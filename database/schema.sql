@@ -53,3 +53,27 @@ UPDATE pets SET equipped_outfit=jsonb_set(equipped_outfit, ARRAY[CASE
  WHEN equipped_cosmetic IN ('scarf','pearl_necklace','rainbow_scarf','bone_tag','puppy_bandana','seed_pouch','ice_scarf') THEN 'neck'
  WHEN equipped_cosmetic IN ('leaf_cape') THEN 'clothes'
  ELSE 'head' END],to_jsonb(equipped_cosmetic),true) WHERE equipped_cosmetic <> 'none' AND equipped_cosmetic IS NOT NULL AND equipped_outfit = '{"head":null,"eyes":null,"neck":null,"clothes":null}'::jsonb;
+
+-- Batch 6: Pet Notes
+ALTER TABLE users ADD COLUMN IF NOT EXISTS pet_note VARCHAR(20);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS note_expires_at TIMESTAMPTZ;
+
+-- Batch 7: PawMail. Run once against the SAME database used by the API.
+CREATE TABLE IF NOT EXISTS paw_mail (
+ id UUID PRIMARY KEY,
+ sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ recipient_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ design TEXT NOT NULL CHECK (design IN ('strawberry','lavender','sunshine','moonlight')),
+ message TEXT NOT NULL,
+ created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+ expires_at TIMESTAMPTZ NOT NULL,
+ read_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS paw_mail_recipient_expiry_idx ON paw_mail(recipient_id,expires_at DESC);
+
+-- Batch 9: room navigation and persistent unlocks
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS active_room TEXT NOT NULL DEFAULT 'living';
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS unlocked_rooms JSONB NOT NULL DEFAULT '["living","bedroom"]'::jsonb;
+
+-- Batch 10: independent room-specific furniture placements
+ALTER TABLE pets ADD COLUMN IF NOT EXISTS room_layouts JSONB NOT NULL DEFAULT '{}'::jsonb;

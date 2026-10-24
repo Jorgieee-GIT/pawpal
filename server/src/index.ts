@@ -1,95 +1,483 @@
 import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import {randomUUID} from 'node:crypto';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import {z} from 'zod';
-import {pool} from './db.js';
-const app=express();app.use(express.json({limit:'24kb'}));
-app.use(cors({
-    origin: [
-      'http://localhost:5173',
-      'https://pawpal-navy.vercel.app',
-      /^https:\/\/pawpal-[a-z0-9-]+\.vercel\.app$/
-    ],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
-const secret=process.env.JWT_SECRET||'LOCAL_DEVELOPMENT_ONLY_CHANGE_THIS_SECRET';
-if(process.env.NODE_ENV==='production'&&!process.env.JWT_SECRET)throw Error('Set JWT_SECRET in production');
-const fields='id,owner_id,name,species,breed,color,owned_colors,owned_breeds,hunger,happiness,energy,cleanliness,affection,coins,xp,level,food,toys,owned_cosmetics,equipped_cosmetic,equipped_outfit,room_theme,owned_items,placed_items,garden,last_daily,daily_claimed_at,last_game_at,created_at,updated_at';
-const species=['cat','dog','bunny','fox','hamster','panda','penguin','axolotl'];
-const catalog:Record<string,{price:number,type:string,level?:number}>={bow:{price:420,type:'cosmetic'},cap:{price:550,type:'cosmetic'},crown:{price:2400,type:'cosmetic'},glasses:{price:720,type:'cosmetic'},flower:{price:460,type:'cosmetic'},scarf:{price:790,type:'cosmetic'},halo:{price:3000,type:'cosmetic'},party:{price:850,type:'cosmetic'},pink:{price:550,type:'color'},cream:{price:450,type:'color'},gray:{price:600,type:'color'},orange:{price:650,type:'color'},black:{price:650,type:'color'},lavender:{price:950,type:'color'},mint:{price:950,type:'color'},calico:{price:1600,type:'breed'},tabby:{price:1300,type:'breed'},tuxedo:{price:1700,type:'breed'},spotted:{price:1500,type:'breed'},fluffy:{price:2200,type:'breed'},striped:{price:1550,type:'breed'},cloud_sofa:{price:2400,type:'furniture'},plant:{price:580,type:'furniture'},lamp:{price:950,type:'furniture'},bookshelf:{price:1800,type:'furniture'},rug:{price:950,type:'furniture'},cat_tree:{price:2200,type:'furniture'},plush:{price:750,type:'furniture'},golden:{price:1300,type:'breed'},dalmatian:{price:1600,type:'breed'},husky:{price:1900,type:'breed'},corgi:{price:2200,type:'breed'},lop:{price:1300,type:'breed'},dutch:{price:1600,type:'breed'},angora:{price:1900,type:'breed'},red_fox:{price:1300,type:'breed'},arctic_fox:{price:1600,type:'breed'},fennec:{price:1900,type:'breed'},silver_fox:{price:2200,type:'breed'},syrian:{price:1300,type:'breed'},dwarf:{price:1600,type:'breed'},roborovski:{price:1900,type:'breed'},banded:{price:2200,type:'breed'},giant_panda:{price:1300,type:'breed'},red_panda:{price:1600,type:'breed'},snow_panda:{price:1900,type:'breed'},baby_panda:{price:2200,type:'breed'},emperor:{price:1300,type:'breed'},adelie:{price:1600,type:'breed'},gentoo:{price:1900,type:'breed'},chinstrap:{price:2200,type:'breed'},leucistic:{price:1300,type:'breed'},wild_type:{price:1600,type:'breed'},melanoid:{price:1900,type:'breed'},golden_albino:{price:2200,type:'breed'},star_clip:{price:800,type:'cosmetic'},heart_shades:{price:970,type:'cosmetic'},pearl_necklace:{price:1140,type:'cosmetic'},moon_crown:{price:1310,type:'cosmetic'},rainbow_scarf:{price:1480,type:'cosmetic'},fish_clip:{price:1250,type:'cosmetic'},yarn_hat:{price:1700,type:'cosmetic'},bone_tag:{price:1250,type:'cosmetic'},puppy_bandana:{price:1700,type:'cosmetic'},carrot_clip:{price:1250,type:'cosmetic'},clover_crown:{price:1700,type:'cosmetic'},leaf_cape:{price:1250,type:'cosmetic'},forest_crown:{price:1700,type:'cosmetic'},seed_pouch:{price:1250,type:'cosmetic'},cheek_bow:{price:1700,type:'cosmetic'},bamboo_clip:{price:1250,type:'cosmetic'},bamboo_hat:{price:1700,type:'cosmetic'},sailor_hat:{price:1250,type:'cosmetic'},ice_scarf:{price:1700,type:'cosmetic'},bubble_crown:{price:1250,type:'cosmetic'},coral_clip:{price:1700,type:'cosmetic'},siamese:{price:2500,type:'breed'},british_shorthair:{price:2950,type:'breed'},maine_coon:{price:3400,type:'breed'},beagle:{price:2500,type:'breed'},shiba:{price:2950,type:'breed'},border_collie:{price:3400,type:'breed'},lionhead:{price:2500,type:'breed'},rex:{price:2950,type:'breed'},himalayan:{price:3400,type:'breed'},cross_fox:{price:2500,type:'breed'},marble_fox:{price:2950,type:'breed'},bat_eared_fox:{price:3400,type:'breed'},winter_white:{price:2500,type:'breed'},chinese_hamster:{price:2950,type:'breed'},teddy_bear:{price:3400,type:'breed'},qinling_panda:{price:2500,type:'breed'},brown_panda:{price:2950,type:'breed'},red_panda_cub:{price:3400,type:'breed'},rockhopper:{price:2500,type:'breed'},little_blue:{price:2950,type:'breed'},macaroni:{price:3400,type:'breed'},copper:{price:2500,type:'breed'},piebald:{price:2950,type:'breed'},mosaic:{price:3400,type:'breed'},blush:{price:0,type:'theme'},lavender_room:{price:2500,type:'theme'},mint_room:{price:2500,type:'theme'},night_room:{price:3500,type:'theme'}};
-const addedBreedsBySpecies:Record<string,string[]>={"cat": ["siamese", "british_shorthair", "maine_coon"], "dog": ["beagle", "shiba", "border_collie"], "bunny": ["lionhead", "rex", "himalayan"], "fox": ["cross_fox", "marble_fox", "bat_eared_fox"], "hamster": ["winter_white", "chinese_hamster", "teddy_bear"], "panda": ["qinling_panda", "brown_panda", "red_panda_cub"], "penguin": ["rockhopper", "little_blue", "macaroni"], "axolotl": ["copper", "piebald", "mosaic"]};
-const uniqueCosmeticsBySpecies:Record<string,string[]>={"cat": ["fish_clip", "yarn_hat"], "dog": ["bone_tag", "puppy_bandana"], "bunny": ["carrot_clip", "clover_crown"], "fox": ["leaf_cape", "forest_crown"], "hamster": ["seed_pouch", "cheek_bow"], "panda": ["bamboo_clip", "bamboo_hat"], "penguin": ["sailor_hat", "ice_scarf"], "axolotl": ["bubble_crown", "coral_clip"]};
-const breedsBySpecies:Record<string,string[]>={"cat": ["calico", "tabby", "tuxedo", "fluffy"], "dog": ["golden", "dalmatian", "husky", "corgi"], "bunny": ["lop", "dutch", "angora", "spotted"], "fox": ["red_fox", "arctic_fox", "fennec", "silver_fox"], "hamster": ["syrian", "dwarf", "roborovski", "banded"], "panda": ["giant_panda", "red_panda", "snow_panda", "baby_panda"], "penguin": ["emperor", "adelie", "gentoo", "chinstrap"], "axolotl": ["leucistic", "wild_type", "melanoid", "golden_albino"]};
-const COSMETIC_SLOTS:Record<string,string>={"bow":"head","cap":"head","crown":"head","flower":"head","halo":"head","party":"head","star_clip":"head","moon_crown":"head","fish_clip":"head","yarn_hat":"head","carrot_clip":"head","clover_crown":"head","forest_crown":"head","cheek_bow":"head","bamboo_clip":"head","bamboo_hat":"head","sailor_hat":"head","bubble_crown":"head","coral_clip":"head","glasses":"eyes","heart_shades":"eyes","scarf":"neck","pearl_necklace":"neck","rainbow_scarf":"neck","bone_tag":"neck","puppy_bandana":"neck","seed_pouch":"neck","ice_scarf":"neck","leaf_cape":"clothes","rose_beret":"head","straw_hat":"head","cloud_beanie":"head","star_tiara":"head","witch_hat":"head","sunflower_crown":"head","sleep_cap":"head","winter_earmuffs":"head","round_specs":"eyes","blue_goggles":"eyes","sleep_mask":"eyes","monocle":"eyes","butterfly_glasses":"eyes","aviators":"eyes","heart_collar":"neck","gold_chain":"neck","bow_tie":"neck","cherry_necklace":"neck","star_pendant":"neck","cozy_muffler":"neck","bell_collar":"neck","pink_hoodie":"clothes","denim_overalls":"clothes","flower_dress":"clothes","raincoat":"clothes","sailor_top":"clothes","striped_sweater":"clothes","royal_cape":"clothes","cloud_pajamas":"clothes","autumn_vest":"clothes","starry_jacket":"clothes"};
-const NEW_COSMETICS={"rose_beret":{"price":900,"type":"cosmetic"},"straw_hat":{"price":1100,"type":"cosmetic"},"cloud_beanie":{"price":950,"type":"cosmetic"},"star_tiara":{"price":1850,"type":"cosmetic"},"witch_hat":{"price":1550,"type":"cosmetic"},"sunflower_crown":{"price":1400,"type":"cosmetic"},"sleep_cap":{"price":820,"type":"cosmetic"},"winter_earmuffs":{"price":970,"type":"cosmetic"},"round_specs":{"price":850,"type":"cosmetic"},"blue_goggles":{"price":1350,"type":"cosmetic"},"sleep_mask":{"price":700,"type":"cosmetic"},"monocle":{"price":1250,"type":"cosmetic"},"butterfly_glasses":{"price":1350,"type":"cosmetic"},"aviators":{"price":1750,"type":"cosmetic"},"heart_collar":{"price":800,"type":"cosmetic"},"gold_chain":{"price":1900,"type":"cosmetic"},"bow_tie":{"price":650,"type":"cosmetic"},"cherry_necklace":{"price":990,"type":"cosmetic"},"star_pendant":{"price":1050,"type":"cosmetic"},"cozy_muffler":{"price":1250,"type":"cosmetic"},"bell_collar":{"price":850,"type":"cosmetic"},"pink_hoodie":{"price":1650,"type":"cosmetic"},"denim_overalls":{"price":1850,"type":"cosmetic"},"flower_dress":{"price":1750,"type":"cosmetic"},"raincoat":{"price":2100,"type":"cosmetic"},"sailor_top":{"price":1500,"type":"cosmetic"},"striped_sweater":{"price":1400,"type":"cosmetic"},"royal_cape":{"price":2850,"type":"cosmetic"},"cloud_pajamas":{"price":1200,"type":"cosmetic"},"autumn_vest":{"price":1350,"type":"cosmetic"},"starry_jacket":{"price":2300,"type":"cosmetic"}};
-Object.assign(catalog,NEW_COSMETICS);
-const clamp=(n:number)=>Math.max(0,Math.min(100,Math.round(n)));
-const token=(id:string)=>jwt.sign({sub:id},secret,{expiresIn:'14d'});
-function auth(req:any,res:any,next:any){try{const t=(req.headers.authorization||'').replace(/^Bearer /,'');const d=jwt.verify(t,secret) as {sub:string};req.userId=d.sub;next()}catch{res.status(401).json({error:'Please sign in again.'})}}
-const handle=(fn:(req:any,res:any)=>Promise<void>)=>(req:any,res:any)=>Promise.resolve(fn(req,res)).catch((e:any)=>{console.error(e);if(!res.headersSent)res.status(500).json({error:'Server error. Check the backend terminal.'})});
-const register=z.object({username:z.string().regex(/^[a-zA-Z0-9_]{3,24}$/),password:z.string().min(6).max(100)});
-app.get('/api/health',(_q,r)=>r.json({ok:true}));
 
-// Temporary diagnostic endpoint: confirms database connectivity and users table.
-app.get('/api/db-health', async (_req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT to_regclass('public.users') AS users_table"
-    );
-    res.json({
-      databaseConnected: true,
-      usersTableExists: result.rows[0].users_table !== null
-    });
-  } catch (error) {
-    console.error('Database health check failed:', error);
-    res.status(500).json({
-      databaseConnected: false,
-      message: 'Database connection failed. Check Render logs.'
-    });
-  }
+import express from 'express';
+
+import cors from 'cors';
+
+import {randomUUID} from 'node:crypto';
+
+import bcrypt from 'bcryptjs';
+
+import jwt from 'jsonwebtoken';
+
+import {z} from 'zod';
+
+import {pool} from './db.js';
+
+const app=express();app.use(express.json({limit:'24kb'}));
+
+app.use(cors({
+
+    origin: [
+
+      'http://localhost:5173',
+
+      'https://pawpal-navy.vercel.app',
+
+      /^https:\/\/pawpal-[a-z0-9-]+\.vercel\.app$/
+
+    ],
+
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+
+    allowedHeaders: ['Content-Type', 'Authorization']
+
+  }));
+
+const secret=process.env.JWT_SECRET||'LOCAL_DEVELOPMENT_ONLY_CHANGE_THIS_SECRET';
+
+if(process.env.NODE_ENV==='production'&&!process.env.JWT_SECRET)throw Error('Set JWT_SECRET in production');
+
+const fields='id,owner_id,name,species,breed,color,owned_colors,owned_breeds,hunger,happiness,energy,cleanliness,affection,coins,xp,level,food,toys,owned_cosmetics,equipped_cosmetic,equipped_outfit,room_theme,active_room,unlocked_rooms,room_layouts,owned_items,placed_items,garden,last_daily,daily_claimed_at,last_game_at,created_at,updated_at';
+
+const species=['cat','dog','bunny','fox','hamster','panda','penguin','axolotl'];
+
+const catalog:Record<string,{price:number,type:string,level?:number}>={bow:{price:420,type:'cosmetic'},cap:{price:550,type:'cosmetic'},crown:{price:2400,type:'cosmetic'},glasses:{price:720,type:'cosmetic'},flower:{price:460,type:'cosmetic'},scarf:{price:790,type:'cosmetic'},halo:{price:3000,type:'cosmetic'},party:{price:850,type:'cosmetic'},pink:{price:550,type:'color'},cream:{price:450,type:'color'},gray:{price:600,type:'color'},orange:{price:650,type:'color'},black:{price:650,type:'color'},lavender:{price:950,type:'color'},mint:{price:950,type:'color'},calico:{price:1600,type:'breed'},tabby:{price:1300,type:'breed'},tuxedo:{price:1700,type:'breed'},spotted:{price:1500,type:'breed'},fluffy:{price:2200,type:'breed'},striped:{price:1550,type:'breed'},cloud_sofa:{price:2400,type:'furniture'},plant:{price:580,type:'furniture'},lamp:{price:950,type:'furniture'},bookshelf:{price:1800,type:'furniture'},rug:{price:950,type:'furniture'},cat_tree:{price:2200,type:'furniture'},plush:{price:750,type:'furniture'},golden:{price:1300,type:'breed'},dalmatian:{price:1600,type:'breed'},husky:{price:1900,type:'breed'},corgi:{price:2200,type:'breed'},lop:{price:1300,type:'breed'},dutch:{price:1600,type:'breed'},angora:{price:1900,type:'breed'},red_fox:{price:1300,type:'breed'},arctic_fox:{price:1600,type:'breed'},fennec:{price:1900,type:'breed'},silver_fox:{price:2200,type:'breed'},syrian:{price:1300,type:'breed'},dwarf:{price:1600,type:'breed'},roborovski:{price:1900,type:'breed'},banded:{price:2200,type:'breed'},giant_panda:{price:1300,type:'breed'},red_panda:{price:1600,type:'breed'},snow_panda:{price:1900,type:'breed'},baby_panda:{price:2200,type:'breed'},emperor:{price:1300,type:'breed'},adelie:{price:1600,type:'breed'},gentoo:{price:1900,type:'breed'},chinstrap:{price:2200,type:'breed'},leucistic:{price:1300,type:'breed'},wild_type:{price:1600,type:'breed'},melanoid:{price:1900,type:'breed'},golden_albino:{price:2200,type:'breed'},star_clip:{price:800,type:'cosmetic'},heart_shades:{price:970,type:'cosmetic'},pearl_necklace:{price:1140,type:'cosmetic'},moon_crown:{price:1310,type:'cosmetic'},rainbow_scarf:{price:1480,type:'cosmetic'},fish_clip:{price:1250,type:'cosmetic'},yarn_hat:{price:1700,type:'cosmetic'},bone_tag:{price:1250,type:'cosmetic'},puppy_bandana:{price:1700,type:'cosmetic'},carrot_clip:{price:1250,type:'cosmetic'},clover_crown:{price:1700,type:'cosmetic'},leaf_cape:{price:1250,type:'cosmetic'},forest_crown:{price:1700,type:'cosmetic'},seed_pouch:{price:1250,type:'cosmetic'},cheek_bow:{price:1700,type:'cosmetic'},bamboo_clip:{price:1250,type:'cosmetic'},bamboo_hat:{price:1700,type:'cosmetic'},sailor_hat:{price:1250,type:'cosmetic'},ice_scarf:{price:1700,type:'cosmetic'},bubble_crown:{price:1250,type:'cosmetic'},coral_clip:{price:1700,type:'cosmetic'},siamese:{price:2500,type:'breed'},british_shorthair:{price:2950,type:'breed'},maine_coon:{price:3400,type:'breed'},beagle:{price:2500,type:'breed'},shiba:{price:2950,type:'breed'},border_collie:{price:3400,type:'breed'},lionhead:{price:2500,type:'breed'},rex:{price:2950,type:'breed'},himalayan:{price:3400,type:'breed'},cross_fox:{price:2500,type:'breed'},marble_fox:{price:2950,type:'breed'},bat_eared_fox:{price:3400,type:'breed'},winter_white:{price:2500,type:'breed'},chinese_hamster:{price:2950,type:'breed'},teddy_bear:{price:3400,type:'breed'},qinling_panda:{price:2500,type:'breed'},brown_panda:{price:2950,type:'breed'},red_panda_cub:{price:3400,type:'breed'},rockhopper:{price:2500,type:'breed'},little_blue:{price:2950,type:'breed'},macaroni:{price:3400,type:'breed'},copper:{price:2500,type:'breed'},piebald:{price:2950,type:'breed'},mosaic:{price:3400,type:'breed'},blush:{price:0,type:'theme'},lavender_room:{price:2500,type:'theme'},mint_room:{price:2500,type:'theme'},night_room:{price:3500,type:'theme'}};
+
+const addedBreedsBySpecies:Record<string,string[]>={"cat": ["siamese", "british_shorthair", "maine_coon"], "dog": ["beagle", "shiba", "border_collie"], "bunny": ["lionhead", "rex", "himalayan"], "fox": ["cross_fox", "marble_fox", "bat_eared_fox"], "hamster": ["winter_white", "chinese_hamster", "teddy_bear"], "panda": ["qinling_panda", "brown_panda", "red_panda_cub"], "penguin": ["rockhopper", "little_blue", "macaroni"], "axolotl": ["copper", "piebald", "mosaic"]};
+
+const uniqueCosmeticsBySpecies:Record<string,string[]>={"cat": ["fish_clip", "yarn_hat"], "dog": ["bone_tag", "puppy_bandana"], "bunny": ["carrot_clip", "clover_crown"], "fox": ["leaf_cape", "forest_crown"], "hamster": ["seed_pouch", "cheek_bow"], "panda": ["bamboo_clip", "bamboo_hat"], "penguin": ["sailor_hat", "ice_scarf"], "axolotl": ["bubble_crown", "coral_clip"]};
+
+const breedsBySpecies:Record<string,string[]>={"cat": ["calico", "tabby", "tuxedo", "fluffy"], "dog": ["golden", "dalmatian", "husky", "corgi"], "bunny": ["lop", "dutch", "angora", "spotted"], "fox": ["red_fox", "arctic_fox", "fennec", "silver_fox"], "hamster": ["syrian", "dwarf", "roborovski", "banded"], "panda": ["giant_panda", "red_panda", "snow_panda", "baby_panda"], "penguin": ["emperor", "adelie", "gentoo", "chinstrap"], "axolotl": ["leucistic", "wild_type", "melanoid", "golden_albino"]};
+
+const COSMETIC_SLOTS:Record<string,string>={"bow":"head","cap":"head","crown":"head","flower":"head","halo":"head","party":"head","star_clip":"head","moon_crown":"head","fish_clip":"head","yarn_hat":"head","carrot_clip":"head","clover_crown":"head","forest_crown":"head","cheek_bow":"head","bamboo_clip":"head","bamboo_hat":"head","sailor_hat":"head","bubble_crown":"head","coral_clip":"head","glasses":"eyes","heart_shades":"eyes","scarf":"neck","pearl_necklace":"neck","rainbow_scarf":"neck","bone_tag":"neck","puppy_bandana":"neck","seed_pouch":"neck","ice_scarf":"neck","leaf_cape":"clothes","rose_beret":"head","straw_hat":"head","cloud_beanie":"head","star_tiara":"head","witch_hat":"head","sunflower_crown":"head","sleep_cap":"head","winter_earmuffs":"head","round_specs":"eyes","blue_goggles":"eyes","sleep_mask":"eyes","monocle":"eyes","butterfly_glasses":"eyes","aviators":"eyes","heart_collar":"neck","gold_chain":"neck","bow_tie":"neck","cherry_necklace":"neck","star_pendant":"neck","cozy_muffler":"neck","bell_collar":"neck","pink_hoodie":"clothes","denim_overalls":"clothes","flower_dress":"clothes","raincoat":"clothes","sailor_top":"clothes","striped_sweater":"clothes","royal_cape":"clothes","cloud_pajamas":"clothes","autumn_vest":"clothes","starry_jacket":"clothes"};
+
+const NEW_COSMETICS={"rose_beret":{"price":900,"type":"cosmetic"},"straw_hat":{"price":1100,"type":"cosmetic"},"cloud_beanie":{"price":950,"type":"cosmetic"},"star_tiara":{"price":1850,"type":"cosmetic"},"witch_hat":{"price":1550,"type":"cosmetic"},"sunflower_crown":{"price":1400,"type":"cosmetic"},"sleep_cap":{"price":820,"type":"cosmetic"},"winter_earmuffs":{"price":970,"type":"cosmetic"},"round_specs":{"price":850,"type":"cosmetic"},"blue_goggles":{"price":1350,"type":"cosmetic"},"sleep_mask":{"price":700,"type":"cosmetic"},"monocle":{"price":1250,"type":"cosmetic"},"butterfly_glasses":{"price":1350,"type":"cosmetic"},"aviators":{"price":1750,"type":"cosmetic"},"heart_collar":{"price":800,"type":"cosmetic"},"gold_chain":{"price":1900,"type":"cosmetic"},"bow_tie":{"price":650,"type":"cosmetic"},"cherry_necklace":{"price":990,"type":"cosmetic"},"star_pendant":{"price":1050,"type":"cosmetic"},"cozy_muffler":{"price":1250,"type":"cosmetic"},"bell_collar":{"price":850,"type":"cosmetic"},"pink_hoodie":{"price":1650,"type":"cosmetic"},"denim_overalls":{"price":1850,"type":"cosmetic"},"flower_dress":{"price":1750,"type":"cosmetic"},"raincoat":{"price":2100,"type":"cosmetic"},"sailor_top":{"price":1500,"type":"cosmetic"},"striped_sweater":{"price":1400,"type":"cosmetic"},"royal_cape":{"price":2850,"type":"cosmetic"},"cloud_pajamas":{"price":1200,"type":"cosmetic"},"autumn_vest":{"price":1350,"type":"cosmetic"},"starry_jacket":{"price":2300,"type":"cosmetic"}};
+
+Object.assign(catalog,NEW_COSMETICS);
+
+// Batch 8: additional collectible room themes, validated by the existing item route.
+Object.assign(catalog, {
+  strawberry_milk: {price:2100,type:'theme'},
+  lavender_dream: {price:2300,type:'theme'},
+  mint_garden: {price:2300,type:'theme'},
+  blueberry_sky: {price:2500,type:'theme'},
+  honey_cottage: {price:2700,type:'theme'},
+  peach_blossom: {price:2700,type:'theme'},
+  moonlight: {price:3300,type:'theme'},
+  sage_forest: {price:2900,type:'theme'}
 });
 
+for(const [id,level] of Object.entries({cloud_sofa:5,moon_crown:12,night_room:8,maine_coon:15,red_panda_cub:18,witch_hat:10,star_tiara:20}))if(catalog[id])catalog[id].level=level;
+
+const clamp=(n:number)=>Math.max(0,Math.min(100,Math.round(n)));
+
+const token=(id:string)=>jwt.sign({sub:id},secret,{expiresIn:'14d'});
+
+function auth(req:any,res:any,next:any){try{const t=(req.headers.authorization||'').replace(/^Bearer /,'');const d=jwt.verify(t,secret) as {sub:string};req.userId=d.sub;next()}catch{res.status(401).json({error:'Please sign in again.'})}}
+
+const handle=(fn:(req:any,res:any)=>Promise<void>)=>(req:any,res:any)=>Promise.resolve(fn(req,res)).catch((e:any)=>{console.error(e);if(!res.headersSent)res.status(500).json({error:'Server error. Check the backend terminal.'})});
+
+const register=z.object({username:z.string().regex(/^[a-zA-Z0-9_]{3,24}$/),password:z.string().min(6).max(100)});
+
+app.get('/api/health',(_q,r)=>r.json({ok:true}));
+
+
+
+// Temporary diagnostic endpoint: confirms database connectivity and users table.
+
+app.get('/api/db-health', async (_req, res) => {
+
+  try {
+
+    const result = await pool.query(
+
+      "SELECT to_regclass('public.users') AS users_table"
+
+    );
+
+    res.json({
+
+      databaseConnected: true,
+
+      usersTableExists: result.rows[0].users_table !== null
+
+    });
+
+  } catch (error) {
+
+    console.error('Database health check failed:', error);
+
+    res.status(500).json({
+
+      databaseConnected: false,
+
+      message: 'Database connection failed. Check Render logs.'
+
+    });
+
+  }
+
+});
+
+
+
 app.post('/api/auth/register',handle(async(req,res)=>{const v=register.safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Username must be 3–24 letters, numbers or underscores. Password must be at least 6 characters.'});const {username,password}=v.data;const hash=await bcrypt.hash(password,12);try{const q=await pool.query('INSERT INTO users(id,username,password_hash) VALUES($1,$2,$3) RETURNING id,username',[randomUUID(),username.toLowerCase(),hash]);res.status(201).json({token:token(q.rows[0].id),user:q.rows[0]})}catch(e:any){if(e.code==='23505')return void res.status(409).json({error:'That username is already taken.'});throw e}}));
+
 app.post('/api/auth/login',handle(async(req,res)=>{const {identity,password}=req.body||{};const q=await pool.query('SELECT * FROM users WHERE username=$1',[String(identity||'').toLowerCase()]);if(!q.rows[0]||!await bcrypt.compare(String(password||''),q.rows[0].password_hash))return void res.status(401).json({error:'Incorrect username or password.'});res.json({token:token(q.rows[0].id),user:{id:q.rows[0].id,username:q.rows[0].username}})}));
-app.get('/api/me',auth,handle(async(req,res)=>{const u=await pool.query('SELECT id,username FROM users WHERE id=$1',[req.userId]);const p=await pool.query(`SELECT ${fields} FROM pets WHERE owner_id=$1`,[req.userId]);res.json({user:u.rows[0],pet:p.rows[0]||null})}));
+
+app.get('/api/me',auth,handle(async(req,res)=>{const u=await pool.query('SELECT id,username,CASE WHEN note_expires_at>NOW() THEN pet_note ELSE NULL END AS pet_note,note_expires_at FROM users WHERE id=$1',[req.userId]);const p=await pool.query(`UPDATE pets SET hunger=GREATEST(0,hunger-LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/1200)::int)),energy=GREATEST(0,energy-LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/1200)::int)),happiness=GREATEST(0,happiness-LEAST(36,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/2400)::int)),cleanliness=GREATEST(0,cleanliness-LEAST(36,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/2400)::int)),updated_at=NOW() WHERE owner_id=$1 RETURNING ${fields}`,[req.userId]);res.json({user:u.rows[0],pet:p.rows[0]||null})}));
+
 app.post('/api/adopt',auth,handle(async(req,res)=>{const v=z.object({name:z.string().trim().min(1).max(24),species:z.enum(['cat','dog','bunny','fox','hamster','panda','penguin','axolotl'])}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Choose a species and a pet name.'});try{const q=await pool.query(`INSERT INTO pets(id,owner_id,name,species) VALUES($1,$2,$3,$4) RETURNING ${fields}`,[randomUUID(),req.userId,v.data.name,v.data.species]);res.status(201).json({pet:q.rows[0]})}catch(e:any){if(e.code==='23505')return void res.status(409).json({error:'You can adopt only one pet.'});throw e}}));
+
 // One-time migration of the old anonymous pet. Explicit ownership claim requires its UUID and an account with no pet.
+
 app.post('/api/claim',auth,handle(async(req,res)=>{if(!z.string().uuid().safeParse(req.body?.petId).success)return void res.status(400).json({error:'Invalid old pet ID.'});const q=await pool.query(`UPDATE pets SET owner_id=$1 WHERE id=$2 AND owner_id IS NULL AND NOT EXISTS(SELECT 1 FROM pets WHERE owner_id=$1) RETURNING ${fields}`,[req.userId,req.body.petId]);if(!q.rows[0])return void res.status(409).json({error:'Pet already claimed, missing, or account already has a pet.'});res.json({pet:q.rows[0]})}));
-async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const mins=Math.min(1440,Math.max(0,(Date.now()-new Date(p.updated_at).getTime())/60000));const tick=Math.floor(mins/20);p.hunger=clamp(p.hunger-tick);p.energy=clamp(p.energy-tick);p.happiness=clamp(p.happiness-Math.floor(tick/2));p.cleanliness=clamp(p.cleanliness-Math.floor(tick/2));const message=await fn(p);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
+
+async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const mins=Math.min(1440,Math.max(0,(Date.now()-new Date(p.updated_at).getTime())/60000));const tick=Math.floor(mins/20);p.hunger=clamp(p.hunger-tick);p.energy=clamp(p.energy-tick);p.happiness=clamp(p.happiness-Math.floor(tick/2));p.cleanliness=clamp(p.cleanliness-Math.floor(tick/2));const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
+
 // Atomic claim: a row lock prevents concurrent requests from claiming twice.
+
 app.post('/api/daily/claim',auth,handle(async(req,res)=>{
+
+ const client=await pool.connect();
+
+ try{
+
+  await client.query('BEGIN');
+
+  const q=await client.query('SELECT id, daily_claimed_at FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
+
+  if(!q.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
+
+  const previous=q.rows[0].daily_claimed_at ? new Date(q.rows[0].daily_claimed_at).getTime():0;
+
+  const next=previous+86400000;
+
+  if(previous && Date.now()<next){await client.query('ROLLBACK');return void res.status(429).json({error:'Daily Surprise is cooling down.',nextClaimAt:new Date(next).toISOString()})}
+
+  const updated=await client.query(`UPDATE pets SET daily_claimed_at=NOW(),last_daily=CURRENT_DATE,coins=coins+120,food=food+2,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[q.rows[0].id]);
+
+  await client.query('COMMIT');res.json({pet:updated.rows[0],message:'Daily Surprise: +120 coins and +2 meals!',nextClaimAt:new Date(Date.now()+86400000).toISOString()});
+
+ }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
+
+}));
+
+app.post('/api/care',auth,handle(async(req,res)=>mutate(req,res,p=>{const action=req.body?.action;let msg='';switch(action){case 'feed':if(p.food<1)return 'Buy food first.';p.food--;p.hunger=clamp(p.hunger+28);p.xp+=12;msg='Yummy lunch!';break;case 'play':if(p.energy<12)return 'Too tired to play.';p.energy=clamp(p.energy-12);p.happiness=clamp(p.happiness+24);p.affection=clamp(p.affection+8);p.coins+=12;p.xp+=18;msg='Playtime! +12 coins';break;case 'sleep':p.energy=clamp(p.energy+36);p.xp+=8;msg='Sweet dreams!';break;case 'bathe':p.cleanliness=clamp(p.cleanliness+40);p.xp+=10;msg='Squeaky clean!';break;case 'cuddle':p.affection=clamp(p.affection+20);p.happiness=clamp(p.happiness+10);p.xp+=8;msg='Best friends forever!';break;case 'daily':return 'Please use the dedicated Daily Surprise claim button.';case 'food':if(p.coins<150)return 'Not enough coins.';p.coins-=150;p.food+=3;msg='3 meals added!';break;case 'toy':if(p.coins<350)return 'Not enough coins.';p.coins-=350;p.toys++;msg='A new toy!';break;default:return 'Unknown action.'}return msg})));
+
+app.post('/api/item',auth,handle(async(req,res)=>mutate(req,res,p=>{const {item,mode}=req.body||{};const product=catalog[item];if(!product)return 'Unknown item.';if(product.type==='cosmetic' && (mode==='buy'||mode==='equip') && Object.values(uniqueCosmeticsBySpecies).some(items=>items.includes(item)) && !uniqueCosmeticsBySpecies[p.species]?.includes(item))return 'This accessory belongs to another species.';if(product.type==='breed' && (mode==='buy'||mode==='equip') && ![...(breedsBySpecies[p.species]||[]),...(addedBreedsBySpecies[p.species]||[])].includes(item))return 'That breed is not available for your pet species.';const owned=product.type==='cosmetic'?p.owned_cosmetics:product.type==='color'?p.owned_colors:product.type==='breed'?p.owned_breeds:p.owned_items;if(mode==='buy'){if(product.level&&p.level<product.level)return `Unlocks at Level ${product.level}.`;if(owned.includes(item))return 'Already owned.';if(p.coins<product.price)return 'Not enough coins.';p.coins-=product.price;owned.push(item);if(product.type==='theme'){p.room_theme=item;return 'Room theme unlocked and applied!'}if(product.type==='breed'){p.breed=item;p.color='classic';return 'New breed unlocked and equipped!'}return 'New item unlocked!'}if(mode==='unequip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(slot){p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:null};}if(p.equipped_cosmetic===item)p.equipped_cosmetic='none';}else if(product.type==='color'&&p.color===item)p.color='classic';else if(product.type==='breed'&&p.breed===item)p.breed='classic';else if(product.type==='theme'&&p.room_theme===item)p.room_theme='blush';else if(product.type==='furniture')p.placed_items=p.placed_items.filter((x:string)=>x!==item);return 'Item removed!'}if(item==='blush' && mode==='equip'){p.room_theme='blush';return 'Cozy Blush room equipped!'}if(mode==='equip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(!slot)return 'Unknown accessory slot.';if(req.body?.slot&&req.body.slot!==slot)return 'Incorrect accessory slot.';p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:item};p.equipped_cosmetic='none';}else if(product.type==='color')p.color=item;else if(product.type==='breed'){p.breed=item;p.color='classic';}else if(product.type==='theme')p.room_theme=item;else if(product.type==='furniture'){p.placed_items=p.placed_items.includes(item)?p.placed_items.filter((x:string)=>x!==item):[...p.placed_items,item]}return 'Look updated!'}if(mode==='equip'&&item==='none'&&product.type==='cosmetic'){p.equipped_cosmetic='none';return 'Accessory removed.'}return 'Unlock this item first.'})));
+
+
+// Batch 10: room-specific furniture inventory and authoritative placement.
+const FURNITURE_BY_ROOM:Record<string,Record<string,number>>={
+ living:{cloud_sofa:2400,plant:580,lamp:950,bookshelf:1800,rug:950,cat_tree:2200,plush:750,velvet_armchair:1700,tea_cart:1300,flower_vase:720,record_player:2300,fireplace:3200},
+ bedroom:{canopy_bed:2800,moon_lamp:850,vanity:2100,star_pillow:600,cloud_dresser:1700,cozy_bench:1100},
+ studio:{drawing_table:2200,canvas_stack:780,paint_cart:1200,sculpture:1950,studio_lamp:950,craft_cabinet:1800},
+ sports:{treadmill:2900,boxing_bag:1800,fitness_ball:850,medal_case:1300,skipping_rope:520,mini_bike:2400}
+};
+const DEFAULT_ROOM_FURNITURE:Record<string,string[]>={
+ living:['living_sofa','living_table','living_rug','living_lamp','living_plant'],
+ bedroom:['bedroom_bed','bedroom_nightstand','bedroom_wardrobe','bedroom_nightlight','bedroom_plush'],
+ studio:['studio_desk','studio_easel','studio_bookshelf','studio_paint','studio_stool'],
+ sports:['sports_mat','sports_weights','sports_rack','sports_bag','sports_water']
+};
+const DEFAULT_POSITIONS:[[number,number],[number,number],[number,number],[number,number],[number,number]]=[[70,61],[28,60],[48,78],[88,38],[13,45]];
+function initialLayout(room:string){return DEFAULT_ROOM_FURNITURE[room].map((id,i)=>({id,x:DEFAULT_POSITIONS[i][0],y:DEFAULT_POSITIONS[i][1]}));}
+app.get('/api/furniture/catalog',auth,(_req,res)=>res.json({items:FURNITURE_BY_ROOM,defaults:DEFAULT_ROOM_FURNITURE}));
+app.post('/api/furniture',auth,handle(async(req,res)=>{
+ const parsed=z.object({room:z.enum(['living','bedroom','studio','sports']),action:z.enum(['buy','place','move','store','reset']),item:z.string().min(1).max(60).optional(),x:z.number().min(5).max(95).optional(),y:z.number().min(20).max(85).optional()}).safeParse(req.body);
+ if(!parsed.success)return void res.status(400).json({error:'Invalid furniture action or coordinates.'});
+ const {room,action,item,x,y}=parsed.data;
  const client=await pool.connect();
  try{
   await client.query('BEGIN');
-  const q=await client.query('SELECT id, daily_claimed_at FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
-  if(!q.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
-  const previous=q.rows[0].daily_claimed_at ? new Date(q.rows[0].daily_claimed_at).getTime():0;
-  const next=previous+86400000;
-  if(previous && Date.now()<next){await client.query('ROLLBACK');return void res.status(429).json({error:'Daily Surprise is cooling down.',nextClaimAt:new Date(next).toISOString()})}
-  const updated=await client.query(`UPDATE pets SET daily_claimed_at=NOW(),last_daily=CURRENT_DATE,coins=coins+120,food=food+2,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[q.rows[0].id]);
-  await client.query('COMMIT');res.json({pet:updated.rows[0],message:'Daily Surprise: +120 coins and +2 meals!',nextClaimAt:new Date(Date.now()+86400000).toISOString()});
+  const result=await client.query('SELECT id,coins,owned_items,room_layouts,unlocked_rooms FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
+  if(!result.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
+  const p=result.rows[0];
+  if(!['living','bedroom'].includes(room)&&!p.unlocked_rooms.includes(room)){await client.query('ROLLBACK');return void res.status(403).json({error:'Unlock this room first.'})}
+  const layouts={...(p.room_layouts||{})};
+  const entries:Array<{id:string,x:number,y:number}>=Array.isArray(layouts[room])?layouts[room]:initialLayout(room);
+  const owned:string[]=Array.isArray(p.owned_items)?p.owned_items:[];
+  const isDefault=(id:string)=>DEFAULT_ROOM_FURNITURE[room].includes(id);
+  const price=item?FURNITURE_BY_ROOM[room][item]:undefined;
+  let message='Furniture updated.';
+  if(action==='buy'){
+   if(!item||price===undefined){await client.query('ROLLBACK');return void res.status(400).json({error:'Not sold in this room.'})}
+   if(owned.includes(item)){await client.query('ROLLBACK');return void res.status(409).json({error:'Already owned.'})}
+   if(p.coins<price){await client.query('ROLLBACK');return void res.status(400).json({error:'Not enough coins.'})}
+   await client.query('UPDATE pets SET coins=coins-$2,owned_items=owned_items || $3::jsonb WHERE id=$1',[p.id,price,JSON.stringify([item])]);message='Furniture purchased!';
+  }else if(action==='reset'){layouts[room]=initialLayout(room);message='Default furniture restored.';
+  }else{
+   if(!item||(!isDefault(item)&&(!owned.includes(item)||price===undefined))){await client.query('ROLLBACK');return void res.status(403).json({error:'Furniture is not available or not owned.'})}
+   const idx=entries.findIndex(f=>f.id===item);
+   if(action==='store'){if(idx<0){await client.query('ROLLBACK');return void res.status(400).json({error:'Furniture is not placed.'})}entries.splice(idx,1);message='Furniture stored.'}
+   if(action==='place'){if(idx>=0){await client.query('ROLLBACK');return void res.status(409).json({error:'Already placed.'})}entries.push({id:item,x:x??50,y:y??62});message='Furniture placed.'}
+   if(action==='move'){if(idx<0||x===undefined||y===undefined){await client.query('ROLLBACK');return void res.status(400).json({error:'Furniture is not placed or coordinates missing.'})}entries[idx]={id:item,x,y};message='Furniture moved.'}
+   layouts[room]=entries;
+  }
+  if(action!=='buy')await client.query('UPDATE pets SET room_layouts=$2::jsonb WHERE id=$1',[p.id,JSON.stringify(layouts)]);
+  await client.query('COMMIT');res.json({message});
  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }));
-app.post('/api/care',auth,handle(async(req,res)=>mutate(req,res,p=>{const action=req.body?.action;let msg='';switch(action){case 'feed':if(p.food<1)return 'Buy food first.';p.food--;p.hunger=clamp(p.hunger+28);p.xp+=12;msg='Yummy lunch!';break;case 'play':if(p.energy<12)return 'Too tired to play.';p.energy=clamp(p.energy-12);p.happiness=clamp(p.happiness+24);p.affection=clamp(p.affection+8);p.coins+=12;p.xp+=18;msg='Playtime! +12 coins';break;case 'sleep':p.energy=clamp(p.energy+36);p.xp+=8;msg='Sweet dreams!';break;case 'bathe':p.cleanliness=clamp(p.cleanliness+40);p.xp+=10;msg='Squeaky clean!';break;case 'cuddle':p.affection=clamp(p.affection+20);p.happiness=clamp(p.happiness+10);p.xp+=8;msg='Best friends forever!';break;case 'daily':return 'Please use the dedicated Daily Surprise claim button.';case 'food':if(p.coins<150)return 'Not enough coins.';p.coins-=150;p.food+=3;msg='3 meals added!';break;case 'toy':if(p.coins<350)return 'Not enough coins.';p.coins-=350;p.toys++;msg='A new toy!';break;default:return 'Unknown action.'}return msg})));
-app.post('/api/item',auth,handle(async(req,res)=>mutate(req,res,p=>{const {item,mode}=req.body||{};const product=catalog[item];if(!product)return 'Unknown item.';if(product.type==='cosmetic' && (mode==='buy'||mode==='equip') && Object.values(uniqueCosmeticsBySpecies).some(items=>items.includes(item)) && !uniqueCosmeticsBySpecies[p.species]?.includes(item))return 'This accessory belongs to another species.';if(product.type==='breed' && (mode==='buy'||mode==='equip') && ![...(breedsBySpecies[p.species]||[]),...(addedBreedsBySpecies[p.species]||[])].includes(item))return 'That breed is not available for your pet species.';const owned=product.type==='cosmetic'?p.owned_cosmetics:product.type==='color'?p.owned_colors:product.type==='breed'?p.owned_breeds:p.owned_items;if(mode==='buy'){if(owned.includes(item))return 'Already owned.';if(p.coins<product.price)return 'Not enough coins.';p.coins-=product.price;owned.push(item);if(product.type==='breed'){p.breed=item;p.color='classic';return 'New breed unlocked and equipped!'}return 'New item unlocked!'}if(mode==='unequip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(slot){p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:null};}if(p.equipped_cosmetic===item)p.equipped_cosmetic='none';}else if(product.type==='color'&&p.color===item)p.color='classic';else if(product.type==='breed'&&p.breed===item)p.breed='classic';else if(product.type==='theme'&&p.room_theme===item)p.room_theme='blush';else if(product.type==='furniture')p.placed_items=p.placed_items.filter((x:string)=>x!==item);return 'Item removed!'}if(mode==='equip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(!slot)return 'Unknown accessory slot.';if(req.body?.slot&&req.body.slot!==slot)return 'Incorrect accessory slot.';p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:item};p.equipped_cosmetic='none';}else if(product.type==='color')p.color=item;else if(product.type==='breed'){p.breed=item;p.color='classic';}else if(product.type==='theme')p.room_theme=item;else if(product.type==='furniture'){p.placed_items=p.placed_items.includes(item)?p.placed_items.filter((x:string)=>x!==item):[...p.placed_items,item]}return 'Look updated!'}if(mode==='equip'&&item==='none'&&product.type==='cosmetic'){p.equipped_cosmetic='none';return 'Accessory removed.'}return 'Unlock this item first.'})));
 app.get('/api/catalog',auth,(_q,r)=>r.json(catalog));
+
 app.get('/api/friends',auth,handle(async(req,res)=>{const q=await pool.query(`SELECT f.requester_id,f.recipient_id,f.status,u.username,u.id AS friend_id FROM friendships f JOIN users u ON u.id=CASE WHEN f.requester_id=$1 THEN f.recipient_id ELSE f.requester_id END WHERE f.requester_id=$1 OR f.recipient_id=$1 ORDER BY f.created_at DESC`,[req.userId]);res.json(q.rows)}));
+
 app.get('/api/users/search',auth,handle(async(req,res)=>{const username=String(req.query.username||'').trim().toLowerCase();if(!/^[a-z0-9_]{3,24}$/.test(username))return void res.status(400).json({error:'Enter an exact username (3–24 characters).'});const q=await pool.query('SELECT id,username FROM users WHERE username=$1 AND id<>$2',[username,req.userId]);res.json({user:q.rows[0]||null})}));
+
 app.post('/api/friends/request',auth,handle(async(req,res)=>{const username=String(req.body?.username||'').toLowerCase();const u=await pool.query('SELECT id FROM users WHERE username=$1 AND id<>$2',[username,req.userId]);if(!u.rows[0])return void res.status(404).json({error:'Username not found.'});const id=u.rows[0].id;const exists=await pool.query('SELECT status FROM friendships WHERE (requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1)',[req.userId,id]);if(exists.rowCount)return void res.status(409).json({error:'A request or friendship already exists.'});await pool.query('INSERT INTO friendships(requester_id,recipient_id,status) VALUES($1,$2,$3)',[req.userId,id,'pending']);res.json({message:'Friend request sent!'})}));
+
 app.post('/api/friends/:id/accept',auth,handle(async(req,res)=>{const q=await pool.query("UPDATE friendships SET status='accepted' WHERE requester_id=$1 AND recipient_id=$2 AND status='pending' RETURNING requester_id",[req.params.id,req.userId]);if(!q.rowCount)return void res.status(404).json({error:'No incoming request.'});res.json({message:'Friend added!'})}));
+
 app.delete('/api/friends/:id',auth,handle(async(req,res)=>{await pool.query('DELETE FROM friendships WHERE (requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1)',[req.userId,req.params.id]);res.json({message:'Friend removed.'})}));
-app.get('/api/room',auth,handle(async(req,res)=>{const q=await pool.query(`SELECT p.id,p.name,p.species,p.color,p.breed,p.level,p.equipped_cosmetic,p.equipped_outfit,u.username,u.id AS user_id FROM pets p JOIN users u ON u.id=p.owner_id WHERE p.owner_id=$1 OR EXISTS(SELECT 1 FROM friendships f WHERE f.status='accepted' AND ((f.requester_id=$1 AND f.recipient_id=p.owner_id) OR (f.recipient_id=$1 AND f.requester_id=p.owner_id)))`,[req.userId]);res.json(q.rows)}));
-app.post('/api/garden',auth,handle(async(req,res)=>mutate(req,res,p=>{const g=p.garden||{seeds:2,flowers:0,planted_at:null};if(req.body?.action==='plant'){if(g.planted_at)return 'A flower is already growing.';if(g.seeds<1)return 'Buy more seeds.';g.seeds--;g.planted_at=new Date().toISOString();p.garden=g;return 'Seed planted! Come back in 60 seconds.'}if(req.body?.action==='harvest'){if(!g.planted_at||Date.now()-new Date(g.planted_at).getTime()<60000)return 'Not ready to harvest.';g.planted_at=null;g.flowers++;p.coins+=40;p.xp+=15;p.garden=g;return 'Harvested a flower! +40 coins.'}if(req.body?.action==='seeds'){if(p.coins<120)return 'Not enough coins.';p.coins-=120;g.seeds+=3;p.garden=g;return 'Bought 3 seeds!'}return 'Unknown garden action.'})));
-app.post('/api/game',auth,handle(async(req,res)=>{const v=z.object({game:z.enum(['memory','dino','runner','pattern']),score:z.number().int().min(0).max(100000)}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Invalid score.'});const result:any={};await mutate(req,{json:(x:any)=>Object.assign(result,x),status:()=>({json:()=>{}})},p=>{if(p.last_game_at&&Date.now()-new Date(p.last_game_at).getTime()<8000)return 'Wait 8 seconds between rewards.';p.last_game_at=new Date().toISOString();const reward=Math.min(75,10+Math.floor(v.data.score/3));p.coins+=reward;p.xp+=Math.min(40,5+Math.floor(v.data.score/8));p.happiness=clamp(p.happiness+8);return `Arcade reward: +${reward} coins!`});if(result.pet)await pool.query('INSERT INTO game_records(user_id,game,best) VALUES($1,$2,$3) ON CONFLICT(user_id,game) DO UPDATE SET best=GREATEST(game_records.best,EXCLUDED.best)',[req.userId,v.data.game,v.data.score]);res.json(result)}));
+
+// Batch 9: server-authoritative room unlocking and selection.
+app.post('/api/rooms',auth,handle(async(req,res)=>{
+  const v=z.object({room:z.enum(['living','bedroom','studio','sports']),action:z.enum(['enter','unlock'])}).safeParse(req.body);
+  if(!v.success)return void res.status(400).json({error:'Invalid room action.'});
+  const {room,action}=v.data;
+  const price=room==='studio'?5000:room==='sports'?8000:0;
+  const client=await pool.connect();
+  try{
+    await client.query('BEGIN');
+    const q=await client.query('SELECT id,coins,unlocked_rooms FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
+    if(!q.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
+    const pet=q.rows[0];const unlocked:Array<string>=Array.isArray(pet.unlocked_rooms)?pet.unlocked_rooms:[];
+    const owned=room==='living'||room==='bedroom'||unlocked.includes(room);
+    if(action==='unlock'&&!owned){
+      if(pet.coins<price){await client.query('ROLLBACK');return void res.status(400).json({error:`You need ${price.toLocaleString()} coins to unlock this room.`})}
+      await client.query('UPDATE pets SET coins=coins-$2,unlocked_rooms=unlocked_rooms || $3::jsonb,active_room=$4 WHERE id=$1',[pet.id,price,JSON.stringify([room]),room]);
+    }else if(action==='enter'&&owned){
+      await client.query('UPDATE pets SET active_room=$2 WHERE id=$1',[pet.id,room]);
+    }else{await client.query('ROLLBACK');return void res.status(403).json({error:'Unlock this room first.'})}
+    await client.query('COMMIT');res.json({message:action==='unlock'&&!owned?'Room unlocked!':'Welcome to your '+room+'!' });
+  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
+}));
+
+app.post('/api/notes', auth, handle(async (req, res) => {
+  const parsed = z.object({
+    text: z.string().trim().max(20)
+  }).safeParse(req.body);
+
+  if (!parsed.success) {
+    return void res.status(400).json({
+      error: 'Notes must be 20 characters or fewer.'
+    });
+  }
+
+  const value = parsed.data.text;
+  const expiresAt = value
+    ? new Date(Date.now() + 24 * 60 * 60 * 1000)
+    : null;
+
+  await pool.query(
+    `UPDATE users
+     SET pet_note = $2,
+         note_expires_at = $3
+     WHERE id = $1`,
+    [req.userId, value || null, expiresAt]
+  );
+
+  res.json({
+    message: value
+      ? 'Pet Note saved for 24 hours.'
+      : 'Pet Note deleted.'
+  });
+}));
+
+// Batch 7 — private, preset PawMail postcards; friendship and expiry enforced on server.
+const pawMailDesigns = ['strawberry', 'lavender', 'sunshine', 'moonlight'] as const;
+app.get('/api/mail', auth, handle(async (req, res) => {
+  const result = await pool.query(`SELECT m.id,m.sender_id,m.design,m.message,m.created_at,m.expires_at,m.read_at,u.username AS sender_username
+    FROM paw_mail m JOIN users u ON u.id=m.sender_id
+    WHERE m.recipient_id=$1 AND m.expires_at>NOW() ORDER BY m.created_at DESC LIMIT 60`, [req.userId]);
+  res.json(result.rows);
+}));
+app.post('/api/mail', auth, handle(async (req, res) => {
+  const parsed=z.object({friendId:z.string().uuid(),design:z.enum(pawMailDesigns)}).safeParse(req.body);
+  if(!parsed.success)return void res.status(400).json({error:'Choose a friend and postcard.'});
+  if(parsed.data.friendId===req.userId)return void res.status(400).json({error:'You cannot mail yourself.'});
+  const friendship=await pool.query(`SELECT 1 FROM friendships WHERE status='accepted' AND
+    ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))`,[req.userId,parsed.data.friendId]);
+  if(!friendship.rowCount)return void res.status(403).json({error:'You can only send postcards to friends.'});
+  const messages:Record<string,string>={strawberry:'You make my day sweeter!',lavender:'Sending you cozy wishes!',sunshine:'You are my sunshine!',moonlight:'Sweet dreams, little pal!'};
+  await pool.query(`INSERT INTO paw_mail(id,sender_id,recipient_id,design,message,expires_at)
+    VALUES($1,$2,$3,$4,$5,NOW()+INTERVAL '24 hours')`,[randomUUID(),req.userId,parsed.data.friendId,parsed.data.design,messages[parsed.data.design]]);
+  res.status(201).json({message:'Your PawMail postcard was sent!'});
+}));
+app.patch('/api/mail/:id/read',auth,handle(async(req,res)=>{
+  const result=await pool.query('UPDATE paw_mail SET read_at=COALESCE(read_at,NOW()) WHERE id=$1 AND recipient_id=$2 AND expires_at>NOW() RETURNING id',[req.params.id,req.userId]);
+  if(!result.rowCount)return void res.status(404).json({error:'Postcard not found or expired.'});
+  res.json({message:'Postcard opened!'});
+}));
+app.delete('/api/mail/:id',auth,handle(async(req,res)=>{
+  const result=await pool.query('DELETE FROM paw_mail WHERE id=$1 AND recipient_id=$2 RETURNING id',[req.params.id,req.userId]);
+  if(!result.rowCount)return void res.status(404).json({error:'Postcard not found.'});
+  res.json({message:'Postcard removed.'});
+}));
+
+app.delete('/api/notes',auth,handle(async(req,res)=>{await pool.query('UPDATE users SET pet_note=NULL,note_expires_at=NULL WHERE id=$1',[req.userId]);res.json({message:'Pet Note deleted.'})}));
+
+app.get('/api/room',auth,handle(async(req,res)=>{const q=await pool.query(`SELECT p.id,p.name,p.species,p.color,p.breed,p.level,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.equipped_cosmetic,p.equipped_outfit,u.username,u.id AS user_id,CASE WHEN u.note_expires_at>NOW() THEN u.pet_note ELSE NULL END AS pet_note,u.note_expires_at FROM pets p JOIN users u ON u.id=p.owner_id WHERE p.owner_id=$1 OR EXISTS(SELECT 1 FROM friendships f WHERE f.status='accepted' AND ((f.requester_id=$1 AND f.recipient_id=p.owner_id) OR (f.recipient_id=$1 AND f.requester_id=p.owner_id)))`,[req.userId]);res.json(q.rows)}));
+
+// Each plot has its own server-timed growth and its own saved rarity.
+
+const plotPrices=[0,0,0,750,1500,2500,4000,6000,9000,13000,18000,25000];
+
+const flowerKinds=[{name:'Wilted',min:30,max:39,weight:10},{name:'Common',min:40,max:60,weight:55},{name:'Uncommon',min:61,max:90,weight:23},{name:'Rare',min:91,max:115,weight:9},{name:'Legendary',min:116,max:130,weight:3}];
+
+function gardenState(raw:any){const g=raw||{};g.seeds=Number(g.seeds)||0;g.flowers=Number(g.flowers)||0;g.watering_cans=Number(g.watering_cans)||0;g.unlocked_plots=Math.min(12,Math.max(3,Number(g.unlocked_plots)||3));g.plots=Array.isArray(g.plots)?g.plots.slice(0,12):[];if(g.planted_at&&!g.plots.some((x:any)=>x?.planted_at)){g.plots[0]={planted_at:g.planted_at,watered_minutes:Number(g.watered_minutes)||0,rarity:'Common',reward:50,variant:0}};while(g.plots.length<g.unlocked_plots)g.plots.push(null);delete g.planted_at;delete g.watered_minutes;return g;}
+
+app.post('/api/garden',auth,handle(async(req,res)=>mutate(req,res,p=>{const g=gardenState(p.garden);const action=String(req.body?.action||'');const qty=Number(req.body?.quantity??1);const idx=Number(req.body?.plotIndex??0);const validPlot=Number.isInteger(idx)&&idx>=0&&idx<g.unlocked_plots;
+
+if(['seeds','buy_water'].includes(action)){if(!Number.isSafeInteger(qty)||qty<1||qty>99)return 'Choose a quantity from 1 to 99.';const cost=qty*(action==='seeds'?40:25);if(p.coins<cost)return 'Not enough coins.';p.coins-=cost;if(action==='seeds')g.seeds+=qty;else g.watering_cans+=qty;p.garden=g;return `Purchased ${qty} ${action==='seeds'?'seeds':'watering cans'}!`;}
+
+if(action==='unlock_plot'){if(g.unlocked_plots>=12)return 'All twelve plots are unlocked.';const cost=plotPrices[g.unlocked_plots];if(p.coins<cost)return `You need ${cost} coins to unlock this plot.`;p.coins-=cost;g.unlocked_plots++;g.plots.push(null);p.garden=g;return `Plot ${g.unlocked_plots} unlocked!`;}
+
+if(!validPlot)return 'Choose an unlocked garden plot.';
+
+const plot=g.plots[idx];
+
+if(action==='plant'){if(plot?.planted_at)return 'This plot already has a flower.';if(g.seeds<1)return 'Buy more seeds.';g.seeds--;const roll=Math.random()*100;let running=0;let kind=flowerKinds[1];for(const candidate of flowerKinds){running+=candidate.weight;if(roll<running){kind=candidate;break;}}g.plots[idx]={planted_at:new Date().toISOString(),watered_minutes:0,rarity:kind.name,reward:kind.min+Math.floor(Math.random()*(kind.max-kind.min+1)),variant:Math.floor(Math.random()*4)};p.garden=g;return `Seed planted in plot ${idx+1}!`;}
+
+if(action==='water'){if(!plot?.planted_at)return 'Plant a flower in this plot first.';if(g.watering_cans<1)return 'Buy a watering can first.';const remaining=300000-(Date.now()-new Date(plot.planted_at).getTime())-(plot.watered_minutes||0)*60000;if(remaining<=0)return 'Your flower is ready!';g.watering_cans--;plot.watered_minutes=Math.min(5,(plot.watered_minutes||0)+1);p.garden=g;return `Plot ${idx+1} watered! One minute removed.`;}
+
+if(action==='harvest'){if(!plot?.planted_at)return 'Plant a flower first.';if(Date.now()-new Date(plot.planted_at).getTime()+(plot.watered_minutes||0)*60000<300000)return 'Not ready to harvest.';const reward=Number(plot.reward)||50;const rarity=String(plot.rarity||'Common');g.plots[idx]=null;g.flowers++;p.coins+=reward;p.xp+=15;p.garden=g;return `${rarity} flower harvested! +${reward} coins and +15 EXP.`;}
+
+return 'Unknown garden action.'})));
+
+app.post('/api/game',auth,handle(async(req,res)=>{const v=z.object({game:z.enum(['memory','dino','runner','pattern']),score:z.number().int().min(0).max(100000)}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Invalid score.'});const result:any={};await mutate(req,{json:(x:any)=>Object.assign(result,x),status:()=>({json:()=>{}})},p=>{if(p.last_game_at&&Date.now()-new Date(p.last_game_at).getTime()<8000)return 'Wait 8 seconds between rewards.';p.last_game_at=new Date().toISOString();const reward=Math.min(75,10+Math.floor(v.data.score/3));p.coins+=reward;p.xp+=Math.min(40,5+Math.floor(v.data.score/8));p.happiness=clamp(p.happiness+8);return `Arcade reward: +${reward} coins!`});if(result.pet && !String(result.message||'').startsWith('Wait '))await recordMissionEvent(pool,req.userId,'arcade');if(result.pet)await pool.query('INSERT INTO game_records(user_id,game,best) VALUES($1,$2,$3) ON CONFLICT(user_id,game) DO UPDATE SET best=GREATEST(game_records.best,EXCLUDED.best)',[req.userId,v.data.game,v.data.score]);res.json(result)}));
+
+// Batch 12: Kitchen 2.0. Ingredients, recipe progress, meals and pet buffs are server-owned.
+const kitchenRecipes: Record<string,{name:string;ingredients:Record<string,number>;steps:string[];hunger:number;happiness:number;energy:number;xp:number}> = {
+ berry_parfait:{name:'Berry Parfait',ingredients:{berries:2,milk:1},steps:['wash','mix','chill'],hunger:24,happiness:14,energy:0,xp:20},
+ cloud_pancakes:{name:'Cloud Pancakes',ingredients:{flour:2,milk:1,berries:1},steps:['mix','cook','plate'],hunger:36,happiness:9,energy:4,xp:28},
+ cozy_soup:{name:'Cozy Soup',ingredients:{carrot:2,milk:1},steps:['chop','simmer','serve'],hunger:32,happiness:5,energy:14,xp:25},
+ moon_cookies:{name:'Moon Cookies',ingredients:{flour:2,berries:1},steps:['mix','bake','decorate'],hunger:20,happiness:22,energy:0,xp:32}
+};
+const kitchenPrices:Record<string,number>={berries:24,milk:20,flour:18,carrot:16};
+app.get('/api/kitchen',auth,handle(async(req,res)=>{
+ const q=await pool.query('SELECT ingredients,meals,active_recipe,recipe_step,cooking_started_at FROM pet_kitchens WHERE user_id=$1',[req.userId]);
+ res.json({kitchen:q.rows[0]||{ingredients:{},meals:{},active_recipe:null,recipe_step:0,cooking_started_at:null},recipes:kitchenRecipes,prices:kitchenPrices});
+}));
+app.post('/api/kitchen',auth,handle(async(req,res)=>{
+ const action=String(req.body?.action||'');const item=String(req.body?.item||'');const quantity=Number(req.body?.quantity??1);
+ const client=await pool.connect();
+ try{
+  await client.query('BEGIN');
+  const petQ=await client.query('SELECT id,coins,hunger,happiness,energy,xp,level FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
+  if(!petQ.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
+  await client.query('INSERT INTO pet_kitchens(user_id) VALUES($1) ON CONFLICT DO NOTHING',[req.userId]);
+  const kitchenQ=await client.query('SELECT * FROM pet_kitchens WHERE user_id=$1 FOR UPDATE',[req.userId]);
+  const k=kitchenQ.rows[0];const ingredients:Record<string,number>={...k.ingredients};const meals:Record<string,number>={...k.meals};
+  let active:string|null=k.active_recipe;let step=Number(k.recipe_step)||0;let started=k.cooking_started_at;let message='';let coinDelta=0;let stats:{hunger:number;happiness:number;energy:number;xp:number;level:number}|null=null;
+  const fail=async(error:string)=>{await client.query('ROLLBACK');res.status(400).json({error})};
+  if(action==='buy'){
+   if(!(item in kitchenPrices)||!Number.isSafeInteger(quantity)||quantity<1||quantity>20)return void await fail('Choose an ingredient and a quantity from 1 to 20.');
+   const cost=kitchenPrices[item]*quantity;if(petQ.rows[0].coins<cost)return void await fail('Not enough coins.');
+   coinDelta=-cost;ingredients[item]=(ingredients[item]||0)+quantity;message=`Purchased ${quantity} ${item}!`;
+  }else if(action==='start'){
+   const recipe=kitchenRecipes[item];if(!recipe)return void await fail('Unknown recipe.');
+   if(active)return void await fail('Finish your current recipe first.');
+   for(const [ingredient,amount] of Object.entries(recipe.ingredients))if((ingredients[ingredient]||0)<amount)return void await fail('Not enough ingredients for this recipe.');
+   for(const [ingredient,amount] of Object.entries(recipe.ingredients))ingredients[ingredient]-=amount;
+   active=item;step=0;started=new Date();message=`Started ${recipe.name}!`;
+  }else if(action==='step'){
+   if(!active||!kitchenRecipes[active])return void await fail('Start a recipe first.');
+   const recipe=kitchenRecipes[active];const expected=recipe.steps[step];
+   if(item!==expected)return void await fail('Not quite! Choose the correct next cooking step.');
+   if(!started||Date.now()-new Date(started).getTime()<800)return void await fail('Take a moment between cooking steps.');
+   step++;started=new Date();message=`${expected} complete!`;
+   if(step>=recipe.steps.length){meals[active]=(meals[active]||0)+1;message=`${recipe.name} is ready! Added to your pantry.`;active=null;step=0;started=null;}
+  }else if(action==='serve'){
+   const recipe=kitchenRecipes[item];if(!recipe||!(meals[item]>0))return void await fail('Cook this meal before serving it.');
+   meals[item]--;const pet=petQ.rows[0];let xp=pet.xp+recipe.xp;let level=pet.level;let earnedCoins=0;
+   while(xp>=level*100){xp-=level*100;level++;earnedCoins+=60;}
+   coinDelta=earnedCoins;stats={hunger:clamp(pet.hunger+recipe.hunger),happiness:clamp(pet.happiness+recipe.happiness),energy:clamp(pet.energy+recipe.energy),xp,level};
+   message=`Served ${recipe.name}! +${recipe.xp} XP`;
+  }else return void await fail('Unknown kitchen action.');
+  await client.query('UPDATE pet_kitchens SET ingredients=$2::jsonb,meals=$3::jsonb,active_recipe=$4,recipe_step=$5,cooking_started_at=$6 WHERE user_id=$1',[req.userId,JSON.stringify(ingredients),JSON.stringify(meals),active,step,started]);
+  if(stats)await client.query('UPDATE pets SET coins=coins+$2,hunger=$3,happiness=$4,energy=$5,xp=$6,level=$7,updated_at=NOW() WHERE owner_id=$1',[req.userId,coinDelta,stats.hunger,stats.happiness,stats.energy,stats.xp,stats.level]);
+  else if(coinDelta)await client.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1',[req.userId,coinDelta]);
+  if(action==='buy'||action==='serve'||(action==='step'&&!active))await recordMissionEvent(client,req.userId,action==='buy'?'buy':action==='serve'?'serve':'cook');await client.query('COMMIT');res.json({message,kitchen:{ingredients,meals,active_recipe:active,recipe_step:step,cooking_started_at:started}});
+ }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
+}));
+
+
+// Batch 13: Mission Center. All rewards and progress are server-authoritative.
+type MissionKind='daily'|'weekly'|'milestone';
+type MissionDef={id:string;kind:MissionKind;title:string;metric:string;target:number;coins:number;xp:number};
+const missionDefs:MissionDef[]=[];
+const missionMetrics:[string,string,number[]][]=[
+ ['feed','Feed your pet',[1,2,3,4,5,7,10,12,15,20]],
+ ['play','Play with your pet',[1,2,3,4,5,7,10,12,15,20]],
+ ['sleep','Help your pet rest',[1,2,3,4,5,7,10,12,15,20]],
+ ['bathe','Give your pet a bath',[1,2,3,4,5,7,10,12,15,20]],
+ ['cuddle','Cuddle your pet',[1,2,3,4,5,7,10,12,15,20]],
+ ['arcade','Play an arcade game',[1,2,3,4,5,7,10,12,15,20]],
+ ['plant','Plant a garden seed',[1,2,3,4,5,7,10,12,15,20]],
+ ['harvest','Harvest a flower',[1,2,3,4,5,7,10,12,15,20]],
+ ['water','Water a flower',[1,2,3,4,5,7,10,12,15,20]],
+ ['cook','Finish a recipe',[1,2,3,4,5,7,10,12,15,20]],
+ ['serve','Serve a cooked meal',[1,2,3,4,5,7,10,12,15,20]],
+ ['buy','Make a shop purchase',[1,2,3,4,5,7,10,12,15,20]]
+];
+// 120 permanent milestones: 12 activity families x 10 escalating targets.
+for(const [metric,label,targets] of missionMetrics){for(let i=0;i<targets.length;i++){
+ const target=targets[i];missionDefs.push({id:`m_${metric}_${i+1}`,kind:'milestone',title:`${label} ${target} ${target===1?'time':'times'}`,metric,target,coins:100+(i+1)*75,xp:30+(i+1)*20});
+}}
+// 40 daily missions, 4 randomly but deterministically selected per Manila day.
+const dailyMetrics=['feed','play','sleep','bathe','cuddle','arcade','plant','harvest','water','cook'];
+for(const metric of dailyMetrics)for(let i=0;i<4;i++)missionDefs.push({id:`d_${metric}_${i+1}`,kind:'daily',title:`${missionMetrics.find(m=>m[0]===metric)?.[1]} ${i+1} ${i===0?'time':'times'} today`,metric,target:i+1,coins:30+(i+1)*25,xp:10+(i+1)*10});
+// 30 weekly missions, 5 selected per Manila Monday-to-Sunday week.
+const weeklyMetrics=['feed','play','sleep','bathe','cuddle','arcade','plant','harvest','water','cook'];
+for(const metric of weeklyMetrics)for(let i=0;i<3;i++)missionDefs.push({id:`w_${metric}_${i+1}`,kind:'weekly',title:`${missionMetrics.find(m=>m[0]===metric)?.[1]} ${[3,7,12][i]} times this week`,metric,target:[3,7,12][i],coins:140+i*100,xp:50+i*35});
+function manilaDay(d=new Date()){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
+function manilaWeek(d=new Date()){const day=manilaDay(d);const utc=new Date(day+'T00:00:00Z');const weekday=utc.getUTCDay();utc.setUTCDate(utc.getUTCDate()-(weekday+6)%7);return utc.toISOString().slice(0,10)}
+function pickMissions(kind:MissionKind,userId:string,period:string,count:number){const choices=missionDefs.filter(m=>m.kind===kind);let seed=2166136261;for(const ch of userId+kind+period){seed=Math.imul(seed^ch.charCodeAt(0),16777619)>>>0;}const result=[...choices];for(let i=result.length-1;i>0;i--){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const j=seed%(i+1);[result[i],result[j]]=[result[j],result[i]];}return result.slice(0,count)}
+async function recordMissionEvent(client:any,userId:string,metric:string,amount=1){await client.query('INSERT INTO mission_events(user_id,metric,amount) VALUES($1,$2,$3)',[userId,metric,amount]);}
+async function missionView(client:any,userId:string){
+ const today=manilaDay(),week=manilaWeek();
+ const chosen=[...pickMissions('daily',userId,today,4),...pickMissions('weekly',userId,week,5),...missionDefs.filter(m=>m.kind==='milestone')];
+ const [counts,claims]=await Promise.all([
+  client.query(`SELECT metric,COALESCE(SUM(amount),0)::int AS total,COALESCE(SUM(amount) FILTER (WHERE (created_at AT TIME ZONE 'Asia/Manila')::date=$2::date),0)::int AS today,COALESCE(SUM(amount) FILTER (WHERE (created_at AT TIME ZONE 'Asia/Manila')::date >= $3::date),0)::int AS week FROM mission_events WHERE user_id=$1 GROUP BY metric`,[userId,today,week]),
+  client.query('SELECT mission_id,period FROM mission_claims WHERE user_id=$1',[userId])
+ ]);
+ const values=new Map<string,any>(counts.rows.map((r:any)=>[r.metric,r]));const claimed=new Set(claims.rows.map((r:any)=>r.mission_id+'|'+r.period));
+ const missions=chosen.map(m=>{const period=m.kind==='daily'?today:m.kind==='weekly'?week:'lifetime';const row=values.get(m.metric);const progress=Math.min(m.target,Number(row?.[m.kind==='daily'?'today':m.kind==='weekly'?'week':'total']||0));return {...m,progress,claimed:claimed.has(m.id+'|'+period),period};});
+ return {missions,totals:{daily:40,weekly:30,milestone:120},active:{daily:4,weekly:5,milestone:120},today,week};
+}
+app.get('/api/missions',auth,handle(async(req,res)=>{res.json(await missionView(pool,req.userId))}));
+app.post('/api/missions/:id/claim',auth,handle(async(req,res)=>{
+ const client=await pool.connect();try{
+  await client.query('BEGIN');
+  const q=await client.query('SELECT id,coins,xp,level FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
+  if(!q.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
+  const view=await missionView(client,req.userId);const m=view.missions.find((x:any)=>x.id===req.params.id);
+  if(!m){await client.query('ROLLBACK');return void res.status(404).json({error:'Mission is not active.'})}
+  if(m.claimed||m.progress<m.target){await client.query('ROLLBACK');return void res.status(409).json({error:m.claimed?'Already claimed.':'Mission not finished yet.'})}
+  const inserted=await client.query('INSERT INTO mission_claims(user_id,mission_id,period) VALUES($1,$2,$3) ON CONFLICT DO NOTHING RETURNING mission_id',[req.userId,m.id,m.period]);
+  if(!inserted.rowCount){await client.query('ROLLBACK');return void res.status(409).json({error:'Already claimed.'})}
+  let xp=Number(q.rows[0].xp)+m.xp,level=Number(q.rows[0].level),coins=m.coins;
+  while(xp>=level*100){xp-=level*100;level++;coins+=60}
+  await client.query('UPDATE pets SET coins=coins+$2,xp=$3,level=$4,updated_at=NOW() WHERE owner_id=$1',[req.userId,coins,xp,level]);
+  await client.query('COMMIT');res.json({message:`Mission complete! +${m.coins} coins and +${m.xp} EXP.`,coins,xp,level});
+ }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
+}));
+
 app.get('/api/records',auth,handle(async(req,res)=>{const q=await pool.query('SELECT game,best FROM game_records WHERE user_id=$1',[req.userId]);res.json(q.rows)}));
+
 app.get('/api/achievements',auth,handle(async(req,res)=>{const q=await pool.query('SELECT code FROM achievements WHERE user_id=$1',[req.userId]);res.json(q.rows.map(x=>x.code))}));
+
 app.post('/api/achievement',auth,handle(async(req,res)=>{const code=String(req.body?.code||'');const p=await pool.query('SELECT level,coins FROM pets WHERE owner_id=$1',[req.userId]);const valid=code==='first_friend'&&!!(await pool.query("SELECT 1 FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId])).rowCount||code==='level_5'&&p.rows[0]?.level>=5||code==='rich'&&p.rows[0]?.coins>=500;if(!valid)return void res.status(400).json({error:'Achievement requirements not met.'});await pool.query('INSERT INTO achievements(user_id,code) VALUES($1,$2) ON CONFLICT DO NOTHING',[req.userId,code]);res.json({message:'Achievement unlocked!'})}));
-app.post('/api/gifts',auth,handle(async(req,res)=>{const id=req.body?.friendId;const amount=25;const c=await pool.connect();try{await c.query('BEGIN');const f=await c.query("SELECT 1 FROM friendships WHERE status='accepted' AND ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))",[req.userId,id]);if(!f.rowCount){await c.query('ROLLBACK');return void res.status(403).json({error:'Only friends can receive gifts.'})}const sent=await c.query('UPDATE pets SET coins=coins-$2 WHERE owner_id=$1 AND coins >= $2 RETURNING id',[req.userId,amount]);if(!sent.rowCount){await c.query('ROLLBACK');return void res.status(400).json({error:'Not enough coins.'})}await c.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1',[id,amount]);await c.query('INSERT INTO gifts(id,sender_id,recipient_id,coins) VALUES($1,$2,$3,$4)',[randomUUID(),req.userId,id,amount]);await c.query('COMMIT');res.json({message:'Sent a 25-coin gift!'})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}));
+
+app.post('/api/gifts',auth,handle(async(req,res)=>{const id=req.body?.friendId;const amount=25;const c=await pool.connect();try{await c.query('BEGIN');const f=await c.query("SELECT 1 FROM friendships WHERE status='accepted' AND ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))",[req.userId,id]);if(!f.rowCount){await c.query('ROLLBACK');return void res.status(403).json({error:'Only friends can receive gifts.'})}const sender=await c.query('SELECT level FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);if(!sender.rows[0]||sender.rows[0].level<10){await c.query('ROLLBACK');return void res.status(403).json({error:'Reach pet Level 10 before sending coin gifts.'})}const sent=await c.query('UPDATE pets SET coins=coins-$2 WHERE owner_id=$1 AND coins >= $2 RETURNING id',[req.userId,amount]);if(!sent.rowCount){await c.query('ROLLBACK');return void res.status(400).json({error:'Not enough coins.'})}await c.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1',[id,amount]);await c.query('INSERT INTO gifts(id,sender_id,recipient_id,coins) VALUES($1,$2,$3,$4)',[randomUUID(),req.userId,id,amount]);await c.query('COMMIT');res.json({message:'Sent a 25-coin gift!'})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}));
+
 const PORT = Number(process.env.PORT || 4000);
+
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`PawPal API running on port ${PORT}`);
+
+  console.log(`PawPal API running on port ${PORT}`);
+
 });
