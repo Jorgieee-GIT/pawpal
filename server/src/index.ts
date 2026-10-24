@@ -33,6 +33,26 @@ function auth(req:any,res:any,next:any){try{const t=(req.headers.authorization||
 const handle=(fn:(req:any,res:any)=>Promise<void>)=>(req:any,res:any)=>Promise.resolve(fn(req,res)).catch((e:any)=>{console.error(e);if(!res.headersSent)res.status(500).json({error:'Server error. Check the backend terminal.'})});
 const register=z.object({username:z.string().regex(/^[a-zA-Z0-9_]{3,24}$/),password:z.string().min(6).max(100)});
 app.get('/api/health',(_q,r)=>r.json({ok:true}));
+
+// Temporary diagnostic endpoint: confirms database connectivity and users table.
+app.get('/api/db-health', async (_req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT to_regclass('public.users') AS users_table"
+    );
+    res.json({
+      databaseConnected: true,
+      usersTableExists: result.rows[0].users_table !== null
+    });
+  } catch (error) {
+    console.error('Database health check failed:', error);
+    res.status(500).json({
+      databaseConnected: false,
+      message: 'Database connection failed. Check Render logs.'
+    });
+  }
+});
+
 app.post('/api/auth/register',handle(async(req,res)=>{const v=register.safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Username must be 3–24 letters, numbers or underscores. Password must be at least 6 characters.'});const {username,password}=v.data;const hash=await bcrypt.hash(password,12);try{const q=await pool.query('INSERT INTO users(id,username,password_hash) VALUES($1,$2,$3) RETURNING id,username',[randomUUID(),username.toLowerCase(),hash]);res.status(201).json({token:token(q.rows[0].id),user:q.rows[0]})}catch(e:any){if(e.code==='23505')return void res.status(409).json({error:'That username is already taken.'});throw e}}));
 app.post('/api/auth/login',handle(async(req,res)=>{const {identity,password}=req.body||{};const q=await pool.query('SELECT * FROM users WHERE username=$1',[String(identity||'').toLowerCase()]);if(!q.rows[0]||!await bcrypt.compare(String(password||''),q.rows[0].password_hash))return void res.status(401).json({error:'Incorrect username or password.'});res.json({token:token(q.rows[0].id),user:{id:q.rows[0].id,username:q.rows[0].username}})}));
 app.get('/api/me',auth,handle(async(req,res)=>{const u=await pool.query('SELECT id,username FROM users WHERE id=$1',[req.userId]);const p=await pool.query(`SELECT ${fields} FROM pets WHERE owner_id=$1`,[req.userId]);res.json({user:u.rows[0],pet:p.rows[0]||null})}));
@@ -69,8 +89,7 @@ app.get('/api/records',auth,handle(async(req,res)=>{const q=await pool.query('SE
 app.get('/api/achievements',auth,handle(async(req,res)=>{const q=await pool.query('SELECT code FROM achievements WHERE user_id=$1',[req.userId]);res.json(q.rows.map(x=>x.code))}));
 app.post('/api/achievement',auth,handle(async(req,res)=>{const code=String(req.body?.code||'');const p=await pool.query('SELECT level,coins FROM pets WHERE owner_id=$1',[req.userId]);const valid=code==='first_friend'&&!!(await pool.query("SELECT 1 FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId])).rowCount||code==='level_5'&&p.rows[0]?.level>=5||code==='rich'&&p.rows[0]?.coins>=500;if(!valid)return void res.status(400).json({error:'Achievement requirements not met.'});await pool.query('INSERT INTO achievements(user_id,code) VALUES($1,$2) ON CONFLICT DO NOTHING',[req.userId,code]);res.json({message:'Achievement unlocked!'})}));
 app.post('/api/gifts',auth,handle(async(req,res)=>{const id=req.body?.friendId;const amount=25;const c=await pool.connect();try{await c.query('BEGIN');const f=await c.query("SELECT 1 FROM friendships WHERE status='accepted' AND ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))",[req.userId,id]);if(!f.rowCount){await c.query('ROLLBACK');return void res.status(403).json({error:'Only friends can receive gifts.'})}const sent=await c.query('UPDATE pets SET coins=coins-$2 WHERE owner_id=$1 AND coins >= $2 RETURNING id',[req.userId,amount]);if(!sent.rowCount){await c.query('ROLLBACK');return void res.status(400).json({error:'Not enough coins.'})}await c.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1',[id,amount]);await c.query('INSERT INTO gifts(id,sender_id,recipient_id,coins) VALUES($1,$2,$3,$4)',[randomUUID(),req.userId,id,amount]);await c.query('COMMIT');res.json({message:'Sent a 25-coin gift!'})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}));
-app.listen(
-    Number(process.env.PORT || 4000),
-    '0.0.0.0',
-    () => console.log('PawPal API running on port 4000')
-  );
+const PORT = Number(process.env.PORT || 4000);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`PawPal API running on port ${PORT}`);
+});
