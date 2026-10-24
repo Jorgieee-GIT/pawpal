@@ -1,0 +1,13 @@
+// All furnishings are drawn with the same muted, flat SVG palette as the UI.
+export function RoomFurniture({placed}:{placed:string[]}){
+ const has=(name:string)=>placed.includes(name);
+ return <div className="svg-furnishings" aria-hidden="true">
+ <svg className="furnish sofa-svg" viewBox="0 0 260 150"><rect x="15" y="50" width="230" height="86" rx="25" fill="#c98d9e" stroke="#86616e" strokeWidth="5"/><rect x="33" y="20" width="194" height="92" rx="24" fill="#e8b1bf" stroke="#86616e" strokeWidth="5"/><rect x="40" y="75" width="88" height="46" rx="17" fill="#f5cbd4" stroke="#ac7988" strokeWidth="3"/><rect x="132" y="75" width="88" height="46" rx="17" fill="#f5cbd4" stroke="#ac7988" strokeWidth="3"/><path d="M37 132v12m185-12v12" stroke="#86616e" strokeWidth="9" strokeLinecap="round"/></svg>
+ <svg className="furnish window-svg" viewBox="0 0 160 160"><rect x="5" y="5" width="150" height="150" rx="70" fill="#bde0eb" stroke="#b78398" strokeWidth="9"/><path d="M80 7v145M8 82h144" stroke="#fff8f1" strokeWidth="8"/><path d="M17 120q40-42 70 0t60-4" fill="none" stroke="#fff8f1" strokeWidth="8"/></svg>
+ <svg className="furnish table-svg" viewBox="0 0 180 100"><ellipse cx="90" cy="43" rx="84" ry="27" fill="#e5b9a6" stroke="#94736c" strokeWidth="5"/><path d="M40 52v39M140 52v39" stroke="#94736c" strokeWidth="11" strokeLinecap="round"/></svg>
+ <svg className="furnish lamp-svg" viewBox="0 0 90 190"><path d="M45 62v108" stroke="#967784" strokeWidth="9"/><path d="M22 175h46" stroke="#967784" strokeWidth="12" strokeLinecap="round"/><path d="M15 67L29 14h32l14 53z" fill="#f6dfb6" stroke="#967784" strokeWidth="4"/></svg>
+ <svg className="furnish plant-svg" viewBox="0 0 95 140"><path d="M30 95L16 52Q30 42 47 90Q40 25 58 10Q73 50 52 95Q70 48 88 58Q82 82 57 100" fill="#94bea3" stroke="#638c79" strokeWidth="4"/><path d="M23 94h52l-10 38H33z" fill="#d6a3a1" stroke="#946d79" strokeWidth="4"/></svg>
+ {has('bookshelf')&&<svg className="furnish books-svg" viewBox="0 0 130 170"><rect x="5" y="4" width="120" height="160" rx="8" fill="#dfb6a4" stroke="#997b7a" strokeWidth="6"/><path d="M8 58h114M8 113h114" stroke="#997b7a" strokeWidth="6"/>{[18,40,65,88].map((x,i)=><rect key={i} x={x} y="20" width="16" height="35" rx="3" fill={['#a9c8bd','#f4d5b0','#b7a6ce','#f2aebd'][i]}/>)}</svg>}
+ {has('cat_tree')&&<svg className="furnish tree-svg" viewBox="0 0 100 170"><rect x="42" y="40" width="15" height="120" fill="#cba897"/><rect x="10" y="150" width="80" height="15" rx="7" fill="#aa8793"/><rect x="10" y="35" width="80" height="15" rx="7" fill="#e6c3ce"/><rect x="25" y="80" width="55" height="13" rx="6" fill="#e6c3ce"/></svg>}
+ </div>
+}
