@@ -6,7 +6,16 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {z} from 'zod';
 import {pool} from './db.js';
-const app=express();app.use(express.json({limit:'24kb'}));app.use(cors({origin:(process.env.CLIENT_ORIGIN||'http://localhost:5173').split(',').map(x=>x.trim())}));
+const app=express();app.use(express.json({limit:'24kb'}));
+app.use(cors({
+    origin: [
+      'http://localhost:5173',
+      'https://pawpal-navy.vercel.app',
+      /^https:\/\/pawpal-[a-z0-9-]+\.vercel\.app$/
+    ],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 const secret=process.env.JWT_SECRET||'LOCAL_DEVELOPMENT_ONLY_CHANGE_THIS_SECRET';
 if(process.env.NODE_ENV==='production'&&!process.env.JWT_SECRET)throw Error('Set JWT_SECRET in production');
 const fields='id,owner_id,name,species,breed,color,owned_colors,owned_breeds,hunger,happiness,energy,cleanliness,affection,coins,xp,level,food,toys,owned_cosmetics,equipped_cosmetic,equipped_outfit,room_theme,owned_items,placed_items,garden,last_daily,daily_claimed_at,last_game_at,created_at,updated_at';
