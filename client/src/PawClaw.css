@@ -5,3 +5,10 @@
 .paw-modal-actions .paw-unfriend-confirm:hover:not(:disabled){background:#bf365e!important;transform:translateY(-1px)}
 .paw-modal-actions .paw-unfriend-confirm:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #a63256}
 .paw-modal-actions .paw-unfriend-confirm:disabled{opacity:.5;cursor:not-allowed}
+
+/* Batch 38: keep the chances control visually separate from the modal Quit action. */
+.paw-claw-modal > header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:0}
+.paw-claw-modal .paw-claw-header{display:flex;align-items:center;justify-content:space-between;column-gap:24px;row-gap:12px;margin-top:20px;margin-bottom:16px;padding:13px 16px;border:1px solid #f3d7e5;border-radius:15px;background:#fff7fb}
+.paw-claw-modal .paw-claw-header p{margin:0;flex:1 1 190px}
+.paw-claw-modal .paw-claw-header > button{flex:0 0 auto;white-space:normal;text-align:center}
+@media(max-width:600px){.paw-claw-modal .paw-claw-header{margin-top:14px;padding:12px;gap:10px}.paw-claw-modal .paw-claw-header > button{max-width:100%}}

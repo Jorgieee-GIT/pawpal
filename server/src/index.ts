@@ -314,6 +314,25 @@ app.get('/api/live',auth,(req:any,res:any)=>{
   const keepAlive=setInterval(()=>res.write(': heartbeat\n\n'),20000);
   req.on('close',()=>{clearInterval(keepAlive);sockets!.delete(res);if(!sockets!.size)liveClients.delete(userId)});
 });
+// Batch 39: bounded notification feed. Derive from existing tables, no unbounded notification storage.
+app.get('/api/notifications',auth,handle(async(req,res)=>{
+ const result=await pool.query(`
+  SELECT kind, actor, event_id, created_at, unread FROM (
+   SELECT 'friend_request' AS kind, u.username AS actor, f.requester_id::text AS event_id,
+          f.created_at, true AS unread
+   FROM friendships f JOIN users u ON u.id=f.requester_id
+   WHERE f.recipient_id=$1 AND f.status='pending'
+   UNION ALL
+   SELECT 'friend_accepted', u.username, f.recipient_id::text, f.created_at, false
+   FROM friendships f JOIN users u ON u.id=f.recipient_id
+   WHERE f.requester_id=$1 AND f.status='accepted'
+   UNION ALL
+   SELECT 'mail', u.username, m.id::text, m.created_at, (m.read_at IS NULL)
+   FROM paw_mail m JOIN users u ON u.id=m.sender_id
+   WHERE m.recipient_id=$1 AND m.expires_at>NOW()
+  ) feed ORDER BY created_at DESC LIMIT 5`,[req.userId]);
+ res.json(result.rows);
+}));
 app.get('/api/friends',auth,handle(async(req,res)=>{const q=await pool.query(`SELECT f.requester_id,f.recipient_id,f.status,u.username,u.id AS friend_id FROM friendships f JOIN users u ON u.id=CASE WHEN f.requester_id=$1 THEN f.recipient_id ELSE f.requester_id END WHERE f.requester_id=$1 OR f.recipient_id=$1 ORDER BY f.created_at DESC`,[req.userId]);res.json(q.rows)}));
 
 app.get('/api/users/search',auth,handle(async(req,res)=>{const username=String(req.query.username||'').trim().toLowerCase();if(!/^[a-z0-9_]{3,24}$/.test(username))return void res.status(400).json({error:'Enter an exact username (3–24 characters).'});const q=await pool.query('SELECT id,username FROM users WHERE username=$1 AND id<>$2',[username,req.userId]);res.json({user:q.rows[0]||null})}));
@@ -581,6 +600,23 @@ app.post('/api/missions/:id/claim',auth,handle(async(req,res)=>{
 app.get('/api/records',auth,handle(async(req,res)=>{const q=await pool.query('SELECT game,best FROM game_records WHERE user_id=$1',[req.userId]);res.json(q.rows)}));
 
 app.get('/api/achievements',auth,handle(async(req,res)=>{const q=await pool.query('SELECT code FROM achievements WHERE user_id=$1',[req.userId]);res.json(q.rows.map(x=>x.code))}));
+
+app.post('/api/achievements/claim-all',auth,handle(async(req,res)=>{
+ const client=await pool.connect();
+ try{
+  await client.query('BEGIN');
+  const pet=await client.query('SELECT level,coins FROM pets WHERE owner_id=$1',[req.userId]);
+  if(!pet.rows.length){await client.query('ROLLBACK');return void res.status(404).json({error:'Pet not found.'})}
+  const friend=await client.query("SELECT 1 FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1) LIMIT 1",[req.userId]);
+  const ready:string[]=[];
+  if(friend.rowCount)ready.push('first_friend');
+  if(pet.rows[0].level>=5)ready.push('level_5');
+  if(pet.rows[0].coins>=500)ready.push('rich');
+  const claimed=await client.query('INSERT INTO achievements(user_id,code) SELECT $1,unnest($2::text[]) ON CONFLICT DO NOTHING RETURNING code',[req.userId,ready]);
+  await client.query('COMMIT');
+  res.json({message:claimed.rowCount?`Claimed ${claimed.rowCount} achievement${claimed.rowCount===1?'':'s'}!`:'No new achievements to claim.',claimed:claimed.rows.map((r:any)=>r.code)});
+ }catch(error){await client.query('ROLLBACK');throw error}finally{client.release()}
+}));
 
 app.post('/api/achievement',auth,handle(async(req,res)=>{const code=String(req.body?.code||'');const p=await pool.query('SELECT level,coins FROM pets WHERE owner_id=$1',[req.userId]);const valid=code==='first_friend'&&!!(await pool.query("SELECT 1 FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId])).rowCount||code==='level_5'&&p.rows[0]?.level>=5||code==='rich'&&p.rows[0]?.coins>=500;if(!valid)return void res.status(400).json({error:'Achievement requirements not met.'});await pool.query('INSERT INTO achievements(user_id,code) VALUES($1,$2) ON CONFLICT DO NOTHING',[req.userId,code]);res.json({message:'Achievement unlocked!'})}));
 

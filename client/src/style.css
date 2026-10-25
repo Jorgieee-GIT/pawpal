@@ -485,3 +485,311 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-
 @media (pointer:coarse){.overlay:has(.arcade-modal){touch-action:pan-y}.overlay:has(.arcade-modal) .arcade-modal{touch-action:auto}}
 
 .paw-game-art-claw{background:#f9dfef;color:#a95f91}.paw-game-art-claw svg{display:block}
+
+/* Batch 39: accessible compact notifications and home logo */
+.paw-logo-home{cursor:pointer;border-radius:12px}.paw-logo-home:focus-visible{outline:3px solid #e68eaf;outline-offset:4px}
+.paw-notifications-wrap{position:relative;display:flex;align-items:center;z-index:120}
+.paw-notifications-trigger{position:relative;display:grid;place-items:center;min-width:42px;min-height:42px}
+.paw-notifications-dot{position:absolute;right:7px;top:6px;width:9px;height:9px;border-radius:50%;background:#e879a1;border:2px solid #fff}
+.paw-notifications-panel{position:absolute;right:0;top:calc(100% + 12px);width:min(360px,calc(100vw - 24px));max-height:min(65vh,480px);overflow:auto;background:var(--card,#fffafc);color:var(--text,#68495c);border:1px solid #f0c8d7;border-radius:19px;box-shadow:0 12px 34px #55334430;padding:12px;z-index:200}
+.paw-notifications-heading{display:flex;align-items:center;gap:10px;padding:5px 5px 11px}.paw-notifications-heading small{opacity:.65}.paw-notifications-close{margin-left:auto;border:0;background:transparent;color:inherit;font-size:22px;cursor:pointer}
+.paw-notification-item{border-top:1px solid #eedde5;padding:10px 5px}.paw-notification-item.is-unread{background:#fff0f5;border-radius:10px}
+.paw-notification-link{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;border:0;background:transparent;color:inherit;cursor:pointer;padding:5px;font:inherit;white-space:normal}
+.paw-notification-link small{display:block;font-size:11px;opacity:.65;margin-top:4px}.paw-notification-icon{display:grid;place-items:center;background:#ffe0eb;border-radius:12px;width:32px;height:32px;flex-shrink:0;color:#bd6283}
+.paw-notification-actions{display:flex;gap:8px;padding:5px 0 0 46px}.paw-notification-actions button{border-radius:10px;padding:7px 12px;font-size:12px}.paw-notifications-empty{padding:16px;text-align:center;opacity:.75}
+@media(max-width:550px){.paw-notifications-panel{position:fixed;right:12px;top:68px;max-height:65vh}.paw-notifications-wrap{z-index:300}}
+
+/* Batch 40: airy notifications and intentional header sign-out */
+.paw-notifications-panel{padding:16px;border:0!important;border-radius:20px;box-shadow:0 16px 55px #5533442c,0 2px 8px #5533440d}
+.paw-notifications-heading{padding:0 4px 13px;gap:8px}
+.paw-notifications-heading b{font-size:15px}.paw-notifications-heading small{font-size:11px}
+.paw-notification-item{border:0!important;padding:12px 10px;margin:4px 0;border-radius:14px;background:transparent;transition:background .18s ease}
+.paw-notification-item+.paw-notification-item{margin-top:6px}
+.paw-notification-item:hover{background:#fff5f9}
+.paw-notification-item.is-unread{background:#fff0f6}
+.paw-notification-link{padding:2px 0;gap:12px;line-height:1.5;align-items:flex-start}
+.paw-notification-link>span:last-child{min-width:0;flex:1;overflow-wrap:anywhere;font-size:12px}
+.paw-notification-icon{width:36px;height:36px;border-radius:13px}
+.paw-notification-actions{padding:12px 0 1px 48px;gap:9px;flex-wrap:wrap}
+.paw-notification-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:8px 15px;font-size:12px;font-weight:800;border-radius:11px;transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+.paw-notification-accept{background:#d889ad;color:white;border:1px solid #d889ad;box-shadow:0 3px 10px #d889ad28}
+.paw-notification-accept:hover:not(:disabled){background:#c6759c;transform:translateY(-1px)}
+.paw-notification-decline{background:#fff;color:#a77c91;border:1px solid #f0dbe4}
+.paw-notification-decline:hover:not(:disabled){background:#fff1f6;color:#a55d7f}
+.paw-header-logout{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:8px 13px;border:0;border-radius:12px;background:transparent;color:#a87b93;font-size:12px;font-weight:800;white-space:nowrap;transition:background .18s ease,color .18s ease}
+.paw-header-logout:hover{background:#fff0f6;color:#b75e87}
+.paw-header-logout svg{flex-shrink:0}
+.paw-dark .paw-notification-item:hover,.paw-dark .paw-notification-item.is-unread{background:#493549}
+.paw-dark .paw-notification-decline{background:#382c40;color:#f4cddd;border-color:#64516b}
+.paw-dark .paw-header-logout{color:#e0b8cd}.paw-dark .paw-header-logout:hover{background:#48344b}
+@media(max-width:600px){.paw-notifications-panel{padding:12px;right:10px;width:min(360px,calc(100vw - 20px))}.paw-notification-item{padding:11px 8px}.paw-notification-actions{padding-left:48px}.paw-header-logout{width:38px;min-width:38px;padding:8px}.paw-header-logout span{display:none!important}.nav-right{gap:5px}}
+
+/* Batch 41: airy borderless notifications, both themes */
+.paw-notifications-panel,.paw-notification-item,.paw-notification-link,.paw-notification-actions,.paw-notification-actions button{outline-offset:2px}
+.paw-notifications-panel{border:0!important}
+.paw-notification-item,.paw-notification-item+.paw-notification-item{border:0!important;box-shadow:none!important}
+.paw-notification-result{margin:9px 0 0 48px;padding:9px 11px;border-radius:11px;background:#f8e9f1;color:#965877;font-size:12px;font-weight:800;line-height:1.4}
+.paw-notification-result.accepted{background:#e8f5ed;color:#427956}
+.paw-notification-result.declined{background:#f8edf1;color:#996578}
+.paw-dark .paw-notifications-panel{background:#332b3b!important;color:#f9e6f1!important;border:0!important;box-shadow:0 16px 55px #130b1a70!important}
+.paw-dark .paw-notifications-heading,.paw-dark .paw-notification-link{color:#f9e6f1!important}
+.paw-dark .paw-notification-item{background:transparent!important;border:0!important}
+.paw-dark .paw-notification-item:hover,.paw-dark .paw-notification-item.is-unread{background:#493549!important}
+.paw-dark .paw-notification-icon{background:#60445c;color:#ffb8d5}
+.paw-dark .paw-notification-accept{background:#c678a3!important;color:#fff!important;border:0!important}
+.paw-dark .paw-notification-decline{background:#514054!important;color:#fbe3ef!important;border:0!important}
+.paw-dark .paw-notification-result{background:#554052;color:#f9dce9}
+.paw-dark .paw-notification-result.accepted{background:#315743;color:#d5f7e1}
+.paw-dark .paw-notification-result.declined{background:#573c4a;color:#ffdbe7}
+.paw-header-username{display:inline-flex;align-items:center;margin-left:3px;margin-right:4px}
+@media(max-width:600px){.paw-header-username{margin-left:1px;margin-right:1px}.paw-notification-result{margin-left:48px}}
+
+/* Batch 42: borderless top-bar theme and notification icon buttons. */
+.nav .nav-right button.theme-toggle,
+.nav .nav-right button.paw-notifications-trigger,
+.paw-dark .nav .nav-right button.theme-toggle,
+.paw-dark .nav .nav-right button.paw-notifications-trigger {
+  border: 0 !important;
+  outline: none;
+  box-shadow: none;
+}
+.nav .nav-right button.theme-toggle:focus-visible,
+.nav .nav-right button.paw-notifications-trigger:focus-visible {
+  outline: 2px solid #d68bb0;
+  outline-offset: 3px;
+}
+
+/* Batch 43: clean, borderless header controls and predictable layout */
+.nav .nav-right button.theme-toggle,
+.nav .nav-right button.paw-notifications-trigger,
+.paw-dark .nav .nav-right button.theme-toggle,
+.paw-dark .nav .nav-right button.paw-notifications-trigger {
+  background: transparent !important; border: 0 !important; box-shadow: none !important;
+}
+.nav .nav-right button.theme-toggle:hover,
+.nav .nav-right button.paw-notifications-trigger:hover {
+  background: transparent !important; opacity: .72;
+}
+.nav-right .paw-header-username {order:0;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block!important;}
+.nav-right .paw-notifications-wrap {order:1;}
+.nav-right .theme-toggle {order:2;}
+.nav-right .paw-header-logout {order:3;}
+@media(max-width:600px){.nav-right .paw-header-username{max-width:92px;font-size:11px;}}
+
+/* Batch 44: unified header SVG color and tighter desktop spacing. */
+.nav .nav-right {
+  --paw-header-icon-color: #a87b93;
+}
+.nav .nav-right .paw-notifications-trigger svg,
+.nav .nav-right .theme-toggle svg,
+.nav .nav-right .paw-header-logout svg {
+  color: var(--paw-header-icon-color) !important;
+  stroke: currentColor !important;
+}
+.paw-dark .nav .nav-right {
+  --paw-header-icon-color: #e0b8cd;
+}
+@media (min-width: 701px) {
+  .nav .nav-right { gap: 5px !important; }
+  .nav .nav-right .paw-header-username { margin-right: 2px; }
+  .nav .nav-right .paw-header-logout { gap: 5px; padding-left: 7px; padding-right: 7px; }
+}
+
+/* Batch 46: visually match the slimmer Logout glyph. */
+.nav .nav-right .paw-notifications-trigger svg,
+.nav .nav-right .theme-toggle svg {
+  stroke-width: 1.65 !important;
+}
+
+/* Batch 47: mobile header notification visibility and usable dropdown. */
+@media (max-width: 600px) {
+  .nav { padding-inline: 10px; gap: 5px; }
+  .nav .logo { min-width: 0; flex: 0 1 auto; }
+  .nav .paw-logo-copy span { display: none; }
+  .nav .nav-right { flex: 0 0 auto; gap: 2px; min-width: 0; }
+  .nav .nav-right .paw-header-username { display: inline-block !important; max-width: 76px; font-size: 10px; }
+  .nav .nav-right .paw-notifications-wrap { display: flex !important; flex: 0 0 36px; min-width: 36px; }
+  .nav .nav-right .paw-notifications-trigger { display: grid !important; width: 36px; min-width: 36px; height: 36px; min-height: 36px; padding: 7px !important; }
+  .nav .nav-right .paw-notifications-dot { display: block !important; }
+  .nav .nav-right .theme-toggle { min-width: 36px; width: 36px; padding: 7px !important; }
+  .nav .nav-right .paw-header-logout { min-width: 34px; width: 34px; padding: 7px !important; }
+  .paw-notifications-panel { position: fixed; top: 66px; left: 10px; right: 10px; width: auto; max-width: none; max-height: min(70dvh, 520px); z-index: 1000; }
+}
+@media (max-width: 375px) {
+  .nav .logo { font-size: 18px; }
+  .nav .nav-right .paw-header-username { max-width: 55px; }
+}
+
+/* Batch 48: the old mobile `.nav-right span{display:none}` rule was also
+   hiding every notification's message, icon, and timestamp. Scope the fix
+   to the dropdown so its content is visible on small screens. */
+@media (max-width: 600px) {
+  .nav .nav-right .paw-notifications-panel span {
+    display: inline !important;
+  }
+  .nav .nav-right .paw-notifications-panel .paw-notification-icon {
+    display: grid !important;
+  }
+  .nav .nav-right .paw-notifications-panel .paw-notification-link > span:last-child {
+    display: block !important;
+    min-width: 0;
+    flex: 1;
+  }
+  .nav .nav-right .paw-notifications-panel .paw-notification-link small {
+    display: block !important;
+  }
+  .nav .nav-right .paw-notifications-panel .paw-notification-actions {
+    display: flex !important;
+  }
+  .nav .nav-right .paw-notifications-panel {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Batch 49: keep PawMail inbox actions side-by-side at every viewport width. */
+.paw-mail-letter .paw-mail-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  width: 100%;
+  margin-top: auto;
+  align-items: stretch;
+}
+.paw-mail-letter .paw-mail-actions > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100% !important;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  white-space: normal;
+  text-align: center;
+  overflow-wrap: normal;
+  line-height: 1.2 !important;
+}
+/* When a letter has already been read, let Remove use the whole row. */
+.paw-mail-letter .paw-mail-actions > button:only-child { grid-column: 1 / -1; }
+@media (max-width: 600px) {
+  .paw-mail-letter .paw-mail-actions { gap: 4px; }
+  .paw-mail-letter .paw-mail-actions > button {
+    font-size: 10px !important;
+    padding: 7px 3px !important;
+    min-height: 34px;
+  }
+}
+
+/* Batch 50 — compact friend requests and real pet portraits */
+.paw-friend-requests-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:20px}
+.paw-friend-requests-heading h3{margin:0;display:flex;align-items:center;gap:8px;min-width:0}
+.paw-requests-count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:99px;background:#fbe7f0;color:#ad6889;font-size:11px;font-weight:800}
+.paw-friends-panel .paw-requests-toggle{display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:0 0 auto;border:0!important;background:transparent!important;box-shadow:none!important;color:#ad6e91!important;padding:7px 5px!important;font-weight:700;cursor:pointer}
+.paw-requests-toggle:hover{opacity:.7}
+.paw-requests-chevron{transition:transform .2s ease}.paw-requests-chevron.open{transform:rotate(180deg)}
+.paw-requests-list{padding-top:7px}
+.paw-friend-identity{display:flex;align-items:center;gap:11px;min-width:0;flex:1 1 150px}
+.paw-friend-avatar{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;overflow:hidden;border-radius:15px;background:#fff0f6;border:1px solid #f3dce6}
+.paw-friend-avatar .pet-svg{width:45px;height:45px;max-width:45px;max-height:45px;object-fit:contain}
+.paw-friend-name{font-weight:800;font-size:13px;overflow-wrap:anywhere;min-width:0}
+.paw-friend-name small{display:block;font-size:11px;font-weight:500;color:#a38b9b;margin-top:2px}
+.paw-avatar-placeholder{color:#c18aa8;font-size:20px}
+.paw-dark .paw-requests-count{background:#62415b;color:#ffe1ef}
+.paw-dark .paw-friends-panel .paw-requests-toggle{color:#f1bfd8!important;background:transparent!important}
+.paw-dark .paw-friend-avatar{background:#513b50;border-color:#79566f}
+.paw-dark .paw-friend-name small{color:#d6bbcc}
+@media(max-width:560px){.paw-friend-requests-heading h3{font-size:17px}.paw-friend-avatar{width:43px;height:43px;flex-basis:43px}.paw-friend-avatar .pet-svg{width:40px;height:40px}.paw-friends-panel .friend-row{flex-wrap:wrap}.paw-friend-identity{flex:1 1 125px}.paw-friend-actions{margin-left:auto}}
+
+/* Batch 51: friend requests are opened in a modal instead of occupying a section */
+.paw-requests-launch-row{display:flex;justify-content:flex-end;margin:10px 0 16px}
+.paw-friends-panel .paw-requests-launch{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:10px 14px;border:1px solid rgba(185,117,151,.2);border-radius:13px;background:rgba(255,231,240,.55);color:#a45b82;font-weight:700;cursor:pointer;box-shadow:none}
+.paw-friends-panel .paw-requests-launch:hover{background:rgba(255,217,234,.8)}
+.paw-requests-launch .paw-requests-count{margin-left:2px}
+.paw-requests-modal{width:min(490px,calc(100vw - 28px));max-height:min(75vh,650px);overflow-y:auto}
+.paw-requests-modal .paw-modal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.paw-requests-modal .paw-requests-list{display:grid;gap:10px;margin-top:16px}
+.paw-requests-modal .friend-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.paw-requests-modal .paw-friend-actions{display:flex;gap:8px;flex-wrap:wrap}
+.paw-dark .paw-friends-panel .paw-requests-launch{background:rgba(241,191,216,.08);border-color:rgba(241,191,216,.18);color:#f1bfd8}
+.paw-dark .paw-friends-panel .paw-requests-launch:hover{background:rgba(241,191,216,.14)}
+@media(max-width:520px){.paw-requests-modal .friend-row{align-items:flex-start}.paw-requests-modal .paw-friend-actions{width:100%}.paw-requests-modal .paw-friend-actions button{flex:1}}
+
+/* Batch 52: icon-only friend requests launcher above friend search. */
+.paw-friends-panel .paw-requests-launch-row{display:flex;justify-content:flex-end;margin:0 0 10px}
+.paw-friends-panel .paw-requests-launch{position:relative;width:40px;height:40px;min-width:40px;padding:0;gap:0;border-radius:12px}
+.paw-friends-panel .paw-requests-launch .paw-requests-count{position:absolute;top:-7px;right:-7px;min-width:19px;height:19px;padding:0 4px;margin:0;display:grid;place-items:center;border-radius:20px;background:#d56a98;color:white;font-size:11px;line-height:1;border:2px solid #fff}
+.paw-dark .paw-friends-panel .paw-requests-launch .paw-requests-count{border-color:#30232e}
+
+/* Batch 53: Friends heading and borderless request icon share one compact row. */
+.paw-friends-panel .paw-friends-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 12px}
+.paw-friends-panel .paw-friends-title-row h2{margin:0;min-width:0}
+.paw-friends-panel .paw-friends-title-row .paw-requests-launch-row{margin:0;flex:0 0 auto}
+.paw-friends-panel .paw-friends-title-row .paw-requests-launch,
+.paw-dark .paw-friends-panel .paw-friends-title-row .paw-requests-launch{width:36px;height:36px;min-width:36px;padding:5px!important;border:0!important;background:transparent!important;box-shadow:none!important;border-radius:8px}
+.paw-friends-panel .paw-friends-title-row .paw-requests-launch:hover,
+.paw-dark .paw-friends-panel .paw-friends-title-row .paw-requests-launch:hover{background:transparent!important;opacity:.75}
+.paw-friends-panel .paw-friends-title-row .paw-requests-launch:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+
+/* Batch 54 — consistent, understated PawPal modal close buttons. */
+.paw-modal .paw-modal-close {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 34px;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px;
+  padding: 0 !important;
+  margin: 0;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: #a46c8c !important;
+  box-shadow: none !important;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .18s ease, background-color .18s ease, transform .18s ease;
+}
+.paw-modal .paw-modal-close:hover {
+  color: #a74379 !important;
+  background: rgba(235, 151, 190, .14) !important;
+  transform: rotate(8deg);
+}
+.paw-modal .paw-modal-close:active { transform: scale(.94); }
+.paw-modal .paw-modal-close:focus-visible {
+  outline: 2px solid #d777a9 !important;
+  outline-offset: 3px;
+}
+.paw-dark .paw-modal .paw-modal-close {
+  color: #e5a6c6 !important;
+  background: transparent !important;
+}
+.paw-dark .paw-modal .paw-modal-close:hover {
+  color: #ffe0ef !important;
+  background: rgba(247, 174, 209, .13) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .paw-modal .paw-modal-close { transition: none; }
+  .paw-modal .paw-modal-close:hover { transform: none; }
+}
+
+/* Batch 55: combine add-friend search and requests in one modal. */
+.paw-requests-modal .paw-requests-add{margin-top:16px;padding:16px;border-radius:16px;background:rgba(255,231,241,.4)}
+.paw-requests-modal .paw-requests-add h3{margin:0 0 12px;font-size:15px}
+.paw-requests-modal .paw-requests-add .search-row{display:flex;gap:8px;align-items:stretch;margin:0}
+.paw-requests-modal .paw-requests-add .search-row input{min-width:0;flex:1}
+.paw-requests-modal .paw-requests-add .friend-row{margin-top:10px}
+.paw-requests-modal .paw-requests-subheading{margin:20px 0 4px;font-size:15px}
+.paw-dark .paw-requests-modal .paw-requests-add{background:rgba(241,191,216,.07)}
+@media(max-width:480px){.paw-requests-modal .paw-requests-add{padding:12px}.paw-requests-modal .paw-requests-add .search-row{gap:6px}.paw-requests-modal .paw-requests-add .search-row button{padding-inline:12px}}
+
+/* Batch 56: compact icon-only friend actions, preserving accessible labels. */
+.paw-friends-panel .paw-friend-icon-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:nowrap;gap:8px;margin-left:auto}
+.paw-friends-panel .paw-friend-icon-actions .paw-friend-icon-button{display:inline-flex;align-items:center;justify-content:center;flex:0 0 36px;width:36px;height:36px;min-width:36px;min-height:36px;padding:7px;border:0;border-radius:11px;background:transparent;box-shadow:none;color:#bb688c;cursor:pointer;transition:background-color .18s,color .18s,transform .18s}
+.paw-friends-panel .paw-friend-icon-actions .paw-friend-icon-button:hover:not(:disabled){background:rgba(227,124,163,.12);color:#a64a74;transform:translateY(-1px)}
+.paw-friends-panel .paw-friend-icon-actions .paw-friend-icon-button:focus-visible{outline:2px solid currentColor;outline-offset:2px}
+.paw-friends-panel .paw-friend-icon-actions .paw-friend-unfriend{color:#ba7786}
+.paw-dark .paw-friends-panel .paw-friend-icon-actions .paw-friend-icon-button{background:transparent;color:#efb2cd}
+.paw-dark .paw-friends-panel .paw-friend-icon-actions .paw-friend-icon-button:hover:not(:disabled){background:rgba(255,185,214,.12);color:#ffe1ee}
+@media(max-width:560px){.paw-friends-panel .paw-friend-icon-actions{width:auto;flex:0 0 auto;gap:4px;margin-left:auto}}

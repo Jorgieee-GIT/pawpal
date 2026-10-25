@@ -1,1 +1,1 @@
-{"root":["./src/App.tsx","./src/ArcadeCanvas.tsx","./src/Kitchen.tsx","./src/MissionCenter.tsx","./src/PetArt.tsx","./src/RoomFurniture.tsx","./src/main.tsx","./src/outfitCatalog.ts","./src/vite-env.d.ts"],"errors":true,"version":"5.8.3"}
+{"root":["./src/Admin.tsx","./src/App.tsx","./src/ArcadeCanvas.tsx","./src/Kitchen.tsx","./src/MissionCenter.tsx","./src/PawClaw.tsx","./src/PetArt.tsx","./src/RoomFurniture.tsx","./src/WhackAMole.tsx","./src/main.tsx","./src/outfitCatalog.ts","./src/vite-env.d.ts"],"errors":true,"version":"5.8.3"}
