@@ -137,6 +137,7 @@ useEffect(()=>{void refresh()},[token]);useEffect(()=>{
      if(!dataLine)continue;
      try{
       const event=JSON.parse(dataLine.slice(6)) as {type:string};
+      if(event.type==='pet_sleep_changed'){void request('/room').then((pets:RoomPet[])=>setRoomPets(pets)).catch(()=>{});}
       if(Date.now()-lastRefresh<250)continue;
       lastRefresh=Date.now();
       void refresh();
@@ -152,7 +153,22 @@ useEffect(()=>{void refresh()},[token]);useEffect(()=>{
  void connect();
  const fallback=setInterval(()=>void refresh(),60000);
  return()=>{active=false;controller.abort();if(reconnect)clearTimeout(reconnect);clearInterval(fallback)};
-},[token]);useEffect(()=>{const t=setInterval(()=>setRotation(x=>x+1),14000);return()=>clearInterval(t)},[]);
+},[token]);// Keep the other players' pet states fresh even when live events are delayed or
+// an existing SSE connection silently stalls (notably on background tabs).
+useEffect(()=>{
+ if(!token)return;
+ let alive=true;
+ const syncRoom=async()=>{
+  try{const pets:RoomPet[]=await request('/room');if(alive)setRoomPets(pets)}catch{/* next poll retries */}
+ };
+ const timer=window.setInterval(()=>{if(document.visibilityState==='visible')void syncRoom()},8000);
+ const onVisible=()=>{if(document.visibilityState==='visible')void syncRoom()};
+ document.addEventListener('visibilitychange',onVisible);
+ window.addEventListener('focus',onVisible);
+ void syncRoom();
+ return()=>{alive=false;window.clearInterval(timer);document.removeEventListener('visibilitychange',onVisible);window.removeEventListener('focus',onVisible)};
+},[token]);
+useEffect(()=>{const t=setInterval(()=>setRotation(x=>x+1),14000);return()=>clearInterval(t)},[]);
 async function execute(path:string,body?:unknown,method='POST'){setBusy(true);try{const data=await request(path,method,body);if(data.pet)setPet(data.pet);setNotice(data.message||'Saved!');if(path.includes('friend')||path.includes('gift')||path.includes('adopt')||path.includes('mail')||path.includes('furniture'))await refresh();return data}catch(e:any){setNotice(e.message)}finally{setBusy(false)}}
 useEffect(()=>{if(!bathMode||!pet)return;const timer=window.setInterval(async()=>{if(!bathScrubbing.current||Date.now()-bathLastMove.current>1150||bathRequest.current||pet.cleanliness>=100)return;bathRequest.current=true;try{const data=await request('/care','POST',{action:'scrub'});if(data.pet)setPet(data.pet)}catch(e:any){setNotice(e?.message||'Could not bathe pet')}finally{bathRequest.current=false}},1000);return()=>window.clearInterval(timer)},[bathMode,pet?.id,pet?.cleanliness]);
 useEffect(()=>{if(!cuddleMode||!pet)return;const timer=window.setInterval(async()=>{if(!cuddleActive.current||Date.now()-cuddleLastMove.current>1100||cuddleRequest.current||pet.affection>=100)return;cuddleRequest.current=true;try{const data=await request('/care','POST',{action:'pet_stroke'});if(data.pet){setPet(data.pet);cuddleSeconds.current++;}}catch(e:any){setNotice(e?.message||'Could not cuddle pet')}finally{cuddleRequest.current=false}},1000);return()=>window.clearInterval(timer)},[cuddleMode,pet?.id,pet?.affection]);
