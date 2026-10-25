@@ -1,0 +1,13 @@
+PawPal Batch 57 — Personalized PawMail
+
+1. Back up your Neon database.
+2. Open Neon SQL Editor for the database used by Render.
+3. Run database/PAWMAIL_BATCH57_MIGRATION.sql ONCE before deploying.
+4. Deploy server changes to Render.
+5. Deploy client changes to Vercel.
+
+Changes: 15 free envelope colors, 1 free classic design, 10 permanently unlockable designs (10,000 coins each), custom 1–300 character messages, live preview, sender's pet wax-seal portrait, existing inbox actions and 24h expiry retained.
+
+The API validates ownership, message length, color/design, friendship and purchase coins. Purchases use a transaction and row lock. Existing older postcards remain readable with fallback design rendering.
+
+Do not run database/schema.sql on production unless you understand all historical migrations; run the dedicated Batch 57 migration file instead.

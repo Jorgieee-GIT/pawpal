@@ -89,7 +89,12 @@ Object.assign(catalog, {
   honey_cottage: {price:2700,type:'theme'},
   peach_blossom: {price:2700,type:'theme'},
   moonlight: {price:3300,type:'theme'},
-  sage_forest: {price:2900,type:'theme'}
+  sage_forest: {price:2900,type:'theme'},
+  aurora_prism: {price:5600,type:'theme',level:12},
+  cosmic_nebula: {price:7400,type:'theme',level:20},
+  crystal_lagoon: {price:9200,type:'theme',level:28},
+  solar_eclipse: {price:11500,type:'theme',level:36},
+  celestial_opal: {price:14500,type:'theme',level:45}
 });
 
 for(const [id,level] of Object.entries({cloud_sofa:5,moon_crown:12,night_room:8,maine_coon:15,red_panda_cub:18,witch_hat:10,star_tiara:20}))if(catalog[id])catalog[id].level=level;
@@ -207,7 +212,7 @@ app.post('/api/auth/register',handle(async(req,res)=>{const v=register.safeParse
 
 app.post('/api/auth/login',handle(async(req,res)=>{const {identity,password}=req.body||{};const q=await pool.query('SELECT * FROM users WHERE username=$1',[String(identity||'').toLowerCase()]);if(!q.rows[0]||!await bcrypt.compare(String(password||''),q.rows[0].password_hash))return void res.status(401).json({error:'Incorrect username or password.'});res.json({token:token(q.rows[0].id),user:{id:q.rows[0].id,username:q.rows[0].username}})}));
 
-app.get('/api/me',auth,handle(async(req,res)=>{const u=await pool.query('SELECT id,username,CASE WHEN note_expires_at>NOW() THEN pet_note ELSE NULL END AS pet_note,note_expires_at FROM users WHERE id=$1',[req.userId]);const p=await pool.query(`UPDATE pets SET hunger=GREATEST(0,hunger-LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/1200)::int)),energy=GREATEST(0,energy-LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/1200)::int)),happiness=GREATEST(0,happiness-LEAST(36,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/2400)::int)),cleanliness=GREATEST(0,cleanliness-LEAST(36,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/2400)::int)),updated_at=NOW() WHERE owner_id=$1 RETURNING ${fields}`,[req.userId]);res.json({user:u.rows[0],pet:p.rows[0]||null})}));
+app.get('/api/me',auth,handle(async(req,res)=>{const u=await pool.query('SELECT id,username,CASE WHEN note_expires_at>NOW() THEN pet_note ELSE NULL END AS pet_note,note_expires_at FROM users WHERE id=$1',[req.userId]);const p=await pool.query(`UPDATE pets SET hunger=GREATEST(0,hunger-LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/600 * CASE WHEN garden->>'_sleeping'='true' THEN 0.75 ELSE 1 END)::int)),energy=LEAST(100,GREATEST(0,energy+CASE WHEN garden->>'_sleeping'='true' THEN LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/600)::int) ELSE -LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/600)::int) END)),happiness=GREATEST(0,happiness-LEAST(36,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/1200 * CASE WHEN garden->>'_sleeping'='true' THEN 0.75 ELSE 1 END)::int)),cleanliness=GREATEST(0,cleanliness-LEAST(36,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/1200 * CASE WHEN garden->>'_sleeping'='true' THEN 0.75 ELSE 1 END)::int)),garden=CASE WHEN garden->>'_sleeping'='true' AND energy + LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/600)::int)>=100 THEN jsonb_set(garden,'{_sleeping}','false'::jsonb) ELSE garden END,updated_at=NOW() WHERE owner_id=$1 RETURNING ${fields}`,[req.userId]);res.json({user:u.rows[0],pet:p.rows[0]||null})}));
 
 app.post('/api/adopt',auth,handle(async(req,res)=>{const v=z.object({name:z.string().trim().min(1).max(24),species:z.enum(['cat','dog','bunny','fox','hamster','panda','penguin','axolotl'])}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Choose a species and a pet name.'});try{const q=await pool.query(`INSERT INTO pets(id,owner_id,name,species) VALUES($1,$2,$3,$4) RETURNING ${fields}`,[randomUUID(),req.userId,v.data.name,v.data.species]);res.status(201).json({pet:q.rows[0]})}catch(e:any){if(e.code==='23505')return void res.status(409).json({error:'You can adopt only one pet.'});throw e}}));
 
@@ -215,7 +220,7 @@ app.post('/api/adopt',auth,handle(async(req,res)=>{const v=z.object({name:z.stri
 
 app.post('/api/claim',auth,handle(async(req,res)=>{if(!z.string().uuid().safeParse(req.body?.petId).success)return void res.status(400).json({error:'Invalid old pet ID.'});const q=await pool.query(`UPDATE pets SET owner_id=$1 WHERE id=$2 AND owner_id IS NULL AND NOT EXISTS(SELECT 1 FROM pets WHERE owner_id=$1) RETURNING ${fields}`,[req.userId,req.body.petId]);if(!q.rows[0])return void res.status(409).json({error:'Pet already claimed, missing, or account already has a pet.'});res.json({pet:q.rows[0]})}));
 
-async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const mins=Math.min(1440,Math.max(0,(Date.now()-new Date(p.updated_at).getTime())/60000));const tick=Math.floor(mins/20);p.hunger=clamp(p.hunger-tick);p.energy=clamp(p.energy-tick);p.happiness=clamp(p.happiness-Math.floor(tick/2));p.cleanliness=clamp(p.cleanliness-Math.floor(tick/2));const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
+async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const mins=Math.min(1440,Math.max(0,(Date.now()-new Date(p.updated_at).getTime())/60000));const tick=Math.floor(mins/10);const asleep=!!p.garden?._sleeping;const wasSleepingAtRequest=asleep;const rate=asleep?0.75:1;p.hunger=clamp(p.hunger-Math.floor(tick*rate));p.energy=clamp(p.energy+(asleep?Math.floor(tick):-tick));p.happiness=clamp(p.happiness-Math.floor(tick*rate/2));p.cleanliness=clamp(p.cleanliness-Math.floor(tick*rate/2));if(asleep&&p.energy>=100)p.garden={...(p.garden||{}),_sleeping:false};p._wasSleepingAtRequest=wasSleepingAtRequest;const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',scrub:'bathe',pet_stroke:'cuddle',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');if(req.path==='/api/care'&&action==='sleep_toggle'){const friends=await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId]);publishLive([String(req.userId),...friends.rows.map((r:any)=>String(r.friend_id))],'pet_sleep_changed')}res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
 
 // Atomic claim: a row lock prevents concurrent requests from claiming twice.
 
@@ -245,7 +250,7 @@ app.post('/api/daily/claim',auth,handle(async(req,res)=>{
 
 }));
 
-app.post('/api/care',auth,handle(async(req,res)=>mutate(req,res,p=>{const action=req.body?.action;let msg='';switch(action){case 'feed':if(p.food<1)return 'Buy food first.';p.food--;p.hunger=clamp(p.hunger+28);p.xp+=12;msg='Yummy lunch!';break;case 'play':if(p.energy<12)return 'Too tired to play.';p.energy=clamp(p.energy-12);p.happiness=clamp(p.happiness+24);p.affection=clamp(p.affection+8);p.coins+=12;p.xp+=18;msg='Playtime! +12 coins';break;case 'sleep':p.energy=clamp(p.energy+36);p.xp+=8;msg='Sweet dreams!';break;case 'bathe':p.cleanliness=clamp(p.cleanliness+40);p.xp+=10;msg='Squeaky clean!';break;case 'cuddle':p.affection=clamp(p.affection+20);p.happiness=clamp(p.happiness+10);p.xp+=8;msg='Best friends forever!';break;case 'daily':return 'Please use the dedicated Daily Surprise claim button.';case 'food':if(p.coins<150)return 'Not enough coins.';p.coins-=150;p.food+=3;msg='3 meals added!';break;case 'toy':if(p.coins<350)return 'Not enough coins.';p.coins-=350;p.toys++;msg='A new toy!';break;default:return 'Unknown action.'}return msg})));
+app.post('/api/care',auth,handle(async(req,res)=>mutate(req,res,p=>{const action=req.body?.action;let msg='';switch(action){case 'feed':if(p.food<1)return 'Buy food first.';p.food--;p.hunger=clamp(p.hunger+28);p.xp+=12;msg='Yummy lunch!';break;case 'play':if(p.energy<12)return 'Too tired to play.';p.energy=clamp(p.energy-12);p.happiness=clamp(p.happiness+24);p.affection=clamp(p.affection+8);p.coins+=12;p.xp+=18;msg='Playtime! +12 coins';break;case 'sleep_toggle':{const wasSleeping=!!p._wasSleepingAtRequest;const shouldSleep=!wasSleeping;/* Starting a nap at full energy needs one point of headroom, otherwise the next stats refresh immediately auto-wakes the pet. */if(shouldSleep&&p.energy>=100)p.energy=99;p.garden={...(p.garden||{}),_sleeping:shouldSleep};msg=shouldSleep?'Sweet dreams! Your pet is resting.':'Your pet is awake!';break;}case 'sleep':p.energy=clamp(p.energy+36);p.xp+=8;msg='Sweet dreams!';break;case 'scrub':{const last=Number(p.garden?._last_scrub_at||0);const now=Date.now();if(now-last<900)return 'Keep scrubbing!';p.garden={...(p.garden||{}),_last_scrub_at:now};p.cleanliness=clamp(p.cleanliness+5);msg='Bath time!';break;}case 'bathe':p.cleanliness=clamp(p.cleanliness+40);p.xp+=10;msg='Squeaky clean!';break;case 'pet_stroke':{const now=Date.now();const last=Number(p.garden?._last_pet_stroke_at||0);if(now-last<900)return 'Keep petting gently!';const strokes=Number(p.garden?._pet_stroke_count||0)+1;p.garden={...(p.garden||{}),_last_pet_stroke_at:now,_pet_stroke_count:strokes};p.affection=clamp(p.affection+4);if(strokes%10===0)p.happiness=clamp(p.happiness+2);msg='Your pet loves the cuddles!';break;}case 'cuddle':p.affection=clamp(p.affection+20);p.happiness=clamp(p.happiness+10);p.xp+=8;msg='Best friends forever!';break;case 'daily':return 'Please use the dedicated Daily Surprise claim button.';case 'food':if(p.coins<150)return 'Not enough coins.';p.coins-=150;p.food+=3;msg='3 meals added!';break;case 'toy':if(p.coins<350)return 'Not enough coins.';p.coins-=350;p.toys++;msg='A new toy!';break;default:return 'Unknown action.'}return msg})));
 
 app.post('/api/item',auth,handle(async(req,res)=>mutate(req,res,p=>{const {item,mode}=req.body||{};const product=catalog[item];if(!product)return 'Unknown item.';if(product.type==='cosmetic' && (mode==='buy'||mode==='equip') && Object.values(uniqueCosmeticsBySpecies).some(items=>items.includes(item)) && !uniqueCosmeticsBySpecies[p.species]?.includes(item))return 'This accessory belongs to another species.';if(product.type==='breed' && (mode==='buy'||mode==='equip') && ![...(breedsBySpecies[p.species]||[]),...(addedBreedsBySpecies[p.species]||[])].includes(item))return 'That breed is not available for your pet species.';const owned=product.type==='cosmetic'?p.owned_cosmetics:product.type==='color'?p.owned_colors:product.type==='breed'?p.owned_breeds:p.owned_items;if(mode==='buy'){if(product.level&&p.level<product.level)return `Unlocks at Level ${product.level}.`;if(owned.includes(item))return 'Already owned.';if(p.coins<product.price)return 'Not enough coins.';p.coins-=product.price;owned.push(item);if(product.type==='theme'){p.room_theme=item;return 'Room theme unlocked and applied!'}if(product.type==='breed'){p.breed=item;p.color='classic';return 'New breed unlocked and equipped!'}return 'New item unlocked!'}if(mode==='unequip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(slot){p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:null};}if(p.equipped_cosmetic===item)p.equipped_cosmetic='none';}else if(product.type==='color'&&p.color===item)p.color='classic';else if(product.type==='breed'&&p.breed===item)p.breed='classic';else if(product.type==='theme'&&p.room_theme===item)p.room_theme='blush';else if(product.type==='furniture')p.placed_items=p.placed_items.filter((x:string)=>x!==item);return 'Item removed!'}if(item==='blush' && mode==='equip'){p.room_theme='blush';return 'Cozy Blush room equipped!'}if(mode==='equip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(!slot)return 'Unknown accessory slot.';if(req.body?.slot&&req.body.slot!==slot)return 'Incorrect accessory slot.';p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:item};p.equipped_cosmetic='none';}else if(product.type==='color')p.color=item;else if(product.type==='breed'){p.breed=item;p.color='classic';}else if(product.type==='theme')p.room_theme=item;else if(product.type==='furniture'){p.placed_items=p.placed_items.includes(item)?p.placed_items.filter((x:string)=>x!==item):[...p.placed_items,item]}return 'Look updated!'}if(mode==='equip'&&item==='none'&&product.type==='cosmetic'){p.equipped_cosmetic='none';return 'Accessory removed.'}return 'Unlock this item first.'})));
 
@@ -397,25 +402,49 @@ app.post('/api/notes', auth, handle(async (req, res) => {
   });
 }));
 
-// Batch 7 — private, preset PawMail postcards; friendship and expiry enforced on server.
-const pawMailDesigns = ['strawberry', 'lavender', 'sunshine', 'moonlight'] as const;
+// Personalized PawMail envelopes: ownership and coin purchases enforced server-side.
+const pawMailDesigns=['classic','rose_garden','starry_night','ocean_waves','cherry_blossom','woodland','royal','sweet_treats','celestial','butterfly','winter'] as const;
+const pawMailColors=['blush','rose','peach','apricot','butter','mint','sage','aqua','sky','periwinkle','lavender','lilac','cream','coral','slate'] as const;
+app.get('/api/mail/designs',auth,handle(async(req,res)=>{
+ const r=await pool.query('SELECT design FROM paw_mail_envelopes WHERE user_id=$1',[req.userId]);
+ res.json({owned:['classic',...r.rows.map(x=>x.design)]});
+}));
+app.post('/api/mail/designs/buy',auth,handle(async(req,res)=>{
+ const parsed=z.object({design:z.enum(pawMailDesigns)}).safeParse(req.body);
+ if(!parsed.success||parsed.data.design==='classic')return void res.status(400).json({error:'Choose a premium envelope design.'});
+ const client=await pool.connect();try{
+  await client.query('BEGIN');
+  const pet=await client.query('SELECT coins FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
+  if(!pet.rowCount){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
+  const owned=await client.query('SELECT 1 FROM paw_mail_envelopes WHERE user_id=$1 AND design=$2',[req.userId,parsed.data.design]);
+  if(owned.rowCount){await client.query('ROLLBACK');return void res.status(409).json({error:'You already own this design.'})}
+  if(pet.rows[0].coins<2000){await client.query('ROLLBACK');return void res.status(400).json({error:'You need 2,000 coins.'})}
+  await client.query('UPDATE pets SET coins=coins-2000 WHERE owner_id=$1',[req.userId]);
+  await client.query('INSERT INTO paw_mail_envelopes(user_id,design) VALUES($1,$2)',[req.userId,parsed.data.design]);
+  await client.query('COMMIT');res.json({message:'Envelope design unlocked!'});
+ }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
+}));
 app.get('/api/mail', auth, handle(async (req, res) => {
-  const result = await pool.query(`SELECT m.id,m.sender_id,m.design,m.message,m.created_at,m.expires_at,m.read_at,u.username AS sender_username
-    FROM paw_mail m JOIN users u ON u.id=m.sender_id
-    WHERE m.recipient_id=$1 AND m.expires_at>NOW() ORDER BY m.created_at DESC LIMIT 60`, [req.userId]);
-  res.json(result.rows);
+ const result = await pool.query(`SELECT m.id,m.sender_id,m.design,m.color,m.message,m.created_at,m.expires_at,m.read_at,u.username AS sender_username,
+  CASE WHEN p.id IS NULL THEN NULL ELSE json_build_object('species',p.species,'color',p.color,'breed',p.breed,'equipped_cosmetic',p.equipped_cosmetic,'equipped_outfit',p.equipped_outfit) END AS sender_pet
+  FROM paw_mail m JOIN users u ON u.id=m.sender_id LEFT JOIN pets p ON p.owner_id=m.sender_id
+  WHERE m.recipient_id=$1 AND m.expires_at>NOW() ORDER BY m.created_at DESC LIMIT 60`, [req.userId]);
+ res.json(result.rows);
 }));
 app.post('/api/mail', auth, handle(async (req, res) => {
-  const parsed=z.object({friendId:z.string().uuid(),design:z.enum(pawMailDesigns)}).safeParse(req.body);
-  if(!parsed.success)return void res.status(400).json({error:'Choose a friend and postcard.'});
-  if(parsed.data.friendId===req.userId)return void res.status(400).json({error:'You cannot mail yourself.'});
-  const friendship=await pool.query(`SELECT 1 FROM friendships WHERE status='accepted' AND
-    ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))`,[req.userId,parsed.data.friendId]);
-  if(!friendship.rowCount)return void res.status(403).json({error:'You can only send postcards to friends.'});
-  const messages:Record<string,string>={strawberry:'You make my day sweeter!',lavender:'Sending you cozy wishes!',sunshine:'You are my sunshine!',moonlight:'Sweet dreams, little pal!'};
-  await pool.query(`INSERT INTO paw_mail(id,sender_id,recipient_id,design,message,expires_at)
-    VALUES($1,$2,$3,$4,$5,NOW()+INTERVAL '24 hours')`,[randomUUID(),req.userId,parsed.data.friendId,parsed.data.design,messages[parsed.data.design]]);
-  publishLive([parsed.data.friendId,req.userId],'mail');res.status(201).json({message:'Your PawMail postcard was sent!'});
+ const parsed=z.object({friendId:z.string().uuid(),design:z.enum(pawMailDesigns),color:z.enum(pawMailColors),message:z.string().trim().min(1).max(100)}).safeParse(req.body);
+ if(!parsed.success)return void res.status(400).json({error:'Choose a friend, envelope, color, and a message (1–100 characters).'});
+ if(parsed.data.friendId===req.userId)return void res.status(400).json({error:'You cannot mail yourself.'});
+ const friendship=await pool.query(`SELECT 1 FROM friendships WHERE status='accepted' AND
+ ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))`,[req.userId,parsed.data.friendId]);
+ if(!friendship.rowCount)return void res.status(403).json({error:'You can only send PawMail to friends.'});
+ if(parsed.data.design!=='classic'){
+  const owned=await pool.query('SELECT 1 FROM paw_mail_envelopes WHERE user_id=$1 AND design=$2',[req.userId,parsed.data.design]);
+  if(!owned.rowCount)return void res.status(403).json({error:'Buy this envelope design first.'});
+ }
+ await pool.query(`INSERT INTO paw_mail(id,sender_id,recipient_id,design,color,message,expires_at)
+ VALUES($1,$2,$3,$4,$5,$6,NOW()+INTERVAL '24 hours')`,[randomUUID(),req.userId,parsed.data.friendId,parsed.data.design,parsed.data.color,parsed.data.message]);
+ publishLive([parsed.data.friendId,req.userId],'mail');res.status(201).json({message:'Your personalized PawMail was sent!'});
 }));
 app.patch('/api/mail/:id/read',auth,handle(async(req,res)=>{
   const result=await pool.query('UPDATE paw_mail SET read_at=COALESCE(read_at,NOW()) WHERE id=$1 AND recipient_id=$2 AND expires_at>NOW() RETURNING id',[req.params.id,req.userId]);
@@ -430,7 +459,7 @@ app.delete('/api/mail/:id',auth,handle(async(req,res)=>{
 
 app.delete('/api/notes',auth,handle(async(req,res)=>{await pool.query('UPDATE users SET pet_note=NULL,note_expires_at=NULL WHERE id=$1',[req.userId]);res.json({message:'Pet Note deleted.'})}));
 
-app.get('/api/room',auth,handle(async(req,res)=>{const q=await pool.query(`SELECT p.id,p.name,p.species,p.color,p.breed,p.level,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.equipped_cosmetic,p.equipped_outfit,u.username,u.id AS user_id,CASE WHEN u.note_expires_at>NOW() THEN u.pet_note ELSE NULL END AS pet_note,u.note_expires_at FROM pets p JOIN users u ON u.id=p.owner_id WHERE p.owner_id=$1 OR EXISTS(SELECT 1 FROM friendships f WHERE f.status='accepted' AND ((f.requester_id=$1 AND f.recipient_id=p.owner_id) OR (f.recipient_id=$1 AND f.requester_id=p.owner_id)))`,[req.userId]);res.json(q.rows)}));
+app.get('/api/room',auth,handle(async(req,res)=>{const q=await pool.query(`SELECT p.id,p.name,p.species,p.color,p.breed,p.level,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.equipped_cosmetic,p.equipped_outfit,u.username,u.id AS user_id,CASE WHEN u.note_expires_at>NOW() THEN u.pet_note ELSE NULL END AS pet_note,u.note_expires_at,COALESCE((p.garden->>'_sleeping')::boolean,false) AS sleeping FROM pets p JOIN users u ON u.id=p.owner_id WHERE p.owner_id=$1 OR EXISTS(SELECT 1 FROM friendships f WHERE f.status='accepted' AND ((f.requester_id=$1 AND f.recipient_id=p.owner_id) OR (f.recipient_id=$1 AND f.requester_id=p.owner_id)))`,[req.userId]);res.json(q.rows)}));
 
 // Each plot has its own server-timed growth and its own saved rarity.
 
@@ -450,11 +479,11 @@ if(!validPlot)return 'Choose an unlocked garden plot.';
 
 const plot=g.plots[idx];
 
-if(action==='plant'){if(plot?.planted_at)return 'This plot already has a flower.';if(g.seeds<1)return 'Buy more seeds.';g.seeds--;const roll=Math.random()*100;let running=0;let kind=flowerKinds[1];for(const candidate of flowerKinds){running+=candidate.weight;if(roll<running){kind=candidate;break;}}g.plots[idx]={planted_at:new Date().toISOString(),watered_minutes:0,rarity:kind.name,reward:kind.min+Math.floor(Math.random()*(kind.max-kind.min+1)),variant:Math.floor(Math.random()*4)};p.garden=g;return `Seed planted in plot ${idx+1}!`;}
+if(action==='plant'){if(plot?.planted_at)return 'This plot already has a flower.';if(g.seeds<1)return 'Buy more seeds.';g.seeds--;const roll=Math.random()*100;let running=0;let kind=flowerKinds[1];for(const candidate of flowerKinds){running+=candidate.weight;if(roll<running){kind=candidate;break;}}g.plots[idx]={planted_at:new Date().toISOString(),watered_minutes:0,rarity:kind.name,reward:kind.min+Math.floor(Math.random()*(kind.max-kind.min+1)),variant:Math.floor(Math.random()*4)};p.garden=g;p.energy=clamp(p.energy-2);p.cleanliness=clamp(p.cleanliness-3);return `Seed planted in plot ${idx+1}!`;}
 
-if(action==='water'){if(!plot?.planted_at)return 'Plant a flower in this plot first.';if(g.watering_cans<1)return 'Buy a watering can first.';const remaining=300000-(Date.now()-new Date(plot.planted_at).getTime())-(plot.watered_minutes||0)*60000;if(remaining<=0)return 'Your flower is ready!';g.watering_cans--;plot.watered_minutes=Math.min(5,(plot.watered_minutes||0)+1);p.garden=g;return `Plot ${idx+1} watered! One minute removed.`;}
+if(action==='water'){if(!plot?.planted_at)return 'Plant a flower in this plot first.';if(g.watering_cans<1)return 'Buy a watering can first.';const remaining=300000-(Date.now()-new Date(plot.planted_at).getTime())-(plot.watered_minutes||0)*60000;if(remaining<=0)return 'Your flower is ready!';g.watering_cans--;plot.watered_minutes=Math.min(5,(plot.watered_minutes||0)+1);p.garden=g;p.energy=clamp(p.energy-2);p.cleanliness=clamp(p.cleanliness-2);return `Plot ${idx+1} watered! One minute removed.`;}
 
-if(action==='harvest'){if(!plot?.planted_at)return 'Plant a flower first.';if(Date.now()-new Date(plot.planted_at).getTime()+(plot.watered_minutes||0)*60000<300000)return 'Not ready to harvest.';const reward=Number(plot.reward)||50;const rarity=String(plot.rarity||'Common');g.plots[idx]=null;g.flowers++;p.coins+=reward;p.xp+=15;p.garden=g;return `${rarity} flower harvested! +${reward} coins and +15 EXP.`;}
+if(action==='harvest'){if(!plot?.planted_at)return 'Plant a flower first.';if(Date.now()-new Date(plot.planted_at).getTime()+(plot.watered_minutes||0)*60000<300000)return 'Not ready to harvest.';const reward=Number(plot.reward)||50;const rarity=String(plot.rarity||'Common');g.plots[idx]=null;g.flowers++;p.coins+=reward;p.xp+=15;p.garden=g;p.energy=clamp(p.energy-3);p.cleanliness=clamp(p.cleanliness-4);return `${rarity} flower harvested! +${reward} coins and +15 EXP.`;}
 
 return 'Unknown garden action.'})));
 
@@ -464,6 +493,7 @@ app.post('/api/claw/play',auth,handle(async(req,res)=>{
  await mutate(req,{json:(x:any)=>Object.assign(result,x),status:()=>({json:()=>{}})},p=>{
   if(p.last_game_at&&Date.now()-new Date(p.last_game_at).getTime()<15000)return `Wait ${Math.ceil((15000-(Date.now()-new Date(p.last_game_at).getTime()))/1000)} seconds before playing Paw Claw again.`;
   p.last_game_at=new Date().toISOString();
+  p.energy=clamp(p.energy-5);p.cleanliness=clamp(p.cleanliness-4);
   const roll=Math.random()*100;
   if(roll<56){const amount=15+Math.floor(Math.random()*6);p.coins+=amount;return `Paw Claw prize: +${amount} coins!`}
   if(roll<72){const amount=25+Math.floor(Math.random()*26);p.coins+=amount;return `Paw Claw prize: +${amount} coins!`}
@@ -478,16 +508,24 @@ app.post('/api/claw/play',auth,handle(async(req,res)=>{
  if(!result.pet)return void res.status(500).json({error:'Prize could not be claimed.'});
  res.json(result);
 }));
-app.post('/api/game',auth,handle(async(req,res)=>{const v=z.object({game:z.enum(['memory','dino','runner','pattern','mole']),score:z.number().int().min(0).max(100000)}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Invalid score.'});const result:any={};await mutate(req,{json:(x:any)=>Object.assign(result,x),status:()=>({json:()=>{}})},p=>{if(p.last_game_at&&Date.now()-new Date(p.last_game_at).getTime()<8000)return 'Wait 8 seconds between rewards.';p.last_game_at=new Date().toISOString();const reward=Math.min(75,10+Math.floor(v.data.score/3));p.coins+=reward;p.xp+=Math.min(40,5+Math.floor(v.data.score/8));p.happiness=clamp(p.happiness+8);return `Arcade reward: +${reward} coins!`});if(result.pet && !String(result.message||'').startsWith('Wait '))await recordMissionEvent(pool,req.userId,'arcade');if(result.pet)await pool.query('INSERT INTO game_records(user_id,game,best) VALUES($1,$2,$3) ON CONFLICT(user_id,game) DO UPDATE SET best=GREATEST(game_records.best,EXCLUDED.best)',[req.userId,v.data.game,v.data.score]);res.json(result)}));
+app.post('/api/game',auth,handle(async(req,res)=>{const v=z.object({game:z.enum(['memory','dino','runner','pattern','mole']),score:z.number().int().min(0).max(100000)}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Invalid score.'});const result:any={};await mutate(req,{json:(x:any)=>Object.assign(result,x),status:()=>({json:()=>{}})},p=>{if(p.last_game_at&&Date.now()-new Date(p.last_game_at).getTime()<8000)return 'Wait 8 seconds between rewards.';p.last_game_at=new Date().toISOString();const reward=Math.min(75,10+Math.floor(v.data.score/3));p.coins+=reward;p.xp+=Math.min(40,5+Math.floor(v.data.score/8));p.happiness=clamp(p.happiness+8);p.energy=clamp(p.energy-7);p.cleanliness=clamp(p.cleanliness-5);return `Arcade reward: +${reward} coins!`});if(result.pet && !String(result.message||'').startsWith('Wait '))await recordMissionEvent(pool,req.userId,'arcade');if(result.pet)await pool.query('INSERT INTO game_records(user_id,game,best) VALUES($1,$2,$3) ON CONFLICT(user_id,game) DO UPDATE SET best=GREATEST(game_records.best,EXCLUDED.best)',[req.userId,v.data.game,v.data.score]);res.json(result)}));
 
 // Batch 12: Kitchen 2.0. Ingredients, recipe progress, meals and pet buffs are server-owned.
 const kitchenRecipes: Record<string,{name:string;ingredients:Record<string,number>;steps:string[];hunger:number;happiness:number;energy:number;xp:number}> = {
  berry_parfait:{name:'Berry Parfait',ingredients:{berries:2,milk:1},steps:['wash','mix','chill'],hunger:24,happiness:14,energy:0,xp:20},
  cloud_pancakes:{name:'Cloud Pancakes',ingredients:{flour:2,milk:1,berries:1},steps:['mix','cook','plate'],hunger:36,happiness:9,energy:4,xp:28},
  cozy_soup:{name:'Cozy Soup',ingredients:{carrot:2,milk:1},steps:['chop','simmer','serve'],hunger:32,happiness:5,energy:14,xp:25},
- moon_cookies:{name:'Moon Cookies',ingredients:{flour:2,berries:1},steps:['mix','bake','decorate'],hunger:20,happiness:22,energy:0,xp:32}
+ moon_cookies:{name:'Moon Cookies',ingredients:{flour:2,berries:1},steps:['mix','bake','decorate'],hunger:20,happiness:22,energy:0,xp:32},
+ honey_toast:{name:'Honey Toast',ingredients:{bread:2,honey:1,butter:1},steps:['mix','cook','plate'],hunger:33,happiness:15,energy:6,xp:34},
+ starry_omelet:{name:'Starry Omelet',ingredients:{egg:2,cheese:1,butter:1},steps:['mix','cook','serve'],hunger:39,happiness:11,energy:10,xp:38},
+ peach_smoothie:{name:'Peach Smoothie',ingredients:{peach:2,milk:1,honey:1},steps:['wash','mix','chill'],hunger:23,happiness:21,energy:7,xp:36},
+ pumpkin_pie:{name:'Pumpkin Pie',ingredients:{pumpkin:2,flour:2,butter:1},steps:['chop','mix','bake','decorate'],hunger:44,happiness:22,energy:0,xp:48},
+ garden_salad:{name:'Garden Salad',ingredients:{lettuce:2,carrot:1,tomato:2},steps:['wash','chop','mix','plate'],hunger:28,happiness:12,energy:17,xp:42},
+ cheesy_pasta:{name:'Cheesy Pasta',ingredients:{pasta:2,cheese:2,tomato:1},steps:['chop','cook','mix','serve'],hunger:49,happiness:16,energy:8,xp:50},
+ starlight_cake:{name:'Starlight Cake',ingredients:{flour:2,egg:2,milk:1,honey:1},steps:['mix','bake','chill','decorate'],hunger:47,happiness:30,energy:3,xp:58},
+ moonlight_ramen:{name:'Moonlight Ramen',ingredients:{noodles:2,egg:1,carrot:1},steps:['chop','simmer','cook','serve'],hunger:52,happiness:19,energy:13,xp:55}
 };
-const kitchenPrices:Record<string,number>={berries:24,milk:20,flour:18,carrot:16};
+const kitchenPrices:Record<string,number>={berries:24,milk:20,flour:18,carrot:16,bread:22,honey:35,butter:26,egg:30,cheese:38,peach:32,pumpkin:28,lettuce:18,tomato:23,pasta:34,noodles:36};
 app.get('/api/kitchen',auth,handle(async(req,res)=>{
  const q=await pool.query('SELECT ingredients,meals,active_recipe,recipe_step,cooking_started_at FROM pet_kitchens WHERE user_id=$1',[req.userId]);
  res.json({kitchen:q.rows[0]||{ingredients:{},meals:{},active_recipe:null,recipe_step:0,cooking_started_at:null},recipes:kitchenRecipes,prices:kitchenPrices});

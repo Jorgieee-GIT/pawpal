@@ -793,3 +793,496 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-
 .paw-dark .paw-friends-panel .paw-friend-icon-actions .paw-friend-icon-button{background:transparent;color:#efb2cd}
 .paw-dark .paw-friends-panel .paw-friend-icon-actions .paw-friend-icon-button:hover:not(:disabled){background:rgba(255,185,214,.12);color:#ffe1ee}
 @media(max-width:560px){.paw-friends-panel .paw-friend-icon-actions{width:auto;flex:0 0 auto;gap:4px;margin-left:auto}}
+
+/* Batch 57: illustrated collectible envelopes, live letters and pet wax seals */
+.paw-envelope{--envelope-color:#ffe1eb;position:relative;isolation:isolate;overflow:hidden;min-height:190px;border-radius:17px;border:1px solid #cba9b9;background:var(--envelope-color);color:#78526d;padding:13px 15px;box-shadow:inset 0 0 0 5px #ffffff35,0 5px 12px #5b284115}
+.paw-envelope:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.36;background:repeating-linear-gradient(45deg,transparent 0 16px,#fff7 16px 17px)}
+.paw-envelope-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.paw-envelope-postmark{font-size:9px;font-weight:900;letter-spacing:1.6px;opacity:.75}.paw-envelope-seal{height:62px;width:62px;flex:none;border-radius:50%;background:radial-gradient(circle at 32% 28%,#ffacc6,#b53f76 75%);box-shadow:0 3px 0 #873359,0 0 0 4px #d47e9b66;display:grid;place-items:center;color:#fff;font-size:25px;overflow:hidden}.paw-envelope-seal .pet-art,.paw-envelope-seal svg{max-width:55px;max-height:55px;width:100%;height:100%}
+.paw-envelope-illustration{height:52px;position:relative;display:flex;align-items:center;justify-content:center}.paw-envelope-illustration svg{position:absolute;inset:0;width:100%;height:100%;opacity:.5}.paw-envelope-art-left,.paw-envelope-art-right{font-size:28px;z-index:1;filter:drop-shadow(0 1px 1px #fff)}.paw-envelope-art-left{margin-right:auto}.paw-envelope-art-right{margin-left:auto}
+.paw-envelope-content{position:relative;z-index:1;background:#fff9;padding:12px;border-radius:10px;text-align:center;box-shadow:0 2px 8px #71425417}.paw-envelope-content small{font-size:10px;letter-spacing:1px;font-weight:900;text-transform:uppercase}.paw-envelope-content p{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:13px;margin:7px 0 0;font-weight:600}
+.paw-envelope-rose_garden{background-image:radial-gradient(circle at 12% 25%,#e7638566 0 6px,transparent 7px),radial-gradient(circle at 85% 72%,#d94e8466 0 9px,transparent 10px)}.paw-envelope-starry_night{background-image:radial-gradient(circle,#fff 1.5px,transparent 2px),linear-gradient(135deg,#515487aa,#bda2d3aa);background-size:24px 24px,auto}.paw-envelope-ocean_waves{background-image:repeating-radial-gradient(ellipse at bottom,#4ab9ce55 0 3px,transparent 4px 19px)}.paw-envelope-cherry_blossom{background-image:radial-gradient(ellipse at 20% 30%,#e87caa88 0 4px,transparent 5px),radial-gradient(ellipse at 70% 55%,#e87caa88 0 5px,transparent 6px)}.paw-envelope-woodland{background-image:repeating-linear-gradient(120deg,#568c5c30 0 3px,transparent 4px 30px)}.paw-envelope-royal{background-image:repeating-linear-gradient(45deg,#c29b4a66 0 2px,transparent 2px 20px),linear-gradient(120deg,#a78bc055,#ffe8a755)}.paw-envelope-sweet_treats{background-image:radial-gradient(circle at 18% 25%,#e8517266 0 6px,transparent 7px),repeating-linear-gradient(125deg,#fff7 0 5px,transparent 5px 24px)}.paw-envelope-celestial{background-image:radial-gradient(circle at 70% 15%,#fff6aa 0 13px,transparent 14px),radial-gradient(circle at 10% 60%,#fff8 0 2px,transparent 3px)}.paw-envelope-butterfly{background-image:radial-gradient(ellipse at 15% 20%,#a4b9ebaa 0 10px,transparent 11px),radial-gradient(ellipse at 85% 70%,#d8a6dfaa 0 12px,transparent 13px)}.paw-envelope-winter{background-image:repeating-linear-gradient(45deg,#fff8 0 2px,transparent 3px 28px),radial-gradient(circle at 30% 50%,#91c4ee88,transparent 55%)}
+.paw-envelope-colors{display:flex;flex-wrap:wrap;gap:8px}.paw-envelope-colors button{height:29px;width:29px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #c9a8b9;cursor:pointer;padding:0}.paw-envelope-colors button.selected{outline:2px solid #ae4d80;outline-offset:2px}.paw-envelope-designs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.paw-envelope-design-option{min-width:0;padding:8px;border:1px solid #e4bfd2;border-radius:12px;background:#fff9fc}.paw-envelope-design-option.selected{border:2px solid #ba6693}.paw-envelope-design-select{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;background:none!important;border:0!important;color:inherit!important;padding:2px!important;box-shadow:none!important}.paw-envelope-design-select b{font-size:11px}.paw-envelope-design-select small{font-size:10px}.paw-envelope-mini{display:grid;place-items:center;width:100%;height:47px;border-radius:8px;background:var(--envelope-color,#ffe1eb);font-size:25px;color:#a25a81}.paw-envelope-buy{font-size:10px!important;width:100%;padding:7px 3px!important;margin-top:6px!important}.paw-mail-compose textarea{width:100%;box-sizing:border-box;resize:vertical;min-height:100px;border:1px solid #dfa8c0;border-radius:12px;background:#fff;color:#67445d;padding:12px;font:inherit}.paw-mail-letter .paw-envelope{min-height:0;padding:8px}.paw-mail-letter .paw-envelope-seal{width:40px;height:40px}.paw-mail-letter .paw-envelope-illustration{height:25px}.paw-mail-letter .paw-envelope-art-left,.paw-mail-letter .paw-envelope-art-right{font-size:16px}.paw-mail-letter .paw-envelope-content{padding:8px}.paw-mail-letter .paw-envelope-content p{font-size:11px}.paw-dark .paw-envelope-design-option{background:#453447;border-color:#805a72}.paw-dark .paw-mail-compose textarea{background:#4c394e;color:#fff;border-color:#906b81}
+@media(max-width:650px){.paw-envelope-designs{grid-template-columns:repeat(2,minmax(0,1fr))}.paw-envelope-colors button{width:32px;height:32px}}
+
+/* Batch 58: compact PawMail design picker with side-by-side live preview */
+.paw-mail-compose .paw-envelope-compose-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;align-items:start}
+.paw-mail-compose .paw-envelope-picker,.paw-mail-compose .paw-envelope-preview-side{min-width:0}
+.paw-mail-compose .paw-envelope-picker{max-height:340px;overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
+.paw-mail-compose .paw-envelope-designs{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.paw-mail-compose .paw-envelope-design-option{padding:6px;border-radius:10px}
+.paw-mail-compose .paw-envelope-mini{height:32px;font-size:20px}
+.paw-mail-compose .paw-envelope-design-select{gap:2px}
+.paw-mail-compose .paw-envelope-design-select b{font-size:10px;line-height:1.2}
+.paw-mail-compose .paw-envelope-design-select small{font-size:9px}
+.paw-mail-compose .paw-envelope-buy{font-size:9px!important;padding:5px 2px!important;margin-top:3px!important}
+.paw-mail-compose .paw-envelope-preview-side .paw-envelope{min-height:220px}
+@media(max-width:700px){.paw-mail-compose .paw-envelope-compose-grid{grid-template-columns:1fr}.paw-mail-compose .paw-envelope-picker{max-height:260px}.paw-mail-compose .paw-envelope-designs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:370px){.paw-mail-compose .paw-envelope-designs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Batch 59: illustrated SVG envelopes and compact inbox dialog */
+.paw-envelope-art-svg{width:100%;height:100%;max-height:108px;display:block;filter:drop-shadow(0 2px 1px rgba(100,60,80,.08))}
+.paw-envelope-mini .paw-envelope-art-svg{height:35px;width:54px;max-height:35px}
+.paw-envelope-illustration{display:flex;align-items:center;justify-content:center}
+.paw-mail-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.paw-inbox-trigger{position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:0 0 40px;border:0;border-radius:12px;background:transparent;color:inherit;cursor:pointer}
+.paw-inbox-trigger:hover{background:rgba(220,112,150,.13)}
+.paw-inbox-trigger.has-unread{color:#e23e55;background:rgba(226,62,85,.09)}
+.paw-inbox-alert{position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;background:#e23e55;border:2px solid white}
+.paw-inbox-modal{width:min(760px,calc(100vw - 28px));max-width:760px;max-height:min(88vh,900px);overflow-y:auto}
+.paw-inbox-modal .paw-mail-inbox{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:14px}
+.paw-inbox-modal .paw-mail-letter{min-width:0}
+@media(max-width:600px){.paw-inbox-modal{padding:16px;max-height:90vh}.paw-inbox-modal .paw-mail-inbox{grid-template-columns:1fr}}
+
+/* Batch 61: two-column mobile PawMail inbox and market-style envelope purchase buttons. */
+.paw-mail-compose .paw-envelope-design-option .paw-envelope-buy{
+  display:block;width:100%;min-height:32px;margin-top:7px!important;padding:7px 5px!important;
+  background:#f9e6ef!important;color:#a95c83!important;border:1px solid #f1cddd!important;
+  border-radius:11px!important;font-size:10px!important;font-weight:800!important;
+  line-height:1.2;box-shadow:none!important;cursor:pointer;
+}
+.paw-mail-compose .paw-envelope-design-option .paw-envelope-buy:hover:not(:disabled){
+  background:#f3d7e5!important;border-color:#e5acc7!important;
+}
+.paw-mail-compose .paw-envelope-design-option .paw-envelope-buy:focus-visible{outline:2px solid #ac668d;outline-offset:2px}
+.paw-mail-compose .paw-envelope-design-option .paw-envelope-buy:disabled{opacity:.5;cursor:not-allowed}
+.paw-dark .paw-mail-compose .paw-envelope-design-option .paw-envelope-buy{
+  background:#583d52!important;color:#ffe5f1!important;border-color:#916b82!important;
+}
+.paw-dark .paw-mail-compose .paw-envelope-design-option .paw-envelope-buy:hover:not(:disabled){background:#704a65!important}
+@media(max-width:600px){
+  .paw-inbox-modal .paw-mail-inbox{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .paw-inbox-modal .paw-mail-letter{padding:8px;min-width:0}
+  .paw-inbox-modal .paw-mail-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+  .paw-inbox-modal .paw-mail-actions>button{min-width:0;padding:7px 3px;font-size:10px}
+  .paw-inbox-modal .paw-mail-letter .paw-envelope{min-height:145px;padding:7px}
+  .paw-inbox-modal .paw-mail-letter .paw-envelope-content{padding:7px}
+  .paw-inbox-modal .paw-mail-letter .paw-envelope-seal{width:38px;height:38px}
+}
+
+/* Batch 62: compact garden inventory and one-line mobile purchase cards */
+@media(max-width:600px){
+ .garden-inventory{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
+ .garden-inventory>div{min-width:0;padding:7px 4px;gap:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+ .garden-inventory svg{width:25px;height:25px;flex:none}
+ .garden-inventory b{font-size:15px;line-height:1.1}
+ .garden-inventory small{font-size:10px;line-height:1.15;white-space:normal;overflow-wrap:anywhere}
+ .garden-purchase-grid{grid-template-columns:1fr;gap:9px}
+ .garden-purchase-card{display:flex;align-items:center;justify-content:space-between;gap:7px;padding:9px 8px;min-width:0}
+ .garden-purchase-title{flex:1 1 auto;min-width:0;gap:5px}
+ .garden-purchase-title svg{width:29px;height:29px;flex:none}
+ .garden-purchase-title b{font-size:12px;line-height:1.15;display:block}
+ .garden-purchase-title small{font-size:10px;line-height:1.1}
+ .garden-purchase-bottom{display:flex;flex:0 1 auto;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:5px;margin:0;min-width:0}
+ .garden-qty{flex:none}
+ .garden-qty button{min-width:25px;height:32px;font-size:16px}
+ .garden-qty output{width:23px;font-size:12px}
+ .garden-buy-button{flex:0 0 auto;min-width:0;padding:8px 7px;font-size:11px;white-space:nowrap}
+}
+@media(max-width:370px){.garden-purchase-title svg{width:23px;height:23px}.garden-purchase-card{gap:4px;padding:8px 5px}.garden-purchase-bottom{gap:3px}.garden-qty button{min-width:22px}.garden-qty output{width:19px}.garden-buy-button{font-size:10px;padding:8px 5px}}
+
+/* Batch 63: uniform room selector and legible compact options */
+.paw-room-dropdown-trigger{width:164px!important;max-width:164px!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;text-align:left!important;font-size:12px!important}
+.paw-room-dropdown-list{width:205px!important;max-width:calc(100vw - 36px)!important}
+.paw-room-dropdown-list button{font-size:12px!important;padding:9px 10px!important;line-height:1.25!important;min-width:0!important}
+.paw-room-dropdown-list small{font-size:9px!important;white-space:nowrap}
+@media(max-width:420px){.paw-room-dropdown-trigger{width:148px!important;max-width:148px!important}.paw-room-dropdown-list{width:190px!important}}
+/* Collectible premium atmospheres: luminous color, richer depth and glowing accents */
+.paw-theme-aurora_prism,.paw-theme-cosmic_nebula,.paw-theme-crystal_lagoon,.paw-theme-solar_eclipse,.paw-theme-celestial_opal{background-image:radial-gradient(ellipse at 17% 8%,color-mix(in srgb,var(--room-accent) 32%,transparent),transparent 48%),radial-gradient(ellipse at 82% 15%,#fff6 0%,transparent 33%),linear-gradient(160deg,var(--wall),var(--floor))!important;box-shadow:inset 0 0 60px #ffffff25,0 0 25px color-mix(in srgb,var(--room-accent) 22%,transparent)!important}
+.paw-theme-aurora_prism .wall-art,.paw-theme-cosmic_nebula .wall-art,.paw-theme-crystal_lagoon .wall-art,.paw-theme-solar_eclipse .wall-art,.paw-theme-celestial_opal .wall-art{filter:drop-shadow(0 0 12px var(--room-accent));opacity:1!important}
+.paw-theme-aurora_prism .room-lights,.paw-theme-cosmic_nebula .room-lights,.paw-theme-crystal_lagoon .room-lights,.paw-theme-solar_eclipse .room-lights,.paw-theme-celestial_opal .room-lights{filter:drop-shadow(0 0 10px var(--room-accent));opacity:1!important}
+
+/* Batch 64: six compact SVG pantry / recipe cards per desktop row. */
+.paw-kitchen .kitchen-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.paw-kitchen .kitchen-item{padding:11px 7px;gap:7px;border-radius:14px;min-width:0}
+.paw-kitchen .kitchen-art{width:68px;height:64px;padding:4px;border-radius:12px}
+.paw-kitchen .kitchen-item>b{font-size:12px;line-height:1.25;overflow-wrap:anywhere}
+.paw-kitchen .kitchen-item small{font-size:10px;line-height:1.35;overflow-wrap:anywhere}
+.paw-kitchen .kitchen-item>button{font-size:11px;padding:9px 4px;white-space:normal;line-height:1.25}
+.paw-kitchen .kitchen-qty{max-width:100%;gap:3px}
+.paw-kitchen .kitchen-qty button{min-width:25px;padding:4px}
+.paw-kitchen .kitchen-active h3 svg{width:34px;height:32px;vertical-align:middle}
+@media(max-width:1100px){.paw-kitchen .kitchen-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:680px){.paw-kitchen .kitchen-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.paw-kitchen .kitchen-item{padding:9px 5px}.paw-kitchen .kitchen-art{width:58px;height:56px}}
+@media(max-width:400px){.paw-kitchen .kitchen-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Batch 65: uniform, compact kitchen cards and vertically listed bonuses. */
+.paw-kitchen .kitchen-grid{align-items:stretch;gap:8px}
+.paw-kitchen .kitchen-item{display:grid;grid-template-rows:58px minmax(30px,auto) minmax(34px,auto) auto auto;align-content:start;justify-items:stretch;gap:5px;padding:9px 6px;border-radius:12px;text-align:center}
+.paw-kitchen .kitchen-art{width:58px;height:58px;padding:2px;margin:auto;background:#fff0f5;border-radius:10px}
+.paw-kitchen .kitchen-item>b{font-size:11px;line-height:1.2;min-height:27px;display:flex;align-items:center;justify-content:center;text-transform:capitalize}
+.paw-kitchen .kitchen-item small{font-size:9px;line-height:1.3;min-height:30px;overflow-wrap:anywhere}
+.paw-kitchen .kitchen-item-meta span{display:block}
+.paw-kitchen .kitchen-boosts{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:2px;width:100%;padding:5px 7px;border-radius:8px;background:rgba(230,164,194,.12);font-size:10px;font-weight:650;color:#a05e7c;line-height:1.25}
+.paw-kitchen .kitchen-item:has(.kitchen-boosts){grid-template-rows:58px 30px minmax(34px,auto) 1fr auto}
+.paw-kitchen .kitchen-item>button{align-self:end;font-size:10px;line-height:1.2;padding:7px 3px;min-height:31px;border-radius:9px}
+.paw-kitchen .kitchen-qty{gap:2px;margin:auto}.paw-kitchen .kitchen-qty button{width:24px;height:25px;min-width:24px;min-height:25px;padding:0}.paw-kitchen .kitchen-qty span{font-size:11px;min-width:16px}
+.paw-dark .paw-kitchen .kitchen-boosts{background:rgba(255,191,217,.1);color:#f4bdd5}
+@media(max-width:680px){.paw-kitchen .kitchen-item{padding:7px 4px;gap:4px}.paw-kitchen .kitchen-art{width:52px;height:52px}.paw-kitchen .kitchen-item{grid-template-rows:52px minmax(30px,auto) minmax(34px,auto) auto auto}.paw-kitchen .kitchen-item:has(.kitchen-boosts){grid-template-rows:52px 30px minmax(34px,auto) 1fr auto}.paw-kitchen .kitchen-boosts{padding:4px;font-size:9px}}
+
+/* Batch 66: modal cooking minigame with live-draining interaction meter */
+.kitchen-game-overlay{position:fixed;inset:0;z-index:10050;background:rgba(37,22,42,.62);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(5px)}
+.kitchen-game-modal{position:relative;width:min(440px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:#fff8fb;color:#784d65;border-radius:24px;padding:24px;box-shadow:0 22px 75px #20112655;text-align:center}
+.kitchen-game-close{position:absolute;right:12px;top:10px;border:0;background:transparent;color:inherit;font-size:26px;cursor:pointer}
+.kitchen-game-head{display:flex;align-items:center;gap:14px;text-align:left}.kitchen-game-head h3{margin:2px 0}.kitchen-game-head p{margin:3px 0;font-size:13px}.kitchen-game-head small{letter-spacing:.14em;font-size:10px}.kitchen-game-art{width:76px;height:76px;flex:none}.kitchen-game-steps{display:flex;gap:6px;justify-content:center;margin:15px 0}.kitchen-game-steps span{height:24px;min-width:24px;display:grid;place-items:center;border-radius:99px;background:#eddce7;font-size:12px}.kitchen-game-steps span.done{background:#c5ecd7}.kitchen-game-steps span.current{background:#d88aaf;color:white}.kitchen-game-instructions{font-size:14px;font-weight:750;margin:12px 0}.kitchen-game-pad{height:210px;touch-action:none;user-select:none;border:2px dashed #e3a3bf;border-radius:22px;background:radial-gradient(circle,#fff,#ffe4f0);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}.kitchen-game-pad svg{height:135px;width:155px;pointer-events:none}.kitchen-game-pad span{font-weight:800;font-size:19px;color:#b45b8c;pointer-events:none}.kitchen-game-meter{height:14px;background:#eadce5;border-radius:99px;overflow:hidden;margin:18px 0 6px}.kitchen-game-meter>div{height:100%;border-radius:inherit;background:linear-gradient(90deg,#ed92b4,#b88df2);transition:width .12s linear}.kitchen-game-hint{font-size:12px;color:#96798a}.kitchen-game-feedback{font-weight:750}.paw-dark .kitchen-game-modal{background:#382b41;color:#ffe4f0}.paw-dark .kitchen-game-pad{background:radial-gradient(circle,#55415d,#44314f)}
+
+/* Batch 67: stable cooking modal dimensions on every recipe and step. */
+.kitchen-game-modal{height:min(590px,calc(100dvh - 24px));min-height:0;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;overflow-y:auto}
+.kitchen-game-head{min-height:84px;flex-shrink:0}
+.kitchen-game-head>div:last-child{min-width:0}
+.kitchen-game-head h3{line-height:1.2;min-height:1.2em}
+.kitchen-game-steps{min-height:24px;flex-shrink:0}
+.kitchen-game-instructions{min-height:38px;display:grid;place-items:center;flex-shrink:0}
+.kitchen-game-pad{height:190px;min-height:150px;flex-shrink:1}
+.kitchen-game-feedback{min-height:20px;margin:8px 0 0;flex-shrink:0}
+@media(max-width:480px){.kitchen-game-modal{height:min(565px,calc(100dvh - 20px));padding:18px}.kitchen-game-pad{height:175px;min-height:125px}}
+
+/* Batch 68: compact horizontal Kitchen lists on phones. */
+@media(max-width:680px){
+ .paw-kitchen .kitchen-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:7px}
+ .paw-kitchen .kitchen-item,
+ .paw-kitchen .kitchen-item:has(.kitchen-boosts){display:grid;grid-template-columns:56px minmax(0,1fr) minmax(88px,auto);grid-template-rows:auto auto auto;column-gap:9px;row-gap:3px;align-items:center;justify-items:stretch;min-height:78px;padding:8px 9px;text-align:left;border-radius:12px}
+ .paw-kitchen .kitchen-art{grid-column:1;grid-row:1 / -1;width:52px;height:52px;min-width:0;margin:0;padding:2px;align-self:center}
+ .paw-kitchen .kitchen-item>b{grid-column:2;grid-row:1;min-height:0;justify-content:flex-start;align-items:end;text-align:left;font-size:12px;line-height:1.2}
+ .paw-kitchen .kitchen-item>small{grid-column:2;grid-row:2 / 4;min-height:0;text-align:left;font-size:10px;line-height:1.3;align-self:start}
+ .paw-kitchen .kitchen-item-meta span{display:block}
+ .paw-kitchen .kitchen-qty{grid-column:3;grid-row:1 / 3;margin:0;justify-content:flex-end;gap:3px}
+ .paw-kitchen .kitchen-qty button{width:24px;height:24px;min-width:24px;min-height:24px}
+ .paw-kitchen .kitchen-item>button{grid-column:3;grid-row:3;align-self:end;min-height:29px;width:100%;max-width:125px;justify-self:end;padding:6px 5px;font-size:10px;white-space:normal}
+ .paw-kitchen .kitchen-boosts{grid-column:2;grid-row:3;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 5px;width:100%;min-width:0;margin:0;padding:4px 5px;font-size:9px;line-height:1.15}
+ .paw-kitchen .kitchen-item:has(.kitchen-boosts)>small{grid-row:2}
+ .paw-kitchen .kitchen-item:has(.kitchen-boosts)>button{grid-row:1 / 4;align-self:center}
+ .paw-kitchen .kitchen-item:not(:has(.kitchen-qty)):not(:has(.kitchen-boosts))>button{grid-row:1 / 4;align-self:center}
+}
+@media(max-width:380px){
+ .paw-kitchen .kitchen-item,.paw-kitchen .kitchen-item:has(.kitchen-boosts){grid-template-columns:45px minmax(0,1fr) 86px;gap:3px 6px;padding:7px}
+ .paw-kitchen .kitchen-art{width:43px;height:43px}
+ .paw-kitchen .kitchen-item>b{font-size:11px}
+ .paw-kitchen .kitchen-item>small{font-size:9px}
+ .paw-kitchen .kitchen-boosts{font-size:8px;gap:2px}
+}
+
+/* Batch 69: smaller mobile kitchen rows, stable quantity alignment, and unobstructed plot labels. */
+.garden-plot-card .plot-number{position:absolute;top:5px;left:5px;z-index:2;line-height:1;padding:3px 5px;border-radius:6px;background:rgba(255,248,251,.92);pointer-events:none}
+.garden-plot-card .garden-plant-button{padding-top:16px;box-sizing:border-box}
+@media(max-width:600px){
+ .paw-kitchen .kitchen-grid{gap:4px}
+ .paw-kitchen .kitchen-item,.paw-kitchen .kitchen-item:has(.kitchen-boosts){grid-template-columns:30px minmax(0,1fr) 75px;column-gap:5px;row-gap:1px;min-height:45px;padding:4px 5px;border-radius:9px}
+ .paw-kitchen .kitchen-art{width:28px;height:28px;padding:1px;border-radius:6px}
+ .paw-kitchen .kitchen-item>b{font-size:10px;line-height:1.1}
+ .paw-kitchen .kitchen-item>small{font-size:8px;line-height:1.15}
+ .paw-kitchen .kitchen-item-meta span{display:block}
+ .paw-kitchen .kitchen-item>button{min-height:23px;max-width:none;padding:3px 2px;font-size:9px;line-height:1.1;border-radius:7px}
+ .paw-kitchen .kitchen-qty{display:grid;grid-template-columns:20px 27px 20px;align-items:center;justify-content:center;gap:2px;width:75px;max-width:75px;margin:0}
+ .paw-kitchen .kitchen-qty button{width:20px;min-width:20px;height:21px;min-height:21px;padding:0;font-size:12px}
+ .paw-kitchen .kitchen-qty span{display:block;width:27px;min-width:27px;max-width:27px;text-align:center;font-size:10px;font-variant-numeric:tabular-nums;line-height:21px;white-space:nowrap}
+ .paw-kitchen .kitchen-boosts{padding:2px 3px;gap:1px 3px;font-size:7px;line-height:1.12;border-radius:5px}
+ .paw-kitchen .kitchen-item:has(.kitchen-boosts)>button{align-self:center}
+ .garden-plot-card .plot-number{font-size:8px;padding:2px 4px}
+ .garden-plot-card .garden-plant-button{padding-top:19px}
+}
+
+/* Batch 70: ingredient market has one compact, consistent purchase toolbar. */
+.paw-kitchen .kitchen-ingredient-item{grid-template-rows:58px minmax(27px,auto) minmax(30px,auto) auto;align-content:stretch}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{display:flex;align-items:center;justify-content:center;gap:5px;width:100%;min-width:0;margin-top:auto}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty{display:grid;grid-template-columns:22px 24px 22px;gap:2px;align-items:center;justify-content:center;flex:0 0 auto;width:auto;max-width:none;margin:0}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty button{width:22px;height:26px;min-width:22px;min-height:26px;padding:0;border-radius:7px}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty span{display:block;width:24px;min-width:24px;max-width:24px;text-align:center;font-variant-numeric:tabular-nums;font-size:10px}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row>button{width:auto;min-width:0;flex:1 1 auto;margin:0;padding:6px 3px;min-height:27px;border-radius:8px;font-size:9px;line-height:1.15;white-space:normal}
+@media(max-width:680px){
+ .paw-kitchen .kitchen-ingredient-item{display:grid;grid-template-columns:30px minmax(0,1fr) minmax(145px,auto);grid-template-rows:auto auto;column-gap:6px;row-gap:2px;min-height:48px;padding:5px 6px;align-items:center}
+ .paw-kitchen .kitchen-ingredient-item .kitchen-art{grid-column:1;grid-row:1 / 3;width:28px;height:28px}
+ .paw-kitchen .kitchen-ingredient-item>b{grid-column:2;grid-row:1;min-height:0;font-size:10px;justify-content:flex-start}
+ .paw-kitchen .kitchen-ingredient-item>small{grid-column:2;grid-row:2;min-height:0;font-size:8px;line-height:1.2}
+ .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{grid-column:3;grid-row:1 / 3;justify-content:flex-end;gap:4px;margin:0}
+ .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty{grid-template-columns:19px 22px 19px;gap:1px}
+ .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty button{width:19px;min-width:19px;height:23px;min-height:23px}
+ .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty span{width:22px;min-width:22px;max-width:22px;font-size:9px}
+ .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row>button{min-height:25px;padding:4px 3px;font-size:9px;max-width:none;width:auto}
+}
+@media(max-width:380px){.paw-kitchen .kitchen-ingredient-item{grid-template-columns:27px minmax(0,1fr) 140px;column-gap:4px;padding:4px}.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{gap:2px}.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row>button{font-size:8px}}
+
+/* Batch 71: compact, uniform horizontal kitchen cards, two across on desktop. */
+.paw-kitchen .kitchen-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:stretch}
+.paw-kitchen .kitchen-item,.paw-kitchen .kitchen-item:has(.kitchen-boosts),.paw-kitchen .kitchen-ingredient-item{display:grid;grid-template-columns:52px minmax(0,1fr) 160px;grid-template-rows:auto auto auto;align-items:center;align-content:center;justify-items:stretch;column-gap:9px;row-gap:3px;min-width:0;min-height:85px;padding:9px;border-radius:11px;text-align:left}
+.paw-kitchen .kitchen-art,.paw-kitchen .kitchen-ingredient-item .kitchen-art{grid-column:1;grid-row:1 / -1;width:50px;height:50px;margin:0;align-self:center}
+.paw-kitchen .kitchen-item>b,.paw-kitchen .kitchen-ingredient-item>b{grid-column:2;grid-row:1;min-height:0;display:block;font-size:12px;line-height:1.2;text-align:left}
+.paw-kitchen .kitchen-item>small,.paw-kitchen .kitchen-ingredient-item>small{grid-column:2;grid-row:2;min-height:0;font-size:10px;line-height:1.3;text-align:left;overflow-wrap:anywhere}
+.paw-kitchen .kitchen-item .kitchen-boosts{grid-column:2;grid-row:3;display:flex;flex-wrap:wrap;gap:3px 8px;width:100%;padding:3px 0;margin:0;background:transparent;font-size:9px;line-height:1.25}
+.paw-kitchen .kitchen-item>button,.paw-kitchen .kitchen-item:has(.kitchen-boosts)>button,.paw-kitchen .kitchen-item:not(:has(.kitchen-qty)):not(:has(.kitchen-boosts))>button{grid-column:3;grid-row:1 / -1;align-self:center;justify-self:stretch;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:100%;max-width:none;min-width:0;min-height:32px;height:32px;margin:0;padding:4px 7px;font-size:10px;line-height:1;white-space:nowrap;border-radius:8px}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{grid-column:3;grid-row:1 / -1;display:grid;grid-template-columns:72px minmax(0,1fr);gap:5px;align-items:center;justify-content:stretch;width:100%;min-width:0;margin:0}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty{display:grid;grid-template-columns:20px 28px 20px;gap:2px;width:72px;min-width:72px;max-width:72px;margin:0;align-items:center;justify-content:center}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty button{box-sizing:border-box;width:20px;min-width:20px;height:30px;min-height:30px;padding:0;font-size:12px}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty span{box-sizing:border-box;display:block;width:28px;min-width:28px;max-width:28px;text-align:center;font-size:11px;line-height:30px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row>button{box-sizing:border-box;display:flex;align-items:center;justify-content:center;width:100%;min-width:0;max-width:none;height:32px;min-height:32px;margin:0;padding:3px 5px;border-radius:8px;font-size:9px;line-height:1.1;white-space:normal;text-align:center}
+@media(max-width:1080px){.paw-kitchen .kitchen-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:680px){.paw-kitchen .kitchen-grid{grid-template-columns:minmax(0,1fr);gap:5px}.paw-kitchen .kitchen-item,.paw-kitchen .kitchen-item:has(.kitchen-boosts),.paw-kitchen .kitchen-ingredient-item{grid-template-columns:32px minmax(0,1fr) 145px;grid-template-rows:auto auto auto;column-gap:6px;row-gap:2px;min-height:53px;padding:5px 6px}.paw-kitchen .kitchen-art,.paw-kitchen .kitchen-ingredient-item .kitchen-art{width:30px;height:30px}.paw-kitchen .kitchen-item>b,.paw-kitchen .kitchen-ingredient-item>b{font-size:10px}.paw-kitchen .kitchen-item>small,.paw-kitchen .kitchen-ingredient-item>small{font-size:8px}.paw-kitchen .kitchen-item .kitchen-boosts{font-size:8px;gap:2px 5px}.paw-kitchen .kitchen-item>button,.paw-kitchen .kitchen-item:has(.kitchen-boosts)>button,.paw-kitchen .kitchen-item:not(:has(.kitchen-qty)):not(:has(.kitchen-boosts))>button{height:27px;min-height:27px;font-size:9px}.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{grid-template-columns:72px minmax(0,1fr);gap:3px}.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row>button{height:27px;min-height:27px;font-size:8px}.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty button{height:25px;min-height:25px}.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty span{line-height:25px}}
+@media(max-width:380px){.paw-kitchen .kitchen-item,.paw-kitchen .kitchen-item:has(.kitchen-boosts),.paw-kitchen .kitchen-ingredient-item{grid-template-columns:28px minmax(0,1fr) 138px;column-gap:4px;padding:4px}.paw-kitchen .kitchen-art,.paw-kitchen .kitchen-ingredient-item .kitchen-art{width:27px;height:27px}.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{gap:2px}}
+
+/* Batch 72: predictable ingredient toolbar and vertically ordered recipe cards. */
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{grid-template-columns:72px minmax(0,1fr);column-gap:10px;padding-right:7px;box-sizing:border-box}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row>button{white-space:nowrap;min-width:0;line-height:1;overflow:hidden;text-overflow:ellipsis}
+.paw-kitchen .kitchen-recipe-card,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts){display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:5px;min-width:0;min-height:0;padding:10px}
+.paw-kitchen .kitchen-recipe-card .kitchen-art{display:flex;align-self:center;justify-content:center;width:56px;height:56px;min-height:56px;margin:0 0 2px}
+.paw-kitchen .kitchen-recipe-card>b{display:block;min-height:0;font-size:12px;line-height:1.2;text-align:center}
+.paw-kitchen .kitchen-recipe-card>small{display:block;min-height:0;font-size:10px;line-height:1.35;text-align:center;overflow-wrap:anywhere}
+.paw-kitchen .kitchen-recipe-card .kitchen-boosts{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:3px 9px;width:100%;min-height:18px;margin:2px 0 0;padding:3px 0;font-size:10px;text-align:center}
+.paw-kitchen .kitchen-recipe-card>button,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts)>button{display:flex;align-items:center;justify-content:center;align-self:stretch;width:100%;max-width:none;min-height:30px;height:30px;margin-top:auto;padding:5px 8px;font-size:10px;white-space:nowrap}
+@media(max-width:680px){.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{gap:5px;padding-right:5px}.paw-kitchen .kitchen-recipe-card,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts){padding:8px;gap:4px}.paw-kitchen .kitchen-recipe-card .kitchen-art{width:44px;height:44px;min-height:44px}.paw-kitchen .kitchen-recipe-card>button,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts)>button{height:28px;min-height:28px}}
+
+/* Batch 73: recipe book is a horizontal LIST, not a vertical tile.
+   Artwork remains at left; details, bonuses, and action stack at right. */
+.paw-kitchen .kitchen-recipe-card,
+.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts){
+  display:grid;grid-template-columns:52px minmax(0,1fr);grid-template-rows:auto auto auto auto;
+  align-items:start;align-content:center;justify-items:stretch;column-gap:10px;row-gap:3px;
+  min-width:0;min-height:0;padding:9px 11px;text-align:left;
+}
+.paw-kitchen .kitchen-recipe-card .kitchen-art{
+  grid-column:1;grid-row:1 / -1;align-self:center;justify-self:center;
+  width:50px;height:50px;min-height:0;margin:0;
+}
+.paw-kitchen .kitchen-recipe-card>b{
+  grid-column:2;grid-row:1;min-height:0;margin:0;font-size:12px;line-height:1.2;text-align:left;
+}
+.paw-kitchen .kitchen-recipe-card>small{
+  grid-column:2;grid-row:2;min-height:0;margin:0;font-size:10px;line-height:1.3;text-align:left;
+}
+.paw-kitchen .kitchen-recipe-card .kitchen-boosts{
+  grid-column:2;grid-row:3;display:flex;flex-flow:row wrap;align-items:center;justify-content:flex-start;
+  gap:2px 9px;width:100%;min-height:0;margin:0;padding:2px 0;background:transparent;
+  font-size:9px;line-height:1.25;text-align:left;
+}
+.paw-kitchen .kitchen-recipe-card>button,
+.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts)>button{
+  grid-column:2;grid-row:4;align-self:start;justify-self:stretch;
+  width:100%;min-width:0;max-width:none;min-height:27px;height:27px;
+  margin:2px 0 0;padding:4px 8px;font-size:10px;line-height:1;white-space:nowrap;
+}
+@media(max-width:680px){
+ .paw-kitchen .kitchen-recipe-card,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts){
+   grid-template-columns:36px minmax(0,1fr);column-gap:7px;row-gap:2px;padding:6px 8px;
+ }
+ .paw-kitchen .kitchen-recipe-card .kitchen-art{width:34px;height:34px;min-height:0}
+ .paw-kitchen .kitchen-recipe-card>b{font-size:10px}
+ .paw-kitchen .kitchen-recipe-card>small{font-size:8px}
+ .paw-kitchen .kitchen-recipe-card .kitchen-boosts{font-size:8px;gap:2px 6px}
+ .paw-kitchen .kitchen-recipe-card>button,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts)>button{height:25px;min-height:25px;font-size:9px}
+}
+
+/* Batch 74: resilient Kitchen controls and recipe actions. */
+.paw-kitchen .kitchen-recipe-card>button,
+.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts)>button{
+  box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+  width:100%;min-width:0;max-width:none;height:auto;min-height:30px;
+  padding:7px 10px;line-height:1.25;white-space:nowrap;overflow:visible;
+}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{
+  box-sizing:border-box;display:grid;grid-template-columns:72px minmax(0,1fr);
+  align-items:center;gap:8px;width:100%;min-width:0;padding:0 7px 0 0;
+}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty{
+  box-sizing:border-box;display:grid;grid-template-columns:20px 28px 20px;
+  gap:2px;width:72px;min-width:72px;max-width:72px;margin:0;
+}
+.paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row>button{
+  box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+  width:100%;min-width:0;max-width:none;min-height:30px;height:auto;
+  padding:7px 4px;line-height:1.15;white-space:nowrap;overflow:visible;
+}
+@media(max-width:680px){
+  /* Keep the original order: quantity selector on the LEFT, Buy on the RIGHT.
+     The toolbar gets its own row so the + control cannot escape the card. */
+  .paw-kitchen .kitchen-ingredient-item{
+    display:grid;grid-template-columns:34px minmax(0,1fr);
+    grid-template-rows:auto auto auto;column-gap:7px;row-gap:2px;
+    min-width:0;padding:6px 8px;
+  }
+  .paw-kitchen .kitchen-ingredient-item .kitchen-art{
+    grid-column:1;grid-row:1 / 3;width:32px;height:32px;align-self:center;
+  }
+  .paw-kitchen .kitchen-ingredient-item>b{grid-column:2;grid-row:1;min-width:0}
+  .paw-kitchen .kitchen-ingredient-item>small{grid-column:2;grid-row:2;min-width:0}
+  .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row{
+    grid-column:1 / -1;grid-row:3;display:grid;
+    grid-template-columns:72px minmax(0,1fr);gap:8px;
+    justify-content:stretch;width:100%;min-width:0;padding:3px 2px 0;
+  }
+  .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty{
+    grid-column:1;grid-row:1;display:grid;grid-template-columns:20px 28px 20px;
+    gap:2px;width:72px;min-width:72px;max-width:72px;
+  }
+  .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty button{
+    box-sizing:border-box;width:20px;min-width:20px;height:26px;min-height:26px;padding:0;
+  }
+  .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row .kitchen-qty span{
+    box-sizing:border-box;width:28px;min-width:28px;max-width:28px;text-align:center;
+    line-height:26px;font-variant-numeric:tabular-nums;
+  }
+  .paw-kitchen .kitchen-ingredient-item .kitchen-purchase-row>button{
+    grid-column:2;grid-row:1;min-width:0;min-height:27px;height:auto;
+    font-size:9px;white-space:nowrap;padding:5px 6px;
+  }
+  .paw-kitchen .kitchen-recipe-card>button,
+  .paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts)>button{
+    min-height:28px;height:auto;line-height:1.2;padding:6px 8px;white-space:nowrap;
+  }
+}
+
+/* Batch 75: one coherent two-column desktop list and single-column mobile list.
+   Ingredient art is the full-height left rail; info + controls stay on the right. */
+.paw-kitchen .kitchen-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:stretch}
+.paw-kitchen .kitchen-ingredient-item,
+.paw-kitchen .kitchen-recipe-card,
+.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts){
+ box-sizing:border-box;display:grid;grid-template-columns:clamp(58px,25%,104px) minmax(0,1fr);
+ grid-template-rows:minmax(0,auto);column-gap:12px;row-gap:0;
+ min-width:0;min-height:108px;padding:9px;align-items:stretch;justify-items:stretch;text-align:left;
+}
+.paw-kitchen .kitchen-ingredient-item>.kitchen-art,
+.paw-kitchen .kitchen-recipe-card>.kitchen-art{
+ box-sizing:border-box;grid-column:1;grid-row:1 / -1;align-self:stretch;justify-self:stretch;
+ display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-height:0;margin:0;padding:5px;
+}
+.paw-kitchen .kitchen-ingredient-item>.kitchen-art svg,
+.paw-kitchen .kitchen-recipe-card>.kitchen-art svg{display:block;width:100%;height:100%;max-height:110px;object-fit:contain}
+.paw-kitchen .kitchen-ingredient-info{grid-column:2;grid-row:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:5px;align-items:stretch}
+.paw-kitchen .kitchen-ingredient-info>b{font-size:12px;line-height:1.2;min-width:0;text-align:left}
+.paw-kitchen .kitchen-ingredient-info>.kitchen-item-meta{display:flex;flex-wrap:wrap;gap:2px 9px;min-width:0;font-size:10px;line-height:1.3;text-align:left}
+.paw-kitchen .kitchen-ingredient-info>.kitchen-item-meta span{display:inline}
+.paw-kitchen .kitchen-ingredient-info>.kitchen-purchase-row{
+ box-sizing:border-box;display:grid;grid-template-columns:76px minmax(0,1fr);
+ align-items:center;gap:9px;min-width:0;width:100%;margin:0;padding:0;
+}
+.paw-kitchen .kitchen-ingredient-info .kitchen-qty{
+ box-sizing:border-box;display:grid;grid-template-columns:22px 28px 22px;gap:2px;
+ align-items:center;justify-content:start;width:76px;min-width:76px;max-width:76px;margin:0;padding:0;
+}
+.paw-kitchen .kitchen-ingredient-info .kitchen-qty button{box-sizing:border-box;width:22px;min-width:22px;height:30px;min-height:30px;padding:0}
+.paw-kitchen .kitchen-ingredient-info .kitchen-qty span{box-sizing:border-box;display:block;width:28px;min-width:28px;max-width:28px;text-align:center;line-height:30px;font-variant-numeric:tabular-nums}
+.paw-kitchen .kitchen-ingredient-info .kitchen-purchase-row>button{
+ box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+ min-width:0;width:100%;max-width:none;min-height:30px;height:auto;padding:7px 5px;
+ font-size:10px;line-height:1.2;white-space:nowrap;overflow:visible;
+}
+/* Recipe remains a horizontal list: art left, all details and action right. */
+.paw-kitchen .kitchen-recipe-card,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts){
+ grid-template-rows:auto auto auto auto;align-content:stretch;row-gap:4px;
+}
+.paw-kitchen .kitchen-recipe-card>.kitchen-art{grid-column:1;grid-row:1 / 5}
+.paw-kitchen .kitchen-recipe-card>b{grid-column:2;grid-row:1;min-width:0;text-align:left;font-size:12px}
+.paw-kitchen .kitchen-recipe-card>small{grid-column:2;grid-row:2;min-width:0;text-align:left;font-size:10px}
+.paw-kitchen .kitchen-recipe-card .kitchen-boosts{
+ grid-column:2;grid-row:3;display:flex;flex-wrap:wrap;gap:2px 8px;
+ min-width:0;width:100%;margin:0;padding:1px 0;justify-content:flex-start;text-align:left;font-size:9px;
+}
+.paw-kitchen .kitchen-recipe-card>button,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts)>button{
+ grid-column:2;grid-row:4;box-sizing:border-box;display:flex;align-items:center;justify-content:center;
+ width:100%;max-width:none;min-width:0;min-height:30px;height:auto;margin:0;padding:7px 8px;
+ white-space:nowrap;font-size:10px;line-height:1.2;
+}
+@media(max-width:800px){.paw-kitchen .kitchen-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:680px){
+ .paw-kitchen .kitchen-grid{grid-template-columns:minmax(0,1fr);gap:6px}
+ .paw-kitchen .kitchen-ingredient-item,.paw-kitchen .kitchen-recipe-card,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts){
+  grid-template-columns:clamp(55px,23%,85px) minmax(0,1fr);min-height:92px;column-gap:9px;padding:7px;
+ }
+ .paw-kitchen .kitchen-ingredient-info{grid-column:2;grid-row:1;gap:4px}
+ .paw-kitchen .kitchen-ingredient-info>b,.paw-kitchen .kitchen-recipe-card>b{font-size:11px}
+ .paw-kitchen .kitchen-ingredient-info>.kitchen-item-meta,.paw-kitchen .kitchen-recipe-card>small{font-size:9px}
+ .paw-kitchen .kitchen-ingredient-info>.kitchen-purchase-row{grid-template-columns:76px minmax(0,1fr);gap:7px;padding:0}
+ .paw-kitchen .kitchen-ingredient-info .kitchen-purchase-row>button{font-size:9px;min-height:29px;padding:6px 3px}
+ .paw-kitchen .kitchen-recipe-card .kitchen-boosts{font-size:9px}
+ .paw-kitchen .kitchen-recipe-card>button,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts)>button{font-size:10px;min-height:28px;padding:6px}
+}
+@media(max-width:360px){
+ .paw-kitchen .kitchen-ingredient-item,.paw-kitchen .kitchen-recipe-card,.paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts){grid-template-columns:48px minmax(0,1fr);column-gap:6px;padding:6px}
+ .paw-kitchen .kitchen-ingredient-info>.kitchen-purchase-row{gap:4px}
+ .paw-kitchen .kitchen-ingredient-info .kitchen-purchase-row>button{font-size:8px}
+}
+
+/* Batch 77: room-side meal service and available-meals-only popup. */
+.paw-themed-room{position:relative}
+.paw-room-meals-trigger{position:absolute;z-index:9;bottom:14px;left:14px;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:8px 13px;border-radius:12px;border:1px solid #e8bacb;background:#fff8fb;color:#88566c;font-weight:800;box-shadow:0 4px 12px #62415429;cursor:pointer}
+.paw-meals-backdrop{position:fixed;inset:0;z-index:2500;display:flex;align-items:center;justify-content:center;padding:16px;background:#251823a6}
+.paw-meals-modal{width:min(500px,100%);max-height:min(80vh,700px);overflow:auto;background:var(--card,#fffafc);color:var(--text,#624658);border-radius:19px;padding:18px;box-shadow:0 20px 60px #160c183d}
+.paw-meals-header{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:14px}.paw-meals-header h3{margin:3px 0}.paw-meals-header small{font-size:10px;letter-spacing:.1em}.paw-meals-header button{min-width:35px}.paw-meals-empty{font-size:13px;line-height:1.5}
+.paw-meals-list{display:grid;gap:9px}.paw-meal-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px;border:1px solid #ecd9e3;border-radius:13px;background:#fff9fc}.paw-meal-art{width:64px;height:64px}.paw-meal-art svg{width:100%;height:100%}.paw-meal-info{display:grid;gap:3px;min-width:0}.paw-meal-info b{font-size:13px}.paw-meal-info small,.paw-meal-info span{font-size:11px;line-height:1.3}.paw-meal-row>button{white-space:nowrap;padding:9px 13px}
+@media(max-width:430px){.paw-room-meals-trigger{bottom:9px;left:9px;padding:7px 10px;font-size:12px}.paw-meal-row{grid-template-columns:49px minmax(0,1fr) auto;gap:7px;padding:7px}.paw-meal-art{width:49px;height:49px}.paw-meal-row>button{padding:7px 9px;font-size:11px}}
+
+/* Batch 78: icon-only feeding and interactive care play picker */
+.paw-room-meals-trigger{width:43px;height:43px;min-height:43px;padding:0;border-radius:14px;gap:0}
+.paw-play-picker{max-width:510px;width:min(94vw,510px)}
+.paw-play-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
+.paw-play-options button{display:flex;align-items:center;gap:9px;min-height:53px;text-align:left;padding:10px 12px;border-radius:13px;border:1px solid #e8c8d7;background:#fff8fc;color:#7d4862;font-weight:750;cursor:pointer}
+.paw-play-options button:hover{background:#fbe8f2}
+.paw-play-options button svg{flex-shrink:0}
+@media(max-width:380px){.paw-play-options{grid-template-columns:1fr}.paw-room-meals-trigger{width:39px;height:39px;min-height:39px;padding:0}}
+
+/* Batch 79: room action dock and persistent sleep mode */
+.paw-room-action{position:absolute;bottom:14px;z-index:12;width:43px;height:43px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:1px solid #e8bacb;background:#fff8fb;color:#88566c;box-shadow:0 4px 12px #62415429;cursor:pointer;padding:0}
+.paw-room-play{left:65px}.paw-room-nap{left:116px}.paw-room-nap.active{background:#ded3f4;color:#654888}
+.paw-room-sleeping::after{content:"";position:absolute;inset:0;pointer-events:none;background:rgba(23,19,55,.40);z-index:7;border-radius:inherit}
+.paw-room-sleeping .wanderer.own{z-index:15!important}
+.paw-room-sleeping .wanderer.own .pet-body{filter:brightness(.78)}
+.paw-sleep-zzz{position:absolute;right:-8px;top:-22px;font-size:24px;font-weight:900;color:#d6c6ff;text-shadow:0 1px 5px #34264d;animation:paw-sleep-float 2.4s ease-in-out infinite}
+.paw-sleep-zzz sup{font-size:14px}
+@keyframes paw-sleep-float{50%{transform:translateY(-8px);opacity:.6}}
+.paw-sleep-status{position:absolute;bottom:65px;left:14px;z-index:14;display:flex;align-items:center;gap:5px;border-radius:9px;background:#f8f0ff;color:#604579;font-size:11px;font-weight:750;padding:5px 8px;box-shadow:0 3px 10px #0002}
+@media(max-width:430px){.paw-room-action{bottom:9px;width:39px;height:39px}.paw-room-play{left:55px}.paw-room-nap{left:101px}.paw-sleep-status{left:9px;bottom:55px;font-size:10px;max-width:calc(100% - 20px)}}
+
+/* Batch 80: darken the complete room, not only the pet; keep interactive dock usable. */
+.living-room.paw-room-sleeping{isolation:isolate;filter:none!important}
+.living-room.paw-room-sleeping::after{content:""!important;position:absolute!important;inset:0!important;background:rgba(15,16,40,.55)!important;z-index:50!important;pointer-events:none!important;border-radius:inherit}
+.living-room.paw-room-sleeping .wanderer.own{z-index:55!important}
+.living-room.paw-room-sleeping .paw-room-action,.living-room.paw-room-sleeping .paw-room-meals-trigger,.living-room.paw-room-sleeping .paw-sleep-status{z-index:60!important}
+.living-room.paw-room-sleeping .wanderer.own .pet-body{filter:brightness(.7)}
+
+/* Batch 81: explicit night overlay, independent of themed room pseudo-elements. */
+.living-room.paw-room-sleeping::after{content:none!important;display:none!important}
+.living-room .paw-room-night-overlay{position:absolute!important;inset:0!important;width:100%;height:100%;background:rgba(12,14,37,.64)!important;z-index:900!important;pointer-events:none!important;border-radius:inherit}
+.living-room.paw-room-sleeping .wanderer.own{z-index:920!important}
+.living-room.paw-room-sleeping .paw-room-action,.living-room.paw-room-sleeping .paw-room-meals-trigger,.living-room.paw-room-sleeping .paw-sleep-status{position:absolute!important;z-index:1000!important;pointer-events:auto!important}
+.living-room.paw-room-sleeping .paw-room-nap{cursor:pointer!important;opacity:1!important}
+
+/* Batch 82: keep sleep controls operable on desktop across room themes. */
+.living-room.paw-room-sleeping .paw-room-night-overlay{pointer-events:none!important}
+.living-room.paw-room-sleeping button.paw-room-nap{z-index:2147483000!important;pointer-events:auto!important;isolation:isolate;transform:translateZ(0)}
+.room-header .paw-room-header-right{display:inline-flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.room-header .paw-wake-header{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border:1px solid #b8a1d8;border-radius:9px;background:#efe6ff;color:#604579;font-weight:800;font-size:12px;cursor:pointer;position:relative;z-index:2}
+.room-header .paw-wake-header:disabled{opacity:.5;cursor:wait}
+
+/* Batch 83: wake controls never inherit global action busy state or night overlay hit-testing. */
+.room-header{position:relative;z-index:1010!important}
+.room-header .paw-wake-header{position:relative;z-index:1011!important;pointer-events:auto!important;touch-action:manipulation}
+.living-room .paw-room-night-overlay{pointer-events:none!important}
+.living-room .paw-room-nap{pointer-events:auto!important;touch-action:manipulation}
+
+/* Batch 87: interactive bathing beside sleep. */
+.paw-room-bathe{left:167px}.paw-room-bathe.active{background:#d9f3fa;color:#236d88;border-color:#86d1e3}
+.paw-bath-hint{position:absolute;left:14px;bottom:65px;z-index:1002;display:flex;align-items:center;gap:5px;background:#f1fcff;color:#316b82;border:1px solid #b8e5f1;border-radius:10px;padding:6px 9px;font-size:11px;font-weight:700;pointer-events:none}
+.paw-scrub-target{touch-action:none;cursor:grab;outline:2px dashed #8cd6e7;outline-offset:4px;border-radius:40%}
+.paw-scrub-target:active{cursor:grabbing}
+.living-room.paw-room-sleeping .paw-room-bathe,.living-room.paw-room-sleeping .paw-bath-hint{z-index:1002!important}
+@media(max-width:430px){.paw-room-bathe{left:147px}.paw-bath-hint{left:9px;bottom:55px;font-size:10px}}
+
+/* Batch 88: allow real mouse/touch events to reach the pet while bathing.
+   The original .wanderer uses pointer-events:none, preventing scrubbing entirely. */
+.living-room .wanderer.own:has(.paw-scrub-target){pointer-events:auto!important}
+.living-room .wanderer.own .paw-scrub-target{pointer-events:auto!important;touch-action:none!important;user-select:none;-webkit-user-select:none;cursor:grab}
+.living-room .wanderer.own .paw-scrub-target:active{cursor:grabbing}
+.living-room .wanderer.own .paw-scrub-target svg,.living-room .wanderer.own .paw-scrub-target svg *{pointer-events:none}
+
+/* Batch 89: interactive room cuddles */
+.paw-room-cuddle{position:relative;z-index:35}
+.paw-room-cuddle.active{background:#ffe4ed!important;color:#be426f!important;border-color:#eaa6bf!important}
+.paw-cuddle-hint{position:absolute;left:12px;bottom:68px;z-index:35;display:flex;align-items:center;gap:5px;padding:6px 10px;border-radius:12px;background:#fff6faed;color:#9d3d65;font-size:11px;pointer-events:none}
+.paw-cuddle-target{touch-action:none!important;cursor:grab!important;pointer-events:auto!important}
+.paw-cuddle-target:active{cursor:grabbing!important}
+.paw-cuddle-hearts{position:absolute;top:-14px;left:35%;color:#ff5896;font-size:23px;pointer-events:none;animation:pawCuddleFloat 1.2s ease-in-out infinite alternate}
+@keyframes pawCuddleFloat{to{transform:translateY(-13px);opacity:.5}}
+
+/* Batch 90: Keep Cuddle in the same bottom-left dock as Feed, Play, Sleep, Bath.
+   Batch 89 accidentally used position:relative, pushing it into document flow. */
+.living-room button.paw-room-cuddle{position:absolute!important;left:218px;bottom:14px;z-index:35}
+@media(max-width:430px){.living-room button.paw-room-cuddle{left:193px;bottom:9px}}
+.living-room.paw-room-sleeping button.paw-room-cuddle{z-index:1002!important;pointer-events:auto!important}

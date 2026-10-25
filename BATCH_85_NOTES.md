@@ -1,0 +1,1 @@
+Batch 85: Fixed sleep toggle at full energy. Starting sleep with 100 energy now sets energy to 99 so automatic wake logic does not immediately cancel the nap. Subsequent sleep toggle wakes the pet. Room sleep button no longer receives a disabled attribute; in-flight requests remain protected by a ref. Deploy server to Render and client to Vercel. No migration.
