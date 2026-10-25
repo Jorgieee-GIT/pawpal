@@ -1,0 +1,20 @@
+PAWPAL ADMIN PORTAL — SETUP
+
+1. Pick a private admin username and a strong, unique admin password.
+2. In the server folder (with npm dependencies installed), generate a bcrypt hash:
+   node -e "const bcrypt=require('bcryptjs'); console.log(bcrypt.hashSync('REPLACE_WITH_YOUR_STRONG_ADMIN_PASSWORD',12))"
+   Never publish the password or hash.
+3. Add the following variables to your BACKEND environment (server/.env locally,
+   and your backend hosting provider's Environment Variables for production):
+   ADMIN_USERNAME=your_private_admin_username
+   ADMIN_PASSWORD_HASH=$2b$12$PASTE_THE_FULL_GENERATED_HASH_HERE
+   Keep your existing JWT_SECRET and DATABASE_URL.
+4. Restart/redeploy the backend and redeploy the frontend.
+5. Visit https://YOUR-PAWPAL-WEBSITE/admin (or http://localhost:5173/admin).
+   Sign in with ADMIN_USERNAME and the original password used to generate the hash.
+
+There is no user/admin switch. Normal player logins cannot access admin endpoints.
+Admin credentials are separate from player accounts, and are not stored in the users table.
+The admin can view players and pets and set new temporary player passwords, but
+cannot see original passwords. No new database migrations or packages required.
+For production, use HTTPS, do not commit .env, and limit who knows the admin credentials.

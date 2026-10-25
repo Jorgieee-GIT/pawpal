@@ -11,6 +11,35 @@ export default function ArcadeCanvas({kind,species='cat',color='classic',breed='
  const move=(dir:number)=>{targetLane=Math.max(0,Math.min(2,targetLane+dir))};
  const key=(e:KeyboardEvent)=>{if(['Space','ArrowUp','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.repeat)return;if(e.code==='Space'||e.code==='ArrowUp')jump();if(e.code==='ArrowLeft')move(-1);if(e.code==='ArrowRight')move(1)};
  let touchX=0;const touchStart=(e:TouchEvent)=>{touchX=e.touches[0].clientX};const touchEnd=(e:TouchEvent)=>{if(kind==='dino')jump();else{const dx=e.changedTouches[0].clientX-touchX;if(Math.abs(dx)>20)move(dx>0?1:-1)}};
+ // On mobile, the dimmed backdrop around the game modal is also a play surface.
+ // Start only on the overlay itself, never on modal buttons or other controls.
+ let outsideTouchId:number|null=null;
+ let outsideStartX=0;
+ let outsideStartY=0;
+ const outsideStart=(e:TouchEvent)=>{
+  if(ended||!e.target||!(e.target instanceof Element)||!e.target.classList.contains('overlay'))return;
+  const finger=e.changedTouches[0];if(!finger)return;
+  outsideTouchId=finger.identifier;outsideStartX=finger.clientX;outsideStartY=finger.clientY;
+ };
+ const outsideMove=(e:TouchEvent)=>{
+  if(outsideTouchId===null||kind!=='runner')return;
+  const finger=Array.from(e.changedTouches).find(t=>t.identifier===outsideTouchId);
+  if(finger&&Math.abs(finger.clientX-outsideStartX)>12)e.preventDefault();
+ };
+ const outsideEnd=(e:TouchEvent)=>{
+  if(outsideTouchId===null||ended)return;
+  const finger=Array.from(e.changedTouches).find(t=>t.identifier===outsideTouchId);
+  if(!finger)return;
+  outsideTouchId=null;
+  if(kind==='dino'){jump();return}
+  const dx=finger.clientX-outsideStartX,dy=finger.clientY-outsideStartY;
+  if(Math.abs(dx)>24&&Math.abs(dx)>Math.abs(dy)*1.15)move(dx>0?1:-1);
+ };
+ const outsideCancel=()=>{outsideTouchId=null};
+ window.addEventListener('touchstart',outsideStart,{passive:true});
+ window.addEventListener('touchmove',outsideMove,{passive:false});
+ window.addEventListener('touchend',outsideEnd,{passive:true});
+ window.addEventListener('touchcancel',outsideCancel,{passive:true});
  const click=()=>{if(kind==='dino')jump()};window.addEventListener('keydown',key);c.addEventListener('touchstart',touchStart,{passive:true});c.addEventListener('touchend',touchEnd,{passive:true});c.addEventListener('pointerdown',click);
  const round=(x:number,y:number,w:number,h:number,r:number,color:string)=>{ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()};
  const cloud=(x:number,y:number,s:number)=>{ctx.fillStyle='#fffafc';ctx.beginPath();ctx.ellipse(x,y,40*s,16*s,0,0,Math.PI*2);ctx.ellipse(x-20*s,y-9*s,20*s,18*s,0,0,Math.PI*2);ctx.ellipse(x+10*s,y-12*s,25*s,20*s,0,0,Math.PI*2);ctx.fill()};
@@ -37,7 +66,7 @@ export default function ArcadeCanvas({kind,species='cat',color='classic',breed='
  round(14,12,155,30,14,'#fff9f6');ctx.font='bold 16px system-ui';ctx.fillStyle='#866178';ctx.fillText(`Score ${score}`,28,33);
  if(!ended)raf=requestAnimationFrame(render);
  }
- raf=requestAnimationFrame(render);return()=>{cancelAnimationFrame(raf);window.removeEventListener('keydown',key);c.removeEventListener('touchstart',touchStart);c.removeEventListener('touchend',touchEnd);c.removeEventListener('pointerdown',click)};
+ raf=requestAnimationFrame(render);return()=>{cancelAnimationFrame(raf);window.removeEventListener('keydown',key);window.removeEventListener('touchstart',outsideStart);window.removeEventListener('touchmove',outsideMove);window.removeEventListener('touchend',outsideEnd);window.removeEventListener('touchcancel',outsideCancel);c.removeEventListener('touchstart',touchStart);c.removeEventListener('touchend',touchEnd);c.removeEventListener('pointerdown',click)};
  },[kind]);
  return <div className="polished-arcade"><div className="arcade-stage"><canvas ref={canvas} aria-label={kind==='dino'?'Jump over cacti':'Three lane perspective runner'}/><div className="arcade-pet-avatar" ref={avatar}><PetArt species={species} color={color} breed={breed} cosmetic={cosmetic}/></div></div><div className="arcade-controls">{kind==='dino'?<span>Space / ↑ / tap to jump</span>:<span>← → / swipe to change lanes</span>}</div></div>
 }

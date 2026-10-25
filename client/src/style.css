@@ -208,3 +208,280 @@
 .room-footer:has(>button:only-child){justify-content:flex-end}
 @media(max-width:800px){.paw-stats-hud{display:block;top:4px;padding:11px 12px}.paw-hud-title{display:flex;align-items:baseline;gap:8px;max-width:none;margin-bottom:8px}.paw-hud-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px}.paw-hud-label{font-size:10px}.paw-hud-label b{font-size:10px}}
 @media(max-width:390px){.paw-hud-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.paw-stats-hud{padding:9px}}
+
+/* Batch 18 — explicit cosmetic shop equipment state and quieter notifications */
+.v8-item.paw-cosmetic-equipped{border:2px solid #b9a0d9!important;background:linear-gradient(155deg,#fff9fe,#f2edff)!important;box-shadow:0 5px 16px #b69bd322}
+.paw-equipped-label{display:inline-flex;align-items:center;justify-content:center;align-self:center;border-radius:999px;padding:5px 12px;background:#e7ddf7;color:#7454a0!important;font-weight:800;font-size:12px}
+.v8-item.paw-cosmetic-equipped .paw-wardrobe-unequip{background:#f5eafa;border:1px solid #d6bde9;color:#845da0;border-radius:11px;font-weight:800}
+.paw-toast{background:rgba(255,242,249,.82)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 5px 18px #5b425421!important}
+.paw-dark .paw-toast{background:rgba(56,44,60,.83)!important}
+.paw-dark .v8-item.paw-cosmetic-equipped{background:linear-gradient(155deg,#493950,#52415f)!important;border-color:#b89acb!important}
+.paw-dark .paw-equipped-label{background:#6a537e;color:#fff2ff!important}
+@media(max-width:700px){.paw-toast{top:64px!important;left:auto!important;right:10px!important;max-width:min(265px,calc(100vw - 20px))!important;width:max-content!important;padding:8px 11px!important;font-size:12px!important;line-height:1.35;border-radius:11px!important;gap:8px;box-shadow:0 3px 12px #5b425421!important}.paw-toast button{font-size:16px!important;margin-left:4px!important;padding:0 3px!important}.paw-toast:not(:has(button)){max-width:265px!important}}
+
+/* Batch 18: translucent compact notifications. Explicitly override earlier desktop/mobile rules. */
+.paw-toast.notice{
+  opacity:.88!important;
+  background:rgba(255,242,249,.62)!important;
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border:1px solid rgba(228,169,196,.6)!important;
+  box-shadow:0 4px 16px rgba(76,49,67,.12)!important;
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;line-height:1.35;padding:10px 13px;
+  width:max-content;max-width:min(360px,calc(100vw - 28px));
+}
+.paw-dark .paw-toast.notice{background:rgba(56,44,60,.65)!important}
+.paw-toast .paw-svg-icon,.paw-toast svg{flex-shrink:0}
+.paw-toast button{margin-left:auto}
+@media(max-width:700px){
+ .paw-toast.notice{opacity:.85!important;background:rgba(255,242,249,.6)!important;
+   top:65px!important;right:8px!important;left:auto!important;
+   width:max-content!important;max-width:min(245px,calc(100vw - 16px))!important;
+   padding:7px 9px!important;font-size:11px!important;border-radius:10px!important;
+   box-shadow:0 3px 12px rgba(76,49,67,.1)!important}
+ .paw-dark .paw-toast.notice{background:rgba(56,44,60,.66)!important}
+}
+.v8-item{position:relative}
+.paw-equipped-badge{position:absolute;top:8px;right:8px;z-index:2;display:inline-flex;align-items:center;gap:3px;
+ padding:4px 7px;background:#e6f6e9;border:1px solid #9acda7;border-radius:999px;color:#367b51;font-size:11px;font-weight:800}
+.paw-dark .paw-equipped-badge{background:#28533d;color:#d6ffe3;border-color:#47825e}
+.paw-equipped-label{display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.v8-slots button b{display:flex;align-items:center;justify-content:center;gap:5px;text-transform:capitalize}
+.panel>h2{display:flex;align-items:center;gap:8px}
+.logo{display:flex;align-items:center;gap:6px}
+
+/* Batch 18 refinement: brand hierarchy, unlock affordance, dense postcard grid */
+.logo{display:flex;align-items:center;gap:9px}
+.logo .paw-logo-copy{display:flex;flex-direction:column;align-items:flex-start;gap:0;line-height:1.05}
+.logo .paw-logo-copy b{font-size:25px;line-height:1.1}
+.logo .paw-logo-copy span{display:block;position:static;margin:3px 0 0;font-size:9px;letter-spacing:1.2px;line-height:1.15}
+.product.paw-level-locked{position:relative;isolation:isolate;border-style:dashed;border-color:#d5b9ce;background:#f8f2f7}
+.product.paw-level-locked>span,.product.paw-level-locked>b{filter:grayscale(.65);opacity:.46}
+.product.paw-level-locked>small{color:#9b6685;font-weight:800}
+.product.paw-level-locked button:disabled{opacity:.7;background:#e8dbe6;color:#846a7c;cursor:not-allowed}
+.paw-level-overlay{display:flex;align-items:center;justify-content:center;gap:6px;padding:7px 10px;border-radius:10px;background:#e8d9ea;color:#76516f;font-size:12px;font-weight:900}
+.paw-dark .product.paw-level-locked{background:#332b37!important;border-color:#765a78!important}
+.paw-dark .paw-level-overlay{background:#5d4862;color:#f9e2f3}
+.paw-mail-inbox{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.paw-mail-letter{padding:10px;border-radius:13px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.paw-mail-letter .paw-postcard{padding:6px;border-radius:11px}
+.paw-mail-letter .paw-postcard svg{max-height:65px}
+.paw-mail-letter .paw-postcard b{font-size:12px}
+.paw-mail-letter .paw-postcard p{font-size:11px;line-height:1.3;overflow-wrap:anywhere}
+.paw-mail-meta{margin:0;gap:4px}
+.paw-mail-meta b{font-size:12px;overflow-wrap:anywhere}
+.paw-mail-meta small{font-size:10px}
+.paw-mail-actions{margin-top:auto;flex-wrap:wrap;gap:4px}
+.paw-mail-actions button{font-size:11px;padding:7px 9px}
+@media(max-width:850px){.paw-mail-inbox{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.logo .paw-logo-copy b{font-size:21px}.logo .paw-logo-copy span{font-size:7px;letter-spacing:.65px}.paw-mail-inbox{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.paw-mail-letter{padding:8px}.paw-mail-letter .paw-postcard svg{max-height:52px}}
+
+/* Batch 18: compact postcard chooser and friends controls */
+.paw-friends-panel .search-row{display:flex;flex-wrap:nowrap;align-items:stretch;gap:8px;max-width:520px}
+.paw-friends-panel .search-row input{width:auto;min-width:0;flex:1 1 auto;padding:9px 12px;border-radius:10px;font-size:13px}
+.paw-friends-panel .search-row button{width:auto;flex:0 0 auto;white-space:nowrap}
+.paw-friends-panel .friend-row{padding:9px 0;gap:8px;flex-wrap:wrap}
+.paw-friends-panel .friend-row>b{font-size:13px;min-width:0;overflow-wrap:anywhere}
+.paw-friend-actions{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+/* Standard compact button scale, matching the room/atmosphere tabs. */
+.paw-friends-panel .friend-row button,
+.paw-friends-panel .search-row button,
+.paw-friends-panel .paw-mail-send,
+.paw-friends-panel .paw-mail-actions button,
+.paw-friends-panel .secondary,
+.paw-friends-panel .primary{font-size:12px!important;padding:8px 12px!important;border-radius:10px!important;min-height:32px;line-height:1.2;box-shadow:none!important}
+.paw-friends-panel .paw-mail-compose{padding:12px;gap:9px}
+.paw-friends-panel .paw-mail-compose select{padding:9px 11px;max-width:300px;font-size:13px}
+.paw-friends-panel .paw-postcard-selector{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.paw-friends-panel .paw-postcard-selector .paw-design-choice{padding:2px!important;border-radius:12px;min-width:0}
+.paw-friends-panel .paw-postcard-selector .paw-postcard{padding:6px 4px;border-radius:11px;min-width:0}
+.paw-friends-panel .paw-postcard-selector .paw-postcard svg{max-height:60px;width:100%}
+.paw-friends-panel .paw-postcard-selector .paw-postcard b{font-size:11px;line-height:1.2}
+.paw-friends-panel .paw-postcard-selector .paw-postcard p{font-size:10px;line-height:1.25;margin:3px 0;overflow-wrap:anywhere}
+@media(max-width:680px){
+ .paw-friends-panel .search-row{flex-wrap:nowrap!important;gap:6px;max-width:none}
+ .paw-friends-panel .search-row input{width:0;min-width:0;padding:8px 9px;font-size:12px}
+ .paw-friends-panel .search-row button{width:auto!important;flex:0 0 auto;padding:8px 10px!important}
+ .paw-friends-panel .friend-row{align-items:center;padding:8px 0}
+ .paw-friends-panel .paw-postcard-selector{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .paw-friends-panel .paw-postcard-selector .paw-postcard svg{max-height:55px}
+ .paw-friend-actions{gap:5px}
+ .paw-friends-panel .friend-row button{padding:7px 9px!important;font-size:11px!important}
+}
+
+/* Batch 18: one compact button system across the site.
+   Deliberately exclude game boards, pet selectors, icon-only controls, and artwork tiles. */
+:root{--paw-button-font:12px;--paw-button-py:8px;--paw-button-px:11px;--paw-button-radius:11px}
+.main-column .primary,.main-column .secondary,
+.main-column .actions button,.main-column .daily button,
+.main-column .friend-row button,.main-column .search-row button,
+.main-column .product button,.main-column .paw-market-tabs button,
+.main-column .paw-room-tools button,.main-column .paw-room-dropdown-trigger,
+.main-column .paw-furniture-editor-top button,.main-column .paw-furniture-placed button,
+.main-column .paw-mail-actions button,.main-column .paw-mail-send,
+.main-column .mission-tabs button,.main-column .mission-claim-button,
+.main-column .paw-kitchen .kitchen-item>button,
+.main-column .paw-kitchen .kitchen-actions button,
+.main-column .paw-room-tab,
+.game-modal .primary,.game-modal .secondary,
+.paw-modal .primary,.paw-modal .secondary,
+.sidebar .daily button{font-size:var(--paw-button-font)!important;padding:var(--paw-button-py) var(--paw-button-px)!important;line-height:1.25!important;min-height:34px;border-radius:var(--paw-button-radius)!important;width:auto;max-width:100%;box-shadow:none}
+/* Care actions stay recognizable as actions, but not oversized cards. */
+.main-column .care-grid button{font-size:12px!important;padding:9px 11px!important;min-height:65px;border-radius:11px!important;gap:3px}
+.main-column .care-grid button>span{min-height:24px}
+/* Make the search control span the whole Friends panel on desktop. */
+.main-column .paw-friends-panel .search-row{display:flex!important;align-items:stretch;flex-wrap:nowrap!important;width:100%!important;max-width:none!important;gap:8px}
+.main-column .paw-friends-panel .search-row input{flex:1 1 0!important;width:0!important;min-width:0!important;max-width:none!important;font-size:13px;padding:8px 12px}
+.main-column .paw-friends-panel .search-row button{flex:0 0 auto!important;width:auto!important;white-space:nowrap}
+/* Match Decorate to the Living Room and Atmosphere controls. */
+.main-column .paw-furniture-editor-top button{font-weight:800!important;background:#fff8fc;color:#8c4c75;border:1px solid #e5b4cf!important}
+/* Preserve sufficient finger targets on touch screens without reverting to huge buttons. */
+@media(max-width:700px){
+ :root{--paw-button-font:11px;--paw-button-py:8px;--paw-button-px:10px}
+ .main-column .paw-friends-panel .search-row{gap:6px}
+ .main-column .paw-friends-panel .search-row input{padding:8px 9px}
+ .main-column .paw-friends-panel .search-row button{padding:8px 10px!important}
+}
+
+/* Batch 18: fixed theme SVG visibility, animated mobile navigation and aligned arcade cards */
+.theme-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 38px!important;width:38px!important;min-width:38px!important;height:38px!important;padding:0!important}
+.theme-toggle svg{display:block!important;width:20px!important;height:20px!important;visibility:visible!important;opacity:1!important;flex-shrink:0}
+.mobile-menu-toggle .paw-hamburger-glyph{width:20px;height:18px;display:inline-flex;flex-direction:column;align-items:center;justify-content:space-between;vertical-align:middle;margin-right:7px}
+.paw-hamburger-glyph i{width:19px;height:2.5px;background:currentColor;border-radius:10px;display:block;transform-origin:center;transition:transform .25s ease,opacity .18s ease}
+.paw-hamburger-glyph.is-open i:first-child{transform:translateY(7.75px) rotate(45deg)}
+.paw-hamburger-glyph.is-open i:nth-child(2){opacity:0;transform:scaleX(.1)}
+.paw-hamburger-glyph.is-open i:last-child{transform:translateY(-7.75px) rotate(-45deg)}
+@media(max-width:700px){.sidebar.menu-open{display:block!important;animation:paw-menu-reveal .25s cubic-bezier(.2,.8,.2,1) both;transform-origin:top center}.mobile-menu-toggle{display:inline-flex;align-items:center;justify-content:center;gap:5px}.mobile-menu-toggle .paw-hamburger-glyph{margin-right:2px}}
+@keyframes paw-menu-reveal{from{opacity:0;transform:translateY(-9px) scaleY(.97)}to{opacity:1;transform:translateY(0) scaleY(1)}}
+.games-grid{align-items:stretch;grid-auto-rows:1fr}
+.games-grid>button{height:100%;min-height:182px;display:grid;grid-template-rows:55px minmax(38px,auto) 1fr auto;align-items:center;justify-items:center;align-content:stretch;gap:7px;min-width:0}
+.games-grid>button>.paw-game-art{height:55px;display:flex;align-items:center;justify-content:center}
+.games-grid>button>b{font-size:14px;line-height:1.3;min-height:38px;display:flex;align-items:center;justify-content:center;text-align:center;overflow-wrap:break-word}
+.games-grid>button>small{align-self:start;font-size:11px;line-height:1.3;text-align:center}
+.games-grid>button>strong{align-self:end}
+@media(max-width:600px){.games-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px}.games-grid>button{padding:11px 6px!important;min-height:170px;grid-template-rows:49px 40px 1fr auto}.games-grid>button>b{font-size:12px;min-height:40px}.games-grid>button>.paw-game-art{height:49px}.games-grid>button>.paw-game-art svg{width:30px;height:30px}}
+@media(prefers-reduced-motion:reduce){.paw-hamburger-glyph i,.sidebar.menu-open{animation:none!important;transition:none!important}}
+
+/* Batch 18: stable mobile menu SVG, preserving the dropdown animation */
+.mobile-menu-toggle .paw-menu-icon{width:20px;height:20px;display:grid;place-items:center;margin:0!important;flex:0 0 20px;line-height:1}
+.mobile-menu-toggle .paw-menu-icon svg{width:20px!important;height:20px!important;display:block;stroke:currentColor;flex-shrink:0;animation:paw-menu-icon-in .18s ease-out}
+@keyframes paw-menu-icon-in{from{opacity:.45;transform:scale(.82) rotate(-15deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+/* Lock the wardrobe hero's dimensions while eye and clothing layers change. */
+.v8-preview{min-width:0;align-items:center}
+.v8-preview>.v8-pet{flex:0 0 190px;width:190px;min-width:0;max-width:none;aspect-ratio:1/1;height:190px;display:grid;place-items:center;overflow:visible}
+.v8-preview>.v8-pet>.pet-svg,.v8-preview>.v8-pet>svg{display:block!important;width:100%!important;height:100%!important;max-width:100%;max-height:100%;aspect-ratio:1/1;object-fit:contain;flex:none}
+.v8-preview>div:last-child{min-width:0;flex:1;overflow-wrap:anywhere}
+@media(max-width:560px){.v8-preview>.v8-pet{flex:0 0 clamp(95px,32vw,130px);width:clamp(95px,32vw,130px);height:auto;aspect-ratio:1/1}.v8-preview>.v8-pet>.pet-svg,.v8-preview>.v8-pet>svg{height:100%!important}.v8-preview>div:last-child h3{font-size:clamp(14px,4vw,19px);overflow-wrap:anywhere}}
+@media(prefers-reduced-motion:reduce){.mobile-menu-toggle .paw-menu-icon svg{animation:none}}
+
+/* Batch 18: centered mobile menu and compact four-slot wardrobe selector */
+@media(max-width:700px){
+  .heading .pills .mobile-menu-toggle{display:flex!important;align-items:center!important;justify-content:center!important;place-items:unset!important;padding:0!important;line-height:normal!important}
+  .mobile-menu-toggle .paw-menu-icon{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;height:100%!important;flex:1 1 auto!important;margin:0!important;transform:none!important}
+  .mobile-menu-toggle .paw-menu-icon svg{display:block!important;width:20px!important;height:20px!important;margin:auto!important;flex:none!important}
+}
+.v8-slots{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:7px}
+.v8-slots button{min-width:0;display:flex;align-items:center;justify-content:center;padding:9px 5px;min-height:38px}
+.v8-slots button b{display:flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;font-size:12px;min-width:0}
+.v8-slots button small{display:none!important}
+@media(max-width:560px){
+ .v8-slots{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:5px}
+ .v8-slots button{padding:8px 2px!important;border-radius:10px;min-height:36px}
+ .v8-slots button b{gap:3px;font-size:clamp(9px,2.6vw,11px)}
+ .v8-slots button svg{width:14px;height:14px;flex-shrink:0}
+}
+
+/* Batch 18: transparent hamburger, shared compact product grids, wardrobe toolbar */
+@media(max-width:700px){
+  .heading .pills .mobile-menu-toggle,
+  .mobile-menu-toggle,
+  .mobile-menu-toggle:hover,
+  .mobile-menu-toggle:focus-visible{
+    background:transparent!important;
+    background-image:none!important;
+    box-shadow:none!important;
+    border:0!important;
+    outline-offset:2px;
+    color:inherit!important;
+  }
+  .mobile-menu-toggle .paw-menu-icon{background:transparent!important;box-shadow:none!important}
+}
+.paw-wardrobe-toolbar{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.paw-wardrobe-toolbar .v8-tabs{display:flex;flex:0 0 auto;gap:7px;margin:0}
+.paw-wardrobe-toolbar .v8-slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));flex:0 1 auto;gap:7px;margin:0}
+.paw-wardrobe-toolbar .v8-tabs button{min-width:74px;padding:8px 12px}
+.paw-wardrobe-toolbar .v8-slots button{min-width:66px}
+.v8-collection{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:9px!important}
+.v8-item{min-width:0;padding:9px 5px!important;gap:5px!important;border-radius:13px}
+.v8-item-art{width:min(100%,78px)!important;height:78px!important}
+.v8-item b{font-size:11px!important;overflow-wrap:anywhere}
+.v8-item small{font-size:10px!important}
+.v8-item button{font-size:10px!important;padding:6px 8px!important;max-width:100%}
+.v8-item .paw-equipped-badge{font-size:9px;padding:3px 5px;top:3px;right:3px}
+.shop-grid{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:9px!important}
+.shop-grid>.product{min-width:0;padding:9px 5px!important;gap:5px!important;border-radius:13px}
+.shop-grid>.product>span{max-width:100%;min-width:0}
+.shop-grid>.product svg{max-width:100%;height:auto}
+.shop-grid>.product b{font-size:11px;overflow-wrap:anywhere}
+.shop-grid>.product small{font-size:10px;overflow-wrap:anywhere}
+.shop-grid>.product button{font-size:10px!important;padding:6px 8px!important;max-width:100%}
+@media(min-width:701px) and (max-width:1050px){
+  .v8-collection,.shop-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:700px){
+  .paw-wardrobe-toolbar{gap:8px;align-items:stretch}
+  .paw-wardrobe-toolbar .v8-tabs{flex:1 1 100%;justify-content:flex-start}
+  .paw-wardrobe-toolbar .v8-slots{flex:1 1 100%;width:100%}
+  .v8-collection,.shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+  .v8-item,.shop-grid>.product{padding:7px 3px!important;gap:4px!important;border-radius:10px}
+  .v8-item-art{width:min(100%,65px)!important;height:65px!important}
+  .v8-item b,.shop-grid>.product b{font-size:10px!important}
+  .v8-item small,.shop-grid>.product small{font-size:9px!important}
+  .v8-item button,.shop-grid>.product button{font-size:9px!important;padding:6px 5px!important}
+  .paw-wardrobe-toolbar .v8-slots button{min-width:0}
+}
+
+.v8-collection>.paw-wardrobe-empty{grid-column:1/-1;width:100%;box-sizing:border-box;text-align:center;padding:24px 12px;border:1px dashed #e9c4d4;border-radius:12px}
+@media(max-width:700px){
+ .paw-wardrobe-toolbar{display:flex!important;flex-wrap:nowrap!important;gap:5px!important;align-items:center!important;width:100%;min-width:0}
+ .paw-wardrobe-toolbar .v8-tabs{flex:0 0 auto!important;width:auto!important;gap:3px!important}
+ .paw-wardrobe-toolbar .v8-slots{flex:1 1 0!important;width:auto!important;min-width:0!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:3px!important}
+ .paw-wardrobe-toolbar .v8-tabs button{min-width:0!important;padding:6px 6px!important;font-size:10px!important}
+ .paw-wardrobe-toolbar .v8-slots button{min-width:0!important;padding:6px 2px!important;font-size:9px!important;border-radius:9px}
+ .paw-wardrobe-toolbar .v8-slots button b{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:9px;line-height:1.15}
+ .paw-wardrobe-toolbar .v8-slots button svg{width:13px;height:13px}
+}
+
+/* Batch 23: matching Market purchase buttons and scalable single-line room tabs */
+.v8-actions .paw-wardrobe-market-buy{background:#f9e6ef;color:#a95c83;border:1px solid #f1cddd;border-radius:11px;padding:10px 13px;font-weight:800;width:100%;min-width:0;white-space:normal}
+.v8-actions .paw-wardrobe-market-buy:hover:not(:disabled){background:#f3d7e5}
+.paw-market-furniture{min-width:0}
+.paw-market-tabs-scroll{width:100%;max-width:100%;min-width:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#e4b3c8 transparent;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;margin-bottom:14px}
+.paw-market-tabs-scroll .paw-market-tabs{display:flex!important;flex-wrap:nowrap!important;align-items:stretch;gap:7px;width:max-content;min-width:100%;margin:0;padding:2px 2px 7px}
+.paw-market-tabs-scroll .paw-market-tabs button{flex:0 0 auto!important;min-width:0;white-space:nowrap;padding:9px 12px;font-size:12px}
+@media(max-width:700px){.paw-market-tabs-scroll .paw-market-tabs{gap:5px}.paw-market-tabs-scroll .paw-market-tabs button{padding:8px 10px;font-size:11px}}
+
+.paw-arcade-hearts{display:inline-flex;align-items:center;gap:5px;background:#fce7f0;border-radius:10px;padding:9px 12px;min-height:40px}
+.paw-game-over-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:min(100%,390px);margin:16px auto 0}
+.paw-game-over-actions button{width:100%;min-width:0;margin:0!important;min-height:45px;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px!important;line-height:1.3}
+.paw-game-art-mole svg{display:block;width:min(100%,110px);height:auto;max-height:80px;margin:auto}
+@media(max-width:380px){.paw-game-over-actions{grid-template-columns:1fr}}
+
+/* Whack-a-Mole arcade icon follows the same single-tone tile design as other games. */
+.paw-game-art-mole{background:#fce5d7;color:#bd785e}
+.paw-game-art-mole svg{width:34px!important;height:34px!important;max-height:none!important;display:block;margin:auto}
+@media(max-width:600px){.paw-game-art-mole svg{width:30px!important;height:30px!important}}
+
+/* Remove browser-blue mouse/touch highlights while preserving accessible keyboard focus. */
+html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-highlight-color:transparent}
+:where(button,a,input,textarea,select,[role="button"],[tabindex]):focus:not(:focus-visible){outline:none}
+:where(button,a,input,textarea,select,[role="button"],[tabindex]):focus-visible{outline:2px solid #cf87a5;outline-offset:3px}
+
+/* Batch 33: sticky pet stats must layer above room selector while scrolling. */
+.main-column .paw-stats-hud{z-index:100!important;isolation:isolate}
+.main-column .paw-room-dropdown{z-index:20}
+
+/* Mobile arcade: the backdrop is a gesture area; modal remains independently scrollable. */
+@media (pointer:coarse){.overlay:has(.arcade-modal){touch-action:pan-y}.overlay:has(.arcade-modal) .arcade-modal{touch-action:auto}}
+
+.paw-game-art-claw{background:#f9dfef;color:#a95f91}.paw-game-art-claw svg{display:block}
