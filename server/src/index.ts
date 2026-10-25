@@ -212,7 +212,45 @@ app.post('/api/auth/register',handle(async(req,res)=>{const v=register.safeParse
 
 app.post('/api/auth/login',handle(async(req,res)=>{const {identity,password}=req.body||{};const q=await pool.query('SELECT * FROM users WHERE username=$1',[String(identity||'').toLowerCase()]);if(!q.rows[0]||!await bcrypt.compare(String(password||''),q.rows[0].password_hash))return void res.status(401).json({error:'Incorrect username or password.'});res.json({token:token(q.rows[0].id),user:{id:q.rows[0].id,username:q.rows[0].username}})}));
 
-app.get('/api/me',auth,handle(async(req,res)=>{const u=await pool.query('SELECT id,username,CASE WHEN note_expires_at>NOW() THEN pet_note ELSE NULL END AS pet_note,note_expires_at FROM users WHERE id=$1',[req.userId]);const p=await pool.query(`UPDATE pets SET hunger=GREATEST(0,hunger-LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/600 * CASE WHEN garden->>'_sleeping'='true' THEN 0.75 ELSE 1 END)::int)),energy=LEAST(100,GREATEST(0,energy+CASE WHEN garden->>'_sleeping'='true' THEN LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/600)::int) ELSE -LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/600)::int) END)),happiness=GREATEST(0,happiness-LEAST(36,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/1200 * CASE WHEN garden->>'_sleeping'='true' THEN 0.75 ELSE 1 END)::int)),cleanliness=GREATEST(0,cleanliness-LEAST(36,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/1200 * CASE WHEN garden->>'_sleeping'='true' THEN 0.75 ELSE 1 END)::int)),garden=CASE WHEN garden->>'_sleeping'='true' AND energy + LEAST(72,FLOOR(EXTRACT(EPOCH FROM (NOW()-updated_at))/600)::int)>=100 THEN jsonb_set(garden,'{_sleeping}','false'::jsonb) ELSE garden END,updated_at=NOW() WHERE owner_id=$1 RETURNING ${fields}`,[req.userId]);res.json({user:u.rows[0],pet:p.rows[0]||null})}));
+// Keep the decay clock separate from updated_at: purchases, care actions and
+// profile refreshes must not restart the countdown. Store fractional progress
+// in the existing garden JSON so no database migration is necessary.
+function applyPetDecay(p:any){
+  const now=Date.now();
+  const previous=Number(p.garden?._decay_at)||new Date(p.updated_at).getTime();
+  const elapsed=Math.max(0,Math.min(1440*60*1000,now-(Number.isFinite(previous)?previous:now)));
+  const sleeping=!!p.garden?._sleeping;
+  const rate=sleeping?0.75:1;
+  const steps=Math.floor(elapsed/600000);
+  // Accumulate fractional rates so sleeping decay still advances over time.
+  const carry=p.garden?._decay_carry||{};
+  const take=(name:string,amount:number)=>{const total=Number(carry[name]||0)+amount;const whole=Math.floor(total);carry[name]=total-whole;return whole;};
+  p.hunger=clamp(p.hunger-take('hunger',steps*rate));
+  p.energy=clamp(p.energy+(sleeping?steps:-steps));
+  p.happiness=clamp(p.happiness-take('happiness',steps*rate/2));
+  p.cleanliness=clamp(p.cleanliness-take('cleanliness',steps*rate/2));
+  // The elapsed remainder is retained instead of discarding sub-10-minute time.
+  p.garden={...(p.garden||{}),_decay_at:now-(elapsed-steps*600000),_decay_carry:carry};
+  if(sleeping&&p.energy>=100)p.garden._sleeping=false;
+  return sleeping;
+}
+
+app.get('/api/me',auth,handle(async(req,res)=>{
+  const c=await pool.connect();
+  try{
+    await c.query('BEGIN');
+    const u=await c.query('SELECT id,username,CASE WHEN note_expires_at>NOW() THEN pet_note ELSE NULL END AS pet_note,note_expires_at FROM users WHERE id=$1',[req.userId]);
+    const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);
+    let pet=q.rows[0]||null;
+    if(pet){
+      applyPetDecay(pet);
+      const result=await c.query(`UPDATE pets SET hunger=$2,energy=$3,happiness=$4,cleanliness=$5,garden=$6::jsonb WHERE id=$1 RETURNING ${fields}`,[pet.id,pet.hunger,pet.energy,pet.happiness,pet.cleanliness,JSON.stringify(pet.garden)]);
+      pet=result.rows[0];
+    }
+    await c.query('COMMIT');
+    res.json({user:u.rows[0],pet});
+  }catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}
+}));
 
 app.post('/api/adopt',auth,handle(async(req,res)=>{const v=z.object({name:z.string().trim().min(1).max(24),species:z.enum(['cat','dog','bunny','fox','hamster','panda','penguin','axolotl'])}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Choose a species and a pet name.'});try{const q=await pool.query(`INSERT INTO pets(id,owner_id,name,species) VALUES($1,$2,$3,$4) RETURNING ${fields}`,[randomUUID(),req.userId,v.data.name,v.data.species]);res.status(201).json({pet:q.rows[0]})}catch(e:any){if(e.code==='23505')return void res.status(409).json({error:'You can adopt only one pet.'});throw e}}));
 
@@ -220,7 +258,7 @@ app.post('/api/adopt',auth,handle(async(req,res)=>{const v=z.object({name:z.stri
 
 app.post('/api/claim',auth,handle(async(req,res)=>{if(!z.string().uuid().safeParse(req.body?.petId).success)return void res.status(400).json({error:'Invalid old pet ID.'});const q=await pool.query(`UPDATE pets SET owner_id=$1 WHERE id=$2 AND owner_id IS NULL AND NOT EXISTS(SELECT 1 FROM pets WHERE owner_id=$1) RETURNING ${fields}`,[req.userId,req.body.petId]);if(!q.rows[0])return void res.status(409).json({error:'Pet already claimed, missing, or account already has a pet.'});res.json({pet:q.rows[0]})}));
 
-async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const mins=Math.min(1440,Math.max(0,(Date.now()-new Date(p.updated_at).getTime())/60000));const tick=Math.floor(mins/10);const asleep=!!p.garden?._sleeping;const wasSleepingAtRequest=asleep;const rate=asleep?0.75:1;p.hunger=clamp(p.hunger-Math.floor(tick*rate));p.energy=clamp(p.energy+(asleep?Math.floor(tick):-tick));p.happiness=clamp(p.happiness-Math.floor(tick*rate/2));p.cleanliness=clamp(p.cleanliness-Math.floor(tick*rate/2));if(asleep&&p.energy>=100)p.garden={...(p.garden||{}),_sleeping:false};p._wasSleepingAtRequest=wasSleepingAtRequest;const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',scrub:'bathe',pet_stroke:'cuddle',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');if(req.path==='/api/care'&&action==='sleep_toggle'){const friends=await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId]);publishLive([String(req.userId),...friends.rows.map((r:any)=>String(r.friend_id))],'pet_sleep_changed')}res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
+async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const wasSleepingAtRequest=applyPetDecay(p);p._wasSleepingAtRequest=wasSleepingAtRequest;const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',scrub:'bathe',pet_stroke:'cuddle',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');if(req.path==='/api/care'&&action==='sleep_toggle'){const friends=await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId]);publishLive([String(req.userId),...friends.rows.map((r:any)=>String(r.friend_id))],'pet_sleep_changed')}res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
 
 // Atomic claim: a row lock prevents concurrent requests from claiming twice.
 
