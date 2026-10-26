@@ -3,3 +3,31 @@
 html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-highlight-color:transparent}
 :where(button,a,input,textarea,select,[role="button"],[tabindex]):focus:not(:focus-visible){outline:none}
 :where(button,a,input,textarea,select,[role="button"],[tabindex]):focus-visible{outline:2px solid #cf87a5;outline-offset:3px}
+
+/* Shared navigation and styling for the two private dashboards. */
+.admin-header-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.admin-page .admin-dashboard-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid #f1cfdf;
+    border-radius: 12px;
+    background: #fff0f6;
+    color: #845772;
+    font-weight: 700;
+    text-decoration: none;
+}
+.admin-page .admin-dashboard-link:hover {
+    background: #ffe3ef;
+}
+.admin-page .admin-dashboard-link:focus-visible {
+    outline: 2px solid #cf87a5;
+    outline-offset: 3px;
+}

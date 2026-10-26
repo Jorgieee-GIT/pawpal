@@ -1,0 +1,187 @@
+/* Shared design system for both protected administration routes. */
+.admin-page,
+.develop-page {
+    --admin-bg: #fff8f9;
+    --admin-panel: #ffffff;
+    --admin-text: #64445a;
+    --admin-muted: #a18a98;
+    --admin-border: #f0dce4;
+    --admin-accent: #d8759b;
+    min-height: 100vh;
+    background: var(--admin-bg);
+    color: var(--admin-text);
+    font-family: Inter, system-ui, sans-serif;
+    font-size: 14px;
+}
+.admin-page {
+    padding: 0 20px;
+}
+.admin-shell,
+.develop-content {
+    max-width: 1120px;
+    margin-inline: auto;
+}
+.admin-page .paw-admin-header,
+.develop-page .paw-admin-header {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    min-height: 92px;
+    padding: 16px 0 20px;
+    margin: 0 auto;
+    background: transparent;
+    border-bottom: 1px solid var(--admin-border);
+}
+.develop-page .paw-admin-header {
+    max-width: 1120px;
+    padding-inline: 0;
+}
+.admin-brand,
+.develop-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.admin-brand > span:first-child,
+.develop-brand .paw-admin-brand-icon {
+    box-sizing: border-box;
+    width: 46px;
+    height: 46px;
+    padding: 12px;
+    display: grid;
+    place-items: center;
+    border-radius: 15px;
+    background: #ffe2ed;
+    color: #c4688c;
+}
+.admin-brand b,
+.develop-brand b {
+    font-size: 18px;
+    line-height: 1.3;
+}
+.admin-brand small,
+.develop-brand small {
+    display: block;
+    margin-top: 3px;
+    color: #ab899c;
+    font-size: 12px;
+}
+.admin-header-actions,
+.develop-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+.admin-page .admin-header-actions a,
+.admin-page .admin-header-actions button,
+.develop-page .develop-header-actions a,
+.develop-page .develop-header-actions button {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 14px;
+    border: 1px solid #ecd5e0;
+    border-radius: 11px;
+    background: #fff;
+    color: #7b5269;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+.admin-page .admin-header-actions a:hover,
+.admin-page .admin-header-actions button:hover,
+.develop-page .develop-header-actions a:hover,
+.develop-page .develop-header-actions button:hover {
+    background: #fff0f6;
+}
+.admin-main,
+.develop-content {
+    box-sizing: border-box;
+    padding: 30px 0 70px;
+}
+.admin-heading,
+.develop-intro {
+    display: block;
+    margin: 0 0 24px;
+}
+.admin-heading span,
+.develop-page .paw-admin-eyebrow {
+    display: block;
+    color: #d17699;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+.admin-heading h1,
+.develop-intro h1 {
+    margin: 6px 0;
+    font-size: 30px;
+    line-height: 1.25;
+    font-weight: 750;
+}
+.admin-heading p,
+.develop-intro p {
+    margin: 0;
+    color: var(--admin-muted);
+    line-height: 1.6;
+}
+.admin-panel,
+.admin-stats article,
+.develop-tile,
+.develop-atmosphere,
+.develop-login {
+    background: var(--admin-panel);
+    border: 1px solid var(--admin-border);
+    border-radius: 18px;
+}
+.develop-content .develop-tabs {
+    margin: 22px 0;
+}
+.develop-page .develop-tabs button {
+    min-height: 42px;
+    padding: 10px 14px;
+    border: 1px solid #ecd5e0;
+    border-radius: 11px;
+    background: #fff;
+    color: #7b5269;
+    font: inherit;
+    font-weight: 700;
+}
+.develop-page .develop-tabs button.active {
+    background: var(--admin-accent);
+    border-color: var(--admin-accent);
+    color: white;
+}
+.develop-page .develop-login form button {
+    background: var(--admin-accent);
+    border-color: var(--admin-accent);
+}
+.develop-page .develop-login {
+    box-shadow: 0 18px 50px #a77d9315;
+}
+@media (max-width: 650px) {
+    .admin-page {
+        padding-inline: 16px;
+    }
+    .develop-page .paw-admin-header,
+    .develop-content {
+        margin-inline: 16px;
+    }
+    .admin-page .paw-admin-header,
+    .develop-page .paw-admin-header {
+        min-height: auto;
+        padding-block: 16px;
+    }
+    .admin-heading h1,
+    .develop-intro h1 {
+        font-size: 26px;
+    }
+}

@@ -46,6 +46,18 @@ function publishLive(userIds:string[],type:string){
     void pool.query('SELECT pg_notify($1,$2)',['pawpal_live',payload]).catch(e=>console.error('Live notification failed',e));
   }
 }
+// Avoid notifying friends on every scrub stroke, while keeping appearance and sleep immediate.
+const lastFriendPetBroadcast = new Map<string, number>();
+async function publishPetToFriends(userId: string, immediate = false) {
+    const now = Date.now();
+    if (!immediate && now - (lastFriendPetBroadcast.get(userId) || 0) < 2500) return;
+    lastFriendPetBroadcast.set(userId, now);
+    const friends = await pool.query(
+        "SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",
+        [userId]
+    );
+    publishLive(friends.rows.map((row: any) => String(row.friend_id)), 'friend_pet_updated');
+}
 async function subscribeLive(){
   const client=await pool.connect();
   client.on('notification',message=>{
@@ -74,6 +86,27 @@ const uniqueCosmeticsBySpecies:Record<string,string[]>={"cat": ["fish_clip", "ya
 
 const breedsBySpecies:Record<string,string[]>={"cat": ["calico", "tabby", "tuxedo", "fluffy"], "dog": ["golden", "dalmatian", "husky", "corgi"], "bunny": ["lop", "dutch", "angora", "spotted"], "fox": ["red_fox", "arctic_fox", "fennec", "silver_fox"], "hamster": ["syrian", "dwarf", "roborovski", "banded"], "panda": ["giant_panda", "red_panda", "snow_panda", "baby_panda"], "penguin": ["emperor", "adelie", "gentoo", "chinstrap"], "axolotl": ["leucistic", "wild_type", "melanoid", "golden_albino"]};
 
+// Append new breed IDs to addedBreedsBySpecies for their species.
+// Every additional breed unlocks five levels after that species' previous breed.
+// Existing levels never change when breeds are appended.
+const BREED_LEVEL_INTERVAL = 5;
+const BREED_UNLOCK_LEVELS: Record<string, number> = {};
+for (const speciesId of Object.keys(breedsBySpecies)) {
+    const orderedBreeds = [
+        ...breedsBySpecies[speciesId],
+        ...(addedBreedsBySpecies[speciesId] || [])
+    ];
+    orderedBreeds.forEach((breedId, index) => {
+        const requiredLevel = (index + 1) * BREED_LEVEL_INTERVAL;
+        BREED_UNLOCK_LEVELS[breedId] = requiredLevel;
+    });
+}
+
+for (const [breedId, level] of Object.entries(BREED_UNLOCK_LEVELS)) {
+    if (catalog[breedId]) catalog[breedId].level = level;
+}
+
+
 const COSMETIC_SLOTS:Record<string,string>={"bow":"head","cap":"head","crown":"head","flower":"head","halo":"head","party":"head","star_clip":"head","moon_crown":"head","fish_clip":"head","yarn_hat":"head","carrot_clip":"head","clover_crown":"head","forest_crown":"head","cheek_bow":"head","bamboo_clip":"head","bamboo_hat":"head","sailor_hat":"head","bubble_crown":"head","coral_clip":"head","glasses":"eyes","heart_shades":"eyes","scarf":"neck","pearl_necklace":"neck","rainbow_scarf":"neck","bone_tag":"neck","puppy_bandana":"neck","seed_pouch":"neck","ice_scarf":"neck","leaf_cape":"clothes","rose_beret":"head","straw_hat":"head","cloud_beanie":"head","star_tiara":"head","witch_hat":"head","sunflower_crown":"head","sleep_cap":"head","winter_earmuffs":"head","round_specs":"eyes","blue_goggles":"eyes","sleep_mask":"eyes","monocle":"eyes","butterfly_glasses":"eyes","aviators":"eyes","heart_collar":"neck","gold_chain":"neck","bow_tie":"neck","cherry_necklace":"neck","star_pendant":"neck","cozy_muffler":"neck","bell_collar":"neck","pink_hoodie":"clothes","denim_overalls":"clothes","flower_dress":"clothes","raincoat":"clothes","sailor_top":"clothes","striped_sweater":"clothes","royal_cape":"clothes","cloud_pajamas":"clothes","autumn_vest":"clothes","starry_jacket":"clothes","crystal_circlet":"head","cherry_blossom_crown":"head","moonlit_veil":"head","dragon_horns":"head","aurora_halo":"head","butterfly_crown":"head","pirate_tricorn":"head","royal_diadem":"head","galaxy_antlers":"head","phoenix_plume":"head","cat_eye_frames":"eyes","starlight_specs":"eyes","pixel_shades":"eyes","rose_gold_glasses":"eyes","emerald_goggles":"eyes","snowflake_lenses":"eyes","cyber_visor":"eyes","nebula_shades":"eyes","royal_mask":"eyes","prismatic_monocle":"eyes","moon_choker":"neck","emerald_pendant":"neck","flower_garland":"neck","silk_cravat":"neck","pearl_choker":"neck","sun_medallion":"neck","frost_necklace":"neck","royal_sash":"neck","cosmic_locket":"neck","phoenix_pendant":"neck","strawberry_cardigan":"clothes","forest_cloak":"clothes","moonlight_kimono":"clothes","dragon_armor":"clothes","aurora_dress":"clothes","butterfly_cape":"clothes","pirate_coat":"clothes","royal_uniform":"clothes","galaxy_robe":"clothes","phoenix_armor":"clothes"};
 
 const NEW_COSMETICS={"rose_beret":{"price":900,"type":"cosmetic"},"straw_hat":{"price":1100,"type":"cosmetic"},"cloud_beanie":{"price":950,"type":"cosmetic"},"star_tiara":{"price":1850,"type":"cosmetic"},"witch_hat":{"price":1550,"type":"cosmetic"},"sunflower_crown":{"price":1400,"type":"cosmetic"},"sleep_cap":{"price":820,"type":"cosmetic"},"winter_earmuffs":{"price":970,"type":"cosmetic"},"round_specs":{"price":850,"type":"cosmetic"},"blue_goggles":{"price":1350,"type":"cosmetic"},"sleep_mask":{"price":700,"type":"cosmetic"},"monocle":{"price":1250,"type":"cosmetic"},"butterfly_glasses":{"price":1350,"type":"cosmetic"},"aviators":{"price":1750,"type":"cosmetic"},"heart_collar":{"price":800,"type":"cosmetic"},"gold_chain":{"price":1900,"type":"cosmetic"},"bow_tie":{"price":650,"type":"cosmetic"},"cherry_necklace":{"price":990,"type":"cosmetic"},"star_pendant":{"price":1050,"type":"cosmetic"},"cozy_muffler":{"price":1250,"type":"cosmetic"},"bell_collar":{"price":850,"type":"cosmetic"},"pink_hoodie":{"price":1650,"type":"cosmetic"},"denim_overalls":{"price":1850,"type":"cosmetic"},"flower_dress":{"price":1750,"type":"cosmetic"},"raincoat":{"price":2100,"type":"cosmetic"},"sailor_top":{"price":1500,"type":"cosmetic"},"striped_sweater":{"price":1400,"type":"cosmetic"},"royal_cape":{"price":2850,"type":"cosmetic"},"cloud_pajamas":{"price":1200,"type":"cosmetic"},"autumn_vest":{"price":1350,"type":"cosmetic"},"starry_jacket":{"price":2300,"type":"cosmetic"},"crystal_circlet":{"price": 1100, "type": "cosmetic", "level": 4},"cherry_blossom_crown":{"price": 1580, "type": "cosmetic", "level": 6},"moonlit_veil":{"price": 2060, "type": "cosmetic", "level": 8},"dragon_horns":{"price": 2540, "type": "cosmetic", "level": 10},"aurora_halo":{"price": 3020, "type": "cosmetic", "level": 12},"butterfly_crown":{"price": 3500, "type": "cosmetic", "level": 15},"pirate_tricorn":{"price": 3980, "type": "cosmetic", "level": 18},"royal_diadem":{"price": 4460, "type": "cosmetic", "level": 22},"galaxy_antlers":{"price": 4940, "type": "cosmetic", "level": 27},"phoenix_plume":{"price": 5420, "type": "cosmetic", "level": 35},"cat_eye_frames":{"price": 1100, "type": "cosmetic", "level": 4},"starlight_specs":{"price": 1580, "type": "cosmetic", "level": 6},"pixel_shades":{"price": 2060, "type": "cosmetic", "level": 8},"rose_gold_glasses":{"price": 2540, "type": "cosmetic", "level": 10},"emerald_goggles":{"price": 3020, "type": "cosmetic", "level": 12},"snowflake_lenses":{"price": 3500, "type": "cosmetic", "level": 15},"cyber_visor":{"price": 3980, "type": "cosmetic", "level": 18},"nebula_shades":{"price": 4460, "type": "cosmetic", "level": 22},"royal_mask":{"price": 4940, "type": "cosmetic", "level": 27},"prismatic_monocle":{"price": 5420, "type": "cosmetic", "level": 35},"moon_choker":{"price": 1100, "type": "cosmetic", "level": 4},"emerald_pendant":{"price": 1580, "type": "cosmetic", "level": 6},"flower_garland":{"price": 2060, "type": "cosmetic", "level": 8},"silk_cravat":{"price": 2540, "type": "cosmetic", "level": 10},"pearl_choker":{"price": 3020, "type": "cosmetic", "level": 12},"sun_medallion":{"price": 3500, "type": "cosmetic", "level": 15},"frost_necklace":{"price": 3980, "type": "cosmetic", "level": 18},"royal_sash":{"price": 4460, "type": "cosmetic", "level": 22},"cosmic_locket":{"price": 4940, "type": "cosmetic", "level": 27},"phoenix_pendant":{"price": 5420, "type": "cosmetic", "level": 35},"strawberry_cardigan":{"price": 1100, "type": "cosmetic", "level": 4},"forest_cloak":{"price": 1580, "type": "cosmetic", "level": 6},"moonlight_kimono":{"price": 2060, "type": "cosmetic", "level": 8},"dragon_armor":{"price": 2540, "type": "cosmetic", "level": 10},"aurora_dress":{"price": 3020, "type": "cosmetic", "level": 12},"butterfly_cape":{"price": 3500, "type": "cosmetic", "level": 15},"pirate_coat":{"price": 3980, "type": "cosmetic", "level": 18},"royal_uniform":{"price": 4460, "type": "cosmetic", "level": 22},"galaxy_robe":{"price": 4940, "type": "cosmetic", "level": 27},"phoenix_armor":{"price": 5420, "type": "cosmetic", "level": 35}};
@@ -98,8 +131,6 @@ Object.assign(catalog, {
 });
 
 for(const [id,level] of Object.entries({cloud_sofa:5,moon_crown:12,night_room:8,maine_coon:15,red_panda_cub:18,witch_hat:10,star_tiara:20}))if(catalog[id])catalog[id].level=level;
-const BREED_UNLOCK_LEVELS:Record<string,number>={calico:1,tabby:1,tuxedo:1,fluffy:5,siamese:10,british_shorthair:16,maine_coon:24,eurasian_lynx:33,snow_leopard:42,smilodon:50,golden:1,dalmatian:1,husky:1,corgi:5,beagle:10,shiba:16,border_collie:24,gray_wolf:33,african_wild_dog:42,dire_wolf:50,lop:1,dutch:1,angora:1,spotted:5,lionhead:10,rex:16,himalayan:24,pygmy_rabbit:33,volcano_rabbit:42,nuralagus:50,red_fox:1,arctic_fox:1,fennec:1,silver_fox:5,cross_fox:10,marble_fox:16,bat_eared_fox:24,kit_fox:33,swift_fox:42,island_fox:50,syrian:1,dwarf:1,roborovski:1,banded:5,winter_white:10,chinese_hamster:16,teddy_bear:24,campbells_dwarf:33,european_hamster:42,brandts_hamster:50,giant_panda:1,red_panda:1,snow_panda:1,baby_panda:5,qinling_panda:10,brown_panda:16,red_panda_cub:24,grizzly_bear:33,polar_bear:42,short_faced_bear:50,emperor:1,adelie:1,gentoo:1,chinstrap:5,rockhopper:10,little_blue:16,macaroni:24,african_penguin:33,king_penguin:42,waitaha_penguin:50,leucistic:1,wild_type:1,melanoid:1,golden_albino:5,copper:10,piebald:16,mosaic:24,tiger_salamander:33,andersons_salamander:42,ambystoma_dumerilii:50};
-for(const [id,level] of Object.entries(BREED_UNLOCK_LEVELS))if(catalog[id])catalog[id].level=level;
 
 const clamp=(n:number)=>Math.max(0,Math.min(100,Math.round(n)));
 
@@ -142,6 +173,9 @@ app.post('/api/admin/login',handle(async(req,res)=>{
   adminAttempts.delete(ip);
   res.json({token:jwt.sign({sub:configuredName,role:'admin'},adminSecret,{algorithm:'HS256',expiresIn:'2h'}),username:configuredName});
 }));
+app.get('/api/admin/develop-access',adminAuth,(_req,res)=>{
+    res.json({authorized:true});
+});
 app.get('/api/admin/overview',adminAuth,handle(async(_req,res)=>{
   const [users,pets]=await Promise.all([pool.query('SELECT COUNT(*)::int AS count FROM users'),pool.query('SELECT COUNT(*)::int AS count FROM pets')]);
   res.json({users:users.rows[0].count,pets:pets.rows[0].count});
@@ -158,7 +192,7 @@ app.get('/api/admin/users',adminAuth,handle(async(req,res)=>{
 app.post('/api/admin/users/:id/reset-password',adminAuth,handle(async(req,res)=>{
   if(!z.string().uuid().safeParse(req.params.id).success){res.status(400).json({error:'Invalid user ID.'});return}
   const password=String(req.body?.newPassword||'');
-  if(password.length<12||password.length>100){res.status(400).json({error:'New password must be 12–100 characters.'});return}
+  if(password.length<6||password.length>100){res.status(400).json({error:'New password must be 6–100 characters.'});return}
   const hash=await bcrypt.hash(password,12);
   const q=await pool.query('UPDATE users SET password_hash=$1 WHERE id=$2 RETURNING id,username',[hash,req.params.id]);
   if(!q.rowCount){res.status(404).json({error:'User not found.'});return}
@@ -217,23 +251,84 @@ app.post('/api/auth/login',handle(async(req,res)=>{const {identity,password}=req
 // in the existing garden JSON so no database migration is necessary.
 function applyPetDecay(p:any){
   const now=Date.now();
-  const previous=Number(p.garden?._decay_at)||new Date(p.updated_at).getTime();
-  const elapsed=Math.max(0,Math.min(1440*60*1000,now-(Number.isFinite(previous)?previous:now)));
+  const stored=Number(p.garden?._decay_at);
+  const fallback=new Date(p.updated_at).getTime();
+  const previous=Number.isFinite(stored)&&stored>0?stored:(Number.isFinite(fallback)?fallback:now);
+  // Do not cap elapsed time: pets must change even after several offline days.
+  const elapsed=Math.max(0,now-previous);
   const sleeping=!!p.garden?._sleeping;
   const rate=sleeping?0.75:1;
-  const steps=Math.floor(elapsed/600000);
-  // Accumulate fractional rates so sleeping decay still advances over time.
-  const carry=p.garden?._decay_carry||{};
-  const take=(name:string,amount:number)=>{const total=Number(carry[name]||0)+amount;const whole=Math.floor(total);carry[name]=total-whole;return whole;};
-  p.hunger=clamp(p.hunger-take('hunger',steps*rate));
-  p.energy=clamp(p.energy+(sleeping?steps:-steps));
-  p.happiness=clamp(p.happiness-take('happiness',steps*rate/2));
-  p.cleanliness=clamp(p.cleanliness-take('cleanliness',steps*rate/2));
-  // The elapsed remainder is retained instead of discarding sub-10-minute time.
-  p.garden={...(p.garden||{}),_decay_at:now-(elapsed-steps*600000),_decay_carry:carry};
+  const carry={...(p.garden?._decay_carry||{})};
+  const take=(name:string,amount:number)=>{
+    const total=Math.max(0,Number(carry[name]||0))+amount;
+    const whole=Math.floor(total);
+    carry[name]=total-whole;
+    return whole;
+  };
+  // All four stats advance against server elapsed time, regardless of whether
+  // the browser was open. Fractional progress is preserved between requests.
+  const tenMinuteSteps=elapsed/600000;
+  p.hunger=clamp(p.hunger-take('hunger',tenMinuteSteps*rate));
+  p.happiness=clamp(p.happiness-take('happiness',tenMinuteSteps*rate/2));
+  p.cleanliness=clamp(p.cleanliness-take('cleanliness',tenMinuteSteps*rate/2));
+  // Awake: -1 Energy / 10 min. Sleeping: +5 Energy / minute,
+  // meaning 0 -> 100 in exactly 20 minutes of accumulated sleep.
+  p.energy=clamp(p.energy+(sleeping?take('sleep_energy',elapsed/60000*5):-take('awake_energy',tenMinuteSteps)));
+  p.garden={...(p.garden||{}),_decay_at:now,_decay_carry:carry};
   if(sleeping&&p.energy>=100)p.garden._sleeping=false;
   return sleeping;
 }
+
+// Waking is idempotent. Complete elapsed sleep recovery first, then stop it.
+// The row lock makes concurrent activities and sleep toggles consistent.
+async function wakePetForActivity(userId:string){
+    const client=await pool.connect();
+    let changed=false;
+    try{
+        await client.query('BEGIN');
+        const result=await client.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[userId]);
+        const pet=result.rows[0];
+        if(pet?.garden?._sleeping){
+            applyPetDecay(pet);
+            pet.garden={...(pet.garden||{}),_sleeping:false};
+            await client.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,garden=$6::jsonb,updated_at=NOW() WHERE id=$1`,[
+                pet.id,pet.hunger,pet.happiness,pet.energy,pet.cleanliness,JSON.stringify(pet.garden)
+            ]);
+            changed=true;
+        }
+        await client.query('COMMIT');
+    }catch(error){
+        await client.query('ROLLBACK');
+        throw error;
+    }finally{
+        client.release();
+    }
+    if(changed){
+        publishLive([userId],'pet_sleep_changed');
+        void publishPetToFriends(userId,true).catch(console.error);
+    }
+    return changed;
+}
+
+// All authenticated activity requests wake the pet before the action runs.
+// GET requests, authentication and the explicit sleep toggle are excluded.
+app.use('/api', (req:any,res:any,next:any)=>{
+    if(!['POST','PUT','PATCH','DELETE'].includes(req.method)||
+       req.path.startsWith('/auth/')||req.path.startsWith('/admin/')||
+       req.path==='/care'&&req.body?.action==='sleep_toggle'||
+       req.path==='/adopt'||req.path==='/claim'){
+        return next();
+    }
+    auth(req,res,()=>{
+        Promise.resolve(wakePetForActivity(String(req.userId))).then(()=>next()).catch(next);
+    });
+});
+
+// UI interactions (including opening a game) use this idempotent wake action.
+app.post('/api/care/wake',auth,handle(async(req,res)=>{
+    await wakePetForActivity(String(req.userId));
+    res.json({message:'Your pet is awake!'});
+}));
 
 app.get('/api/me',auth,handle(async(req,res)=>{
   const c=await pool.connect();
@@ -258,39 +353,35 @@ app.post('/api/adopt',auth,handle(async(req,res)=>{const v=z.object({name:z.stri
 
 app.post('/api/claim',auth,handle(async(req,res)=>{if(!z.string().uuid().safeParse(req.body?.petId).success)return void res.status(400).json({error:'Invalid old pet ID.'});const q=await pool.query(`UPDATE pets SET owner_id=$1 WHERE id=$2 AND owner_id IS NULL AND NOT EXISTS(SELECT 1 FROM pets WHERE owner_id=$1) RETURNING ${fields}`,[req.userId,req.body.petId]);if(!q.rows[0])return void res.status(409).json({error:'Pet already claimed, missing, or account already has a pet.'});res.json({pet:q.rows[0]})}));
 
-async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const wasSleepingAtRequest=applyPetDecay(p);p._wasSleepingAtRequest=wasSleepingAtRequest;const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',scrub:'bathe',pet_stroke:'cuddle',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');if(req.path==='/api/care'&&action==='sleep_toggle'){const friends=await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId]);publishLive([String(req.userId),...friends.rows.map((r:any)=>String(r.friend_id))],'pet_sleep_changed')}res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
+async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const wasSleepingAtRequest=applyPetDecay(p);p._wasSleepingAtRequest=wasSleepingAtRequest;const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',scrub:'bathe',pet_stroke:'cuddle',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');if(req.path==='/api/care'&&action==='sleep_toggle'){const friends=await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId]);publishLive([String(req.userId),...friends.rows.map((r:any)=>String(r.friend_id))],'pet_sleep_changed')}publishLive([String(req.userId)],'pet_updated');if(req.path==='/api/item'||(req.path==='/api/care'&&['sleep_toggle','scrub','pet_stroke','feed','play','bathe','cuddle'].includes(action)))void publishPetToFriends(String(req.userId),action==='sleep_toggle'||req.path==='/api/item').catch(console.error);res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
 
 // Atomic claim: a row lock prevents concurrent requests from claiming twice.
 
+// Daily Surprise resets at midnight in the Philippines (UTC+08:00).
+// A locked pet row and kitchen upsert make claims atomic and idempotent.
 app.post('/api/daily/claim',auth,handle(async(req,res)=>{
-
- const client=await pool.connect();
-
- try{
-
-  await client.query('BEGIN');
-
-  const q=await client.query('SELECT id, daily_claimed_at FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
-
-  if(!q.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
-
-  const previous=q.rows[0].daily_claimed_at ? new Date(q.rows[0].daily_claimed_at).getTime():0;
-
-  const next=previous+86400000;
-
-  if(previous && Date.now()<next){await client.query('ROLLBACK');return void res.status(429).json({error:'Daily Surprise is cooling down.',nextClaimAt:new Date(next).toISOString()})}
-
-  const updated=await client.query(`UPDATE pets SET daily_claimed_at=NOW(),last_daily=CURRENT_DATE,coins=coins+120,food=food+2,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[q.rows[0].id]);
-
-  await client.query('COMMIT');res.json({pet:updated.rows[0],message:'Daily Surprise: +120 coins and +2 meals!',nextClaimAt:new Date(Date.now()+86400000).toISOString()});
-
- }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
-
+ const client=await pool.connect();
+ try{
+  await client.query('BEGIN');
+  const q=await client.query('SELECT id,daily_claimed_at FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
+  if(!q.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
+  const manilaDay=(date:Date)=>new Date(date.getTime()+8*3600000).toISOString().slice(0,10);
+  const today=manilaDay(new Date());
+  const previous=q.rows[0].daily_claimed_at;
+  const nextMidnight=new Date(Date.parse(today+'T16:00:00Z')+86400000).toISOString();
+  if(previous&&manilaDay(new Date(previous))===today){await client.query('ROLLBACK');return void res.status(429).json({error:'Daily Surprise already claimed today.',nextClaimAt:nextMidnight})}
+  const updated=await client.query(`UPDATE pets SET daily_claimed_at=NOW(),last_daily=CURRENT_DATE,coins=coins+120,food=food+2,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[q.rows[0].id]);
+  await client.query(`INSERT INTO pet_kitchens(user_id,meals) VALUES($1,jsonb_build_object('berry_parfait',5)) ON CONFLICT(user_id) DO UPDATE SET meals=jsonb_set(COALESCE(pet_kitchens.meals,'{}'::jsonb),'{berry_parfait}',to_jsonb(COALESCE((pet_kitchens.meals->>'berry_parfait')::int,0)+5),true)`,[req.userId]);
+  await client.query('COMMIT');
+  publishLive([String(req.userId)],'daily_reward');
+  res.json({pet:updated.rows[0],message:'Daily Surprise: +120 coins, +2 regular meals, and +5 Berry Parfaits!',nextClaimAt:nextMidnight});
+ }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }));
 
 app.post('/api/care',auth,handle(async(req,res)=>mutate(req,res,p=>{const action=req.body?.action;let msg='';switch(action){case 'feed':if(p.food<1)return 'Buy food first.';p.food--;p.hunger=clamp(p.hunger+28);p.xp+=12;msg='Yummy lunch!';break;case 'play':if(p.energy<12)return 'Too tired to play.';p.energy=clamp(p.energy-12);p.happiness=clamp(p.happiness+24);p.affection=clamp(p.affection+8);p.coins+=12;p.xp+=18;msg='Playtime! +12 coins';break;case 'sleep_toggle':{const wasSleeping=!!p._wasSleepingAtRequest;const shouldSleep=!wasSleeping;/* Starting a nap at full energy needs one point of headroom, otherwise the next stats refresh immediately auto-wakes the pet. */if(shouldSleep&&p.energy>=100)p.energy=99;p.garden={...(p.garden||{}),_sleeping:shouldSleep};msg=shouldSleep?'Sweet dreams! Your pet is resting.':'Your pet is awake!';break;}case 'sleep':p.energy=clamp(p.energy+36);p.xp+=8;msg='Sweet dreams!';break;case 'scrub':{const last=Number(p.garden?._last_scrub_at||0);const now=Date.now();if(now-last<900)return 'Keep scrubbing!';p.garden={...(p.garden||{}),_last_scrub_at:now};p.cleanliness=clamp(p.cleanliness+5);msg='Bath time!';break;}case 'bathe':p.cleanliness=clamp(p.cleanliness+40);p.xp+=10;msg='Squeaky clean!';break;case 'pet_stroke':{const now=Date.now();const last=Number(p.garden?._last_pet_stroke_at||0);if(now-last<900)return 'Keep petting gently!';const strokes=Number(p.garden?._pet_stroke_count||0)+1;p.garden={...(p.garden||{}),_last_pet_stroke_at:now,_pet_stroke_count:strokes};p.affection=clamp(p.affection+4);if(strokes%10===0)p.happiness=clamp(p.happiness+2);msg='Your pet loves the cuddles!';break;}case 'cuddle':p.affection=clamp(p.affection+20);p.happiness=clamp(p.happiness+10);p.xp+=8;msg='Best friends forever!';break;case 'daily':return 'Please use the dedicated Daily Surprise claim button.';case 'food':if(p.coins<150)return 'Not enough coins.';p.coins-=150;p.food+=3;msg='3 meals added!';break;case 'toy':if(p.coins<350)return 'Not enough coins.';p.coins-=350;p.toys++;msg='A new toy!';break;default:return 'Unknown action.'}return msg})));
 
-app.post('/api/item',auth,handle(async(req,res)=>mutate(req,res,p=>{const {item,mode}=req.body||{};const product=catalog[item];if(!product)return 'Unknown item.';if(product.type==='cosmetic' && (mode==='buy'||mode==='equip') && Object.values(uniqueCosmeticsBySpecies).some(items=>items.includes(item)) && !uniqueCosmeticsBySpecies[p.species]?.includes(item))return 'This accessory belongs to another species.';if(product.type==='breed' && (mode==='buy'||mode==='equip') && ![...(breedsBySpecies[p.species]||[]),...(addedBreedsBySpecies[p.species]||[])].includes(item))return 'That breed is not available for your pet species.';const owned=product.type==='cosmetic'?p.owned_cosmetics:product.type==='color'?p.owned_colors:product.type==='breed'?p.owned_breeds:p.owned_items;if(mode==='buy'){if(product.level&&p.level<product.level)return `Unlocks at Level ${product.level}.`;if(owned.includes(item))return 'Already owned.';if(p.coins<product.price)return 'Not enough coins.';p.coins-=product.price;owned.push(item);if(product.type==='theme'){p.room_theme=item;return 'Room theme unlocked and applied!'}if(product.type==='breed'){p.breed=item;p.color='classic';return 'New breed unlocked and equipped!'}return 'New item unlocked!'}if(mode==='unequip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(slot){p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:null};}if(p.equipped_cosmetic===item)p.equipped_cosmetic='none';}else if(product.type==='color'&&p.color===item)p.color='classic';else if(product.type==='breed'&&p.breed===item)p.breed='classic';else if(product.type==='theme'&&p.room_theme===item)p.room_theme='blush';else if(product.type==='furniture')p.placed_items=p.placed_items.filter((x:string)=>x!==item);return 'Item removed!'}if(item==='blush' && mode==='equip'){p.room_theme='blush';return 'Cozy Blush room equipped!'}if(mode==='equip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(!slot)return 'Unknown accessory slot.';if(req.body?.slot&&req.body.slot!==slot)return 'Incorrect accessory slot.';p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:item};p.equipped_cosmetic='none';}else if(product.type==='color')p.color=item;else if(product.type==='breed'){p.breed=item;p.color='classic';}else if(product.type==='theme')p.room_theme=item;else if(product.type==='furniture'){p.placed_items=p.placed_items.includes(item)?p.placed_items.filter((x:string)=>x!==item):[...p.placed_items,item]}return 'Look updated!'}if(mode==='equip'&&item==='none'&&product.type==='cosmetic'){p.equipped_cosmetic='none';return 'Accessory removed.'}return 'Unlock this item first.'})));
+app.post('/api/item',auth,handle(async(req,res)=>mutate(req,res,p=>{const {item,mode}=req.body||{};const product=catalog[item];if(!product)return 'Unknown item.';if(product.type==='cosmetic' && (mode==='buy'||mode==='equip') && Object.values(uniqueCosmeticsBySpecies).some(items=>items.includes(item)) && !uniqueCosmeticsBySpecies[p.species]?.includes(item))return 'This accessory belongs to another species.';if(product.type==='breed' && (mode==='buy'||mode==='equip') && ![...(breedsBySpecies[p.species]||[]),...(addedBreedsBySpecies[p.species]||[])].includes(item))return 'That breed is not available for your pet species.';const owned=product.type==='cosmetic'?p.owned_cosmetics:product.type==='color'?p.owned_colors:product.type==='breed'?p.owned_breeds:p.owned_items;if(mode==='buy'){const requiredLevel = product.type === 'breed' ? BREED_UNLOCK_LEVELS[item] : product.level;
+        if (requiredLevel && p.level < requiredLevel) return `Unlocks at Level ${requiredLevel}.`;if(owned.includes(item))return 'Already owned.';if(p.coins<product.price)return 'Not enough coins.';p.coins-=product.price;owned.push(item);if(product.type==='theme'){p.room_theme=item;return 'Room theme unlocked and applied!'}if(product.type==='breed'){p.breed=item;p.color='classic';return 'New breed unlocked and equipped!'}return 'New item unlocked!'}if(mode==='unequip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(slot){p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:null};}if(p.equipped_cosmetic===item)p.equipped_cosmetic='none';}else if(product.type==='color'&&p.color===item)p.color='classic';else if(product.type==='breed'&&p.breed===item)p.breed='classic';else if(product.type==='theme'&&p.room_theme===item)p.room_theme='blush';else if(product.type==='furniture')p.placed_items=p.placed_items.filter((x:string)=>x!==item);return 'Item removed!'}if(item==='blush' && mode==='equip'){p.room_theme='blush';return 'Cozy Blush room equipped!'}if(mode==='equip'&&owned.includes(item)){if(product.type==='cosmetic'){const slot=COSMETIC_SLOTS[item];if(!slot)return 'Unknown accessory slot.';if(req.body?.slot&&req.body.slot!==slot)return 'Incorrect accessory slot.';p.equipped_outfit={...(p.equipped_outfit||{}),[slot]:item};p.equipped_cosmetic='none';}else if(product.type==='color')p.color=item;else if(product.type==='breed'){p.breed=item;p.color='classic';}else if(product.type==='theme')p.room_theme=item;else if(product.type==='furniture'){p.placed_items=p.placed_items.includes(item)?p.placed_items.filter((x:string)=>x!==item):[...p.placed_items,item]}return 'Look updated!'}if(mode==='equip'&&item==='none'&&product.type==='cosmetic'){p.equipped_cosmetic='none';return 'Accessory removed.'}return 'Unlock this item first.'})));
 
 
 // Batch 10: room-specific furniture inventory and authoritative placement.
@@ -607,7 +698,7 @@ app.post('/api/kitchen',auth,handle(async(req,res)=>{
   await client.query('UPDATE pet_kitchens SET ingredients=$2::jsonb,meals=$3::jsonb,active_recipe=$4,recipe_step=$5,cooking_started_at=$6 WHERE user_id=$1',[req.userId,JSON.stringify(ingredients),JSON.stringify(meals),active,step,started]);
   if(stats)await client.query('UPDATE pets SET coins=coins+$2,hunger=$3,happiness=$4,energy=$5,xp=$6,level=$7,updated_at=NOW() WHERE owner_id=$1',[req.userId,coinDelta,stats.hunger,stats.happiness,stats.energy,stats.xp,stats.level]);
   else if(coinDelta)await client.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1',[req.userId,coinDelta]);
-  if(action==='buy'||action==='serve'||(action==='step'&&!active))await recordMissionEvent(client,req.userId,action==='buy'?'buy':action==='serve'?'serve':'cook');await client.query('COMMIT');res.json({message,kitchen:{ingredients,meals,active_recipe:active,recipe_step:step,cooking_started_at:started}});
+  if(action==='buy'||action==='serve'||(action==='step'&&!active))await recordMissionEvent(client,req.userId,action==='buy'?'buy':action==='serve'?'serve':'cook');await client.query('COMMIT');publishLive([String(req.userId)],'kitchen_updated');res.json({message,kitchen:{ingredients,meals,active_recipe:active,recipe_step:step,cooking_started_at:started}});
  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }));
 

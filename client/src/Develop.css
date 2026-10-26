@@ -1,0 +1,114 @@
+.develop-page { min-height: 100vh; background: #fff7fa; color: #67465a; font-family: inherit; }
+.develop-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px max(20px, calc((100vw - 1200px) / 2)); background: #fff; border-bottom: 1px solid #f4dce8; flex-wrap: wrap; }
+.develop-brand, .develop-header-actions, .develop-intro { display: flex; align-items: center; gap: 12px; }
+.develop-brand span { display: grid; gap: 3px; }
+.develop-brand small, .develop-tile small, .develop-hint { color: #99798b; }
+.develop-header-actions { flex-wrap: wrap; }
+.develop-header-actions a, .develop-header-actions button { display: inline-flex; align-items: center; gap: 7px; color: #845772; background: #fff0f6; border: 1px solid #f1cfdf; border-radius: 12px; padding: 10px 14px; text-decoration: none; cursor: pointer; }
+.develop-content { max-width: 1200px; margin: auto; padding: 30px 20px 70px; }
+.develop-intro { align-items: flex-start; margin-bottom: 22px; }
+.develop-intro h1, .develop-login h1 { margin: 0 0 8px; }
+.develop-intro p { margin: 0; line-height: 1.5; }
+.develop-tabs { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+.develop-tabs button, .develop-login form button { border: 1px solid #e8bdd2; background: white; color: #80536b; border-radius: 12px; padding: 12px 18px; cursor: pointer; font-weight: 700; }
+.develop-tabs button.active, .develop-login form button { background: #ed91b7; border-color: #ed91b7; color: #fff; }
+.develop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 16px; margin-top: 18px; }
+.develop-tile { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px 12px; background: white; border: 1px solid #f0dbe5; border-radius: 18px; min-width: 0; gap: 5px; }
+.develop-tile small { overflow-wrap: anywhere; font-size: 12px; }
+.develop-pet-art { width: 140px; height: 145px; display: flex; justify-content: center; align-items: center; }
+.develop-pet-art svg { max-width: 100%; max-height: 100%; }
+.develop-furniture-art { width: 145px; height: 125px; display: flex; justify-content: center; align-items: center; }
+.develop-furniture-art svg { max-width: 100%; max-height: 100%; }
+.develop-filters { display: flex; gap: 15px; flex-wrap: wrap; }
+.develop-filters label, .develop-login label { display: grid; gap: 7px; font-weight: 600; }
+.develop-filters input, .develop-filters select, .develop-login input { min-width: 190px; padding: 11px; border: 1px solid #e8c9d8; border-radius: 10px; background: white; color: #67465a; }
+.develop-login, .develop-message { max-width: 440px; margin: 60px auto; padding: 30px; background: white; border: 1px solid #f0dbe5; border-radius: 20px; text-align: center; }
+.develop-login p { line-height: 1.5; }
+.develop-login form { display: grid; gap: 16px; text-align: left; margin-top: 22px; }
+.develop-login form input { width: 100%; box-sizing: border-box; }
+.develop-error { color: #b32751; }
+@media (max-width: 520px) { .develop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .develop-tile { padding: 12px 6px; } .develop-pet-art { width: 100%; } .develop-furniture-art { width: 100%; } .develop-header { padding: 15px; } .develop-login { margin: 20px 12px; } }
+
+/* Admin-only atmosphere previews: isolated from player room state. */
+.develop-atmosphere { display: grid; gap: 16px; }
+.develop-room-scene { position: relative; width: 100%; aspect-ratio: 1.8; min-height: 280px; max-height: 580px; overflow: hidden; border: 3px solid var(--room-accent); border-radius: 22px; background: linear-gradient(to bottom, #fcecf6 0%, var(--wall) 53%, #e8c5c8 53%, var(--floor) 100%); isolation: isolate; }
+.develop-room-scene::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 20%, #ffffff55, transparent 60%); pointer-events: none; }
+.develop-room-seam { position: absolute; left: 0; right: 0; top: 53%; height: 5px; background: #ffffff77; }
+.develop-room-window { position: absolute; top: 12%; left: 8%; width: 21%; height: 31%; border-radius: 60px 60px 12px 12px; background: linear-gradient(145deg, #bce9fb, #fef2e2); box-shadow: inset 0 0 0 5px #f9dae8, 0 5px 18px #ae7b9930; }
+.develop-room-window::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 5px solid #fff9fa; }
+.develop-room-furniture { position: absolute; width: clamp(75px, 16%, 180px); height: 27%; transform: translate(-50%, -50%); display: grid; place-items: center; filter: drop-shadow(0 7px 5px #6e426a35); }
+.develop-room-furniture svg { width: 100%; height: 100%; max-height: 100%; }
+.develop-atmosphere-name { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.develop-atmosphere-name span { color: #99798b; }
+.develop-theme-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+.develop-theme-list button { display: grid; gap: 7px; padding: 9px; border: 2px solid #f0dbe5; border-radius: 12px; background: white; color: #67465a; cursor: pointer; font-weight: 700; }
+.develop-theme-list button.selected { border-color: #c977a3; background: #fff0f6; }
+.develop-theme-colors { display: block; height: 48px; border: 1px solid; border-radius: 8px; }
+@media (max-width: 600px) { .develop-room-scene { min-height: 250px; aspect-ratio: 1.2; } .develop-room-furniture { width: 23%; height: 23%; } .develop-theme-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } .develop-theme-list button { font-size: 11px; } }
+
+
+/* Keep the wall/floor boundary visible in the admin atmosphere preview. */
+.develop-room-scene .develop-room-seam {
+    z-index: 1;
+    top: 52.6%;
+    height: 5px;
+    background: color-mix(in srgb, var(--room-accent) 55%, white);
+    box-shadow: 0 2px 4px #3b23452b;
+    pointer-events: none;
+}
+.develop-room-scene .develop-room-furniture,
+.develop-room-scene .develop-room-window {
+    z-index: 2;
+}
+
+/* Match the seam to each room's actual wall/floor transition.
+   Living Room uses 53%; the other three rooms use 66%. */
+.develop-room-scene:is(.paw-room-bedroom, .paw-room-studio, .paw-room-sports) .develop-room-seam {
+    top: 65.6%;
+}
+
+/* Match the administrator portal's shell, header and action styles. */
+.develop-page {
+    background: #fff8f9;
+    color: #64445a;
+    font-family: Inter, system-ui, sans-serif;
+}
+.develop-header {
+    padding: 20px max(20px, calc((100vw - 1120px) / 2));
+    background: #fff8f9;
+    border-bottom: 1px solid #f0dce4;
+}
+.develop-brand {
+    color: #64445a;
+}
+.develop-brand > svg {
+    box-sizing: content-box;
+    padding: 12px;
+    background: #ffe2ed;
+    border-radius: 15px;
+    color: #c4688c;
+}
+.develop-brand b {
+    font-size: 18px;
+}
+.develop-brand small {
+    color: #ab899c;
+}
+.develop-header-actions a,
+.develop-header-actions button {
+    font: inherit;
+    font-weight: 700;
+    border-radius: 12px;
+}
+.develop-header-actions a:hover,
+.develop-header-actions button:hover {
+    background: #ffe3ef;
+}
+.develop-content {
+    max-width: 1120px;
+}
+.develop-tabs button.active,
+.develop-login form button {
+    background: #d8759b;
+    border-color: #d8759b;
+}

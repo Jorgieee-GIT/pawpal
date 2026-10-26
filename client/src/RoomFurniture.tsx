@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {memo, useState} from 'react';
 export const FURNITURE:Record<string,{name:string,room:string,price:number,kind:string}>={
  living_sofa:{name:'Cloud Sofa',room:'living',price:0,kind:'sofa'},living_table:{name:'Coffee Table',room:'living',price:0,kind:'table'},living_rug:{name:'Rose Rug',room:'living',price:0,kind:'rug'},living_lamp:{name:'Floor Lamp',room:'living',price:0,kind:'lamp'},living_plant:{name:'Leafy Plant',room:'living',price:0,kind:'plant'},
  bedroom_bed:{name:'Dream Bed',room:'bedroom',price:0,kind:'bed'},bedroom_nightstand:{name:'Bedside Table',room:'bedroom',price:0,kind:'table'},bedroom_wardrobe:{name:'Wardrobe',room:'bedroom',price:0,kind:'wardrobe'},bedroom_nightlight:{name:'Moon Nightlight',room:'bedroom',price:0,kind:'lamp'},bedroom_plush:{name:'Sleepy Plush',room:'bedroom',price:0,kind:'plush'},
@@ -98,7 +98,7 @@ function CustomFurniture({id}:{id:string}){
  }
 }
 
-export function FurnitureArt({kind,itemId}:{kind:string;itemId?:string}){
+function FurnitureArtBase({kind,itemId}:{kind:string;itemId?:string}){
  if(itemId&&CUSTOM_FURNITURE.has(itemId))return <svg viewBox="0 0 120 110" width="100%" height="100%" role="img" aria-label={FURNITURE[itemId]?.name||'Furniture'}><CustomFurniture id={itemId}/></svg>;
  return <svg viewBox="0 0 120 110" width="100%" height="100%" aria-hidden="true" style={{overflow:'visible'}}>
  <ellipse cx="60" cy="101" rx="48" ry="6" fill="#856879" opacity=".15"/>
@@ -122,3 +122,6 @@ export function RoomFurniture({room,layout,editing,onMove,onSelect,selected}:{ro
  return <div key={f.id} className={'room-furniture-piece '+(selected===f.id?'selected':'')} style={{left:current.x+'%',top:current.y+'%'}} title={FURNITURE[f.id].name} onPointerDown={e=>{if(!editing)return;e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);onSelect(f.id);setDrag({id:f.id,x:f.x,y:f.y})}} onPointerMove={e=>{if(!editing||drag?.id!==f.id)return;const bounds=e.currentTarget.parentElement!.getBoundingClientRect();setDrag({id:f.id,x:Math.min(95,Math.max(5,(e.clientX-bounds.left)/bounds.width*100)),y:Math.min(85,Math.max(20,(e.clientY-bounds.top)/bounds.height*100))})}} onPointerUp={()=>{if(drag?.id===f.id){onMove(f.id,Math.round(drag.x),Math.round(drag.y));setDrag(null)}}}><FurnitureArt kind={FURNITURE[f.id].kind} itemId={f.id}/>{editing&&<small>{FURNITURE[f.id].name}</small>}</div>})}
  </div>;
 }
+
+// Cache unchanged SVG furniture trees; each itemId retains its own unique artwork.
+export const FurnitureArt = memo(FurnitureArtBase);

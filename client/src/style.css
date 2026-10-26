@@ -1286,3 +1286,151 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-
 .living-room button.paw-room-cuddle{position:absolute!important;left:218px;bottom:14px;z-index:35}
 @media(max-width:430px){.living-room button.paw-room-cuddle{left:193px;bottom:9px}}
 .living-room.paw-room-sleeping button.paw-room-cuddle{z-index:1002!important;pointer-events:auto!important}
+
+/* SVG sponge tracks mouse, stylus and touch during the existing scrub interaction. */
+.paw-svg-sponge{position:absolute;z-index:60;pointer-events:none;transform:translate(-45%,-55%) rotate(-16deg);opacity:0;transition:opacity .12s ease;filter:drop-shadow(0 3px 2px rgba(90,70,55,.18))}
+.paw-svg-sponge.is-visible{opacity:1}
+.living-room .wanderer.own .paw-scrub-target{cursor:none!important}
+@media (prefers-reduced-motion:reduce){.paw-svg-sponge{transition:none}}
+
+/* Wardrobe controls: flat, solid pastel buttons with no raised 3D treatment. */
+.v8-wardrobe .paw-wardrobe-equip {
+    appearance: none;
+    background: #eaa5c4 !important;
+    color: #58384c !important;
+    border: 1px solid #d98eb1 !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+    font-weight: 700 !important;
+    transition: background-color 150ms ease, border-color 150ms ease !important;
+}
+
+.v8-wardrobe .paw-wardrobe-equip:hover:not(:disabled) {
+    background: #f2bdd4 !important;
+    border-color: #ce7fa6 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+}
+
+.v8-wardrobe .paw-wardrobe-equip:active:not(:disabled) {
+    background: #dc91b4 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.v8-wardrobe .paw-wardrobe-equip:focus-visible {
+    outline: 2px solid #a95582;
+    outline-offset: 2px;
+}
+
+.v8-wardrobe .paw-wardrobe-equip:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none !important;
+}
+
+.paw-dark .v8-wardrobe .paw-wardrobe-equip {
+    background: #855875 !important;
+    color: #fff2f8 !important;
+    border-color: #a77896 !important;
+}
+
+.paw-dark .v8-wardrobe .paw-wardrobe-equip:hover:not(:disabled) {
+    background: #986a89 !important;
+}
+
+/* Login hero: use the same pastel SVG pet artwork as the game. */
+.paw-auth-svg-pets {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(4px, 1.4vw, 16px);
+    width: 100%;
+    max-width: 490px;
+    margin: 0 auto 18px;
+    letter-spacing: normal;
+}
+
+.paw-auth-pet {
+    flex: 0 1 31%;
+    min-width: 0;
+    max-width: 155px;
+}
+
+.paw-auth-pet .pet-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.paw-auth-pet-bunny {
+    transform: translateY(-7px);
+}
+
+@media (max-width: 600px) {
+    .paw-auth-svg-pets {
+        max-width: 330px;
+        gap: 6px;
+    }
+}
+
+/* SVG-only adoption artwork: preserve each pet's unique species silhouette. */
+.paw-adoption-pet-art {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 74px;
+    height: 74px;
+    max-width: 100%;
+}
+.paw-adoption-pet-art svg {
+    width: 100%;
+    height: 100%;
+}
+.paw-adopt-inline-pet {
+    display: inline-flex;
+    width: 26px;
+    height: 26px;
+    vertical-align: middle;
+}
+.paw-adopt-inline-pet svg {
+    width: 100%;
+    height: 100%;
+}
+.username-warning strong, .game-stats b, .mole-hud span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+
+/* Premium atmospheres retain a clearly separated wall and floor.
+   The old diagonal gradient blended both surfaces into one background. */
+.paw-themed-room:is(
+    .paw-theme-aurora_prism,
+    .paw-theme-cosmic_nebula,
+    .paw-theme-crystal_lagoon,
+    .paw-theme-solar_eclipse,
+    .paw-theme-celestial_opal
+) {
+    background-image:
+        radial-gradient(ellipse at 17% 8%, color-mix(in srgb, var(--room-accent) 32%, transparent), transparent 48%),
+        radial-gradient(ellipse at 82% 15%, #ffffff66, transparent 33%),
+        linear-gradient(to bottom,
+            color-mix(in srgb, var(--wall) 80%, white) 0%,
+            var(--wall) var(--room-wall-edge, 52.6%),
+            color-mix(in srgb, var(--room-accent) 42%, var(--wall)) var(--room-wall-edge, 52.6%),
+            color-mix(in srgb, var(--room-accent) 42%, var(--wall)) var(--room-floor-start, 53.4%),
+            var(--floor) var(--room-floor-start, 53.4%),
+            color-mix(in srgb, var(--floor) 80%, var(--room-accent)) 100%) !important;
+}
+
+/* Bedroom, Creative Studio and Sports Room have a 66% wall/floor split.
+   Premium atmosphere gradients use that same boundary, rather than 53%. */
+.paw-themed-room:is(.paw-room-bedroom, .paw-room-studio, .paw-room-sports) {
+    --room-wall-edge: 65.6%;
+    --room-floor-start: 66.4%;
+}
