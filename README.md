@@ -46,3 +46,11 @@ Both `/admin` and `/develop` now load the same `client/src/AdminShared.css` desi
 ## Admin panel welcome and copyright
 
 Both `/admin` and `/develop` display **Welcome, Jorge Jose** in their authenticated headers. Both pages also display a footer with the current year, PawPal copyright, and Jorge Jose. The welcome message is hidden until an admin session is active. This update is frontend-only; no database migration or backend deployment is required.
+
+
+## Room background alignment and developer preview (October 2026)
+- Fixed the real gameplay Living Room atmosphere backgrounds, including Aurora Prism through Celestial Opal. The wall/floor divider is aligned with the actual background transition.
+- All four gameplay rooms now use the same theme-aware wall/floor background rules (Living Room 53%, other rooms 66%).
+- The admin `/develop` Atmosphere tab now uses the actual gameplay `living-room` classes, real `window` and `wall-art`, and the actual `RoomFurniture` component with `furnitureLayout()` starter positions. This is a read-only visual preview; no pet is required.
+- Test all 17 themes in all four rooms both in gameplay and `/develop`, especially the five premium themes and mobile view. The developer preview does not simulate live pets, overlays, or room interaction.
+- Frontend-only change: redeploy Vercel.

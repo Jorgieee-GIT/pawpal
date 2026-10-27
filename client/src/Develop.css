@@ -112,3 +112,29 @@
     background: #d8759b;
     border-color: #d8759b;
 }
+
+
+/* Preview uses the actual gameplay room DOM classes, furniture placement,
+   wall/floor split and divider rather than a separately drawn mockup. */
+.develop-room-scene.living-room {
+    height: auto;
+    aspect-ratio: 1.8;
+    min-height: 280px;
+    max-height: 580px;
+    width: 100%;
+    border-radius: 22px;
+    border: 3px solid var(--room-accent);
+    isolation: isolate;
+}
+.develop-room-scene.living-room .room-furniture-layer {
+    z-index: 2;
+}
+.develop-room-scene.living-room .wall-art {
+    z-index: 1;
+}
+@media (max-width: 600px) {
+    .develop-room-scene.living-room {
+        aspect-ratio: 1.2;
+        min-height: 250px;
+    }
+}

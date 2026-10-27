@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {ArrowLeft, Eye, LockKeyhole, LogOut, ShieldCheck} from 'lucide-react';
 import PetArt from './PetArt';
-import {DEFAULTS, FURNITURE, FurnitureArt} from './RoomFurniture';
+import {DEFAULTS, FURNITURE, FurnitureArt, RoomFurniture, furnitureLayout} from './RoomFurniture';
 import {FoodArt} from './Kitchen';
 import {COSMETIC_SLOTS, SLOT_NAMES, type OutfitSlot} from './outfitCatalog';
 import {MoleArt} from './WhackAMole';
@@ -155,17 +155,11 @@ export default function Develop() {
                             </select>
                         </label>
                     </div>
-                    <div className={'develop-room-scene paw-themed-room paw-theme-' + atmosphereTheme + ' paw-room-' + atmosphereRoom}
+                    <div className={'develop-room-scene living-room paw-themed-room paw-theme-' + atmosphereTheme + ' paw-room-' + atmosphereRoom}
                         style={{'--wall': ROOM_THEMES[atmosphereTheme][0], '--floor': ROOM_THEMES[atmosphereTheme][1], '--room-accent': ROOM_THEMES[atmosphereTheme][2]} as React.CSSProperties}>
-                        <div className="develop-room-window" aria-hidden="true"><span/></div>
-                        <div className="develop-room-seam" aria-hidden="true"/>
-                        {DEFAULTS[atmosphereRoom].map((id, index) => {
-                            const item = FURNITURE[id];
-                            const positions = [[69, 65], [29, 62], [49, 81], [88, 42], [13, 48]];
-                            return <div key={id} className="develop-room-furniture" title={item.name} style={{left: positions[index][0] + '%', top: positions[index][1] + '%'}}>
-                                <FurnitureArt kind={item.kind} itemId={id}/>
-                            </div>;
-                        })}
+                        <div className="window" aria-hidden="true"/>
+                        <div className="wall-art" aria-hidden="true">♡</div>
+                        <RoomFurniture room={atmosphereRoom} layout={furnitureLayout(atmosphereRoom)} editing={false} selected={null} onSelect={() => {}} onMove={() => {}}/>
                     </div>
                     <div className="develop-atmosphere-name"><b>{ROOM_THEME_NAMES[atmosphereTheme]}</b><span>{titleCase(atmosphereRoom)} · Default starter furniture</span></div>
                     <div className="develop-theme-list" aria-label="Choose an atmosphere">

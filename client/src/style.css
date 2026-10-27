@@ -1434,3 +1434,47 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-
     --room-wall-edge: 65.6%;
     --room-floor-start: 66.4%;
 }
+
+
+/* Shared actual-game and developer room surfaces. The same selectors and
+   theme variables render both, preventing the preview from masking bugs. */
+.living-room.paw-themed-room,
+.develop-room-scene.living-room.paw-themed-room {
+    --room-split: 53%;
+    --room-wall-edge: 52.6%;
+    --room-floor-start: 53.4%;
+    background: linear-gradient(to bottom, var(--wall) 0%, var(--wall) var(--room-split), var(--floor) var(--room-split), var(--floor) 100%) !important;
+}
+.living-room.paw-themed-room:is(.paw-room-bedroom, .paw-room-studio, .paw-room-sports),
+.develop-room-scene.living-room.paw-themed-room:is(.paw-room-bedroom, .paw-room-studio, .paw-room-sports) {
+    --room-split: 66%;
+    --room-wall-edge: 65.6%;
+    --room-floor-start: 66.4%;
+}
+.living-room.paw-themed-room:is(.paw-theme-aurora_prism, .paw-theme-cosmic_nebula, .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal),
+.develop-room-scene.living-room.paw-themed-room:is(.paw-theme-aurora_prism, .paw-theme-cosmic_nebula, .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal) {
+    background-image:
+        radial-gradient(ellipse at 17% 8%, color-mix(in srgb, var(--room-accent) 32%, transparent), transparent 48%),
+        radial-gradient(ellipse at 82% 15%, #ffffff66, transparent 33%),
+        linear-gradient(to bottom,
+            color-mix(in srgb, var(--wall) 80%, white) 0%,
+            var(--wall) var(--room-wall-edge),
+            color-mix(in srgb, var(--room-accent) 42%, var(--wall)) var(--room-wall-edge),
+            color-mix(in srgb, var(--room-accent) 42%, var(--wall)) var(--room-floor-start),
+            var(--floor) var(--room-floor-start),
+            color-mix(in srgb, var(--floor) 80%, var(--room-accent)) 100%) !important;
+}
+.living-room.paw-themed-room::after,
+.develop-room-scene.living-room.paw-themed-room::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--room-wall-edge);
+    height: 5px;
+    background: color-mix(in srgb, var(--room-accent) 55%, white);
+    box-shadow: 0 2px 4px #3b23452b;
+    opacity: 0.75;
+    z-index: 1;
+    pointer-events: none;
+}
