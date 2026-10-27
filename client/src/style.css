@@ -1478,3 +1478,261 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-
     z-index: 1;
     pointer-events: none;
 }
+
+
+/* Premium atmosphere illustration system. Shared by gameplay and /develop.
+   Flat pastel wall/floor surfaces with crisp boundaries, not full-room gradients.
+   Each theme has its own subtle illustrated wallpaper motif. */
+.living-room.paw-themed-room:is(
+    .paw-theme-aurora_prism, .paw-theme-cosmic_nebula,
+    .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal
+),
+.develop-room-scene.living-room.paw-themed-room:is(
+    .paw-theme-aurora_prism, .paw-theme-cosmic_nebula,
+    .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal
+) {
+    background: linear-gradient(to bottom,
+        var(--wall) 0%, var(--wall) var(--room-split),
+        var(--floor) var(--room-split), var(--floor) 100%) !important;
+    box-shadow: inset 0 0 0 1px #ffffff66 !important;
+}
+
+/* Pattern overlay stays strictly on the wall, above the baseboard. */
+.living-room.paw-themed-room:is(
+    .paw-theme-aurora_prism, .paw-theme-cosmic_nebula,
+    .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal
+)::before,
+.develop-room-scene.living-room.paw-themed-room:is(
+    .paw-theme-aurora_prism, .paw-theme-cosmic_nebula,
+    .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal
+)::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: var(--room-split);
+    z-index: 0;
+    pointer-events: none;
+    opacity: 1;
+    letter-spacing: normal;
+}
+
+/* Aurora Prism: translucent pastel crystal facets and small pearl lights. */
+.paw-theme-aurora_prism::before {
+    background-image:
+        radial-gradient(circle at 13% 23%, #fffaf5 0 4px, transparent 5px),
+        radial-gradient(circle at 80% 29%, #fffaf5 0 3px, transparent 4px),
+        linear-gradient(135deg, transparent 46%, #b5a6de80 47% 53%, transparent 54%),
+        linear-gradient(45deg, transparent 46%, #f9d8e780 47% 53%, transparent 54%);
+    background-size: 160px 125px, 190px 150px, 90px 90px, 90px 90px;
+}
+
+/* Cosmic Nebula: a constellation wallpaper, not a dark gradient. */
+.paw-theme-cosmic_nebula::before {
+    background-image:
+        radial-gradient(circle, #ffffff 0 3px, transparent 4px),
+        radial-gradient(circle, #a99bd5 0 2px, transparent 3px),
+        radial-gradient(circle, #e6badb 0 4px, transparent 5px),
+        linear-gradient(25deg, transparent 49%, #b5a8d350 50%, transparent 51%);
+    background-size: 95px 78px, 135px 115px, 180px 150px, 160px 160px;
+    background-position: 18px 9px, 67px 48px, 10px 30px, 0 0;
+}
+
+/* Crystal Lagoon: tiny shell-like circles and gentle tile lines. */
+.paw-theme-crystal_lagoon::before {
+    background-image:
+        radial-gradient(circle at 50% 100%, transparent 11px, #81c4bc88 12px 14px, transparent 15px),
+        radial-gradient(circle at 50% 0%, #ffffffb0 0 5px, transparent 6px),
+        linear-gradient(90deg, transparent 98%, #9bd0c980 100%);
+    background-size: 80px 65px, 80px 65px, 80px 65px;
+}
+
+/* Solar Eclipse: sunburst medallions on a warm peach wall. */
+.paw-theme-solar_eclipse::before {
+    background-image:
+        radial-gradient(circle, #f7d49d 0 12px, #ffffffb5 13px 16px, transparent 17px),
+        radial-gradient(circle, #e5ac9a80 0 4px, transparent 5px),
+        linear-gradient(0deg, transparent 96%, #dfb4a860 100%);
+    background-size: 155px 125px, 80px 75px, 100% 42px;
+    background-position: 30px 20px, 0 0, 0 0;
+}
+
+/* Celestial Opal: pearlescent gems and delicate diamond lattice. */
+.paw-theme-celestial_opal::before {
+    background-image:
+        radial-gradient(ellipse at center, #fffafde0 0 7px, #d8b7dc88 8px 11px, transparent 12px),
+        linear-gradient(45deg, transparent 48%, #d3b9d980 49% 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, #d3b9d980 49% 51%, transparent 52%);
+    background-size: 115px 105px, 115px 105px, 115px 105px;
+}
+
+/* Gentle solid-color baseboards and decoration shadows. */
+.living-room.paw-themed-room:is(
+    .paw-theme-aurora_prism, .paw-theme-cosmic_nebula,
+    .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal
+)::after,
+.develop-room-scene.living-room.paw-themed-room:is(
+    .paw-theme-aurora_prism, .paw-theme-cosmic_nebula,
+    .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal
+)::after {
+    background: color-mix(in srgb, var(--room-accent) 60%, white);
+    opacity: 1;
+    height: 5px;
+    box-shadow: 0 2px 0 #ffffff88;
+}
+.paw-themed-room:is(
+    .paw-theme-aurora_prism, .paw-theme-cosmic_nebula,
+    .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal
+) .wall-art {
+    filter: none;
+    opacity: 1 !important;
+}
+
+
+/* Room parity: every room uses the Living Room's spacious 53/47 wall/floor split.
+   Applied after all earlier room-specific rules, for gameplay AND developer previews. */
+.living-room.paw-themed-room,
+.develop-room-scene.living-room.paw-themed-room,
+.living-room.paw-themed-room:is(.paw-room-bedroom, .paw-room-studio, .paw-room-sports),
+.develop-room-scene.living-room.paw-themed-room:is(.paw-room-bedroom, .paw-room-studio, .paw-room-sports) {
+    --room-split: 53%;
+    --room-wall-edge: 52.6%;
+    --room-floor-start: 53.4%;
+    background: linear-gradient(to bottom, var(--wall) 0 53%, var(--floor) 53% 100%) !important;
+}
+.living-room.paw-themed-room::after,
+.develop-room-scene.living-room.paw-themed-room::after {
+    top: 52.6%;
+}
+
+/* Premium rooms: bespoke SVG architectural features rather than another wallpaper.
+   A single illustrated wall layer, a flat wall, and a subtly patterned floor. */
+.living-room.paw-themed-room:is(.paw-theme-aurora_prism, .paw-theme-cosmic_nebula, .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal),
+.develop-room-scene.living-room.paw-themed-room:is(.paw-theme-aurora_prism, .paw-theme-cosmic_nebula, .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal) {
+    background-image: linear-gradient(to bottom, var(--wall) 0 53%, var(--floor) 53% 100%) !important;
+}
+.living-room.paw-themed-room:is(.paw-theme-aurora_prism, .paw-theme-cosmic_nebula, .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal)::before,
+.develop-room-scene.living-room.paw-themed-room:is(.paw-theme-aurora_prism, .paw-theme-cosmic_nebula, .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal)::before {
+    height: 53%;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    opacity: 1;
+}
+
+.living-room.paw-themed-room.paw-theme-aurora_prism::before,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-aurora_prism::before {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20210%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23a897d2%22%20stroke-width%3D%224%22%20opacity%3D%22.75%22%3E%3Cpath%20d%3D%22M0%20198H900%22%2F%3E%3Cpath%20d%3D%22M70%20198V42L125%2012L180%2042V198M720%20198V42L775%2012L830%2042V198%22%2F%3E%3Cpath%20d%3D%22M80%2074H170M730%2074H820%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23e7d9fa%22%20stroke%3D%22%23aa91d4%22%20stroke-width%3D%224%22%3E%3Cpath%20d%3D%22M125%2025L153%2081L125%20155L97%2081Z%22%2F%3E%3Cpath%20d%3D%22M775%2025L803%2081L775%20155L747%2081Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23fff8ff%22%20opacity%3D%22.9%22%3E%3Ccircle%20cx%3D%22125%22%20cy%3D%2281%22%20r%3D%229%22%2F%3E%3Ccircle%20cx%3D%22775%22%20cy%3D%2281%22%20r%3D%229%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M370%2042L450%2010L530%2042L512%20135L450%20172L388%20135Z%22%20fill%3D%22%23d9caef%22%20stroke%3D%22%23ad92cc%22%20stroke-width%3D%225%22%2F%3E%3Cpath%20d%3D%22M450%2010V172M370%2042L512%20135M530%2042L388%20135%22%20stroke%3D%22%23fff7ff%22%20stroke-width%3D%225%22%20fill%3D%22none%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.living-room.paw-themed-room.paw-theme-cosmic_nebula::before,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-cosmic_nebula::before {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20210%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%3Cg%20stroke%3D%22%239285bc%22%20stroke-width%3D%225%22%20fill%3D%22%23f8f2ff%22%3E%3Cpath%20d%3D%22M45%20198V68Q45%2015%2099%2015H179Q233%2015%20233%2068V198Z%22%2F%3E%3Cpath%20d%3D%22M667%20198V68Q667%2015%20721%2015H801Q855%2015%20855%2068V198Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23c8bde9%22%3E%3Cpath%20d%3D%22M63%20198V72Q63%2035%20103%2035H175Q215%2035%20215%2072V198Z%22%2F%3E%3Cpath%20d%3D%22M685%20198V72Q685%2035%20725%2035H797Q837%2035%20837%2072V198Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff8fe%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M90%20128L135%2067L181%20116L164%20157%22%2F%3E%3Cpath%20d%3D%22M713%20121L746%2073L790%20111L808%20163%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23fffefa%22%3E%3Ccircle%20cx%3D%2290%22%20cy%3D%22128%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22135%22%20cy%3D%2267%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%22181%22%20cy%3D%22116%22%20r%3D%225%22%2F%3E%3Ccircle%20cx%3D%22746%22%20cy%3D%2273%22%20r%3D%226%22%2F%3E%3Ccircle%20cx%3D%22790%22%20cy%3D%22111%22%20r%3D%225%22%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%22450%22%20cy%3D%2295%22%20r%3D%2257%22%20fill%3D%22%23e9e2f8%22%20stroke%3D%22%239584c0%22%20stroke-width%3D%226%22%2F%3E%3Ccircle%20cx%3D%22450%22%20cy%3D%2295%22%20r%3D%2238%22%20fill%3D%22%23c7bce5%22%2F%3E%3Cpath%20d%3D%22M414%2098Q450%2041%20486%2098%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%226%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.living-room.paw-themed-room.paw-theme-crystal_lagoon::before,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-crystal_lagoon::before {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20210%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%3Cg%20fill%3D%22%23b9e5df%22%20stroke%3D%22%2371b4ae%22%20stroke-width%3D%225%22%3E%3Cpath%20d%3D%22M35%20198V82Q35%2028%2093%2028H203Q261%2028%20261%2082V198Z%22%2F%3E%3Cpath%20d%3D%22M639%20198V82Q639%2028%20697%2028H807Q865%2028%20865%2082V198Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23dffaf3%22%20stroke%3D%22%237bbfb8%22%20stroke-width%3D%224%22%3E%3Cpath%20d%3D%22M55%20198V89Q55%2049%20100%2049H197Q241%2049%20241%2089V198Z%22%2F%3E%3Cpath%20d%3D%22M659%20198V89Q659%2049%20704%2049H801Q845%2049%20845%2089V198Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%225%22%3E%3Cpath%20d%3D%22M80%20144Q148%20100%20216%20144M680%20144Q748%20100%20816%20144%22%2F%3E%3Cpath%20d%3D%22M400%20151Q450%2087%20500%20151%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M450%2020Q486%2066%20450%20106Q414%2066%20450%2020Z%22%20fill%3D%22%23b3e6e1%22%20stroke%3D%22%236ab5ad%22%20stroke-width%3D%225%22%2F%3E%3Cg%20fill%3D%22%23fef8f0%22%3E%3Ccircle%20cx%3D%22125%22%20cy%3D%2276%22%20r%3D%2210%22%2F%3E%3Ccircle%20cx%3D%22770%22%20cy%3D%2276%22%20r%3D%2210%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+.living-room.paw-themed-room.paw-theme-solar_eclipse::before,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-solar_eclipse::before {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20210%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%3Cg%20fill%3D%22%23ffe9ce%22%20stroke%3D%22%23c99585%22%20stroke-width%3D%225%22%3E%3Cpath%20d%3D%22M30%20198V65L93%2016L156%2065V198Z%22%2F%3E%3Cpath%20d%3D%22M744%20198V65L807%2016L870%2065V198Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23d4a18b%22%20stroke-width%3D%225%22%3E%3Cpath%20d%3D%22M48%2086H138M762%2086H852M93%2016V198M807%2016V198%22%2F%3E%3C%2Fg%3E%3Ccircle%20cx%3D%22450%22%20cy%3D%2294%22%20r%3D%2271%22%20fill%3D%22%23f6d4a9%22%20stroke%3D%22%23ce9683%22%20stroke-width%3D%227%22%2F%3E%3Ccircle%20cx%3D%22450%22%20cy%3D%2294%22%20r%3D%2246%22%20fill%3D%22%23fff3d7%22%2F%3E%3Ccircle%20cx%3D%22467%22%20cy%3D%2283%22%20r%3D%2241%22%20fill%3D%22%23eab5a6%22%2F%3E%3Cg%20stroke%3D%22%23d5a083%22%20stroke-width%3D%225%22%3E%3Cpath%20d%3D%22M450%206V20M450%20168V184M363%2094H378M522%2094H537M390%2034L402%2046M498%20142L510%20154M390%20154L402%20142M498%2046L510%2034%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+.living-room.paw-themed-room.paw-theme-celestial_opal::before,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-celestial_opal::before {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20900%20210%22%20preserveAspectRatio%3D%22xMidYMid%20slice%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23bd9ac2%22%20stroke-width%3D%225%22%3E%3Cpath%20d%3D%22M35%20198V36H205V198M695%20198V36H865V198%22%2F%3E%3Cpath%20d%3D%22M50%2053H190V183H50ZM710%2053H850V183H710Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23e7d5ea%22%20stroke%3D%22%23b88dc2%22%20stroke-width%3D%224%22%3E%3Cpath%20d%3D%22M120%2061L171%20118L120%20175L69%20118Z%22%2F%3E%3Cpath%20d%3D%22M780%2061L831%20118L780%20175L729%20118Z%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23fff8ff%22%3E%3Cpath%20d%3D%22M120%2078L154%20118L120%20158L86%20118Z%22%2F%3E%3Cpath%20d%3D%22M780%2078L814%20118L780%20158L746%20118Z%22%2F%3E%3C%2Fg%3E%3Cpath%20d%3D%22M450%2022L510%2083L450%20144L390%2083Z%22%20fill%3D%22%23dfc8e6%22%20stroke%3D%22%23ae8abd%22%20stroke-width%3D%225%22%2F%3E%3Cpath%20d%3D%22M450%2022V144M390%2083H510%22%20fill%3D%22none%22%20stroke%3D%22%23fff6ff%22%20stroke-width%3D%225%22%2F%3E%3Cg%20fill%3D%22%23fffaf5%22%3E%3Ccircle%20cx%3D%22280%22%20cy%3D%2254%22%20r%3D%227%22%2F%3E%3Ccircle%20cx%3D%22620%22%20cy%3D%2254%22%20r%3D%227%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+}
+
+/* Distinct premium flooring textures confined to the bottom 47%. */
+.living-room.paw-themed-room.paw-theme-aurora_prism,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-aurora_prism {
+    background-image: repeating-linear-gradient(90deg, transparent 0 78px, #a89ac31f 78px 80px), linear-gradient(to bottom, var(--wall) 0 53%, var(--floor) 53% 100%) !important;
+    background-size: 100% 47%, 100% 100%;
+    background-position: bottom, center;
+    background-repeat: no-repeat;
+}
+.living-room.paw-themed-room.paw-theme-cosmic_nebula,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-cosmic_nebula {
+    background-image: repeating-linear-gradient(90deg, transparent 0 56px, #9c8cbe26 56px 58px), linear-gradient(to bottom, var(--wall) 0 53%, var(--floor) 53% 100%) !important;
+    background-size: 100% 47%, 100% 100%;
+    background-position: bottom, center;
+    background-repeat: no-repeat;
+}
+.living-room.paw-themed-room.paw-theme-crystal_lagoon,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-crystal_lagoon {
+    background-image: repeating-linear-gradient(90deg, transparent 0 48px, #76b9b322 48px 50px), linear-gradient(to bottom, var(--wall) 0 53%, var(--floor) 53% 100%) !important;
+    background-size: 100% 47%, 100% 100%;
+    background-position: bottom, center;
+    background-repeat: no-repeat;
+}
+.living-room.paw-themed-room.paw-theme-solar_eclipse,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-solar_eclipse {
+    background-image: repeating-linear-gradient(90deg, transparent 0 90px, #c18e7628 90px 93px), linear-gradient(to bottom, var(--wall) 0 53%, var(--floor) 53% 100%) !important;
+    background-size: 100% 47%, 100% 100%;
+    background-position: bottom, center;
+    background-repeat: no-repeat;
+}
+.living-room.paw-themed-room.paw-theme-celestial_opal,
+.develop-room-scene.living-room.paw-themed-room.paw-theme-celestial_opal {
+    background-image: repeating-linear-gradient(90deg, transparent 0 70px, #bd9ac22a 70px 72px), linear-gradient(to bottom, var(--wall) 0 53%, var(--floor) 53% 100%) !important;
+    background-size: 100% 47%, 100% 100%;
+    background-position: bottom, center;
+    background-repeat: no-repeat;
+}
+
+/* Permanent architectural features shared by real rooms and /develop.
+   Overlay never captures pointer events or blocks furniture interactions. */
+.living-room.paw-themed-room,
+.develop-room-scene.living-room.paw-themed-room {
+    position: relative;
+}
+.paw-room-architecture {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    color: var(--room-accent, #c49cb9);
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* Room identity: large architectural elements, visible in both gameplay and /develop. */
+.living-room.paw-themed-room .paw-room-architecture,
+.develop-room-scene .paw-room-architecture {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: block;
+    opacity: 1;
+    pointer-events: none;
+}
+.living-room.paw-room-bedroom > .rug,
+.living-room.paw-room-studio > .rug,
+.living-room.paw-room-sports > .rug {
+    display: none !important;
+}
+.living-room.paw-room-bedroom > .window,
+.living-room.paw-room-studio > .window,
+.living-room.paw-room-sports > .window,
+.living-room.paw-room-bedroom > .wall-art,
+.living-room.paw-room-studio > .wall-art,
+.living-room.paw-room-sports > .wall-art {
+    display: none !important;
+}
+.living-room.paw-room-bedroom .paw-room-architecture { color: #bd92ad; }
+.living-room.paw-room-studio .paw-room-architecture { color: #b49e9b; }
+.living-room.paw-room-sports .paw-room-architecture { color: #79aa9b; }
+
+/* Neutral architectural finishes: allow each atmosphere to set the accent color. */
+.living-room.paw-room-bedroom .paw-room-architecture,
+.living-room.paw-room-studio .paw-room-architecture,
+.living-room.paw-room-sports .paw-room-architecture,
+.develop-room-scene.paw-room-bedroom .paw-room-architecture,
+.develop-room-scene.paw-room-studio .paw-room-architecture,
+.develop-room-scene.paw-room-sports .paw-room-architecture {
+    color: var(--room-accent, #b7a99a);
+}

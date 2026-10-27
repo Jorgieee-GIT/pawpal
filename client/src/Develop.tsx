@@ -1,3 +1,4 @@
+import RoomArchitecture from './RoomArchitecture';
 import {useEffect, useState} from 'react';
 import {ArrowLeft, Eye, LockKeyhole, LogOut, ShieldCheck} from 'lucide-react';
 import PetArt from './PetArt';
@@ -22,7 +23,7 @@ const UNLOCKABLE_BREEDS: Record<string, string[]> = {
     penguin: ['rockhopper', 'little_blue', 'macaroni', 'african_penguin', 'king_penguin', 'waitaha_penguin'],
     axolotl: ['copper', 'piebald', 'mosaic', 'tiger_salamander', 'andersons_salamander', 'ambystoma_dumerilii']
 };
-const ROOM_THEMES: Record<string, [string, string, string]> = {blush:['#ffeaf0','#f6d5cc','#bc6482'],lavender_room:['#f0e9ff','#e3d5ed','#8966b1'],mint_room:['#e9faf0','#d2eadc','#4d9275'],night_room:['#dcd6ed','#b7a5c8','#655383'],strawberry_milk:['#ffe1eb','#f4c2cb','#c95379'],lavender_dream:['#eee4ff','#d6c4ed','#7753ad'],mint_garden:['#dff9ed','#bde7d3','#34866f'],blueberry_sky:['#e3edff','#b9cdec','#5579bc'],honey_cottage:['#fff2ce','#e8cd96','#aa7631'],peach_blossom:['#ffe8dd','#f4c6b8','#c77460'],moonlight:['#dce0f5','#a7acd5','#4e588d'],sage_forest:['#e6eee0','#c0d3b4','#617f56'],aurora_prism:['#172451','#5b38a9','#46f2cf'],cosmic_nebula:['#151334','#662c8b','#ff72c6'],crystal_lagoon:['#0d526b','#29aeb7','#c0fcff'],solar_eclipse:['#23152f','#db754d','#ffd58a'],celestial_opal:['#382765','#a78aff','#91ffe7']};
+const ROOM_THEMES: Record<string, [string, string, string]> = {blush:['#ffeaf0','#f6d5cc','#bc6482'],lavender_room:['#f0e9ff','#e3d5ed','#8966b1'],mint_room:['#e9faf0','#d2eadc','#4d9275'],night_room:['#dcd6ed','#b7a5c8','#655383'],strawberry_milk:['#ffe1eb','#f4c2cb','#c95379'],lavender_dream:['#eee4ff','#d6c4ed','#7753ad'],mint_garden:['#dff9ed','#bde7d3','#34866f'],blueberry_sky:['#e3edff','#b9cdec','#5579bc'],honey_cottage:['#fff2ce','#e8cd96','#aa7631'],peach_blossom:['#ffe8dd','#f4c6b8','#c77460'],moonlight:['#dce0f5','#a7acd5','#4e588d'],sage_forest:['#e6eee0','#c0d3b4','#617f56'],aurora_prism:['#e9e5fa','#cfc8ed','#8b7bbf'],cosmic_nebula:['#e7e4f5','#c9c1e3','#8272af'],crystal_lagoon:['#ddf2ef','#b6dcd8','#4d9c9a'],solar_eclipse:['#f9e7d8','#e9c6b6','#c48a77'],celestial_opal:['#f5e9f2','#e3d2e9','#a87fae']};
 const ROOM_THEME_NAMES: Record<string, string> = {blush:'Cozy Blush',lavender_room:'Lavender Room',mint_room:'Mint Room',night_room:'Night Room',strawberry_milk:'Strawberry Milk',lavender_dream:'Lavender Dream',mint_garden:'Mint Garden',blueberry_sky:'Blueberry Sky',honey_cottage:'Honey Cottage',peach_blossom:'Peach Blossom',moonlight:'Moonlight',sage_forest:'Sage Forest',aurora_prism:'Aurora Prism',cosmic_nebula:'Cosmic Nebula',crystal_lagoon:'Crystal Lagoon',solar_eclipse:'Solar Eclipse',celestial_opal:'Celestial Opal'};
 const FOODS = ["berries", "milk", "flour", "carrot", "bread", "honey", "butter", "egg", "cheese", "peach", "pumpkin", "lettuce", "tomato", "pasta", "noodles", "berry_parfait", "cloud_pancakes", "cozy_soup", "moon_cookies", "honey_toast", "starry_omelet", "peach_smoothie", "pumpkin_pie", "garden_salad", "cheesy_pasta", "starlight_cake", "moonlight_ramen"];
 const ACCESSORIES = Object.entries(COSMETIC_SLOTS);
@@ -159,7 +160,7 @@ export default function Develop() {
                         style={{'--wall': ROOM_THEMES[atmosphereTheme][0], '--floor': ROOM_THEMES[atmosphereTheme][1], '--room-accent': ROOM_THEMES[atmosphereTheme][2]} as React.CSSProperties}>
                         <div className="window" aria-hidden="true"/>
                         <div className="wall-art" aria-hidden="true">♡</div>
-                        <RoomFurniture room={atmosphereRoom} layout={furnitureLayout(atmosphereRoom)} editing={false} selected={null} onSelect={() => {}} onMove={() => {}}/>
+                        <RoomArchitecture room={atmosphereRoom}/><RoomFurniture room={atmosphereRoom} layout={furnitureLayout(atmosphereRoom)} editing={false} selected={null} onSelect={() => {}} onMove={() => {}}/>
                     </div>
                     <div className="develop-atmosphere-name"><b>{ROOM_THEME_NAMES[atmosphereTheme]}</b><span>{titleCase(atmosphereRoom)} · Default starter furniture</span></div>
                     <div className="develop-theme-list" aria-label="Choose an atmosphere">

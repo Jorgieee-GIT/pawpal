@@ -54,3 +54,45 @@ Both `/admin` and `/develop` display **Welcome, Jorge Jose** in their authentica
 - The admin `/develop` Atmosphere tab now uses the actual gameplay `living-room` classes, real `window` and `wall-art`, and the actual `RoomFurniture` component with `furnitureLayout()` starter positions. This is a read-only visual preview; no pet is required.
 - Test all 17 themes in all four rooms both in gameplay and `/develop`, especially the five premium themes and mobile view. The developer preview does not simulate live pets, overlays, or room interaction.
 - Frontend-only change: redeploy Vercel.
+
+
+## Premium atmosphere visual refresh (October 2026)
+- Aurora Prism, Cosmic Nebula, Crystal Lagoon, Solar Eclipse and Celestial Opal now use pastel wall and floor colors instead of saturated, full-room gradient blends.
+- Each premium atmosphere has a distinct decorative wallpaper pattern (crystals, constellations, lagoon scallops, sun medallions or opal diamonds). The floor remains solid and the baseboard follows the real room split.
+- The real gameplay room and admin `/develop` atmosphere preview share the same CSS. Living Room uses a 53% wall split; Bedroom, Creative Studio and Sports Room use 66%.
+- No atmosphere IDs, unlock levels, prices, furniture, pet assets or database records were changed.
+- Test all five premium themes in all four room types in gameplay and `/develop`; verify the wallpaper stays on the wall, floor stays solid and baseboard aligns on desktop/mobile.
+
+
+## Premium atmosphere architectural redesign and room floor ratio
+
+- All four rooms now use the Living Room's 53% wall / 47% floor split, including `/develop` previews. The baseboard aligns to the same split.
+- Aurora Prism, Cosmic Nebula, Crystal Lagoon, Solar Eclipse and Celestial Opal now feature five distinct vector architectural wall illustrations (crystal gallery, observatory, lagoon arches, solar hall and opal jewel room) instead of repetitive wallpaper gradients.
+- Premium floor panels have light theme-specific line details while retaining the flat pastel wall/floor colors.
+- The actual gameplay room and `/develop` use the same CSS selectors and theme artwork. Existing room furniture, pets, prices, unlocks, and backend remain unchanged.
+- Test each of the five themes across Living Room, Bedroom, Creative Studio and Sports Room, then compare gameplay to `/develop` at desktop and mobile widths.
+- This archive was checked for integrity, but a full browser rendering test was not performed.
+
+
+## Distinct room architecture (October 2026)
+- Added `client/src/RoomArchitecture.tsx`, shared by actual gameplay and `/develop` atmosphere previews.
+- Living Room: classic wall-panel trim. Bedroom: arched upholstered-style alcoves and molding. Creative Studio: gallery wall panels, framed abstract art, and subtle studio floor grid. Sports Room: sports hall wall panels, circular emblems, and floor court markings.
+- Architectural decorations are SVG and noninteractive; furniture, pets, room themes, purchases and unlocks are unchanged.
+- Check all four rooms in gameplay and `/develop` at desktop/mobile widths, especially that room details do not obstruct pet and furniture interactions.
+- A full browser comparison has not been performed.
+
+
+## Room identity correction
+- Replaced faint architecture lines with prominent permanent SVG scenery for Bedroom (canopy alcove), Creative Studio (gallery paintings and easel), and Sports Room (scoreboard, padded walls and court).
+- Hid the generic oval living-room rug, living-room window and wall-art in the three non-living rooms.
+- Shared `RoomArchitecture` is used in gameplay and `/develop`, so previews show the same room-specific illustration.
+- Test each room with different atmospheres and on mobile. No backend changes.
+
+
+## Neutral room architecture update (October 2026)
+
+- Recolored the permanent room architecture with warm ivory, parchment, sand, and stone instead of room-specific pink, teal, and purple. The result is designed to complement all 17 atmosphere palettes.
+- Retained distinct room identities: bedroom canopy/alcove, studio gallery and pegboard, sports scoreboard and court, living room cozy trim.
+- Added understated room architectural details and atmosphere-aware translucent accents. No furniture SVGs, pet artwork, themes, pricing, unlocks, or backend data were changed.
+- The same `RoomArchitecture` component is used by gameplay and the `/develop` gallery.
+- Check all four rooms with blush and premium themes, on mobile and desktop. This update has not been visually verified in a browser.
