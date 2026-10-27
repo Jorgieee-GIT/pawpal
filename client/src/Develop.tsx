@@ -109,6 +109,7 @@ export default function Develop() {
         <header className="develop-header paw-admin-header">
             <div className="develop-brand"><span className="paw-admin-brand-icon"><ShieldCheck size={22}/></span><span><b>PawPal Admin</b><small>Administration workspace</small></span></div>
             <div className="develop-header-actions">
+                {authorized && <span className="paw-admin-welcome">Welcome, Jorge Jose</span>}
                 <a href="/admin"><ArrowLeft size={16}/> Admin dashboard</a>
                 {authorized && <button type="button" onClick={signOut}><LogOut size={16}/> Sign out</button>}
             </div>
@@ -252,5 +253,6 @@ export default function Develop() {
                 </>}
 
             </main>}
+        <footer className="paw-admin-footer">© {new Date().getFullYear()} PawPal. All rights reserved. · Jorge Jose</footer>
     </div>;
 }

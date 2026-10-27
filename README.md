@@ -41,3 +41,8 @@ The project archive has been checked for integrity; a full browser rendering tes
 Both `/admin` and `/develop` now load the same `client/src/AdminShared.css` design system. The two pages share their header dimensions, brand icon, page width, background, typography, title layout, navigation buttons, card borders, and responsive breakpoints. The gallery keeps its unique artwork tools and the account dashboard keeps its player-management table. The administrator password reset minimum remains six characters. Deploy the frontend to see the change; if the old appearance persists, hard-refresh the browser or clear its cached site assets.
 
 **Check:** Compare `/admin` and `/develop` side by side at desktop and mobile widths; test navigation both ways and gallery tabs. A production browser visual test was not run in this environment.
+
+
+## Admin panel welcome and copyright
+
+Both `/admin` and `/develop` display **Welcome, Jorge Jose** in their authenticated headers. Both pages also display a footer with the current year, PawPal copyright, and Jorge Jose. The welcome message is hidden until an admin session is active. This update is frontend-only; no database migration or backend deployment is required.

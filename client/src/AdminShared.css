@@ -185,3 +185,27 @@
         font-size: 26px;
     }
 }
+
+/* Shared admin identity and copyright */
+.paw-admin-welcome {
+    display: inline-flex;
+    align-items: center;
+    color: var(--admin-text, #493747);
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.paw-admin-footer {
+    width: min(100%, 1160px);
+    margin: 24px auto 0;
+    padding: 20px 16px 26px;
+    text-align: center;
+    color: #806d7c;
+    font-size: 0.8rem;
+}
+@media (max-width: 650px) {
+    .paw-admin-welcome {
+        width: 100%;
+        justify-content: center;
+    }
+}

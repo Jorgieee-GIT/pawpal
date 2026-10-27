@@ -1,8 +1,12 @@
 {
-  "rewrites": [
-    {
-      "source": "/admin",
-      "destination": "/index.html"
-    }
-  ]
+    "rewrites": [
+        {
+            "source": "/admin",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/develop",
+            "destination": "/index.html"
+        }
+    ]
 }
