@@ -1,4 +1,4 @@
-PAWPAL ADMIN PORTAL — SETUP
+PAWPAL ADMIN PORTAL - SETUP
 
 1. Pick a private admin username and a strong, unique admin password.
 2. In the server folder (with npm dependencies installed), generate a bcrypt hash:

@@ -1,0 +1,1407 @@
+/* PawPal Multiplayer Meadow - scoped so the existing PawPal screens stay untouched. */
+.paw-multiplayer { --multi-pink: #d989ac; --multi-deep: #88546e; --multi-muted: #9c8191; --multi-line: #f0dce6; --multi-soft: #fff6fa; color: var(--multi-deep); }
+.paw-multiplayer *, .paw-multiplayer *::before, .paw-multiplayer *::after { box-sizing: border-box; }
+.paw-multiplayer-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.paw-multiplayer-heading h2 { margin: 5px 0 4px; }
+.paw-multiplayer-heading p { margin: 0; max-width: 510px; font-size: 13px; }
+.paw-multiplayer-wallet { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: #fff1f7; border: 1px solid #efd4e1; border-radius: 15px; color: #b77093; white-space: nowrap; }
+.paw-multiplayer-wallet small, .paw-multiplayer-wallet b { display: block; }
+.paw-multiplayer-wallet small { font-size: 9px; font-weight: 900; letter-spacing: .7px; }
+.paw-multiplayer-wallet b { font-size: 20px; color: #a45b7f; }
+.paw-multiplayer-hero { display: flex; align-items: center; gap: 18px; padding: 23px; margin: 16px 0 21px; border-radius: 22px; background: linear-gradient(120deg,#fbe5ed,#f6e9fc 70%,#f3f0ff); border: 2px solid #f2d8e9; position: relative; }
+.paw-brawl-hero-icon { display: grid; place-items: center; flex-shrink: 0; width: 87px; height: 87px; color: #c4739e; border-radius: 24px; border: 2px solid #eabdd1; background: #fff7fb; box-shadow: 5px 6px 0 #edcddd; transform: rotate(-5deg); }
+.paw-multiplayer-hero h3 { margin: 5px 0; font-size: 24px; color: #a76189; }
+.paw-multiplayer-hero small { font-size: 10px; font-weight: 900; letter-spacing: 1.2px; color: #ad7597; }
+.paw-multiplayer-hero p { max-width: 460px; margin: 0; font-size: 12px; }
+.paw-brawl-live-pill { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; border: 1px solid #dbbed2; border-radius: 20px; padding: 7px 10px; color: #97608a; background: #fffafa; white-space: nowrap; font-size: 10px; font-weight: 900; }
+.paw-multiplayer-grid { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 16px; }
+.paw-multiplayer-card { border: 1px solid var(--multi-line); background: #fffcfd; border-radius: 20px; padding: 20px; min-width: 0; box-shadow: 0 4px 18px #e2aec01c; }
+.paw-multiplayer-card-heading { display: flex; align-items: center; gap: 9px; color: #c07a9d; padding-bottom: 14px; margin-bottom: 16px; border-bottom: 1px dashed #eed2de; }
+.paw-multiplayer-card-heading h3 { margin: 0; color: #96637e; font-size: 17px; }
+.paw-challenge-form label { display: block; font-weight: 800; font-size: 12px; color: #98708a; margin: 15px 0 7px; }
+.paw-multi-select-wrap, .paw-multi-wager-input { position: relative; display: flex; align-items: center; gap: 9px; padding: 0 12px; border: 1.5px solid #ecd3df; border-radius: 12px; background: white; color: #bc8aa7; }
+.paw-multi-select-wrap:focus-within, .paw-multi-wager-input:focus-within { border-color: #cb85a7; box-shadow: 0 0 0 3px #e5a1bf2f; }
+.paw-multi-select-wrap select, .paw-multi-wager-input input { width: 100%; min-width: 0; padding: 13px 0; border: 0; border-radius: 0; background: transparent; outline: none; color: #76546b; font-family: inherit; font-size: 13px; }
+.paw-multi-select-wrap select { appearance: none; cursor: pointer; padding-right: 18px; }
+.paw-multi-select-wrap > svg:last-child { pointer-events: none; }
+.paw-multi-wager-input input { box-shadow: none; }
+.paw-multi-wager-input input::-webkit-inner-spin-button { appearance: none; }
+.paw-multi-wager-input span { font-size: 10px; font-weight: 900; color: #b4819a; }
+.paw-multi-presets { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.paw-multi-presets button { flex: 1; min-width: 50px; border: 1px solid #edcfdb; border-radius: 9px; background: #fff4f8; color: #b57698; padding: 7px 9px; font-size: 12px; font-weight: 900; }
+.paw-multi-presets button.chosen { background: #eebed2; color: #7e4769; border-color: #d898b5; }
+.paw-multi-prize { background: linear-gradient(125deg,#fff0f7,#fff9fb); border: 1px solid #f0d3e0; border-radius: 15px; padding: 14px; margin: 19px 0 13px; display: grid; gap: 9px; }
+.paw-multi-prize > span, .paw-multi-prize > div { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; }
+.paw-multi-prize > span { color: #94798a; }
+.paw-multi-prize b { color: #926380; }
+.paw-multi-prize > div { border-top: 1px dashed #eecfdd; padding-top: 11px; font-size: 13px; font-weight: 900; }
+.paw-multi-prize strong { display: inline-flex; align-items: center; gap: 6px; font-size: 20px; color: #bc7497; }
+.paw-multi-primary { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #d68baa; border: 1px solid #c97e9c; color: white; font-weight: 900; padding: 13px; border-radius: 12px; box-shadow: 0 4px 0 #ba7092; }
+.paw-multi-primary:not(:disabled):hover { background: #c87599; transform: translateY(-1px); }
+.paw-multi-hint { display: flex; align-items: flex-start; gap: 7px; margin: 12px 0 0; font-size: 11px; line-height: 1.5; color: #9f8797; }
+.paw-multi-hint svg { flex-shrink: 0; margin-top: 2px; }
+.paw-multi-error { color: #bd526e !important; margin: 8px 0 0; font-size: 11px; }
+.paw-multi-refresh { display: inline-flex; padding: 6px; margin-left: auto; background: #fff0f6; color: #ad7392; border: 1px solid #ebd1df; border-radius: 9px; }
+.paw-multi-empty { text-align: center; padding: 35px 10px; color: #ac8a9e; }
+.paw-multi-empty span { display: block; font-size: 38px; }
+.paw-multi-empty b { display: block; margin: 9px; color: #ad7d97; }
+.paw-multi-empty p { font-size: 12px; }
+.paw-multi-invite { padding: 14px; border: 1px solid #edcbdc; background: #fff3f8; border-radius: 14px; margin-bottom: 12px; }
+.paw-multi-invite-header { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+.paw-multi-invite-header b { display: flex; align-items: center; gap: 5px; font-size: 13px; }
+.paw-multi-invite-header span { font-weight: 900; font-size: 9px; letter-spacing: .5px; background: white; padding: 6px; border-radius: 7px; }
+.paw-multi-invite p { margin: 9px 0; color: #896579; font-size: 12px; }
+.paw-multi-invite small { color: #aa879d; font-size: 11px; }
+.paw-multi-wager-label { display: flex; align-items: center; gap: 6px; }
+.paw-multi-invite-actions { display: flex; gap: 8px; margin-top: 12px; }
+.paw-multi-accept, .paw-multi-decline { display: inline-flex; align-items: center; justify-content: center; gap: 5px; font-size: 12px; font-weight: 900; border-radius: 10px; padding: 10px 12px; border: 1px solid #d9b2c7; }
+.paw-multi-accept { flex: 1; background: #d58aaa; color: white; }
+.paw-multi-decline { background: white; color: #9f6a83; }
+.paw-brawl-arena { margin-top: 20px; background: linear-gradient(#fff7fa,#fffdfd); }
+.paw-brawl-arena-prize { margin-left: auto; display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 900; color: #b17794; }
+.paw-brawl-versus { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: center; gap: 11px; }
+.paw-brawl-versus-label { font-weight: 1000; color: #e1abc2; font-size: 22px; }
+.paw-brawl-fighter { border-radius: 17px; border: 2px solid #f0d9e5; background: white; padding: 12px; min-width: 0; }
+.paw-brawl-fighter.is-turn { border-color: #d794b3; box-shadow: 0 0 0 3px #eabbd343; }
+.paw-brawl-fighter-art { width: 130px; max-width: 100%; margin: auto; aspect-ratio: 1; display: grid; place-items: center; }
+.paw-brawl-fighter-art > * { max-width: 100%; width: 100%; }
+.paw-brawl-fighter-details b, .paw-brawl-fighter-details small, .paw-brawl-fighter-details > span { display: block; }
+.paw-brawl-fighter-details b { color: #98607e; font-size: 15px; overflow-wrap: anywhere; }
+.paw-brawl-fighter-details small { color: #ac8a9d; font-size: 10px; }
+.paw-brawl-fighter-details > span { text-transform: capitalize; font-size: 11px; color: #9a7a8b; }
+.paw-brawl-health-track { height: 10px; margin: 9px 0 4px; background: #f5dce6; overflow: hidden; border-radius: 20px; }
+.paw-brawl-health-track > span { display: block; height: 100%; border-radius: 20px; background: linear-gradient(90deg,#e7a3b5,#cc749b); transition: width .2s; }
+.paw-brawl-traits { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.paw-brawl-traits span { border: 1px solid #f0dce5; background: #fff4f9; padding: 4px 6px; font-size: 9px; font-weight: 800; border-radius: 7px; }
+.paw-brawl-turn-banner { display: flex; align-items: center; justify-content: center; gap: 7px; text-align: center; background: #fae6f0; color: #915671; padding: 12px; border-radius: 12px; margin: 17px 0 13px; font-weight: 900; font-size: 13px; }
+.paw-brawl-action-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 9px; }
+.paw-brawl-action-grid button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 13px; border: 1px solid #ebcddd; background: #fff3f8; color: #a26483; min-height: 91px; padding: 10px 6px; }
+.paw-brawl-action-grid button:not(:disabled):hover { background: #f9dfeb; }
+.paw-brawl-action-grid b { font-size: 12px; }
+.paw-brawl-action-grid small { font-size: 9px; text-align: center; color: #a68b9d; }
+.paw-brawl-log { margin-top: 15px; padding: 14px; background: white; border: 1px dashed #eac9d8; border-radius: 13px; }
+.paw-brawl-log > b { display: block; color: #a36584; font-size: 12px; margin-bottom: 7px; }
+.paw-brawl-log p { font-size: 11px; margin: 6px 0; color: #98758a; }
+.paw-brawl-forfeit { display: block; border: none; background: transparent; color: #b27e94; text-decoration: underline; font-size: 11px; margin: 14px auto 0; }
+.paw-multi-history { margin-top: 17px; }
+.paw-multi-history-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f2e4eb; }
+.paw-multi-history-row:last-child { border-bottom: 0; }
+.paw-multi-history-row b { font-size: 12px; }
+.paw-multi-history-row small { display: block; font-size: 10px; color: #a68d9f; }
+.paw-multi-history-row > span { font-size: 11px; text-transform: capitalize; color: #987a89; }
+.paw-multi-history-row > span.won { color: #448e71; font-weight: 900; }
+.paw-multi-history-row > span.lost { color: #b86e88; }
+.paw-multiplayer-footer { display: flex; align-items: center; gap: 6px; font-size: 11px; margin: 17px 0 0; }
+/* Notification details belong to the global bell and retain its existing design. */
+.paw-notification-game { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: #a66688; background: #fff2f7; border-radius: 8px; padding: 6px 8px; font-size: 11px; margin: 7px 0; }
+.paw-notification-game b { color: #a35e81; }
+.paw-notification-game-wager { color: #967487; font-weight: 800; }
+.paw-notification-item .paw-notification-actions button { white-space: nowrap; }
+.paw-dark .paw-multiplayer { --multi-deep: #f4dbe9; --multi-muted: #d3b1c6; --multi-line: #705169; --multi-soft: #473344; color: #ffe8f5; }
+.paw-dark .paw-multiplayer-card, .paw-dark .paw-brawl-fighter, .paw-dark .paw-brawl-log, .paw-dark .paw-multi-select-wrap, .paw-dark .paw-multi-wager-input { background: #473645; border-color: #76596d; }
+.paw-dark .paw-multiplayer-hero, .paw-dark .paw-multiplayer-wallet, .paw-dark .paw-multi-prize, .paw-dark .paw-multi-invite, .paw-dark .paw-brawl-turn-banner, .paw-dark .paw-brawl-action-grid button { background: #534052; border-color: #785a72; color: #ffdeef; }
+.paw-dark .paw-multiplayer input, .paw-dark .paw-multiplayer select { background: transparent !important; color: #ffdeef !important; border: 0 !important; }
+.paw-dark .paw-multiplayer select option { color: #573f4e; background: #fff6fa; }
+.paw-dark .paw-multiplayer h3, .paw-dark .paw-multiplayer b, .paw-dark .paw-multiplayer label { color: #ffe1ef; }
+.paw-dark .paw-multi-presets button, .paw-dark .paw-multi-decline, .paw-dark .paw-multi-refresh { background: #66465e; color: #ffe4f2; border-color: #94738a; }
+@media(max-width:900px) { .paw-multiplayer-grid { grid-template-columns: 1fr; } }
+@media(max-width:620px) { .paw-multiplayer-heading { flex-wrap: wrap; } .paw-multiplayer-wallet { width: 100%; } .paw-multiplayer-hero { padding: 15px; gap: 12px; flex-wrap: wrap; } .paw-brawl-hero-icon { width: 65px; height: 65px; border-radius: 17px; } .paw-brawl-live-pill { margin-left: auto; } .paw-multiplayer-card { padding: 14px; } .paw-brawl-versus { gap: 5px; } .paw-brawl-fighter { padding: 7px; } .paw-brawl-fighter-art { width: 85px; } .paw-brawl-versus-label { font-size: 14px; } .paw-brawl-action-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .paw-multiplayer-hero h3 { font-size: 20px; } }
+@media(max-width:365px) { .paw-brawl-versus { grid-template-columns: 1fr; } .paw-brawl-versus-label { text-align: center; } }
+
+.paw-brawl-breed-skill { margin-top: 6px; font-weight: 700; color: #aa7394 !important; }
+
+/* Multiplayer game library - same card-first browsing pattern as the Mini-games arcade. */
+.paw-multi-section-heading { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:18px 0 12px; }
+.paw-multi-section-heading h3 { margin:0 0 4px; font-size:19px; color:#98617e; }
+.paw-multi-section-heading p { margin:0; font-size:12px; color:#a18697; }
+.paw-multi-section-heading > span { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; font-size:10px; font-weight:900; color:#b17b98; }
+.paw-multi-game-library { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:16px; margin-bottom:18px; }
+.paw-multi-game-tile { display:flex; flex-direction:column; padding:0; min-width:0; overflow:hidden; text-align:left; border:2px solid #efd8e4; border-radius:19px; background:#fffcfd; box-shadow:0 5px 0 #ead4e0; color:#92647f; font:inherit; transition:transform .16s,border-color .16s,box-shadow .16s; }
+button.paw-multi-game-tile { cursor:pointer; }
+button.paw-multi-game-tile:hover { transform:translateY(-3px); border-color:#d48bac; box-shadow:0 8px 0 #e8c5d7; }
+button.paw-multi-game-tile:focus-visible { outline:3px solid #b8709a; outline-offset:3px; }
+.paw-multi-game-tile.selected { border-color:#ca7c9e; box-shadow:0 5px 0 #d59ab7; }
+.paw-multi-game-art { min-height:146px; width:100%; display:grid; place-items:center; position:relative; overflow:hidden; }
+.paw-multi-game-art-brawl { background:radial-gradient(circle at 25% 30%,#fff8df 0 14%,transparent 15%),linear-gradient(135deg,#ffe5ed,#efdafa 70%,#e3e5ff); }
+.paw-multi-game-art-soon { background:radial-gradient(circle at 75% 25%,#fff7ed 0 12%,transparent 13%),linear-gradient(135deg,#e9e5fa,#f8e5ef 70%,#e9f4fc); }
+.paw-multi-game-art-circle { display:grid; place-items:center; width:92px; height:92px; border-radius:28px; color:#b86d95; background:#fff8fc; border:3px solid #e7bcd1; box-shadow:5px 6px 0 #dfbfd2; transform:rotate(-7deg); }
+.paw-multi-game-art-soon .paw-multi-game-art-circle { color:#a395bd; border-color:#d4c9e9; box-shadow:5px 6px 0 #dcd3ed; transform:rotate(6deg); }
+.paw-multi-game-status { position:absolute; right:10px; top:10px; display:inline-flex; align-items:center; gap:4px; border:1px solid #e6c4d5; border-radius:20px; background:#fffafa; padding:6px 9px; font-size:9px; font-weight:900; color:#a46689; }
+.paw-multi-game-info { display:flex; flex-direction:column; gap:5px; padding:14px 16px 16px; }
+.paw-multi-game-info b { font-size:16px; color:#95617f; }
+.paw-multi-game-info small { font-size:11px; color:#a28a9a; }
+.paw-multi-game-info strong { margin-top:9px; font-size:11px; color:#c17b9f; letter-spacing:.4px; }
+.paw-multi-game-upcoming { cursor:default; }
+.paw-multi-game-upcoming .paw-multi-game-info strong { color:#aa9ab4; }
+.paw-multi-selected-banner { display:flex; align-items:center; gap:10px; padding:12px 15px; margin:0 0 16px; border:1px solid #e9cbdc; border-radius:13px; background:#fff2f8; font-size:12px; color:#936580; }
+.paw-multi-selected-banner span { flex:1; }
+.paw-multi-selected-banner button { border:1px solid #dfb5c9; border-radius:9px; background:white; color:#9e6c87; padding:8px 10px; font-size:11px; font-weight:800; cursor:pointer; }
+.paw-multiplayer-grid:has(> .paw-multi-inbox:only-child) { grid-template-columns:1fr; }
+.paw-dark .paw-multi-game-tile { background:#473645; border-color:#76596d; box-shadow:0 5px 0 #3d2b3b; }
+.paw-dark .paw-multi-game-tile.selected { border-color:#d698b6; }
+.paw-dark .paw-multi-game-info b, .paw-dark .paw-multi-section-heading h3 { color:#ffe1ef; }
+.paw-dark .paw-multi-selected-banner { background:#534052; border-color:#785a72; color:#ffe1ef; }
+@media(max-width:620px) { .paw-multi-section-heading { align-items:flex-start; } .paw-multi-section-heading > span { display:none; } .paw-multi-game-library { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; } .paw-multi-game-art { min-height:112px; } .paw-multi-game-art-circle { width:70px; height:70px; border-radius:20px; } .paw-multi-game-art-circle svg { width:35px; height:35px; } .paw-multi-game-info { padding:11px; } .paw-multi-game-info b { font-size:13px; } .paw-multi-game-status { font-size:8px; padding:4px 6px; } .paw-multi-selected-banner { flex-wrap:wrap; } }
+
+/* Paw Brawl: full-screen, responsive classic monster-battle presentation */
+.paw-brawl-modal-backdrop { position:fixed; inset:0; z-index:10000; display:grid; place-items:center; padding:18px; background:rgba(39,29,49,.76); backdrop-filter:blur(6px); }
+.paw-brawl-modal { width:min(950px,100%); max-height:min(94dvh,900px); overflow:auto; border:3px solid #f3d7c9; border-radius:25px; background:#fffaf3; box-shadow:0 22px 90px #26162780; color:#765668; }
+.paw-brawl-modal-header { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:15px 21px; background:#fff0e6; border-bottom:2px solid #eed6c8; }
+.paw-brawl-modal-kicker { font-size:10px; letter-spacing:1.5px; font-weight:900; color:#b47b91; }
+.paw-brawl-modal-header h2 { display:flex; gap:8px; align-items:center; margin:3px 0 0; font-size:22px; color:#8d6178; }
+.paw-brawl-modal-header-right { display:flex; gap:13px; align-items:center; }
+.paw-brawl-modal-close { display:grid; place-items:center; width:37px; height:37px; border-radius:50%; border:2px solid #e9c9c8; background:#fffaf5; color:#9d7185; cursor:pointer; }
+.paw-brawl-battlefield { height:clamp(330px,45vw,460px); position:relative; isolation:isolate; overflow:hidden; background:linear-gradient(#b9e6fa 0%,#e8f8ed 60%,#b9dfac 61%,#85c59b 100%); }
+.paw-brawl-landscape-sun { position:absolute; top:11%; right:22%; width:78px; height:78px; border-radius:50%; background:#fff7cc; box-shadow:0 0 0 19px #fff8d54d; }
+.paw-brawl-hill { position:absolute; width:120%; height:180px; left:-10%; border-radius:50% 50% 0 0; pointer-events:none; }
+.paw-brawl-hill-back { bottom:12%; background:#b6d9b2; transform:rotate(-7deg); }
+.paw-brawl-hill-front { bottom:-27%; background:#82b891; transform:rotate(7deg); }
+.paw-brawl-combatant { position:absolute; z-index:2; width:48%; height:100%; }
+.paw-brawl-combatant-enemy { right:1%; top:0; }
+.paw-brawl-combatant-player { left:1%; bottom:0; }
+.paw-brawl-platform { position:absolute; width:70%; height:17%; left:15%; border-radius:50%; background:#69a887a3; border:3px solid #d2e9b2; bottom:9%; }
+.paw-brawl-combatant-enemy .paw-brawl-platform { bottom:27%; width:55%; left:24%; }
+.paw-brawl-pet-sprite { position:absolute; width:clamp(120px,24vw,235px); height:clamp(120px,24vw,235px); display:grid; place-items:center; filter:drop-shadow(0 12px 5px #355a423b); }
+.paw-brawl-pet-sprite > * { width:100%; max-height:100%; }
+.paw-brawl-sprite-player { bottom:12%; left:8%; transform:scaleX(-1) rotate(-5deg); transform-origin:bottom center; }
+.paw-brawl-sprite-enemy { bottom:31%; right:10%; transform:rotate(4deg); transform-origin:bottom center; }
+.paw-brawl-battle-hud { position:absolute; z-index:4; width:min(275px,88%); padding:11px 13px; background:#fffdf5ed; border:2px solid #c9ad9e; border-radius:13px; box-shadow:3px 4px 0 #7caa9c66; }
+.paw-brawl-combatant-enemy .paw-brawl-battle-hud { top:6%; right:5%; }
+.paw-brawl-combatant-player .paw-brawl-battle-hud { bottom:5%; right:-5%; }
+.paw-brawl-hud-top { display:flex; justify-content:space-between; gap:6px; align-items:center; }
+.paw-brawl-hud-top b { font-size:14px; overflow-wrap:anywhere; }
+.paw-brawl-hud-top small, .paw-brawl-battle-hud > small { font-size:10px; color:#8d7582; }
+.paw-brawl-hud-health { height:10px; margin:7px 0 4px; background:#ecd4d6; border:1px solid #d5b9bb; border-radius:20px; overflow:hidden; }
+.paw-brawl-hud-health span { display:block; height:100%; border-radius:20px; background:linear-gradient(90deg,#85cdb3,#4cb888); transition:width .25s; }
+.paw-brawl-modal-controls { padding:12px 21px 18px; }
+.paw-brawl-modal-controls .paw-brawl-turn-banner { margin:0 0 12px; }
+.paw-brawl-battle-log { margin-top:13px; border:1px solid #e9d3d9; border-radius:12px; padding:10px 13px; background:#fff; }
+.paw-brawl-battle-log summary { cursor:pointer; font-weight:800; font-size:12px; }
+.paw-brawl-battle-log p { margin:7px 0; font-size:11px; }
+.paw-brawl-rejoin { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:14px; margin-top:17px; background:#fff3e9; border:2px solid #e9c6cc; border-radius:16px; }
+.paw-brawl-rejoin > div { display:flex; align-items:center; gap:9px; }
+.paw-brawl-rejoin span { display:grid; gap:3px; }
+.paw-brawl-rejoin small { font-size:11px; }
+.paw-brawl-rejoin button { padding:10px 14px; border:0; border-radius:10px; background:#b8789b; color:white; font-weight:800; cursor:pointer; }
+.paw-dark .paw-brawl-modal { background:#3d303e; border-color:#84637a; }
+.paw-dark .paw-brawl-modal-header { background:#4f3d4d; border-color:#76596d; }
+.paw-dark .paw-brawl-modal-header h2, .paw-dark .paw-brawl-hud-top b { color:#f6d9e8; }
+.paw-dark .paw-brawl-battle-hud { background:#4c3b4ce8; border-color:#8e7283; }
+.paw-dark .paw-brawl-battle-log { background:#4c3b4c; border-color:#76596d; }
+@media(max-width:620px) {
+    .paw-brawl-modal-backdrop { padding:7px; }
+    .paw-brawl-modal { max-height:97dvh; border-radius:16px; }
+    .paw-brawl-modal-header { padding:10px 12px; }
+    .paw-brawl-modal-header h2 { font-size:18px; }
+    .paw-brawl-arena-prize { font-size:10px; }
+    .paw-brawl-battlefield { height:340px; }
+    .paw-brawl-pet-sprite { width:clamp(105px,32vw,175px); height:clamp(105px,32vw,175px); }
+    .paw-brawl-sprite-player { bottom:17%; left:0; }
+    .paw-brawl-sprite-enemy { bottom:37%; right:0; }
+    .paw-brawl-combatant-enemy .paw-brawl-battle-hud { right:0; top:5%; }
+    .paw-brawl-combatant-player .paw-brawl-battle-hud { right:-8%; bottom:2%; }
+    .paw-brawl-battle-hud { padding:7px; width:min(185px,100%); }
+    .paw-brawl-hud-top { flex-wrap:wrap; }
+    .paw-brawl-hud-top b { font-size:12px; }
+    .paw-brawl-modal-controls { padding:10px; }
+    .paw-brawl-action-grid button { min-height:73px; }
+}
+
+/* Paw Brawl: per-turn countdown and contextual move/species information. */
+.paw-brawl-info-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 8px 11px; border-radius: 11px; background: #fff2d8; border: 1px solid #e6c991; color: #805b32; font-size: 12px; font-weight: 800; cursor: pointer; }
+.paw-brawl-info-toggle:hover { background: #ffe5b9; }
+.paw-brawl-turn-clock { display: inline-flex; align-items: center; gap: 4px; justify-content: center; border-radius: 10px; background: #fffdf4; color: #786143; padding: 6px 10px; min-width: 61px; font-weight: 900; font-variant-numeric: tabular-nums; border: 1px solid #eed8a9; }
+.paw-brawl-turn-clock.is-urgent { color: #bd3c57; background: #ffe3e8; border-color: #efa4b5; animation: paw-brawl-clock-pulse 1s ease-in-out infinite alternate; }
+@keyframes paw-brawl-clock-pulse { to { opacity: .63; } }
+.paw-brawl-info-panel { padding: 14px; background: #fff9ee; border-bottom: 2px solid #e6d1af; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; max-height: 47vh; overflow: auto; color: #725339; }
+.paw-brawl-info-pet, .paw-brawl-info-moves { background: #fffefb; border: 1px solid #e7d7ba; border-radius: 13px; padding: 12px; }
+.paw-brawl-info-panel h3 { margin: 0 0 7px; font-size: 15px; color: #84593d; }
+.paw-brawl-info-panel p { margin: 6px 0; line-height: 1.5; font-size: 11px; }
+.paw-brawl-info-stats { display: flex; gap: 6px; flex-wrap: wrap; margin: 7px 0; }
+.paw-brawl-info-stats span { padding: 5px 7px; border: 1px solid #ebd7bd; background: #fff4df; border-radius: 8px; font-size: 11px; }
+.paw-brawl-info-moves { grid-column: 1 / -1; }
+.paw-dark .paw-brawl-info-panel { background: #403649; border-color: #776176; color: #f4e0ed; }
+.paw-dark .paw-brawl-info-pet, .paw-dark .paw-brawl-info-moves { background: #544456; border-color: #806a7a; }
+.paw-dark .paw-brawl-info-panel h3 { color: #ffe2f1; }
+.paw-dark .paw-brawl-info-stats span { background: #675366; border-color: #886e85; }
+@media (max-width: 620px) { .paw-brawl-info-panel { grid-template-columns: 1fr; max-height: 55vh; } .paw-brawl-modal-header-right { gap: 5px; } .paw-brawl-info-toggle { padding: 7px; font-size: 10px; } .paw-brawl-turn-banner { flex-wrap: wrap; } }
+
+/* Private simultaneous move rounds and refined responsive modal */
+.paw-brawl-hidden-move-note { display:flex; align-items:center; justify-content:center; gap:8px; color:#875c71; font-size:12px; font-weight:750; line-height:1.4; margin:0 0 10px; text-align:center; }
+.paw-brawl-hidden-move-note svg { flex-shrink:0; }
+.paw-brawl-modal, .paw-brawl-modal * { box-sizing:border-box; }
+.paw-brawl-modal { max-width:100%; min-width:0; }
+.paw-brawl-modal-header > div:first-child { min-width:0; }
+.paw-brawl-modal-header-right { min-width:0; flex-wrap:wrap; justify-content:flex-end; }
+.paw-brawl-battle-hud { max-width:100%; }
+.paw-brawl-action-grid button { min-width:0; overflow-wrap:anywhere; cursor:pointer; }
+.paw-brawl-action-grid button:disabled { cursor:not-allowed; opacity:.58; }
+.paw-dark .paw-brawl-hidden-move-note { color:#ead0de; }
+@media (max-width: 700px) {
+    .paw-brawl-modal-backdrop { padding: max(4px, env(safe-area-inset-top)) 5px max(4px, env(safe-area-inset-bottom)); }
+    .paw-brawl-modal { width:100%; max-height:calc(100dvh - 10px); border-width:2px; border-radius:15px; }
+    .paw-brawl-modal-header { gap:7px; padding:9px 10px; }
+    .paw-brawl-modal-header h2 { font-size:17px; }
+    .paw-brawl-modal-kicker { font-size:9px; letter-spacing:.6px; }
+    .paw-brawl-modal-header-right { gap:5px; }
+    .paw-brawl-info-toggle { padding:6px 7px; font-size:10px; }
+    .paw-brawl-info-toggle svg { width:14px; }
+    .paw-brawl-arena-prize { font-size:10px; }
+    .paw-brawl-modal-close { width:30px; height:30px; flex-shrink:0; }
+    .paw-brawl-battlefield { height:clamp(250px, 47dvh, 370px); }
+    .paw-brawl-pet-sprite { width:clamp(90px,31vw,160px); height:clamp(90px,31vw,160px); }
+    .paw-brawl-combatant-enemy .paw-brawl-battle-hud { top:4%; right:0; }
+    .paw-brawl-combatant-player .paw-brawl-battle-hud { bottom:2%; right:-4%; }
+    .paw-brawl-battle-hud { width:min(175px,96%); padding:6px 7px; }
+    .paw-brawl-hud-top b { font-size:11px; }
+    .paw-brawl-hud-top small, .paw-brawl-battle-hud > small { font-size:9px; }
+    .paw-brawl-hud-health { margin:4px 0 3px; height:8px; }
+    .paw-brawl-modal-controls { padding:9px; }
+    .paw-brawl-turn-banner { font-size:11px; line-height:1.35; }
+    .paw-brawl-action-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+    .paw-brawl-action-grid button { min-height:69px; padding:7px 4px; gap:3px; }
+    .paw-brawl-action-grid b { font-size:11px; }
+    .paw-brawl-action-grid small { font-size:9px; }
+    .paw-brawl-hidden-move-note { font-size:10px; }
+    .paw-brawl-info-panel { grid-template-columns:1fr; max-height:45dvh; padding:9px; gap:8px; }
+}
+@media (max-width: 380px) {
+    .paw-brawl-modal-header { flex-wrap:wrap; }
+    .paw-brawl-modal-header-right { width:100%; justify-content:space-between; }
+    .paw-brawl-battlefield { height:260px; }
+    .paw-brawl-pet-sprite { width:100px; height:100px; }
+    .paw-brawl-battle-hud { width:min(148px,98%); }
+    .paw-brawl-combatant-player .paw-brawl-battle-hud { right:-3%; }
+    .paw-brawl-hud-top { gap:2px; }
+    .paw-brawl-modal-controls .paw-brawl-turn-banner { padding:7px; margin-bottom:7px; }
+}
+@media (max-height: 650px) and (min-width: 701px) {
+    .paw-brawl-modal { max-height:97dvh; }
+    .paw-brawl-battlefield { height:240px; }
+    .paw-brawl-action-grid button { min-height:65px; }
+}
+
+/* Resolved-round effects: attack travels from the acting pet to the target. */
+.paw-brawl-projectile {position:absolute;inset:0;z-index:16;pointer-events:none;--origin-x:27%;--origin-y:70%;--target-x:75%;--target-y:39%;}
+.paw-brawl-projectile.from-enemy {--origin-x:75%;--origin-y:39%;--target-x:27%;--target-y:70%;}
+.paw-brawl-projectile-art {position:absolute;width:clamp(58px,10vw,95px);height:auto;left:var(--origin-x);top:var(--origin-y);transform:translate(-50%,-50%);filter:drop-shadow(0 2px 9px #d87976a6);animation:paw-attack-travel 1.1s ease-in-out both;}
+.paw-brawl-projectile.from-enemy .paw-brawl-projectile-art {rotate:160deg;}
+.paw-brawl-impact-art {position:absolute;width:clamp(85px,16vw,150px);height:auto;left:var(--target-x);top:var(--target-y);transform:translate(-50%,-50%);filter:drop-shadow(0 2px 11px #ffa25aa6);animation:paw-attack-impact 1.1s ease-out both;}
+.paw-brawl-projectile.is-dodged .paw-brawl-impact-art {display:none;}
+.paw-brawl-projectile-label {position:absolute;top:calc(var(--target-y) - 20%);left:var(--target-x);transform:translateX(-50%);white-space:nowrap;font-weight:900;font-size:clamp(10px,2vw,17px);color:white;-webkit-text-stroke:.7px #614d71;text-shadow:0 2px 4px #514f6d;animation:paw-attack-label 1.1s ease-out both;}
+@keyframes paw-attack-travel {0%{opacity:0;left:var(--origin-x);top:var(--origin-y);scale:.5}15%{opacity:1}65%{opacity:1;left:var(--target-x);top:var(--target-y);scale:1.2}78%{opacity:0;left:var(--target-x);top:var(--target-y);scale:.8}100%{opacity:0;left:var(--target-x);top:var(--target-y)}}
+@keyframes paw-attack-impact {0%,58%{opacity:0;scale:.2}68%{opacity:.95;scale:1.4}85%{opacity:1;scale:1}100%{opacity:0;scale:1.3}}
+@keyframes paw-attack-label {0%,58%{opacity:0;translate:0 9px}70%,85%{opacity:1;translate:0 0}100%{opacity:0;translate:0 -10px}}
+/* Transparent Shield and Focus SVGs are attached to the actual pet artwork. */
+.paw-brawl-pet-sprite {isolation:isolate;}
+.paw-brawl-pet-aura {position:absolute;inset:-6%;z-index:4;display:grid;place-items:center;pointer-events:none;opacity:.75;animation:paw-pet-aura-show 1.08s ease-out both;}
+.paw-brawl-pet-aura svg {width:100%;height:100%;overflow:visible;}
+.paw-brawl-pet-aura-guard svg {animation:paw-pet-shield 1.08s ease-out both;}
+.paw-brawl-pet-aura-focus svg {animation:paw-pet-focus 1.08s ease-out both;}
+@keyframes paw-pet-aura-show {0%{opacity:0}20%,75%{opacity:.78}100%{opacity:0}}
+@keyframes paw-pet-shield {0%{transform:scale(.5)}35%{transform:scale(1.1)}65%{transform:scale(1)}100%{transform:scale(1.09)}}
+@keyframes paw-pet-focus {0%{transform:scale(.65) translateY(14px)}35%{transform:scale(1.1) translateY(-7px)}80%{transform:scale(1.03) translateY(-12px)}100%{transform:scale(1.25) translateY(-20px)}}
+@media(max-width:600px){.paw-brawl-projectile {--origin-x:23%;--origin-y:65%;--target-x:76%;--target-y:36%;}.paw-brawl-projectile.from-enemy {--origin-x:76%;--origin-y:36%;--target-x:23%;--target-y:65%;}.paw-brawl-projectile-art{width:55px}.paw-brawl-impact-art{width:80px}.paw-brawl-projectile-label{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.paw-brawl-projectile-art,.paw-brawl-impact-art,.paw-brawl-projectile-label,.paw-brawl-pet-aura,.paw-brawl-pet-aura svg{animation:none!important}.paw-brawl-projectile-art{display:none}.paw-brawl-impact-art{opacity:.6}.paw-brawl-pet-aura{opacity:.6}}
+
+/* Final blow: reveal result only after the final round's SVG effects finish. */
+.paw-brawl-final-result { margin: 12px 18px 0; padding: 18px 16px; border: 2px solid #efc5d5; border-radius: 16px; text-align: center; background: #fff5f5; color: #6a425b; display:flex; flex-direction:column; align-items:center; gap: 7px; }
+.paw-brawl-final-result h3 { margin: 0; font-size: 24px; }
+.paw-brawl-final-result p { margin: 0 0 5px; }
+.paw-brawl-final-result button { padding: 10px 18px; background: #9a6385; border: 0; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; }
+.paw-dark .paw-brawl-final-result { background: #533b4e; border-color: #906b83; color: #ffeaf4; }
+@media(max-width:620px) { .paw-brawl-final-result { margin: 8px; padding: 12px; } .paw-brawl-final-result h3 { font-size: 20px; } }
+
+/* Attack update: the pet lunges toward the opponent, then the target receives the hit effect. */
+.paw-brawl-battlefield.is-cinematic {
+    animation: paw-brawl-cinematic-zoom 1.05s ease-in-out both;
+}
+.paw-brawl-battlefield.cinematic-from-player { transform-origin: 64% 41%; }
+.paw-brawl-battlefield.cinematic-from-enemy { transform-origin: 35% 67%; }
+@keyframes paw-brawl-cinematic-zoom {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.035); }
+    58% { transform: scale(1.075); }
+    100% { transform: scale(1); }
+}
+
+.paw-brawl-pet-sprite {
+    overflow: visible;
+}
+.paw-brawl-sprite-player.is-attacking,
+.paw-brawl-sprite-enemy.is-attacking,
+.paw-brawl-sprite-player.is-targeted,
+.paw-brawl-sprite-enemy.is-targeted {
+    z-index: 8;
+}
+.paw-brawl-sprite-player.is-attacking { animation: paw-brawl-player-lunge 1.05s cubic-bezier(.2,.8,.22,1) both; }
+.paw-brawl-sprite-enemy.is-attacking { animation: paw-brawl-enemy-lunge 1.05s cubic-bezier(.2,.8,.22,1) both; }
+.paw-brawl-sprite-player.is-targeted.attack-hit { animation: paw-brawl-target-hit-player 1.05s ease-out both; }
+.paw-brawl-sprite-enemy.is-targeted.attack-hit { animation: paw-brawl-target-hit-enemy 1.05s ease-out both; }
+.paw-brawl-sprite-player.is-targeted.attack-dodged { animation: paw-brawl-target-dodge-player 1.05s ease-out both; }
+.paw-brawl-sprite-enemy.is-targeted.attack-dodged { animation: paw-brawl-target-dodge-enemy 1.05s ease-out both; }
+
+@keyframes paw-brawl-player-lunge {
+    0% { left: 8%; bottom: 12%; transform: scaleX(-1) rotate(-5deg) scale(1); }
+    18% { left: 11%; bottom: 12%; transform: scaleX(-1) rotate(-9deg) scale(1.02); }
+    52% { left: 31%; bottom: 18%; transform: scaleX(-1) rotate(-12deg) scale(1.10); }
+    68% { left: 36%; bottom: 16%; transform: scaleX(-1) rotate(-7deg) scale(1.09); }
+    100% { left: 8%; bottom: 12%; transform: scaleX(-1) rotate(-5deg) scale(1); }
+}
+@keyframes paw-brawl-enemy-lunge {
+    0% { right: 10%; bottom: 31%; transform: rotate(4deg) scale(1); }
+    18% { right: 13%; bottom: 31%; transform: rotate(8deg) scale(1.02); }
+    52% { right: 32%; bottom: 24%; transform: rotate(11deg) scale(1.10); }
+    68% { right: 36%; bottom: 25%; transform: rotate(6deg) scale(1.09); }
+    100% { right: 10%; bottom: 31%; transform: rotate(4deg) scale(1); }
+}
+@keyframes paw-brawl-target-hit-player {
+    0%, 44% { left: 8%; bottom: 12%; transform: scaleX(-1) rotate(-5deg) scale(1); }
+    57% { left: 10%; bottom: 14%; transform: scaleX(-1) rotate(-2deg) scale(1.05); }
+    70% { left: 6%; bottom: 11%; transform: scaleX(-1) rotate(-11deg) scale(.97); }
+    100% { left: 8%; bottom: 12%; transform: scaleX(-1) rotate(-5deg) scale(1); }
+}
+@keyframes paw-brawl-target-hit-enemy {
+    0%, 44% { right: 10%; bottom: 31%; transform: rotate(4deg) scale(1); }
+    57% { right: 12%; bottom: 33%; transform: rotate(7deg) scale(1.05); }
+    70% { right: 8%; bottom: 30%; transform: rotate(-2deg) scale(.97); }
+    100% { right: 10%; bottom: 31%; transform: rotate(4deg) scale(1); }
+}
+@keyframes paw-brawl-target-dodge-player {
+    0%, 40% { left: 8%; bottom: 12%; transform: scaleX(-1) rotate(-5deg); }
+    58% { left: 0%; bottom: 15%; transform: scaleX(-1) rotate(-14deg) scale(1.02); }
+    82% { left: 9%; bottom: 12%; transform: scaleX(-1) rotate(-4deg); }
+    100% { left: 8%; bottom: 12%; transform: scaleX(-1) rotate(-5deg); }
+}
+@keyframes paw-brawl-target-dodge-enemy {
+    0%, 40% { right: 10%; bottom: 31%; transform: rotate(4deg); }
+    58% { right: 1%; bottom: 34%; transform: rotate(14deg) scale(1.02); }
+    82% { right: 11%; bottom: 31%; transform: rotate(5deg); }
+    100% { right: 10%; bottom: 31%; transform: rotate(4deg); }
+}
+
+.paw-brawl-hit-overlay {
+    position: absolute;
+    inset: -12%;
+    z-index: 7;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+.paw-brawl-hit-burst {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 4px 10px rgba(255, 162, 90, .55));
+    animation: paw-brawl-hit-burst 1.05s ease-out both;
+}
+.paw-brawl-hit-label {
+    position: absolute;
+    top: -11%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-weight: 900;
+    font-size: clamp(10px, 1.25vw, 15px);
+    color: white;
+    -webkit-text-stroke: .7px #614d71;
+    text-shadow: 0 2px 4px #514f6d;
+    animation: paw-brawl-hit-label 1.05s ease-out both;
+}
+.paw-brawl-hit-overlay.is-dodged .paw-brawl-hit-burst { display: none; }
+@keyframes paw-brawl-hit-burst {
+    0%, 49% { opacity: 0; transform: scale(.15) rotate(-22deg); }
+    60% { opacity: .95; transform: scale(1.22) rotate(0deg); }
+    78% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.18); }
+}
+@keyframes paw-brawl-hit-label {
+    0%, 48% { opacity: 0; transform: translate(-50%, 10px); }
+    60%, 84% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -10px); }
+}
+
+@media (max-width: 700px) {
+    .paw-brawl-battlefield.is-cinematic { animation-duration: .95s; }
+    @keyframes paw-brawl-player-lunge {
+        0% { left: 8%; bottom: 12%; transform: scaleX(-1) rotate(-5deg) scale(1); }
+        18% { left: 10%; bottom: 12%; transform: scaleX(-1) rotate(-9deg) scale(1.02); }
+        52% { left: 26%; bottom: 16%; transform: scaleX(-1) rotate(-12deg) scale(1.08); }
+        68% { left: 29%; bottom: 14%; transform: scaleX(-1) rotate(-7deg) scale(1.06); }
+        100% { left: 8%; bottom: 12%; transform: scaleX(-1) rotate(-5deg) scale(1); }
+    }
+    @keyframes paw-brawl-enemy-lunge {
+        0% { right: 10%; bottom: 31%; transform: rotate(4deg) scale(1); }
+        18% { right: 12%; bottom: 31%; transform: rotate(8deg) scale(1.02); }
+        52% { right: 26%; bottom: 26%; transform: rotate(11deg) scale(1.08); }
+        68% { right: 29%; bottom: 26%; transform: rotate(6deg) scale(1.06); }
+        100% { right: 10%; bottom: 31%; transform: rotate(4deg) scale(1); }
+    }
+    .paw-brawl-hit-overlay { inset: -15%; }
+    .paw-brawl-hit-label { top: -14%; font-size: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .paw-brawl-battlefield.is-cinematic,
+    .paw-brawl-sprite-player.is-attacking,
+    .paw-brawl-sprite-enemy.is-attacking,
+    .paw-brawl-sprite-player.is-targeted,
+    .paw-brawl-sprite-enemy.is-targeted,
+    .paw-brawl-hit-burst,
+    .paw-brawl-hit-label {
+        animation: none !important;
+    }
+    .paw-brawl-hit-overlay { opacity: .6; }
+}
+
+/* Pet-only perspective change: leave the arena and HUD perfectly still. */
+.paw-brawl-battlefield.is-cinematic { animation: none !important; transform: none !important; }
+.paw-brawl-pet-sprite.is-attacking { z-index: 9; }
+@keyframes paw-brawl-player-lunge {
+    0% { left:8%; bottom:12%; transform:scaleX(-1) rotate(-5deg) scale(1); }
+    15% { left:5%; bottom:11%; transform:scaleX(-1) rotate(-8deg) scale(1.08); }
+    52% { left:57%; bottom:28%; transform:scaleX(-1) rotate(-5deg) scale(.72); }
+    65% { left:63%; bottom:29%; transform:scaleX(-1) rotate(-7deg) scale(.68); }
+    100% { left:8%; bottom:12%; transform:scaleX(-1) rotate(-5deg) scale(1); }
+}
+@keyframes paw-brawl-enemy-lunge {
+    0% { right:10%; bottom:31%; transform:rotate(4deg) scale(1); }
+    15% { right:6%; bottom:32%; transform:rotate(8deg) scale(1.06); }
+    52% { right:57%; bottom:14%; transform:rotate(4deg) scale(1.25); }
+    65% { right:63%; bottom:13%; transform:rotate(7deg) scale(1.32); }
+    100% { right:10%; bottom:31%; transform:rotate(4deg) scale(1); }
+}
+/* This overlay lives inside the target pet sprite, not beside it. */
+.paw-brawl-hit-overlay { z-index: 11; }
+.paw-brawl-confirm-backdrop {
+    position:fixed;
+    inset:0;
+    z-index:1200;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(37,27,47,.64);
+    backdrop-filter:blur(5px);
+}
+.paw-brawl-confirm-dialog {
+    width:min(410px,100%);
+    padding:25px;
+    border:3px solid #f0c8d2;
+    border-radius:22px;
+    background:#fffaf4;
+    box-shadow:0 18px 70px rgba(40,20,45,.35);
+    text-align:center;
+    color:#785668;
+}
+.paw-brawl-confirm-icon {
+    width:54px;
+    height:54px;
+    margin:0 auto 12px;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:#ffdee3;
+    color:#c65c77;
+}
+.paw-brawl-confirm-dialog h3 { font-size:21px; margin:0 0 9px; color:#774b65; }
+.paw-brawl-confirm-dialog p { line-height:1.55; margin:0 0 20px; font-size:13px; }
+.paw-brawl-confirm-actions { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.paw-brawl-confirm-actions button {
+    border:2px solid #dec5d1;
+    border-radius:12px;
+    padding:11px 9px;
+    font-weight:800;
+    cursor:pointer;
+    background:#fff2f1;
+    color:#80556a;
+}
+.paw-brawl-confirm-actions .is-danger { background:#cc6881; border-color:#b95774; color:#fff; }
+.paw-brawl-confirm-actions button:disabled { opacity:.55; cursor:not-allowed; }
+.paw-dark .paw-brawl-confirm-dialog { background:#443747; border-color:#85667a; color:#f8ddea; }
+.paw-dark .paw-brawl-confirm-dialog h3 { color:#ffe9f1; }
+.paw-dark .paw-brawl-confirm-actions button:not(.is-danger) { background:#5b465a; color:#ffedfa; border-color:#90718b; }
+@media(max-width:700px) {
+    @keyframes paw-brawl-player-lunge {
+        0% { left:8%; bottom:12%; transform:scaleX(-1) rotate(-5deg) scale(1); }
+        15% { left:5%; bottom:11%; transform:scaleX(-1) rotate(-8deg) scale(1.06); }
+        52% { left:56%; bottom:25%; transform:scaleX(-1) rotate(-5deg) scale(.69); }
+        65% { left:62%; bottom:26%; transform:scaleX(-1) rotate(-7deg) scale(.65); }
+        100% { left:8%; bottom:12%; transform:scaleX(-1) rotate(-5deg) scale(1); }
+    }
+    @keyframes paw-brawl-enemy-lunge {
+        0% { right:10%; bottom:31%; transform:rotate(4deg) scale(1); }
+        15% { right:6%; bottom:32%; transform:rotate(8deg) scale(1.05); }
+        52% { right:56%; bottom:16%; transform:rotate(4deg) scale(1.22); }
+        65% { right:62%; bottom:14%; transform:rotate(7deg) scale(1.27); }
+        100% { right:10%; bottom:31%; transform:rotate(4deg) scale(1); }
+    }
+    .paw-brawl-confirm-dialog { padding:18px; }
+}
+@media(prefers-reduced-motion:reduce) {
+    .paw-brawl-sprite-player.is-attacking,
+    .paw-brawl-sprite-enemy.is-attacking { animation:none !important; }
+}
+
+
+/* Responsive pet-to-pet lunge: movement distances come from live DOM positions. */
+.paw-brawl-combatant.has-attacking-pet { z-index: 12; }
+.paw-brawl-pet-sprite.is-attacking { will-change: transform; }
+.paw-brawl-sprite-player.is-attacking {
+    animation: paw-brawl-measured-player-lunge 1.05s cubic-bezier(.22,.7,.23,1) both;
+}
+.paw-brawl-sprite-enemy.is-attacking {
+    animation: paw-brawl-measured-enemy-lunge 1.05s cubic-bezier(.22,.7,.23,1) both;
+}
+@keyframes paw-brawl-measured-player-lunge {
+    0% { transform: translate(0,0) scaleX(-1) rotate(-5deg) scale(1); }
+    14% { transform: translate(-8px,4px) scaleX(-1) rotate(-9deg) scale(1.04); }
+    53%, 67% { transform: translate(var(--paw-lunge-x,0px),var(--paw-lunge-y,0px)) scaleX(-1) rotate(-5deg) scale(.77); }
+    100% { transform: translate(0,0) scaleX(-1) rotate(-5deg) scale(1); }
+}
+@keyframes paw-brawl-measured-enemy-lunge {
+    0% { transform: translate(0,0) rotate(4deg) scale(1); }
+    14% { transform: translate(8px,-4px) rotate(8deg) scale(1.04); }
+    53%, 67% { transform: translate(var(--paw-lunge-x,0px),var(--paw-lunge-y,0px)) rotate(4deg) scale(1.24); }
+    100% { transform: translate(0,0) rotate(4deg) scale(1); }
+}
+/* Reset app-wide button/icon inheritance that can misalign the X glyph. */
+.paw-brawl-modal-close {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    aspect-ratio: 1;
+    flex: 0 0 auto;
+}
+.paw-brawl-modal-close > svg { display: block; flex: 0 0 auto; margin: 0; width: 20px; height: 20px; }
+@media (max-width: 700px) {
+    .paw-brawl-modal-close > svg { width: 18px; height: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .paw-brawl-sprite-player.is-attacking,
+    .paw-brawl-sprite-enemy.is-attacking { animation: none !important; }
+}
+
+/* Battle Focus is shown as eight small stamina pips (server cap is eight). */
+.paw-brawl-focus-pips {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 3px;
+    margin-top: 6px;
+}
+.paw-brawl-focus-pips > span {
+    height: 6px;
+    min-width: 0;
+    border-radius: 4px;
+    border: 1px solid #d0b7dd;
+    background: #eee3f1;
+}
+.paw-brawl-focus-pips > span.is-filled {
+    background: linear-gradient(90deg, #c4a4ed, #8e66d2);
+    border-color: #9569cb;
+}
+.paw-brawl-hit-label {
+    width: max-content;
+    max-width: min(250px, 70vw);
+    white-space: normal;
+    overflow-wrap: break-word;
+    line-height: 1.15;
+    text-align: center;
+}
+@media(max-width: 700px) {
+    .paw-brawl-focus-pips { gap: 2px; margin-top: 4px; }
+    .paw-brawl-focus-pips > span { height: 4px; }
+    .paw-brawl-hit-label { max-width: 155px; font-size: 10px; }
+}
+
+/* Paw Brawl responsive cockpit: actions always visible without scrolling the match modal. */
+.paw-brawl-modal-backdrop {
+    padding: max(7px, env(safe-area-inset-top)) 7px max(7px, env(safe-area-inset-bottom));
+}
+.paw-brawl-modal {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(1040px, 100%);
+    height: min(770px, calc(100dvh - 14px));
+    max-height: calc(100dvh - 14px);
+    overflow: hidden;
+}
+.paw-brawl-modal-header {
+    flex: 0 0 auto;
+    padding: 10px 15px;
+    gap: 10px;
+}
+.paw-brawl-modal-header-right { flex-wrap: nowrap; }
+.paw-brawl-modal-header h2 { font-size: 19px; }
+.paw-brawl-modal-header .paw-brawl-modal-kicker { font-size: 9px; }
+.paw-brawl-battlefield {
+    flex: 1 1 auto;
+    height: auto !important;
+    min-height: 100px;
+    overflow: hidden;
+}
+.paw-brawl-modal-controls {
+    position: relative;
+    z-index: 20;
+    flex: 0 0 auto;
+    padding: 7px 14px 7px;
+    border-top: 2px solid #eadbd5;
+    background: #fffaf3;
+}
+.paw-brawl-modal-controls .paw-brawl-turn-banner {
+    min-height: 30px;
+    padding: 5px 7px;
+    margin: 0 0 4px;
+    line-height: 1.2;
+    font-size: 11px;
+}
+.paw-brawl-turn-clock { padding: 3px 7px; min-width: 52px; }
+.paw-brawl-hidden-move-note { margin: 0 0 5px; line-height: 1.1; font-size: 10px; }
+.paw-brawl-action-grid { gap: 6px; }
+.paw-brawl-action-grid button {
+    min-height: 70px;
+    padding: 6px;
+    gap: 2px;
+    border-radius: 10px;
+}
+.paw-brawl-action-grid button > svg { width: 17px; height: 17px; flex: 0 0 auto; }
+.paw-brawl-action-grid b { font-size: 11px; line-height: 1.2; }
+.paw-brawl-action-grid small { font-size: 9px; line-height: 1.2; }
+.paw-brawl-action-grid .paw-brawl-special-hint {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    max-width: 100%;
+    color: #80576f;
+}
+.paw-dark .paw-brawl-action-grid .paw-brawl-special-hint { color: #f5cfe2; }
+.paw-brawl-utilities { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px; min-height: 23px; }
+.paw-brawl-battle-log { position: relative; margin: 0; padding: 4px 8px; border-radius: 8px; background: transparent; }
+.paw-brawl-battle-log summary { font-size: 10px; line-height: 1.2; }
+.paw-brawl-log-entries {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 7px);
+    left: 0;
+    width: min(380px, 80vw);
+    max-height: min(260px, 40dvh);
+    padding: 9px;
+    overflow: auto;
+    border: 1px solid #e9d3d9;
+    border-radius: 12px;
+    background: #fffaf5;
+    box-shadow: 0 10px 32px #4128384f;
+    color: #785668;
+    z-index: 45;
+}
+.paw-brawl-battle-log[open] { z-index: 45; }
+.paw-brawl-battle-log[open] .paw-brawl-log-entries { display: block; }
+.paw-dark .paw-brawl-log-entries { background: #4c3b4c; color: #f8e2ef; border-color: #85667a; }
+.paw-brawl-forfeit { margin: 0 3px 0 auto; font-size: 10px; cursor: pointer; }
+.paw-brawl-final-result { flex: 0 0 auto; margin: 5px 12px 0; padding: 8px; gap: 3px; }
+.paw-brawl-final-result h3 { font-size: 17px; }
+.paw-brawl-final-result p { margin: 0; font-size: 11px; }
+.paw-brawl-final-result button { padding: 7px 11px; }
+
+/* Open detailed help above the playfield, without shifting the attack controls. */
+.paw-brawl-info-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 55;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: max-content;
+    align-content: start;
+    gap: 9px;
+    max-height: none;
+    padding: 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: 0;
+    background: #fff9ee;
+    box-shadow: 0 8px 40px #563b5866;
+}
+.paw-brawl-info-panel-heading {
+    position: sticky;
+    top: -12px;
+    z-index: 56;
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 42px;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid #e4c5ad;
+    border-radius: 12px;
+    background: #ffefdb;
+    color: #7f536b;
+    font-size: 13px;
+}
+.paw-brawl-info-panel-heading button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid #e0b8be;
+    border-radius: 50%;
+    background: white;
+    color: #82516c;
+    cursor: pointer;
+}
+.paw-brawl-info-pet, .paw-brawl-info-moves { padding: 10px; }
+.paw-dark .paw-brawl-info-panel-heading { background: #534050; color: #fff1ee; border-color: #86647b; }
+.paw-dark .paw-brawl-modal-controls { background: #3d303e; border-color: #76596d; }
+
+/* Each higher breed has a readable stage name that is separate from player levels. */
+.paw-brawl-grade {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 3px;
+    padding: 2px 6px;
+    border-radius: 7px;
+    background: #f6e8ff;
+    border: 1px solid #d9c0e9;
+    color: #8156a7;
+    font-size: 10px;
+    line-height: 1.1;
+    font-weight: 800;
+    white-space: nowrap;
+}
+.paw-dark .paw-brawl-grade { background: #674b70; color: #f5d9ff; border-color: #a17ab4; }
+
+/* Perspective applies only to the pet, not to the camera or the battlefield. */
+.paw-brawl-sprite-enemy { transform: rotate(4deg) scale(.68); transform-origin: bottom center; }
+.paw-brawl-sprite-enemy.is-attacking { animation: paw-brawl-measured-enemy-lunge 1.05s cubic-bezier(.22,.7,.23,1) both; }
+@keyframes paw-brawl-measured-enemy-lunge {
+    0% { transform: translate(0,0) rotate(4deg) scale(.68); }
+    14% { transform: translate(8px,-4px) rotate(8deg) scale(.75); }
+    53%, 67% { transform: translate(var(--paw-lunge-x,0px),var(--paw-lunge-y,0px)) rotate(4deg) scale(1.20); }
+    100% { transform: translate(0,0) rotate(4deg) scale(.68); }
+}
+.paw-brawl-sprite-enemy.is-targeted.attack-hit { animation: paw-brawl-distant-enemy-hit 1.05s ease-out both; }
+.paw-brawl-sprite-enemy.is-targeted.attack-dodged { animation: paw-brawl-distant-enemy-dodge 1.05s ease-out both; }
+@keyframes paw-brawl-distant-enemy-hit {
+    0%, 44% { transform: rotate(4deg) scale(.68); }
+    57% { transform: translate(4px,-3px) rotate(9deg) scale(.74); }
+    70% { transform: translate(-5px,2px) rotate(-3deg) scale(.65); }
+    100% { transform: rotate(4deg) scale(.68); }
+}
+@keyframes paw-brawl-distant-enemy-dodge {
+    0%, 40% { transform: rotate(4deg) scale(.68); }
+    58% { transform: translate(14px,-8px) rotate(13deg) scale(.70); }
+    82% { transform: translate(-3px,0) rotate(3deg) scale(.68); }
+    100% { transform: rotate(4deg) scale(.68); }
+}
+/* Player hit/dodge no longer override responsive left/bottom placements. */
+.paw-brawl-sprite-player.is-targeted.attack-hit { animation: paw-brawl-stationary-player-hit 1.05s ease-out both; }
+.paw-brawl-sprite-player.is-targeted.attack-dodged { animation: paw-brawl-stationary-player-dodge 1.05s ease-out both; }
+@keyframes paw-brawl-stationary-player-hit {
+    0%, 44% { transform: scaleX(-1) rotate(-5deg); }
+    57% { transform: translate(-4px,-2px) scaleX(-1) rotate(-1deg) scale(1.04); }
+    70% { transform: translate(5px,2px) scaleX(-1) rotate(-11deg) scale(.97); }
+    100% { transform: scaleX(-1) rotate(-5deg); }
+}
+@keyframes paw-brawl-stationary-player-dodge {
+    0%, 40% { transform: scaleX(-1) rotate(-5deg); }
+    58% { transform: translate(-16px,-9px) scaleX(-1) rotate(-14deg); }
+    82% { transform: translate(4px,0) scaleX(-1) rotate(-4deg); }
+    100% { transform: scaleX(-1) rotate(-5deg); }
+}
+
+@media (max-width: 700px) {
+    .paw-brawl-modal { width: 100%; height: calc(100dvh - 10px); max-height: calc(100dvh - 10px); }
+    .paw-brawl-modal-header { padding: 7px 9px; min-height: 48px; }
+    .paw-brawl-modal-header h2 { font-size: 16px; }
+    .paw-brawl-modal-header .paw-brawl-modal-kicker { font-size: 8px; }
+    .paw-brawl-modal-header-right { flex-wrap: nowrap; gap: 5px; }
+    .paw-brawl-info-toggle { padding: 5px 7px; font-size: 10px; }
+    .paw-brawl-battlefield { min-height: 80px; }
+    .paw-brawl-battle-hud { width: min(156px, 91%); padding: 5px 6px; }
+    .paw-brawl-hud-health { margin: 3px 0 2px; height: 7px; }
+    .paw-brawl-battle-hud > small, .paw-brawl-hud-top small { font-size: 9px; }
+    .paw-brawl-grade { font-size: 8px; padding: 2px 4px; }
+    .paw-brawl-modal-controls { padding: 5px 7px; }
+    .paw-brawl-modal-controls .paw-brawl-turn-banner { min-height: 28px; font-size: 10px; margin-bottom: 3px; }
+    .paw-brawl-hidden-move-note { margin-bottom: 4px; font-size: 9px; }
+    .paw-brawl-action-grid { gap: 4px; }
+    .paw-brawl-action-grid button { min-height: 58px; padding: 4px 3px; gap: 1px; }
+    .paw-brawl-action-grid b { font-size: 10px; }
+    .paw-brawl-action-grid small { font-size: 9px; }
+    .paw-brawl-action-grid button > svg { width: 15px; height: 15px; }
+    .paw-brawl-action-grid .paw-brawl-special-hint { -webkit-line-clamp: 1; }
+    .paw-brawl-utilities { margin-top: 3px; min-height: 21px; }
+    .paw-brawl-info-panel { grid-template-columns: 1fr; padding: 8px; }
+    .paw-brawl-info-panel-heading { top: -8px; }
+    .paw-brawl-final-result { margin: 3px 8px 0; padding: 6px; }
+}
+@media (max-width: 420px) {
+    .paw-brawl-arena-prize { display: none; }
+    .paw-brawl-battle-hud { width: min(138px, 100%); }
+    .paw-brawl-pet-sprite { width: clamp(80px, 26vw, 115px); height: clamp(80px, 26vw, 115px); }
+    .paw-brawl-hud-top b { font-size: 10px; }
+    .paw-brawl-action-grid button { min-height: 57px; }
+}
+@media (max-height: 600px) {
+    .paw-brawl-modal-header { padding-top: 5px; padding-bottom: 5px; }
+    .paw-brawl-battlefield { min-height: 65px; }
+    .paw-brawl-modal-controls .paw-brawl-turn-banner { min-height: 25px; }
+    .paw-brawl-hidden-move-note { display: none; }
+    .paw-brawl-action-grid button { min-height: 56px; padding-top: 3px; padding-bottom: 3px; }
+    .paw-brawl-action-grid button > svg { width: 14px; height: 14px; }
+    .paw-brawl-utilities { margin-top: 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .paw-brawl-sprite-enemy.is-attacking,
+    .paw-brawl-sprite-enemy.is-targeted,
+    .paw-brawl-sprite-player.is-attacking,
+    .paw-brawl-sprite-player.is-targeted { animation: none !important; }
+}
+
+/* Keep the opponent on the far end of the arena, behind its platform. */
+.paw-brawl-sprite-enemy { bottom: 37%; }
+.paw-brawl-pet-sprite {
+    width: min(clamp(105px, 23vw, 210px), 34dvh);
+    height: min(clamp(105px, 23vw, 210px), 34dvh);
+}
+@media (max-width: 700px) {
+    .paw-brawl-sprite-enemy { bottom: 44%; }
+    .paw-brawl-pet-sprite {
+        width: min(clamp(83px, 30vw, 145px), 34dvh);
+        height: min(clamp(83px, 30vw, 145px), 34dvh);
+    }
+}
+@media (max-width: 420px) {
+    .paw-brawl-pet-sprite {
+        width: min(clamp(80px, 27vw, 115px), 34dvh);
+        height: min(clamp(80px, 27vw, 115px), 34dvh);
+    }
+}
+
+
+/* Paw Brawl sprite alignment + first-attack fix (shared across all breakpoints).
+   The platform centers are the source of truth for both pets. The new `translate`
+   property centers the actual SVG wrapper independently of animation `transform`,
+   so moving/scaling cannot pull a cat or another species off its platform. */
+.paw-brawl-sprite-player,
+.paw-brawl-sprite-enemy {
+    left: 50%;
+    right: auto;
+    translate: -50% 0;
+    transform-origin: 50% 50%;
+}
+.paw-brawl-sprite-player {
+    /* Player platform: bottom 9%, height 17%, center 17.5%. */
+    bottom: calc(17.5% - 9px);
+    transform: scaleX(-1) rotate(-5deg);
+}
+.paw-brawl-sprite-enemy {
+    /* Enemy platform: left 24% + half of 55% = 51.5%; vertical center 35.5%. */
+    left: 51.5%;
+    bottom: calc(35.5% - 6px);
+    transform: rotate(4deg) scale(.68);
+}
+.paw-brawl-sprite-player.is-attacking {
+    animation: paw-brawl-centered-player-lunge 1.05s cubic-bezier(.22,.7,.23,1) both;
+}
+.paw-brawl-sprite-enemy.is-attacking {
+    animation: paw-brawl-centered-enemy-lunge 1.05s cubic-bezier(.22,.7,.23,1) both;
+}
+/* No 0px fallback: these classes are added only after layout has computed both
+   --paw-lunge-x and --paw-lunge-y from the real sprite positions. */
+@keyframes paw-brawl-centered-player-lunge {
+    0% { transform: translate(0,0) scaleX(-1) rotate(-5deg) scale(1); }
+    15% { transform: translate(-5px,3px) scaleX(-1) rotate(-7deg) scale(1.04); }
+    53%, 67% { transform: translate(var(--paw-lunge-x),var(--paw-lunge-y)) scaleX(-1) rotate(-5deg) scale(.77); }
+    100% { transform: translate(0,0) scaleX(-1) rotate(-5deg) scale(1); }
+}
+@keyframes paw-brawl-centered-enemy-lunge {
+    0% { transform: translate(0,0) rotate(4deg) scale(.68); }
+    15% { transform: translate(5px,-3px) rotate(7deg) scale(.76); }
+    53%, 67% { transform: translate(var(--paw-lunge-x),var(--paw-lunge-y)) rotate(4deg) scale(1.20); }
+    100% { transform: translate(0,0) rotate(4deg) scale(.68); }
+}
+@media (max-width: 700px) {
+    /* Keep the same platform-centering rules on mobile: no left:0/right:0. */
+    .paw-brawl-sprite-player { left: 50%; bottom: calc(17.5% - 7px); }
+    .paw-brawl-sprite-enemy { left: 51.5%; bottom: calc(35.5% - 5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .paw-brawl-sprite-player.is-attacking,
+    .paw-brawl-sprite-enemy.is-attacking { animation: none !important; }
+}
+
+
+/* Distant ground plane: a shallow oval with the same center (51.5%) as the enemy SVG.
+   Width is relative to the enemy half, height to the arena. Neither changes its
+   anchor or the measured first-round pet-to-pet attack travel. */
+.paw-brawl-combatant-enemy .paw-brawl-platform {
+    left: 19%;
+    width: 65%;
+    height: clamp(12px, 6%, 27px);
+    /* Keep the platform's center at 35.5% despite flattening its height. */
+    bottom: calc(35.5% - clamp(6px, 3%, 13.5px));
+    border-radius: 50%;
+    border-width: 2px;
+    transform: translateY(2%);
+    background: #659d7bb0;
+    box-shadow: 0 6px 12px #315b4033;
+}
+
+/* The info button is independent of the (possibly disabled) special action. */
+.paw-brawl-special-action { position: relative; min-width: 0; display: flex; }
+.paw-brawl-action-grid .paw-brawl-special-action > .paw-brawl-special-move { width: 100%; min-width: 0; padding-right: 30px; }
+.paw-brawl-action-grid .paw-brawl-special-action > .paw-brawl-special-help {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    min-height: 0;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid #cb8ba9;
+    background: #fffafc;
+    color: #915f83;
+    opacity: 1;
+    cursor: pointer;
+}
+.paw-brawl-action-grid .paw-brawl-special-help > svg { width: 15px; height: 15px; margin: 0; }
+.paw-brawl-special-help-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    padding: 12px;
+    background: #241b2a99;
+    border-radius: inherit;
+}
+.paw-brawl-special-help-dialog {
+    position: relative;
+    width: min(410px, 100%);
+    max-height: min(80dvh, 550px);
+    overflow-y: auto;
+    padding: 22px;
+    border: 2px solid #e7bbd1;
+    border-radius: 20px;
+    background: #fff9f3;
+    color: #765668;
+    box-shadow: 0 16px 50px #26162766;
+}
+.paw-brawl-special-help-dialog h3 { display: flex; align-items: center; gap: 8px; font-size: 19px; margin: 8px 30px 10px 0; }
+.paw-brawl-special-help-dialog p { line-height: 1.5; margin: 8px 0 13px; font-size: 13px; }
+.paw-brawl-special-help-stats { display: flex; flex-wrap: wrap; gap: 8px; }
+.paw-brawl-special-help-stats span { display: inline-flex; align-items: center; gap: 5px; padding: 6px 9px; border-radius: 9px; background: #f5e8f8; font-weight: 800; font-size: 12px; }
+.paw-brawl-special-help-dialog .paw-brawl-special-help-passive { padding: 10px; background: #fff0e8; border-radius: 10px; }
+.paw-brawl-special-help-close { position: absolute; right: 12px; top: 12px; width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid #e6c7d5; border-radius: 50%; background: #fff; cursor: pointer; }
+.paw-brawl-special-help-done { display: block; margin-left: auto; border: 0; border-radius: 10px; padding: 9px 18px; background: #c68daa; color: #fff; font-weight: 800; cursor: pointer; }
+.paw-dark .paw-brawl-special-help-dialog { background: #4c3b4c; color: #f8e2ef; }
+.paw-dark .paw-brawl-special-help-stats span, .paw-dark .paw-brawl-special-help-dialog .paw-brawl-special-help-passive { background: #614c64; }
+@media (max-width: 620px) {
+    .paw-brawl-action-grid .paw-brawl-special-action > .paw-brawl-special-help { width: 30px; height: 30px; top: 3px; right: 3px; }
+    .paw-brawl-special-help-dialog { padding: 16px; }
+}
+
+/* Special help is a distinct accessible action even when Special is disabled. */
+.paw-brawl-special-help:focus-visible, .paw-brawl-special-help-close:focus-visible,
+.paw-brawl-special-help-done:focus-visible { outline: 3px solid #9262c2; outline-offset: 2px; }
+.paw-brawl-special-help-dialog { max-height: min(80dvh, 520px); }
+@media (max-height: 530px) {
+    .paw-brawl-special-help-dialog { max-height: calc(100dvh - 28px); padding: 12px 16px; }
+}
+
+/* Multiplayer Meadow: invitation updates are compact notification bars,
+   not a second full-sized inbox section. */
+.paw-multi-section-heading:has(> span:only-child) { margin: 8px 0 10px; }
+.paw-multi-notification-list { display: grid; gap: 9px; margin: 12px 0 16px; }
+.paw-multi-invite-bar {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid #e9cbda;
+    border-left: 4px solid #d18bab;
+    border-radius: 12px;
+    background: #fff6fa;
+    color: #805972;
+    box-shadow: 0 3px 12px #9b668514;
+}
+.paw-multi-invite-bar.is-outgoing { border-left-color: #bea4df; background: #fbf8ff; }
+.paw-multi-invite-icon { flex: 0 0 auto; display: grid; place-items: center; width: 29px; height: 29px; color: #ba779b; }
+.paw-multi-invite-body { display: grid; gap: 4px; flex: 1 1 auto; min-width: 0; }
+.paw-multi-invite-body b { font-size: 12px; line-height: 1.3; overflow-wrap: anywhere; }
+.paw-multi-invite-body small { display: inline-flex; align-items: center; gap: 5px; color: #a17e91; font-size: 10px; }
+.paw-multi-invite-body .paw-multi-error { margin: 0; }
+.paw-multi-invite-bar-actions { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.paw-multi-invite-bar-actions button { min-height: 33px; padding: 7px 10px; font-size: 11px; white-space: nowrap; }
+.paw-multi-selected-banner .paw-multi-open-challenge { display: inline-flex; align-items: center; gap: 6px; background: #d68baa; border-color: #bf7196; color: #fff; font-weight: 900; }
+.paw-multi-selected-banner .paw-multi-open-challenge:hover { background: #bf7196; }
+
+/* Separate, scroll-safe challenge modal. The Meadow remains uncluttered. */
+.paw-multi-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10025;
+    display: grid;
+    place-items: center;
+    padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+    background: #271d31bd;
+    backdrop-filter: blur(5px);
+}
+.paw-multi-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(490px, 100%);
+    min-width: 0;
+    max-height: min(710px, calc(100dvh - 20px));
+    overflow: hidden;
+    border: 2px solid #e8cadc;
+    border-radius: 20px;
+    background: #fffafd;
+    color: #855d76;
+    box-shadow: 0 20px 70px #291b3266;
+}
+.paw-multi-dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 9px; padding: 15px 18px 12px; border-bottom: 1px solid #f0dbe5; }
+.paw-multi-dialog-header h3 { display: flex; align-items: center; gap: 8px; margin: 4px 0 0; font-size: 19px; color: #99627f; }
+.paw-multi-dialog-close { display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 auto; border: 1px solid #e8cddc; border-radius: 11px; background: white; color: #996c84; cursor: pointer; }
+.paw-multi-dialog-body { flex: 1 1 auto; min-height: 0; padding: 1px 18px 14px; overflow-y: auto; overscroll-behavior: contain; }
+.paw-multi-dialog-body .paw-multi-prize { margin: 14px 0 10px; }
+.paw-multi-dialog-body .paw-multi-hint { margin-top: 9px; }
+.paw-multi-dialog-actions { display: flex; align-items: center; gap: 9px; padding: 12px 18px 15px; border-top: 1px solid #f0dbe5; }
+.paw-multi-dialog-actions .paw-multi-primary { flex: 1; width: auto; }
+.paw-multi-dialog-actions .paw-multi-decline { padding: 13px 16px; }
+
+/* The turn counter is exactly ONE row after choosing a move, even at 320px. */
+.paw-brawl-modal-controls .paw-brawl-turn-banner {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: left;
+}
+.paw-brawl-turn-clock { flex: 0 0 auto; white-space: nowrap; }
+.paw-brawl-turn-message { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.paw-brawl-ready-count { flex: 0 0 auto; white-space: nowrap; font-size: .92em; color: #a66c87; }
+
+/* A real battle-log dialog, rather than an expanding details block. */
+.paw-brawl-log-button { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; border: 1px solid #e7cfda; border-radius: 8px; background: #fff4f9; color: #95647f; font-weight: 800; font-size: 11px; cursor: pointer; }
+.paw-brawl-log-button:hover { background: #f7e1ec; }
+.paw-brawl-log-modal-backdrop { position: absolute; inset: 0; z-index: 89; display: grid; place-items: center; padding: 10px; background: #241b2ab3; border-radius: inherit; }
+.paw-brawl-log-modal { display: flex; flex-direction: column; gap: 10px; width: min(500px, 100%); max-height: min(80dvh, 560px); min-height: 0; overflow: hidden; padding: 15px; border: 2px solid #e9cbd9; border-radius: 17px; background: #fffaf6; color: #785668; box-shadow: 0 16px 50px #26162766; }
+.paw-brawl-log-modal-heading { display: flex; align-items: center; justify-content: space-between; gap: 9px; border-bottom: 1px solid #eddae3; padding-bottom: 10px; }
+.paw-brawl-log-modal-heading h3 { display: flex; align-items: center; gap: 7px; margin: 3px 0 0; font-size: 18px; }
+.paw-brawl-log-modal-heading button { display: grid; place-items: center; width: 32px; height: 32px; flex: 0 0 auto; border: 1px solid #e9cfda; border-radius: 9px; background: white; color: #91677c; cursor: pointer; }
+.paw-brawl-log-modal-entries { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: grid; align-content: start; gap: 6px; padding-right: 4px; }
+.paw-brawl-log-modal-entries p { margin: 0; padding: 9px 11px; font-size: 12px; line-height: 1.45; border-radius: 10px; background: #fff0f7; overflow-wrap: anywhere; }
+.paw-brawl-log-modal .paw-brawl-special-help-done { flex: 0 0 auto; }
+
+/* CircleHelp already draws a circle. No second enclosing button circle. */
+.paw-brawl-action-grid .paw-brawl-special-action > .paw-brawl-special-help {
+    width: 29px;
+    height: 29px;
+    min-height: 0;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    box-shadow: none;
+    color: #86547e;
+}
+.paw-brawl-action-grid .paw-brawl-special-action > .paw-brawl-special-help:hover { background: #f3dce9; }
+.paw-brawl-action-grid .paw-brawl-special-help > svg { width: 19px; height: 19px; }
+.paw-dark .paw-multi-dialog, .paw-dark .paw-brawl-log-modal { background: #423448; color: #ffe2ef; border-color: #856a85; }
+.paw-dark .paw-multi-dialog-header, .paw-dark .paw-multi-dialog-actions, .paw-dark .paw-brawl-log-modal-heading { border-color: #755a72; }
+.paw-dark .paw-multi-invite-bar { background: #554053; color: #ffe5ee; border-color: #895e7b; }
+.paw-dark .paw-multi-invite-bar.is-outgoing { background: #4f405b; }
+.paw-dark .paw-multi-invite-body small { color: #e1bbd3; }
+.paw-dark .paw-brawl-log-modal-entries p { background: #594459; }
+.paw-dark .paw-brawl-log-button { background: #554357; color: #ffe5ef; border-color: #83667a; }
+.paw-dark .paw-brawl-action-grid .paw-brawl-special-action > .paw-brawl-special-help { background: transparent; color: #ffe5f0; }
+@media (max-width: 620px) {
+    .paw-multi-invite-bar { gap: 7px; padding: 9px; }
+    .paw-multi-invite-icon { width: 21px; }
+    .paw-multi-invite-body b { font-size: 11px; }
+    .paw-multi-invite-bar-actions { gap: 4px; }
+    .paw-multi-invite-bar-actions button { font-size: 10px; padding: 6px 7px; }
+    .paw-multi-selected-banner { gap: 8px; }
+    .paw-multi-dialog { border-radius: 15px; }
+    .paw-multi-dialog-header { padding: 11px 13px; }
+    .paw-multi-dialog-body { padding: 0 13px 10px; }
+    .paw-multi-dialog-actions { padding: 10px 13px; }
+    .paw-brawl-modal-controls .paw-brawl-turn-banner { flex-wrap: nowrap; padding: 5px; }
+    .paw-brawl-turn-clock { padding: 3px 5px; min-width: 45px; }
+    .paw-brawl-ready-count { font-size: 9px; }
+    .paw-brawl-log-modal { max-height: calc(100dvh - 28px); }
+}
+@media (max-width: 380px) {
+    .paw-multi-invite-bar { flex-wrap: wrap; }
+    .paw-multi-invite-body { flex: 1 1 calc(100% - 45px); }
+    .paw-multi-invite-bar-actions { margin-left: 29px; }
+    .paw-multi-selected-banner span { flex-basis: calc(100% - 40px); }
+    .paw-brawl-modal-controls .paw-brawl-turn-banner { font-size: 9px; }
+}
+
+
+/* Multiplayer: clean page title and a predictable, touch-friendly selected-game toolbar. */
+.paw-multiplayer .paw-multiplayer-heading {
+    align-items: center;
+    margin-bottom: 17px;
+}
+.paw-multiplayer .paw-multiplayer-heading h2 {
+    margin: 4px 0 0;
+}
+.paw-multiplayer .paw-multi-selected-banner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 15px;
+}
+.paw-multiplayer .paw-multi-selected-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    font-size: 12px;
+}
+.paw-multiplayer .paw-multi-selected-title > svg {
+    flex: 0 0 auto;
+}
+.paw-multiplayer .paw-multi-selected-title > span {
+    flex: initial;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.paw-multiplayer .paw-multi-selected-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 8px;
+    min-width: 0;
+}
+.paw-multiplayer .paw-multi-selected-actions > button {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 9px 11px;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+.paw-multiplayer .paw-multi-selected-actions button svg {
+    flex: 0 0 auto;
+}
+.paw-multiplayer .paw-multi-selected-actions .paw-multi-open-challenge {
+    background: #d68baa;
+    border-color: #bf7196;
+    color: #fff;
+}
+.paw-multiplayer .paw-multi-selected-actions .paw-multi-open-history {
+    background: #fdf8ff;
+    border-color: #e0c9e8;
+    color: #966f9e;
+}
+.paw-multiplayer .paw-multi-selected-actions .paw-multi-change-game {
+    color: #8f7180;
+}
+.paw-multiplayer .paw-multi-selected-actions .paw-multi-open-history small {
+    display: inline-grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    background: #ecddf5;
+    color: #8f669c;
+    font-size: 10px;
+    font-weight: 900;
+}
+.paw-multiplayer .paw-multi-selected-actions > button:focus-visible,
+.paw-multiplayer .paw-multi-dialog button:focus-visible {
+    outline: 3px solid #9868ad;
+    outline-offset: 2px;
+}
+.paw-multi-history-dialog {
+    width: min(520px, 100%);
+}
+.paw-multi-history-list {
+    padding-top: 8px;
+}
+.paw-multi-history-list .paw-multi-history-row {
+    padding: 13px 0;
+    min-width: 0;
+}
+.paw-multi-history-list .paw-multi-history-row > div {
+    min-width: 0;
+}
+.paw-multi-history-list .paw-multi-history-row b,
+.paw-multi-history-list .paw-multi-history-row small {
+    overflow-wrap: anywhere;
+}
+.paw-multi-history-list .paw-multi-history-row > span {
+    flex: 0 0 auto;
+    text-align: right;
+}
+.paw-multi-history-empty {
+    display: grid;
+    place-items: center;
+    gap: 5px;
+    padding: 35px 12px;
+    text-align: center;
+    color: #a47794;
+}
+.paw-multi-history-empty p {
+    margin: 0;
+    font-size: 12px;
+}
+.paw-multi-history-done {
+    flex: 1;
+    min-height: 41px;
+    border: 1px solid #cf91b0;
+    border-radius: 11px;
+    background: #d68baa;
+    color: #fff;
+    font-weight: 900;
+}
+.paw-dark .paw-multiplayer .paw-multi-selected-actions .paw-multi-open-history {
+    background: #5a4664;
+    color: #fbe0ff;
+    border-color: #856d9c;
+}
+.paw-dark .paw-multiplayer .paw-multi-selected-actions .paw-multi-change-game {
+    background: #534255;
+    color: #f2d6e8;
+    border-color: #846d85;
+}
+.paw-dark .paw-multi-history-done {
+    background: #9d6d91;
+    border-color: #bd8caf;
+}
+@media (max-width: 1100px) {
+    .paw-multiplayer .paw-multi-selected-banner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+    .paw-multiplayer .paw-multi-selected-actions {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+    }
+    .paw-multiplayer .paw-multi-selected-actions > button {
+        min-width: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        padding-inline: 5px;
+    }
+}
+@media (max-width: 620px) {
+    .paw-multiplayer .paw-multi-selected-banner {
+        padding: 11px;
+    }
+    .paw-multiplayer .paw-multi-selected-title > span {
+        flex: initial;
+        flex-basis: auto;
+    }
+    .paw-multiplayer .paw-multi-selected-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+    .paw-multiplayer .paw-multi-selected-actions > button {
+        min-height: 44px;
+        font-size: 11px;
+        padding: 8px 6px;
+    }
+    .paw-multiplayer .paw-multi-selected-actions > .paw-multi-change-game {
+        grid-column: 1 / -1;
+        min-height: 35px;
+        background: transparent;
+    }
+    .paw-multi-history-list .paw-multi-history-row {
+        gap: 8px;
+    }
+}
+@media (max-width: 340px) {
+    .paw-multiplayer .paw-multi-selected-actions > button {
+        font-size: 10px;
+        gap: 4px;
+    }
+    .paw-multiplayer .paw-multi-selected-actions button svg {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+/* Match history can be opened even before choosing a game. */
+.paw-multiplayer .paw-multi-header-history {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    flex: 0 0 auto;
+    min-height: 37px;
+    padding: 8px 11px;
+    background: #fff4fa;
+    color: #a26d91;
+    border: 1px solid #ebcadd;
+    border-radius: 11px;
+    font-size: 12px;
+    font-weight: 900;
+}
+.paw-multiplayer .paw-multi-header-history small {
+    display: grid;
+    place-items: center;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 4px;
+    border-radius: 10px;
+    background: #ead6e4;
+    font-size: 10px;
+}
+.paw-multiplayer .paw-multi-header-history:focus-visible {
+    outline: 3px solid #9868ad;
+    outline-offset: 2px;
+}
+.paw-multiplayer .paw-multi-selected-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 1100px) {
+    .paw-multiplayer .paw-multi-selected-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 620px) {
+    .paw-multiplayer .paw-multi-selected-actions > .paw-multi-change-game {
+        grid-column: auto;
+        min-height: 44px;
+        background: #fff;
+    }
+    .paw-multiplayer .paw-multi-header-history {
+        padding: 7px 9px;
+        font-size: 11px;
+    }
+}
+.paw-dark .paw-multiplayer .paw-multi-header-history {
+    background: #564258;
+    border-color: #8a6b89;
+    color: #ffe8f6;
+}
+
+.paw-brawl-action-grid .paw-brawl-special-action > .paw-brawl-special-help{width:25px;height:25px;min-width:25px;min-height:25px;padding:2px}.paw-brawl-action-grid .paw-brawl-special-help > svg{width:16px;height:16px}

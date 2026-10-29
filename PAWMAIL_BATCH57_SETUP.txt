@@ -1,4 +1,4 @@
-PawPal Batch 57 — Personalized PawMail
+PawPal Batch 57 - Personalized PawMail
 
 1. Back up your Neon database.
 2. Open Neon SQL Editor for the database used by Render.

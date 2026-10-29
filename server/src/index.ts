@@ -13,6 +13,8 @@ import jwt from 'jsonwebtoken';
 import {z} from 'zod';
 
 import {pool} from './db.js';
+import {registerMultiplayer} from './multiplayer.js';
+import {pawMailCatalog, pawMailDesigns} from './mailCatalog.js';
 
 const app=express();app.use(express.json({limit:'24kb'}));
 
@@ -275,7 +277,6 @@ function applyPetDecay(p:any){
   // meaning 0 -> 100 in exactly 20 minutes of accumulated sleep.
   p.energy=clamp(p.energy+(sleeping?take('sleep_energy',elapsed/60000*5):-take('awake_energy',tenMinuteSteps)));
   p.garden={...(p.garden||{}),_decay_at:now,_decay_carry:carry};
-  if(sleeping&&p.energy>=100)p.garden._sleeping=false;
   return sleeping;
 }
 
@@ -310,15 +311,19 @@ async function wakePetForActivity(userId:string){
     return changed;
 }
 
-// All authenticated activity requests wake the pet before the action runs.
-// GET requests, authentication and the explicit sleep toggle are excluded.
-app.use('/api', (req:any,res:any,next:any)=>{
-    if(!['POST','PUT','PATCH','DELETE'].includes(req.method)||
-       req.path.startsWith('/auth/')||req.path.startsWith('/admin/')||
-       req.path==='/care'&&req.body?.action==='sleep_toggle'||
-       req.path==='/adopt'||req.path==='/claim'){
-        return next();
-    }
+// Browsing, shopping, changing outfits, decorating, social actions, and claiming rewards
+// do not interrupt naps. Only activities that require an awake pet wake it.
+function isWakeActivity(path:string,body:any,method:string){
+    if(!['POST','PUT','PATCH','DELETE'].includes(method))return false;
+    if(path==='/care')return ['feed','play','bathe','scrub','pet_stroke','cuddle'].includes(String(body?.action||''));
+    if(path==='/kitchen')return body?.action==='serve';
+    if(path==='/game'||path==='/claw/play')return true;
+    if(/^\/multiplayer\/challenges\/[^/]+\/move$/.test(path))return true;
+    if(/^\/multiplayer\/challenges\/[^/]+\/respond$/.test(path))return body?.action==='accept';
+    return false;
+}
+app.use('/api',(req:any,res:any,next:any)=>{
+    if(!isWakeActivity(req.path,req.body,req.method))return next();
     auth(req,res,()=>{
         Promise.resolve(wakePetForActivity(String(req.userId))).then(()=>next()).catch(next);
     });
@@ -353,7 +358,7 @@ app.post('/api/adopt',auth,handle(async(req,res)=>{const v=z.object({name:z.stri
 
 app.post('/api/claim',auth,handle(async(req,res)=>{if(!z.string().uuid().safeParse(req.body?.petId).success)return void res.status(400).json({error:'Invalid old pet ID.'});const q=await pool.query(`UPDATE pets SET owner_id=$1 WHERE id=$2 AND owner_id IS NULL AND NOT EXISTS(SELECT 1 FROM pets WHERE owner_id=$1) RETURNING ${fields}`,[req.userId,req.body.petId]);if(!q.rows[0])return void res.status(409).json({error:'Pet already claimed, missing, or account already has a pet.'});res.json({pet:q.rows[0]})}));
 
-async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const wasSleepingAtRequest=applyPetDecay(p);p._wasSleepingAtRequest=wasSleepingAtRequest;const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',scrub:'bathe',pet_stroke:'cuddle',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');if(req.path==='/api/care'&&action==='sleep_toggle'){const friends=await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId]);publishLive([String(req.userId),...friends.rows.map((r:any)=>String(r.friend_id))],'pet_sleep_changed')}publishLive([String(req.userId)],'pet_updated');if(req.path==='/api/item'||(req.path==='/api/care'&&['sleep_toggle','scrub','pet_stroke','feed','play','bathe','cuddle'].includes(action)))void publishPetToFriends(String(req.userId),action==='sleep_toggle'||req.path==='/api/item').catch(console.error);res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
+async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const wasSleepingAtRequest=applyPetDecay(p);p._wasSleepingAtRequest=wasSleepingAtRequest;const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',scrub:'bathe',pet_stroke:'cuddle',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':req.path==='/api/item'&&req.body?.mode==='equip'&&(catalog[req.body?.item]?.type==='theme')?'atmosphere':req.path==='/api/item'&&req.body?.mode==='equip'?'outfit':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');if(req.path==='/api/care'&&action==='sleep_toggle'){const friends=await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId]);publishLive([String(req.userId),...friends.rows.map((r:any)=>String(r.friend_id))],'pet_sleep_changed')}publishLive([String(req.userId)],'pet_updated');if(req.path==='/api/item'||(req.path==='/api/care'&&['sleep_toggle','scrub','pet_stroke','feed','play','bathe','cuddle'].includes(action)))void publishPetToFriends(String(req.userId),action==='sleep_toggle'||req.path==='/api/item').catch(console.error);res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
 
 // Atomic claim: a row lock prevents concurrent requests from claiming twice.
 
@@ -372,6 +377,7 @@ app.post('/api/daily/claim',auth,handle(async(req,res)=>{
   if(previous&&manilaDay(new Date(previous))===today){await client.query('ROLLBACK');return void res.status(429).json({error:'Daily Surprise already claimed today.',nextClaimAt:nextMidnight})}
   const updated=await client.query(`UPDATE pets SET daily_claimed_at=NOW(),last_daily=CURRENT_DATE,coins=coins+120,food=food+2,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[q.rows[0].id]);
   await client.query(`INSERT INTO pet_kitchens(user_id,meals) VALUES($1,jsonb_build_object('berry_parfait',5)) ON CONFLICT(user_id) DO UPDATE SET meals=jsonb_set(COALESCE(pet_kitchens.meals,'{}'::jsonb),'{berry_parfait}',to_jsonb(COALESCE((pet_kitchens.meals->>'berry_parfait')::int,0)+5),true)`,[req.userId]);
+  await recordMissionEvent(client,req.userId,'daily_surprise');
   await client.query('COMMIT');
   publishLive([String(req.userId)],'daily_reward');
   res.json({pet:updated.rows[0],message:'Daily Surprise: +120 coins, +2 regular meals, and +5 Berry Parfaits!',nextClaimAt:nextMidnight});
@@ -434,6 +440,8 @@ app.post('/api/furniture',auth,handle(async(req,res)=>{
    layouts[room]=entries;
   }
   if(action!=='buy')await client.query('UPDATE pets SET room_layouts=$2::jsonb WHERE id=$1',[p.id,JSON.stringify(layouts)]);
+  if(action==='buy')await recordMissionEvent(client,req.userId,'buy');
+  if(action==='place')await recordMissionEvent(client,req.userId,'furniture');
   await client.query('COMMIT');res.json({message});
  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }));
@@ -451,19 +459,27 @@ app.get('/api/live',auth,(req:any,res:any)=>{
 // Batch 39: bounded notification feed. Derive from existing tables, no unbounded notification storage.
 app.get('/api/notifications',auth,handle(async(req,res)=>{
  const result=await pool.query(`
-  SELECT kind, actor, event_id, created_at, unread FROM (
+  SELECT kind, actor, event_id, created_at, unread, game_name, wager FROM (
    SELECT 'friend_request' AS kind, u.username AS actor, f.requester_id::text AS event_id,
-          f.created_at, true AS unread
+          f.created_at, true AS unread, NULL::text AS game_name, NULL::integer AS wager
    FROM friendships f JOIN users u ON u.id=f.requester_id
    WHERE f.recipient_id=$1 AND f.status='pending'
    UNION ALL
-   SELECT 'friend_accepted', u.username, f.recipient_id::text, f.created_at, false
+   SELECT 'friend_accepted', u.username, f.recipient_id::text, f.created_at, false, NULL::text, NULL::integer
    FROM friendships f JOIN users u ON u.id=f.recipient_id
    WHERE f.requester_id=$1 AND f.status='accepted'
    UNION ALL
-   SELECT 'mail', u.username, m.id::text, m.created_at, (m.read_at IS NULL)
+   SELECT 'mail', u.username, m.id::text, m.created_at, (m.read_at IS NULL), NULL::text, NULL::integer
    FROM paw_mail m JOIN users u ON u.id=m.sender_id
    WHERE m.recipient_id=$1 AND m.expires_at>NOW()
+   UNION ALL
+   SELECT 'multiplayer_challenge', u.username, c.id::text, c.created_at, true, 'Paw Brawl', c.wager
+   FROM multiplayer_challenges c JOIN users u ON u.id=c.challenger_id
+   WHERE c.challenged_id=$1 AND c.status='pending' AND c.expires_at>NOW()
+   UNION ALL
+   SELECT 'multiplayer_result', u.username, c.id::text, c.updated_at, false, 'Paw Brawl', c.wager
+   FROM multiplayer_challenges c JOIN users u ON u.id=CASE WHEN c.challenger_id=$1 THEN c.challenged_id ELSE c.challenger_id END
+   WHERE (c.challenger_id=$1 OR c.challenged_id=$1) AND c.status='finished'
   ) feed ORDER BY created_at DESC LIMIT 5`,[req.userId]);
  res.json(result.rows);
 }));
@@ -473,7 +489,7 @@ app.get('/api/users/search',auth,handle(async(req,res)=>{const username=String(r
 
 app.post('/api/friends/request',auth,handle(async(req,res)=>{const username=String(req.body?.username||'').toLowerCase();const u=await pool.query('SELECT id FROM users WHERE username=$1 AND id<>$2',[username,req.userId]);if(!u.rows[0])return void res.status(404).json({error:'Username not found.'});const id=u.rows[0].id;const exists=await pool.query('SELECT status FROM friendships WHERE (requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1)',[req.userId,id]);if(exists.rowCount)return void res.status(409).json({error:'A request or friendship already exists.'});await pool.query('INSERT INTO friendships(requester_id,recipient_id,status) VALUES($1,$2,$3)',[req.userId,id,'pending']);publishLive([id,req.userId],'friend_request');res.json({message:'Friend request sent!'})}));
 
-app.post('/api/friends/:id/accept',auth,handle(async(req,res)=>{const q=await pool.query("UPDATE friendships SET status='accepted' WHERE requester_id=$1 AND recipient_id=$2 AND status='pending' RETURNING requester_id",[req.params.id,req.userId]);if(!q.rowCount)return void res.status(404).json({error:'No incoming request.'});publishLive([String(req.params.id),req.userId],'friend_accepted');res.json({message:'Friend added!'})}));
+app.post('/api/friends/:id/accept',auth,handle(async(req,res)=>{const q=await pool.query("UPDATE friendships SET status='accepted' WHERE requester_id=$1 AND recipient_id=$2 AND status='pending' RETURNING requester_id",[req.params.id,req.userId]);if(!q.rowCount)return void res.status(404).json({error:'No incoming request.'});await recordMissionEvent(pool,req.userId,'friend');await recordMissionEvent(pool,req.params.id,'friend');publishLive([String(req.params.id),req.userId],'friend_accepted');res.json({message:'Friend added!'})}));
 
 app.delete('/api/friends/:id',auth,handle(async(req,res)=>{await pool.query('DELETE FROM friendships WHERE (requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1)',[req.userId,req.params.id]);publishLive([String(req.params.id),req.userId],'friend_removed');res.json({message:'Friend removed.'})}));
 
@@ -496,6 +512,8 @@ app.post('/api/rooms',auth,handle(async(req,res)=>{
     }else if(action==='enter'&&owned){
       await client.query('UPDATE pets SET active_room=$2 WHERE id=$1',[pet.id,room]);
     }else{await client.query('ROLLBACK');return void res.status(403).json({error:'Unlock this room first.'})}
+    await recordMissionEvent(client,req.userId,'room');
+    if(action==='unlock'&&!owned)await recordMissionEvent(client,req.userId,'buy');
     await client.query('COMMIT');res.json({message:action==='unlock'&&!owned?'Room unlocked!':'Welcome to your '+room+'!' });
   }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }));
@@ -524,6 +542,7 @@ app.post('/api/notes', auth, handle(async (req, res) => {
     [req.userId, value || null, expiresAt]
   );
 
+  if(value)await recordMissionEvent(pool,req.userId,'note');
   res.json({
     message: value
       ? 'Pet Note saved for 24 hours.'
@@ -532,23 +551,24 @@ app.post('/api/notes', auth, handle(async (req, res) => {
 }));
 
 // Personalized PawMail envelopes: ownership and coin purchases enforced server-side.
-const pawMailDesigns=['classic','rose_garden','starry_night','ocean_waves','cherry_blossom','woodland','royal','sweet_treats','celestial','butterfly','winter'] as const;
 const pawMailColors=['blush','rose','peach','apricot','butter','mint','sage','aqua','sky','periwinkle','lavender','lilac','cream','coral','slate'] as const;
 app.get('/api/mail/designs',auth,handle(async(req,res)=>{
  const r=await pool.query('SELECT design FROM paw_mail_envelopes WHERE user_id=$1',[req.userId]);
- res.json({owned:['classic',...r.rows.map(x=>x.design)]});
+ res.json({owned:['classic',...r.rows.map(x=>x.design)],catalog:pawMailCatalog});
 }));
 app.post('/api/mail/designs/buy',auth,handle(async(req,res)=>{
- const parsed=z.object({design:z.enum(pawMailDesigns)}).safeParse(req.body);
+ const parsed=z.object({design:z.string().refine(value=>pawMailDesigns.includes(value as typeof pawMailDesigns[number]))}).safeParse(req.body);
  if(!parsed.success||parsed.data.design==='classic')return void res.status(400).json({error:'Choose a premium envelope design.'});
  const client=await pool.connect();try{
   await client.query('BEGIN');
-  const pet=await client.query('SELECT coins FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
+  const pet=await client.query('SELECT coins,level FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
   if(!pet.rowCount){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
   const owned=await client.query('SELECT 1 FROM paw_mail_envelopes WHERE user_id=$1 AND design=$2',[req.userId,parsed.data.design]);
   if(owned.rowCount){await client.query('ROLLBACK');return void res.status(409).json({error:'You already own this design.'})}
-  if(pet.rows[0].coins<2000){await client.query('ROLLBACK');return void res.status(400).json({error:'You need 2,000 coins.'})}
-  await client.query('UPDATE pets SET coins=coins-2000 WHERE owner_id=$1',[req.userId]);
+  const design=pawMailCatalog.find(item=>item.id===parsed.data.design)!;
+  if(pet.rows[0].level<design.level){await client.query('ROLLBACK');return void res.status(403).json({error:`Reach Pet Level ${design.level} to unlock ${design.title}.`})}
+  if(pet.rows[0].coins<design.price){await client.query('ROLLBACK');return void res.status(400).json({error:`You need ${design.price.toLocaleString()} coins.`})}
+  await client.query('UPDATE pets SET coins=coins-$1 WHERE owner_id=$2',[design.price,req.userId]);
   await client.query('INSERT INTO paw_mail_envelopes(user_id,design) VALUES($1,$2)',[req.userId,parsed.data.design]);
   await client.query('COMMIT');res.json({message:'Envelope design unlocked!'});
  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
@@ -560,8 +580,16 @@ app.get('/api/mail', auth, handle(async (req, res) => {
   WHERE m.recipient_id=$1 AND m.expires_at>NOW() ORDER BY m.created_at DESC LIMIT 60`, [req.userId]);
  res.json(result.rows);
 }));
+app.get('/api/mail/sent', auth, handle(async (req, res) => {
+ const result = await pool.query(`SELECT m.id,m.sender_id,m.design,m.color,m.message,m.created_at,m.expires_at,m.read_at,
+  u.username AS recipient_username,
+  CASE WHEN p.id IS NULL THEN NULL ELSE json_build_object('species',p.species,'color',p.color,'breed',p.breed,'equipped_cosmetic',p.equipped_cosmetic,'equipped_outfit',p.equipped_outfit) END AS sender_pet
+  FROM paw_mail m JOIN users u ON u.id=m.recipient_id LEFT JOIN pets p ON p.owner_id=m.sender_id
+  WHERE m.sender_id=$1 AND m.expires_at>NOW() ORDER BY m.created_at DESC LIMIT 60`, [req.userId]);
+ res.json(result.rows);
+}));
 app.post('/api/mail', auth, handle(async (req, res) => {
- const parsed=z.object({friendId:z.string().uuid(),design:z.enum(pawMailDesigns),color:z.enum(pawMailColors),message:z.string().trim().min(1).max(100)}).safeParse(req.body);
+ const parsed=z.object({friendId:z.string().uuid(),design:z.string().refine(value=>pawMailDesigns.includes(value as typeof pawMailDesigns[number])),color:z.enum(pawMailColors),message:z.string().trim().min(1).max(100)}).safeParse(req.body);
  if(!parsed.success)return void res.status(400).json({error:'Choose a friend, envelope, color, and a message (1–100 characters).'});
  if(parsed.data.friendId===req.userId)return void res.status(400).json({error:'You cannot mail yourself.'});
  const friendship=await pool.query(`SELECT 1 FROM friendships WHERE status='accepted' AND
@@ -573,7 +601,7 @@ app.post('/api/mail', auth, handle(async (req, res) => {
  }
  await pool.query(`INSERT INTO paw_mail(id,sender_id,recipient_id,design,color,message,expires_at)
  VALUES($1,$2,$3,$4,$5,$6,NOW()+INTERVAL '24 hours')`,[randomUUID(),req.userId,parsed.data.friendId,parsed.data.design,parsed.data.color,parsed.data.message]);
- publishLive([parsed.data.friendId,req.userId],'mail');res.status(201).json({message:'Your personalized PawMail was sent!'});
+ await recordMissionEvent(pool,req.userId,'mail');publishLive([parsed.data.friendId,req.userId],'mail');res.status(201).json({message:'Your personalized PawMail was sent!'});
 }));
 app.patch('/api/mail/:id/read',auth,handle(async(req,res)=>{
   const result=await pool.query('UPDATE paw_mail SET read_at=COALESCE(read_at,NOW()) WHERE id=$1 AND recipient_id=$2 AND expires_at>NOW() RETURNING id',[req.params.id,req.userId]);
@@ -635,9 +663,10 @@ app.post('/api/claw/play',auth,handle(async(req,res)=>{
   p.coins+=100;return 'Breed already owned! +100 bonus coins!';
  });
  if(!result.pet)return void res.status(500).json({error:'Prize could not be claimed.'});
+ if(!String(result.message||'').startsWith('Wait '))await recordMissionEvent(pool,req.userId,'claw');
  res.json(result);
 }));
-app.post('/api/game',auth,handle(async(req,res)=>{const v=z.object({game:z.enum(['memory','dino','runner','pattern','mole']),score:z.number().int().min(0).max(100000)}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Invalid score.'});const result:any={};await mutate(req,{json:(x:any)=>Object.assign(result,x),status:()=>({json:()=>{}})},p=>{if(p.last_game_at&&Date.now()-new Date(p.last_game_at).getTime()<8000)return 'Wait 8 seconds between rewards.';p.last_game_at=new Date().toISOString();const reward=Math.min(75,10+Math.floor(v.data.score/3));p.coins+=reward;p.xp+=Math.min(40,5+Math.floor(v.data.score/8));p.happiness=clamp(p.happiness+8);p.energy=clamp(p.energy-7);p.cleanliness=clamp(p.cleanliness-5);return `Arcade reward: +${reward} coins!`});if(result.pet && !String(result.message||'').startsWith('Wait '))await recordMissionEvent(pool,req.userId,'arcade');if(result.pet)await pool.query('INSERT INTO game_records(user_id,game,best) VALUES($1,$2,$3) ON CONFLICT(user_id,game) DO UPDATE SET best=GREATEST(game_records.best,EXCLUDED.best)',[req.userId,v.data.game,v.data.score]);res.json(result)}));
+app.post('/api/game',auth,handle(async(req,res)=>{const v=z.object({game:z.enum(['memory','dino','runner','pattern','mole']),score:z.number().int().min(0).max(100000)}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Invalid score.'});const result:any={};await mutate(req,{json:(x:any)=>Object.assign(result,x),status:()=>({json:()=>{}})},p=>{if(p.last_game_at&&Date.now()-new Date(p.last_game_at).getTime()<8000)return 'Wait 8 seconds between rewards.';p.last_game_at=new Date().toISOString();const reward=Math.min(75,10+Math.floor(v.data.score/3));p.coins+=reward;p.xp+=Math.min(40,5+Math.floor(v.data.score/8));p.happiness=clamp(p.happiness+8);p.energy=clamp(p.energy-7);p.cleanliness=clamp(p.cleanliness-5);return `Arcade reward: +${reward} coins!`});if(result.pet && !String(result.message||'').startsWith('Wait '))await Promise.all([recordMissionEvent(pool,req.userId,'arcade'),recordMissionEvent(pool,req.userId,v.data.game)]);if(result.pet)await pool.query('INSERT INTO game_records(user_id,game,best) VALUES($1,$2,$3) ON CONFLICT(user_id,game) DO UPDATE SET best=GREATEST(game_records.best,EXCLUDED.best)',[req.userId,v.data.game,v.data.score]);res.json(result)}));
 
 // Batch 12: Kitchen 2.0. Ingredients, recipe progress, meals and pet buffs are server-owned.
 const kitchenRecipes: Record<string,{name:string;ingredients:Record<string,number>;steps:string[];hunger:number;happiness:number;energy:number;xp:number}> = {
@@ -655,9 +684,11 @@ const kitchenRecipes: Record<string,{name:string;ingredients:Record<string,numbe
  moonlight_ramen:{name:'Moonlight Ramen',ingredients:{noodles:2,egg:1,carrot:1},steps:['chop','simmer','cook','serve'],hunger:52,happiness:19,energy:13,xp:55}
 };
 const kitchenPrices:Record<string,number>={berries:24,milk:20,flour:18,carrot:16,bread:22,honey:35,butter:26,egg:30,cheese:38,peach:32,pumpkin:28,lettuce:18,tomato:23,pasta:34,noodles:36};
+// The convenience fee is precisely 2x the ingredients' market value.
+const readyMealPrices:Record<string,number>=Object.fromEntries(Object.entries(kitchenRecipes).map(([id,recipe])=>[id,2*Object.entries(recipe.ingredients).reduce((sum,[ingredient,amount])=>sum+kitchenPrices[ingredient]*amount,0)]));
 app.get('/api/kitchen',auth,handle(async(req,res)=>{
  const q=await pool.query('SELECT ingredients,meals,active_recipe,recipe_step,cooking_started_at FROM pet_kitchens WHERE user_id=$1',[req.userId]);
- res.json({kitchen:q.rows[0]||{ingredients:{},meals:{},active_recipe:null,recipe_step:0,cooking_started_at:null},recipes:kitchenRecipes,prices:kitchenPrices});
+ res.json({kitchen:q.rows[0]||{ingredients:{},meals:{},active_recipe:null,recipe_step:0,cooking_started_at:null},recipes:kitchenRecipes,prices:kitchenPrices,mealPrices:readyMealPrices});
 }));
 app.post('/api/kitchen',auth,handle(async(req,res)=>{
  const action=String(req.body?.action||'');const item=String(req.body?.item||'');const quantity=Number(req.body?.quantity??1);
@@ -675,6 +706,15 @@ app.post('/api/kitchen',auth,handle(async(req,res)=>{
    if(!(item in kitchenPrices)||!Number.isSafeInteger(quantity)||quantity<1||quantity>20)return void await fail('Choose an ingredient and a quantity from 1 to 20.');
    const cost=kitchenPrices[item]*quantity;if(petQ.rows[0].coins<cost)return void await fail('Not enough coins.');
    coinDelta=-cost;ingredients[item]=(ingredients[item]||0)+quantity;message=`Purchased ${quantity} ${item}!`;
+  }else if(action==='buy_meal'){
+   const recipe=kitchenRecipes[item];
+   if(!recipe)return void await fail('Unknown meal.');
+   if(!Number.isSafeInteger(quantity)||quantity!==1)return void await fail('Buy one ready-made meal at a time.');
+   const cost=readyMealPrices[item];
+   if(petQ.rows[0].coins<cost)return void await fail('Not enough Paw Coins.');
+   coinDelta=-cost;
+   meals[item]=(meals[item]||0)+1;
+   message=`Bought ${recipe.name} for ${cost} Paw Coins! Ready in your pantry.`;
   }else if(action==='start'){
    const recipe=kitchenRecipes[item];if(!recipe)return void await fail('Unknown recipe.');
    if(active)return void await fail('Finish your current recipe first.');
@@ -698,7 +738,10 @@ app.post('/api/kitchen',auth,handle(async(req,res)=>{
   await client.query('UPDATE pet_kitchens SET ingredients=$2::jsonb,meals=$3::jsonb,active_recipe=$4,recipe_step=$5,cooking_started_at=$6 WHERE user_id=$1',[req.userId,JSON.stringify(ingredients),JSON.stringify(meals),active,step,started]);
   if(stats)await client.query('UPDATE pets SET coins=coins+$2,hunger=$3,happiness=$4,energy=$5,xp=$6,level=$7,updated_at=NOW() WHERE owner_id=$1',[req.userId,coinDelta,stats.hunger,stats.happiness,stats.energy,stats.xp,stats.level]);
   else if(coinDelta)await client.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1',[req.userId,coinDelta]);
-  if(action==='buy'||action==='serve'||(action==='step'&&!active))await recordMissionEvent(client,req.userId,action==='buy'?'buy':action==='serve'?'serve':'cook');await client.query('COMMIT');publishLive([String(req.userId)],'kitchen_updated');res.json({message,kitchen:{ingredients,meals,active_recipe:active,recipe_step:step,cooking_started_at:started}});
+  if(action==='buy'||action==='buy_meal'||action==='serve'||(action==='step'&&!active)){
+   await recordMissionEvent(client,req.userId,action==='buy'?'buy':action==='buy_meal'?'meal_buy':action==='serve'?'serve':'cook');
+   if(action==='buy_meal')await recordMissionEvent(client,req.userId,'buy');
+  }await client.query('COMMIT');publishLive([String(req.userId)],'kitchen_updated');res.json({message,kitchen:{ingredients,meals,active_recipe:active,recipe_step:step,cooking_started_at:started}});
  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }));
 
@@ -719,34 +762,87 @@ const missionMetrics:[string,string,number[]][]=[
  ['water','Water a flower',[1,2,3,4,5,7,10,12,15,20]],
  ['cook','Finish a recipe',[1,2,3,4,5,7,10,12,15,20]],
  ['serve','Serve a cooked meal',[1,2,3,4,5,7,10,12,15,20]],
- ['buy','Make a shop purchase',[1,2,3,4,5,7,10,12,15,20]]
+ ['buy','Make a shop purchase',[1,2,3,4,5,7,10,12,15,20]],
+ ['claw','Try Paw Claw',[1,2,3,4,5,7,10,12,15,20]],
+ ['meal_buy','Buy a ready-made meal',[1,2,3,4,5,7,10,12,15,20]],
+ ['friend','Make a new friend',[1,2,3,4,5,7,10,12,15,20]],
+ ['mail','Send PawMail',[1,2,3,4,5,7,10,12,15,20]],
+ ['outfit','Change your pet outfit',[1,2,3,4,5,7,10,12,15,20]],
+ ['atmosphere','Change room atmosphere',[1,2,3,4,5,7,10,12,15,20]],
+ ['furniture','Place room furniture',[1,2,3,4,5,7,10,12,15,20]],
+ ['room','Visit a room',[1,2,3,4,5,7,10,12,15,20]],
+ ['brawl','Finish a Paw Brawl',[1,2,3,4,5,7,10,12,15,20]],
+ ['memory','Play Memory Tiles',[1,2,3,4,5,7,10,12,15,20]],
+ ['dino','Play Cactus Jump',[1,2,3,4,5,7,10,12,15,20]],
+ ['runner','Play Paw Run',[1,2,3,4,5,7,10,12,15,20]],
+ ['pattern','Play Heart Color Match',[1,2,3,4,5,7,10,12,15,20]],
+ ['mole','Play Whack-a-Mole',[1,2,3,4,5,7,10,12,15,20]],
+ ['gift','Send a friend gift',[1,2,3,4,5,7,10,12,15,20]],
+ ['note','Write a pet note',[1,2,3,4,5,7,10,12,15,20]],
+ ['daily_surprise','Claim your daily surprise',[1,2,3,4,5,7,10,12,15,20]]
 ];
-// 120 permanent milestones: 12 activity families x 10 escalating targets.
+// Permanent milestones across every tracked activity. Existing mission IDs stay intact.
 for(const [metric,label,targets] of missionMetrics){for(let i=0;i<targets.length;i++){
  const target=targets[i];missionDefs.push({id:`m_${metric}_${i+1}`,kind:'milestone',title:`${label} ${target} ${target===1?'time':'times'}`,metric,target,coins:100+(i+1)*75,xp:30+(i+1)*20});
 }}
-// 40 daily missions, 4 randomly but deterministically selected per Manila day.
-const dailyMetrics=['feed','play','sleep','bathe','cuddle','arcade','plant','harvest','water','cook'];
-for(const metric of dailyMetrics)for(let i=0;i<4;i++)missionDefs.push({id:`d_${metric}_${i+1}`,kind:'daily',title:`${missionMetrics.find(m=>m[0]===metric)?.[1]} ${i+1} ${i===0?'time':'times'} today`,metric,target:i+1,coins:30+(i+1)*25,xp:10+(i+1)*10});
-// 30 weekly missions, 5 selected per Manila Monday-to-Sunday week.
-const weeklyMetrics=['feed','play','sleep','bathe','cuddle','arcade','plant','harvest','water','cook'];
-for(const metric of weeklyMetrics)for(let i=0;i<3;i++)missionDefs.push({id:`w_${metric}_${i+1}`,kind:'weekly',title:`${missionMetrics.find(m=>m[0]===metric)?.[1]} ${[3,7,12][i]} times this week`,metric,target:[3,7,12][i],coins:140+i*100,xp:50+i*35});
+// Daily missions are sampled from low-friction actions, across the live features.
+const dailyMetrics=['feed','play','bathe','cuddle','arcade','plant','harvest','water','cook','serve','buy','claw','meal_buy','outfit','atmosphere'];
+for(const metric of dailyMetrics)for(let i=0;i<(['outfit','atmosphere'].includes(metric)?1:4);i++)missionDefs.push({id:`d_${metric}_${i+1}`,kind:'daily',title:`${missionMetrics.find(m=>m[0]===metric)?.[1]} ${i+1} ${i===0?'time':'times'} today`,metric,target:i+1,coins:30+(i+1)*25,xp:10+(i+1)*10});
+// Weekly missions rotate across the full gameplay catalog.
+const weeklyMetrics=['feed','play','sleep','bathe','cuddle','arcade','claw','plant','harvest','water','cook','serve','buy','meal_buy','mail','outfit','atmosphere','furniture','room','memory','dino','runner','pattern','mole','brawl','gift','note','daily_surprise'];
+for(const metric of weeklyMetrics)for(let i=0;i<3;i++){
+ const target=['outfit','atmosphere','room','furniture','note','gift'].includes(metric)?[1,3,5][i]:metric==='daily_surprise'?[1,3,5][i]:[3,7,12][i];
+ missionDefs.push({id:`w_${metric}_${i+1}`,kind:'weekly',title:`${missionMetrics.find(m=>m[0]===metric)?.[1]} ${target} times this week`,metric,target,coins:140+i*100,xp:50+i*35});
+}
 function manilaDay(d=new Date()){return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Manila',year:'numeric',month:'2-digit',day:'2-digit'}).format(d)}
 function manilaWeek(d=new Date()){const day=manilaDay(d);const utc=new Date(day+'T00:00:00Z');const weekday=utc.getUTCDay();utc.setUTCDate(utc.getUTCDate()-(weekday+6)%7);return utc.toISOString().slice(0,10)}
 function pickMissions(kind:MissionKind,userId:string,period:string,count:number){const choices=missionDefs.filter(m=>m.kind===kind);let seed=2166136261;for(const ch of userId+kind+period){seed=Math.imul(seed^ch.charCodeAt(0),16777619)>>>0;}const result=[...choices];for(let i=result.length-1;i>0;i--){seed=(Math.imul(seed,1664525)+1013904223)>>>0;const j=seed%(i+1);[result[i],result[j]]=[result[j],result[i]];}return result.slice(0,count)}
-async function recordMissionEvent(client:any,userId:string,metric:string,amount=1){await client.query('INSERT INTO mission_events(user_id,metric,amount) VALUES($1,$2,$3)',[userId,metric,amount]);}
+async function recordMissionEvent(client:any,userId:string,metric:string,amount=1){
+ // Cosmetic changes and room visits should not be farmed by tapping a toggle repeatedly.
+ // Once per Manila day is also attainable for the corresponding daily and weekly goals.
+ if(['room','outfit','atmosphere','furniture','note'].includes(metric)){
+  await client.query(`INSERT INTO mission_events(user_id,metric,amount)
+   SELECT $1,$2,$3 WHERE NOT EXISTS(
+    SELECT 1 FROM mission_events WHERE user_id=$1 AND metric=$2
+    AND (created_at AT TIME ZONE 'Asia/Manila')::date=(NOW() AT TIME ZONE 'Asia/Manila')::date
+   )`,[userId,metric,amount]);
+ }else await client.query('INSERT INTO mission_events(user_id,metric,amount) VALUES($1,$2,$3)',[userId,metric,amount]);
+}
 async function missionView(client:any,userId:string){
  const today=manilaDay(),week=manilaWeek();
- const chosen=[...pickMissions('daily',userId,today,4),...pickMissions('weekly',userId,week,5),...missionDefs.filter(m=>m.kind==='milestone')];
+ const chosen=[...pickMissions('daily',userId,today,5),...pickMissions('weekly',userId,week,10),...missionDefs.filter(m=>m.kind==='milestone')];
  const [counts,claims]=await Promise.all([
   client.query(`SELECT metric,COALESCE(SUM(amount),0)::int AS total,COALESCE(SUM(amount) FILTER (WHERE (created_at AT TIME ZONE 'Asia/Manila')::date=$2::date),0)::int AS today,COALESCE(SUM(amount) FILTER (WHERE (created_at AT TIME ZONE 'Asia/Manila')::date >= $3::date),0)::int AS week FROM mission_events WHERE user_id=$1 GROUP BY metric`,[userId,today,week]),
   client.query('SELECT mission_id,period FROM mission_claims WHERE user_id=$1',[userId])
  ]);
  const values=new Map<string,any>(counts.rows.map((r:any)=>[r.metric,r]));const claimed=new Set(claims.rows.map((r:any)=>r.mission_id+'|'+r.period));
  const missions=chosen.map(m=>{const period=m.kind==='daily'?today:m.kind==='weekly'?week:'lifetime';const row=values.get(m.metric);const progress=Math.min(m.target,Number(row?.[m.kind==='daily'?'today':m.kind==='weekly'?'week':'total']||0));return {...m,progress,claimed:claimed.has(m.id+'|'+period),period};});
- return {missions,totals:{daily:40,weekly:30,milestone:120},active:{daily:4,weekly:5,milestone:120},today,week};
+ return {missions,totals:{daily:missionDefs.filter(m=>m.kind==='daily').length,weekly:missionDefs.filter(m=>m.kind==='weekly').length,milestone:missionDefs.filter(m=>m.kind==='milestone').length},active:{daily:5,weekly:10,milestone:missionDefs.filter(m=>m.kind==='milestone').length},today,week};
 }
 app.get('/api/missions',auth,handle(async(req,res)=>{res.json(await missionView(pool,req.userId))}));
+app.post('/api/missions/claim-all',auth,handle(async(req,res)=>{
+ const parsed=z.object({kind:z.enum(['daily','weekly','milestone'])}).safeParse(req.body);
+ if(!parsed.success)return void res.status(400).json({error:'Choose a mission group.'});
+ const client=await pool.connect();
+ try{
+  await client.query('BEGIN');
+  const q=await client.query('SELECT id,coins,xp,level FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
+  if(!q.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
+  const view=await missionView(client,req.userId);
+  const eligible=view.missions.filter((m:any)=>m.kind===parsed.data.kind&&!m.claimed&&m.progress>=m.target);
+  let rewardCoins=0,rewardXp=0,claimed=0;
+  for(const m of eligible){
+   const ins=await client.query('INSERT INTO mission_claims(user_id,mission_id,period) VALUES($1,$2,$3) ON CONFLICT DO NOTHING RETURNING mission_id',[req.userId,m.id,m.period]);
+   if(ins.rowCount){rewardCoins+=m.coins;rewardXp+=m.xp;claimed++}
+  }
+  let xp=Number(q.rows[0].xp)+rewardXp,level=Number(q.rows[0].level);
+  while(xp>=level*100){xp-=level*100;level++;rewardCoins+=60}
+  if(claimed)await client.query('UPDATE pets SET coins=coins+$2,xp=$3,level=$4,updated_at=NOW() WHERE owner_id=$1',[req.userId,rewardCoins,xp,level]);
+  await client.query('COMMIT');
+  if(claimed)publishLive([String(req.userId)],'pet_updated');
+  res.json({message:claimed?`Claimed ${claimed} mission rewards! +${rewardCoins} coins and +${rewardXp} EXP.`:'No completed unclaimed missions in this group.',claimed,coins:rewardCoins,xp:rewardXp});
+ }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
+}));
 app.post('/api/missions/:id/claim',auth,handle(async(req,res)=>{
  const client=await pool.connect();try{
   await client.query('BEGIN');
@@ -787,7 +883,9 @@ app.post('/api/achievements/claim-all',auth,handle(async(req,res)=>{
 
 app.post('/api/achievement',auth,handle(async(req,res)=>{const code=String(req.body?.code||'');const p=await pool.query('SELECT level,coins FROM pets WHERE owner_id=$1',[req.userId]);const valid=code==='first_friend'&&!!(await pool.query("SELECT 1 FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId])).rowCount||code==='level_5'&&p.rows[0]?.level>=5||code==='rich'&&p.rows[0]?.coins>=500;if(!valid)return void res.status(400).json({error:'Achievement requirements not met.'});await pool.query('INSERT INTO achievements(user_id,code) VALUES($1,$2) ON CONFLICT DO NOTHING',[req.userId,code]);res.json({message:'Achievement unlocked!'})}));
 
-app.post('/api/gifts',auth,handle(async(req,res)=>{const id=req.body?.friendId;const amount=25;const c=await pool.connect();try{await c.query('BEGIN');const f=await c.query("SELECT 1 FROM friendships WHERE status='accepted' AND ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))",[req.userId,id]);if(!f.rowCount){await c.query('ROLLBACK');return void res.status(403).json({error:'Only friends can receive gifts.'})}const sender=await c.query('SELECT level FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);if(!sender.rows[0]||sender.rows[0].level<10){await c.query('ROLLBACK');return void res.status(403).json({error:'Reach pet Level 10 before sending coin gifts.'})}const sent=await c.query('UPDATE pets SET coins=coins-$2 WHERE owner_id=$1 AND coins >= $2 RETURNING id',[req.userId,amount]);if(!sent.rowCount){await c.query('ROLLBACK');return void res.status(400).json({error:'Not enough coins.'})}await c.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1',[id,amount]);await c.query('INSERT INTO gifts(id,sender_id,recipient_id,coins) VALUES($1,$2,$3,$4)',[randomUUID(),req.userId,id,amount]);await c.query('COMMIT');publishLive([String(id),req.userId],'gift');res.json({message:'Sent a 25-coin gift!'})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}));
+app.post('/api/gifts',auth,handle(async(req,res)=>{const id=req.body?.friendId;const amount=25;const c=await pool.connect();try{await c.query('BEGIN');const f=await c.query("SELECT 1 FROM friendships WHERE status='accepted' AND ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))",[req.userId,id]);if(!f.rowCount){await c.query('ROLLBACK');return void res.status(403).json({error:'Only friends can receive gifts.'})}const sender=await c.query('SELECT level FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);if(!sender.rows[0]||sender.rows[0].level<10){await c.query('ROLLBACK');return void res.status(403).json({error:'Reach pet Level 10 before sending coin gifts.'})}const sent=await c.query('UPDATE pets SET coins=coins-$2 WHERE owner_id=$1 AND coins >= $2 RETURNING id',[req.userId,amount]);if(!sent.rowCount){await c.query('ROLLBACK');return void res.status(400).json({error:'Not enough coins.'})}await c.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1',[id,amount]);await c.query('INSERT INTO gifts(id,sender_id,recipient_id,coins) VALUES($1,$2,$3,$4)',[randomUUID(),req.userId,id,amount]);await recordMissionEvent(c,req.userId,'gift');await c.query('COMMIT');publishLive([String(id),req.userId],'gift');res.json({message:'Sent a 25-coin gift!'})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}));
+
+registerMultiplayer(app, auth, publishLive);
 
 const PORT = Number(process.env.PORT || 4000);
 

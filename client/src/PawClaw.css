@@ -6,9 +6,73 @@
 .paw-modal-actions .paw-unfriend-confirm:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #a63256}
 .paw-modal-actions .paw-unfriend-confirm:disabled{opacity:.5;cursor:not-allowed}
 
-/* Batch 38: keep the chances control visually separate from the modal Quit action. */
-.paw-claw-modal > header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:0}
-.paw-claw-modal .paw-claw-header{display:flex;align-items:center;justify-content:space-between;column-gap:24px;row-gap:12px;margin-top:20px;margin-bottom:16px;padding:13px 16px;border:1px solid #f3d7e5;border-radius:15px;background:#fff7fb}
-.paw-claw-modal .paw-claw-header p{margin:0;flex:1 1 190px}
-.paw-claw-modal .paw-claw-header > button{flex:0 0 auto;white-space:normal;text-align:center}
-@media(max-width:600px){.paw-claw-modal .paw-claw-header{margin-top:14px;padding:12px;gap:10px}.paw-claw-modal .paw-claw-header > button{max-width:100%}}
+/* Keep the horizontal claw movement visible independently of React rerenders. */
+.paw-claw-arm {
+    left: var(--claw-x, 50%);
+    will-change: left, transform;
+}
+.paw-claw-motion-hint {
+    margin: 0;
+    font-size: 13px;
+    color: #956c86;
+    font-weight: 700;
+}
+
+
+/* Claw game: readable modal controls in dark mode, pastel cabinet unchanged. */
+.paw-dark .paw-claw-footnote,
+.paw-dark .paw-claw-motion-hint {
+    color: var(--paw-dark-subtle, #e6c6d9) !important;
+}
+.paw-dark .paw-claw-prize {
+    color: #f9cae0 !important;
+}
+
+/* Compact odds trigger tucked into the top-right corner of the claw machine glass. */
+.paw-claw-modal .paw-claw-glass .paw-claw-info-button {
+    position: absolute;
+    z-index: 10;
+    top: 8px;
+    right: 8px;
+    width: 27px;
+    min-width: 27px;
+    max-width: 27px;
+    height: 27px;
+    min-height: 27px;
+    padding: 0;
+    margin: 0;
+    border: 2px solid #d9a8c3;
+    border-radius: 50%;
+    background: #fff1f7;
+    color: #8d4d70;
+    font-size: 14px;
+    font-weight: 900;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px #895b752b;
+}
+.paw-claw-modal .paw-claw-glass .paw-claw-info-button:hover {
+    background: #fbe1ed;
+}
+.paw-claw-modal .paw-claw-glass .paw-claw-info-button:focus-visible {
+    outline: 3px solid #ba7199;
+    outline-offset: 2px;
+}
+.paw-dark .paw-claw-modal .paw-claw-glass .paw-claw-info-button {
+    background: #67465c;
+    color: #ffe4f0;
+    border-color: #a2708e;
+}
+@media (max-width: 600px) {
+    .paw-claw-modal .paw-claw-glass .paw-claw-info-button {
+        top: 7px;
+        right: 7px;
+    }
+    .paw-claw-modal .paw-claw-glass {
+        height: min(205px, 30dvh);
+    }
+}
+
+.paw-claw-modal .paw-claw-glass .paw-claw-info-button{width:24px;min-width:24px;max-width:24px;height:24px;min-height:24px;font-size:12px;border-width:1.5px}

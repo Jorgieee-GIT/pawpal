@@ -138,3 +138,101 @@
         min-height: 250px;
     }
 }
+
+/* Read-only Paw Brawl abilities gallery */
+.develop-combat {display:grid;gap:15px;min-width:0}.develop-combat h2{margin:12px 0 0;font-size:1.3rem}.develop-combat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:14px}.develop-combat-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:15px;border:1px solid #efd5e2;border-radius:18px;background:#fff;min-width:0}.develop-combat-card h3{margin:0}.develop-combat-art{height:115px;width:130px;max-width:100%;display:grid;place-items:center}.develop-combat-art>*{max-height:110px;width:100%}.develop-combat-stats{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}.develop-combat-stats span{background:#fceaf2;color:#814e70;padding:4px 7px;border-radius:9px;font-size:12px;font-weight:700}.develop-combat-card p{margin:0;width:100%;display:flex;flex-direction:column;gap:3px}.develop-combat-card small{color:#826b78;line-height:1.4}.develop-combat-moves{padding:16px;border:1px solid #efd5e2;border-radius:16px;background:#fff}.develop-combat-moves p{margin:0 0 10px;line-height:1.5}.develop-combat-moves p:last-child{margin-bottom:0}@media(max-width:520px){.develop-combat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.develop-combat-card{padding:10px 7px}.develop-combat-art{width:100%;height:90px}.develop-combat-art>*{max-height:85px}}
+
+
+/* Garden developer gallery: shared SVGs from actual gameplay. */
+.develop-garden {display:grid;gap:15px;min-width:0}
+.develop-garden h2 {margin:12px 0 0;font-size:1.3rem}
+.develop-garden-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px}
+.develop-garden-card {display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;min-width:0;padding:16px 12px;background:#fff;border:1px solid #efd5e2;border-radius:18px}
+.develop-garden-card h3 {margin:0;font-size:16px;color:#7c526b}
+.develop-garden-card small {font-size:12px;color:#866c7a;line-height:1.45}
+.develop-garden-art {height:135px;width:135px;max-width:100%;display:grid;place-items:center;background:#fff9f2;border-radius:16px}
+.develop-garden-art svg {width:105px;height:115px;max-width:100%;max-height:100%}
+.develop-garden-rarity {font-weight:800;font-size:12px;padding:5px 11px;border-radius:99px;background:#fce8f1;color:#99516f}
+.develop-garden-legendary .develop-garden-rarity {background:#fff0bd;color:#9d6919}
+.develop-garden-rare .develop-garden-rarity {background:#def3ff;color:#307c9b}
+.develop-garden-uncommon .develop-garden-rarity {background:#ebe2ff;color:#7e5cad}
+.develop-garden-wilted .develop-garden-rarity {background:#eee4e1;color:#836a71}
+.develop-garden-meta {display:flex;flex-direction:column;gap:3px}
+.develop-garden-meta b {font-size:13px;color:#9b6681}
+.develop-garden-utilities .develop-garden-art {height:110px}
+.develop-garden-utilities .develop-garden-art svg {height:90px;width:90px}
+@media(max-width:540px){.develop-garden-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.develop-garden-card{padding:10px 7px}.develop-garden-art{height:105px;width:100%}.develop-garden-art svg{height:92px;width:92px}}
+
+
+/* Developer SVG sanity checks: invalid thumbnails are clearly marked. */
+.develop-svg-health {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    border: 1px solid #d3e6d9;
+    background: #f0faf2;
+    border-radius: 14px;
+}
+.develop-svg-health > div { display: grid; gap: 3px; }
+.develop-svg-health b { color: #3c7755; font-size: 14px; }
+.develop-svg-health span { color: #5d806c; font-size: 12px; }
+.develop-svg-health button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #a9d3b5;
+    border-radius: 10px;
+    color: #3c7755;
+    font-weight: 700;
+    cursor: pointer;
+}
+.develop-svg-health.has-issues { background: #fff0f0; border-color: #e4aaaa; }
+.develop-svg-health.has-issues b, .develop-svg-health.has-issues span { color: #9f3c50; }
+.develop-svg-issue {
+    outline: 3px solid #df5169;
+    outline-offset: 1px;
+    position: relative;
+}
+.develop-svg-issue::after {
+    content: 'SVG CHECK FAILED';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 4px 6px;
+    border-radius: 5px;
+    background: #b82649;
+    color: white;
+    font-size: 9px;
+    font-weight: 900;
+    z-index: 5;
+}
+
+
+/* PawMail gallery: reuse the in-game envelope collection colors and SVGs. */
+.develop-mail {display:grid;gap:15px;min-width:0}
+.develop-mail-heading {display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.develop-mail-heading h2 {margin:4px 0 5px;color:#754c65;font-size:clamp(18px,2.3vw,24px)}
+.develop-mail-heading p {max-width:670px;margin:0;line-height:1.5}
+.develop-mail-total {padding:8px 13px;border-radius:99px;background:#ffe8f2;color:#965779;font-size:12px;font-weight:800;white-space:nowrap}
+.develop-mail-filters {display:flex;gap:12px;flex-wrap:wrap}
+.develop-mail-filters label {display:grid;gap:6px;min-width:0;flex:1 1 210px;font-size:12px;font-weight:800;color:#885c77}
+.develop-mail-filters input,.develop-mail-filters select {width:100%;min-width:0;box-sizing:border-box;padding:11px 13px;border-radius:12px;border:1px solid #e8bfd2;background:#fff;color:#744660;font:inherit;font-size:13px}
+.develop-mail-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;min-width:0}
+.develop-mail-card {display:flex;flex-direction:column;min-width:0;gap:10px;padding:10px;background:#fff;border:1px solid #efd4e2;border-radius:18px;box-shadow:0 3px 13px #bd779412}
+.develop-mail-card .develop-mail-art {width:100%;height:125px;border:1px solid #f6d4e5;border-radius:13px;background-color:#ffe6ef;overflow:hidden;display:grid;place-items:center}
+.develop-mail-card .develop-mail-art svg {width:min(92%,180px);height:min(92%,115px);max-width:100%;max-height:100%;color:inherit;filter:drop-shadow(0 3px 2px #623e6325)}
+.develop-mail-card-details {display:grid;gap:5px;min-width:0}
+.develop-mail-card-details b {color:#7c4e6a;font-size:14px;overflow-wrap:anywhere}
+.develop-mail-card-details>small {color:#a07b90;font-size:11px;overflow-wrap:anywhere}
+.develop-mail-meta {display:flex;gap:5px;flex-wrap:wrap}
+.develop-mail-meta span {background:#fff0f6;color:#945b7e;border-radius:9px;padding:5px 7px;font-weight:800;font-size:11px}
+.develop-mail-empty {padding:20px;border:1px dashed #dfb8cd;border-radius:15px;text-align:center;color:#936b82}
+.develop-mail-card.develop-svg-issue .develop-mail-art {outline:2px solid #d35669}
+@media(max-width:900px){.develop-mail-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:620px){.develop-mail-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.develop-mail-card{padding:7px;gap:7px;border-radius:14px}.develop-mail-card .develop-mail-art{height:105px}.develop-mail-card-details b{font-size:12px}.develop-mail-card-details>small{font-size:10px}.develop-mail-meta span{font-size:10px;padding:5px}.develop-mail-filters{gap:9px}.develop-mail-filters label{flex:1 1 130px}}
+@media(max-width:360px){.develop-mail-card .develop-mail-art{height:92px}.develop-mail-meta{flex-direction:column;align-items:flex-start}.develop-mail-meta span{max-width:100%}}

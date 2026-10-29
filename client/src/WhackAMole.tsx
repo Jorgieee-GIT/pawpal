@@ -1,11 +1,34 @@
 import {useEffect,useRef,useState} from 'react';
+import {Gamepad2,X} from 'lucide-react';
 import './WhackAMole.css';
+import {MoleGameIcon} from './ArcadeArt';
 
 type Critter='mouse'|'bomb'|'gold';
 type Target={kind:Critter;id:number}|null;
 const START_LIVES=3;
-export default function WhackAMole({onQuit,onFinish}:{onQuit:()=>void;onFinish:(score:number)=>void}){
+export default function WhackAMole({onQuit,onFinish}:{onQuit:()=>void;onFinish:(score:number)=>Promise<boolean>}){
  const [phase,setPhase]=useState<'ready'|'playing'|'over'>('ready');
+ const [claiming,setClaiming]=useState(false),[rewardError,setRewardError]=useState(false);
+ const claimRef=useRef(false);
+ async function claimRound(replay:boolean){
+     if(claimRef.current)return;
+     claimRef.current=true;
+     setClaiming(true);
+     setRewardError(false);
+     try{
+         const rewarded=await onFinish(scoreRef.current);
+         if(rewarded){
+             if(replay)start();
+             else onQuit();
+         }else setRewardError(true);
+     }catch{
+         setRewardError(true);
+     }finally{
+         claimRef.current=false;
+         setClaiming(false);
+     }
+ }
+ const closeGame=()=>{if(phase==='over')void claimRound(false);else{stop();onQuit()}};
  const [score,setScore]=useState(0),[lives,setLives]=useState(START_LIVES),[round,setRound]=useState(1);
  const [holes,setHoles]=useState<Target[]>(Array(9).fill(null)),[hit,setHit]=useState(-1),[effect,setEffect]=useState<{index:number;label:string;id:number}|null>(null);
  const active=useRef(false),generation=useRef(0),sequence=useRef(0),scoreRef=useRef(0),livesRef=useRef(3),roundRef=useRef(1),targetRef=useRef<{index:number;id:number;kind:Critter}|null>(null);
@@ -57,10 +80,10 @@ export default function WhackAMole({onQuit,onFinish}:{onQuit:()=>void;onFinish:(
   const difficulty=Math.min(26,Math.floor(scoreRef.current/75));
   timer.current=setTimeout(spawn,Math.max(130,470-difficulty*13));
  }
- return <div className="overlay"><div className="game-modal arcade-modal mole-modal"><header><h2>Whack-a-Mole</h2><button className="secondary" onClick={()=>{stop();onQuit()}}>Quit</button></header>
- {phase==='ready'?<div className="game-center mole-intro"><MoleArt kind="mouse"/><h3>Catch the cheeky mice!</h3><p>Tap mice for <b>+10 points</b> and golden mice for <b>+30</b>. Don't hit the bombs! Missing a mouse or hitting a bomb costs one of your <b>3 lives</b>. The critters get faster as you score.</p><button className="primary" onClick={start}>Start game</button></div>:
- phase==='over'?<div className="game-center mole-intro"><h2>Game over!</h2><h3>{score} points · Round {round}</h3><p>Those mice are quick! Want another try?</p><div className="actions centered paw-game-over-actions"><button className="primary" onClick={start}>Retry</button><button className="secondary" onClick={()=>onFinish(score)}>Collect coins & quit</button></div></div>:
- <><div className="mole-hud"><span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2 15 9 23 9 17 14 19 22 12 18 5 22 7 14 1 9 9 9Z" fill="#f4ce7b" stroke="#aa8192" strokeWidth="1.5"/></svg> {score} points</span><span>Round {round}</span><span aria-label={`${lives} lives remaining`}>{Array.from({length:3},(_,i)=><span key={i} className={i<lives?'mole-heart':'mole-heart spent'}><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" fill={i<lives?'#ed799d':'none'} stroke={i<lives?'#ed799d':'#c7b4c0'} strokeWidth="2"/></svg></span>)}</span></div><div className="mole-board">{holes.map((target,index)=><button type="button" key={index} className={'mole-hole '+(target?'has-target ':'')+(hit===index?'mole-hit':'')} aria-label={target?target.kind==='bomb'?'Bomb! Avoid!':target.kind==='gold'?'Golden mouse, 30 points':'Mouse, 10 points':'Empty hole'} onClick={()=>tap(index)}><span className="mole-dirt"/><span className="mole-creature">{target&&<MoleArt kind={target.kind}/>}</span><span className="mole-rim"/>{effect?.index===index&&<span key={effect.id} className={'mole-score-pop '+(effect.label.includes('−')?'bad':'')}>{effect.label}</span>}</button>)}</div><p className="mole-hint">Tap the mice, avoid bombs! • Missed mice cost a life.</p></>}
+ return <div className="overlay"><div className="game-modal arcade-modal mole-modal"><header className="paw-arcade-modal-header"><h2><Gamepad2 size={23} aria-hidden="true"/><span>Whack-a-Mole</span></h2><button className="paw-arcade-exit" type="button" aria-label="Close game" title="Close game" disabled={claiming} onClick={closeGame}><X size={20}/></button></header>
+ {phase==='ready'?<div className="game-center paw-mole-start"><div className="huge mole-intro-card-art"><MoleGameIcon/></div><p>Tap mice for <b>+10 points</b> and golden mice for <b>+30</b>. Avoid bombs! You have <b>3 lives</b>, and the mice get faster as you score.</p><button className="primary" onClick={start}>Start game</button></div>:
+ phase==='over'?<div className="game-center mole-intro"><h2>Game over!</h2><h3>{score} points · Round {round}</h3><p>Those mice are quick! Want another try?</p>{rewardError&&<p className="paw-arcade-reward-error" role="alert">Reward wasn't saved. Try again to claim it.</p>}<div className="actions centered paw-game-over-actions"><button className="primary" disabled={claiming} onClick={()=>void claimRound(true)}>{claiming?'Collecting reward...':'Retry'}</button><button className="secondary" disabled={claiming} onClick={()=>void claimRound(false)}>Collect coins & quit</button></div></div>:
+ <><div className="mole-hud paw-arcade-hud"><span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 2 15 9 23 9 17 14 19 22 12 18 5 22 7 14 1 9 9 9Z" fill="#f4ce7b" stroke="#aa8192" strokeWidth="1.5"/></svg> {score} points</span><span>Round {round}</span><span aria-label={`${lives} lives remaining`}>{Array.from({length:3},(_,i)=><span key={i} className={i<lives?'mole-heart':'mole-heart spent'}><svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" fill={i<lives?'#ed799d':'none'} stroke={i<lives?'#ed799d':'#c7b4c0'} strokeWidth="2"/></svg></span>)}</span></div><div className="mole-board">{holes.map((target,index)=><button type="button" key={index} className={'mole-hole '+(target?'has-target ':'')+(hit===index?'mole-hit':'')} aria-label={target?target.kind==='bomb'?'Bomb! Avoid!':target.kind==='gold'?'Golden mouse, 30 points':'Mouse, 10 points':'Empty hole'} onClick={()=>tap(index)}><span className="mole-dirt"/><span className="mole-creature">{target&&<MoleArt kind={target.kind}/>}</span><span className="mole-rim"/>{effect?.index===index&&<span key={effect.id} className={'mole-score-pop '+(effect.label.includes('−')?'bad':'')}>{effect.label}</span>}</button>)}</div><p className="mole-hint">Tap the mice, avoid bombs! • Missed mice cost a life.</p></>}
  </div></div>;
 }
 export function MoleArt({kind}:{kind:Critter}){

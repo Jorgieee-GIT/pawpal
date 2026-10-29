@@ -48,7 +48,7 @@
 .shop-grid .product > span .pet-svg{width:105px;height:105px;max-width:100%;filter:drop-shadow(0 5px 3px rgba(99,57,77,.09))}
 .paw-dark .shop-grid .product:has(.pet-svg) > span{background:rgba(255,215,230,.07)}
 
-/* PawPal V8 — multi-slot wardrobe */
+/* PawPal V8 - multi-slot wardrobe */
 .v8-wardrobe{display:grid;gap:16px;margin:16px 0 30px}.v8-preview{display:flex;align-items:center;gap:18px;padding:18px;border-radius:22px;background:var(--card,#fff5f9);border:1px solid #e9c4d4}.v8-pet{width:190px;min-width:120px;max-width:42%;filter:drop-shadow(0 8px 9px #9b72803d)}.v8-pet svg{width:100%;height:auto}.v8-preview h3{margin:0 0 6px}.v8-preview p{margin:0;font-size:14px}.v8-try{display:block;margin-top:8px;font-size:12px;color:#b46886}.v8-tabs,.v8-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.v8-tabs button,.v8-slots button{border:1px solid #e9c4d4;border-radius:14px;background:var(--card,#fff8fa);padding:12px;color:inherit;cursor:pointer}.v8-tabs .selected,.v8-slots .selected{background:#f4bfd3;color:#56354a;border-color:#d98fb0}.v8-slots{grid-template-columns:repeat(4,minmax(0,1fr))}.v8-slots button{text-align:center;display:grid;gap:5px;text-transform:capitalize}.v8-slots small{font-size:11px;overflow-wrap:anywhere}.v8-collection{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;margin:12px 0}.v8-item{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:12px;background:var(--card,#fff9fc);border:1px solid #e9c4d4;border-radius:16px}.v8-item-art{width:110px;height:110px}.v8-item-art svg{width:100%;height:100%}.v8-item b{font-size:13px;text-transform:capitalize}.v8-item small{font-size:12px}.v8-item button{font-size:12px;padding:8px 10px}.v8-actions{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}.paw-dark .v8-preview,.paw-dark .v8-item,.paw-dark .v8-slots button,.paw-dark .v8-tabs button{background:#3a303e;border-color:#665368;color:#fce8f2}.paw-dark .v8-tabs .selected,.paw-dark .v8-slots .selected{background:#82576e;color:white}@media(max-width:560px){.v8-preview{padding:12px;gap:10px}.v8-pet{width:130px}.v8-slots{grid-template-columns:repeat(2,minmax(0,1fr))}.v8-collection{grid-template-columns:repeat(2,minmax(0,1fr))}.v8-item-art{width:95px;height:95px}}
 
 .password-safety-note{display:block;margin:6px 0 12px;color:#756879;line-height:1.5;font-size:12px}
@@ -58,7 +58,7 @@
 .adoption-warning p{margin:8px 0}.adoption-warning label{display:flex;align-items:center;gap:8px;cursor:pointer}.adoption-warning input{width:18px;height:18px;flex-shrink:0}
 .pet-body{transform-origin:50% 100%;transition:transform .35s ease}
 
-/* Batch 3: checkbox alignment — overrides global input width and adopt-card input margins */
+/* Batch 3: checkbox alignment - overrides global input width and adopt-card input margins */
 .adoption-warning .adoption-check-row{display:flex;align-items:flex-start;justify-content:flex-start;gap:10px;text-align:left;width:100%;line-height:1.5;cursor:pointer}
 .adopt-card .adoption-warning .adoption-check-row input[type="checkbox"]{appearance:auto!important;display:block!important;position:static!important;flex:0 0 18px!important;width:18px!important;min-width:18px!important;max-width:18px!important;height:18px!important;margin:2px 0 0!important;padding:0!important;vertical-align:top;accent-color:#c9799d}
 .adoption-check-row span{display:block;flex:1;min-width:0;font-size:13px;font-weight:600}
@@ -87,7 +87,6 @@
 @media(max-width:390px){.garden-plots{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* Batch 6: Pet Notes */
-.pet-note-bubble{display:block;margin:5px auto 0;padding:5px 9px;max-width:160px;width:max-content;overflow-wrap:anywhere;background:#fff5d9;color:#75526d;border:2px solid #d8aac0;border-radius:13px;font-size:11px;line-height:1.35;box-shadow:0 2px 0 #d8aac04d;opacity:1}
 .pet-note-editor{margin:12px 0;padding:12px 15px;background:#fff1f6;border:2px solid #e8b9d0;border-radius:15px;color:#654a60}
 .pet-note-editor label{display:block;font-weight:700;margin-bottom:8px}
 .pet-note-editor-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -102,7 +101,7 @@
 .paw-mail-section{margin-top:32px;padding-top:20px;border-top:2px dashed #e5bfd0}.paw-mail-heading h3{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:5px 0}.paw-unread-count{font-size:12px;color:#9a5479;background:#ffe1ef;padding:5px 10px;border-radius:20px}.paw-mail-compose{display:grid;gap:12px;padding:18px;border:1px solid #eac5d7;border-radius:20px;background:#fff6fa}.paw-mail-compose label{font-weight:800}.paw-mail-compose select{width:100%;max-width:360px;padding:12px;border:1px solid #dfa8c0;border-radius:12px;background:#fff;color:#67445d;font:inherit}.paw-postcard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.paw-design-choice{background:transparent!important;border:2px solid transparent!important;padding:3px!important;border-radius:20px;cursor:pointer;min-width:0}.paw-design-choice.active{border-color:#b8588b!important;box-shadow:0 0 0 3px #f6d7e5}.paw-postcard{border-radius:18px;padding:12px;text-align:center;min-width:0;background:#ffe1eb;color:#a54e77;border:1px solid #e8b6cc}.paw-postcard svg{display:block;width:100%;max-height:130px}.paw-postcard b{display:block;font-size:15px}.paw-postcard p{margin:6px 0;font-size:13px;font-weight:700;color:inherit}.paw-postcard-lavender{background:#ece2ff;color:#8055b0;border-color:#cbb7ec}.paw-postcard-sunshine{background:#fff0c9;color:#b98235;border-color:#efd7a0}.paw-postcard-moonlight{background:#e3e9ff;color:#6578b3;border-color:#c3ceef}.paw-mail-send{justify-self:start}.paw-mail-inbox{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.paw-mail-letter{padding:14px;border:1px solid #ebc5d8;border-radius:18px;background:#fff9fc;min-width:0}.paw-mail-letter.unread{border:2px solid #cb77a2}.paw-mail-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}.paw-mail-meta small{font-size:11px;color:#97788b}.paw-new{font-size:10px;background:#d875a5;color:#fff;border-radius:8px;padding:3px 6px;font-weight:900}.paw-mail-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}.paw-mail-actions button{font-size:12px}.paw-mail-empty{padding:20px;background:#fff6fa;border:1px dashed #e8bfd1;border-radius:14px}.paw-dark .paw-mail-compose,.paw-dark .paw-mail-letter,.paw-dark .paw-mail-empty{background:#403241;border-color:#805a72;color:#fff0f7}.paw-dark .paw-mail-compose select{background:#4c394e;color:#fff;border-color:#906b81}.paw-dark .paw-wardrobe-unequip{background:#583c52!important;color:#fff!important}.paw-dark .paw-postcard{color:#804161}.paw-dark .paw-postcard-lavender{color:#8055b0}.paw-dark .paw-postcard-sunshine{color:#93652a}.paw-dark .paw-postcard-moonlight{color:#53669d}
 @media(max-width:640px){.paw-postcard-grid,.paw-mail-inbox{grid-template-columns:1fr}.paw-mail-compose{padding:12px}.paw-note-save{flex:1 1 90px}}
 
-/* Batch 8 — collectible themed rooms and instant room picker */
+/* Batch 8 - collectible themed rooms and instant room picker */
 .paw-theme-picker{margin:0 0 16px;padding:17px;border:1px solid rgba(160,115,150,.2);background:var(--card,#fff9fc);border-radius:22px;box-shadow:0 8px 24px rgba(120,77,113,.06)}
 .paw-theme-picker-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .paw-theme-picker-heading>div{display:grid;gap:3px}.paw-theme-picker-heading small{font-size:12px;opacity:.72}.paw-active-theme{font-size:12px;font-weight:800;border-radius:999px;padding:8px 12px;background:#fce2ed;color:#874667}
@@ -113,7 +112,7 @@
 .paw-dark .paw-theme-picker{background:#282435;border-color:#55445e}.paw-dark .paw-theme-option{background:#393044;color:#f9e7f1}.paw-dark .paw-theme-option.active{background:#50334c;border-color:#e8a4c8}.paw-dark .paw-active-theme{background:#52354b;color:#ffe2ef}
 @media(max-width:600px){.paw-theme-picker{padding:12px}.paw-theme-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.paw-theme-option{padding:6px 3px}.paw-theme-swatch{height:37px}}
 
-/* Batch 9 — unobstructed room-first experience, room-corner actions and modals */
+/* Batch 9 - unobstructed room-first experience, room-corner actions and modals */
 .paw-room-toolbar{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin:0 0 12px}
 .paw-room-switcher{display:flex;flex-wrap:wrap;gap:6px;flex:1;min-width:0}.paw-room-tab{border-radius:999px!important;padding:9px 12px!important;font-size:12px!important;font-weight:800;white-space:nowrap;background:#fff6fa!important;color:#855471!important;border:1px solid #edc5d8!important}.paw-room-tab.active{background:#ca7aa5!important;color:white!important;border-color:#ca7aa5!important}.paw-room-tab small{font-size:10px}
 .paw-room-tools{display:flex;gap:6px;margin-left:auto}.paw-room-tools button{border:1px solid #e5b4cf!important;background:#fff8fc!important;color:#8c4c75!important;border-radius:12px!important;font-weight:800;font-size:12px;padding:9px 11px!important;box-shadow:0 4px 10px #91527718}.paw-room-tools button:hover{background:#fbe1ef!important}
@@ -209,7 +208,7 @@
 @media(max-width:800px){.paw-stats-hud{display:block;top:4px;padding:11px 12px}.paw-hud-title{display:flex;align-items:baseline;gap:8px;max-width:none;margin-bottom:8px}.paw-hud-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px}.paw-hud-label{font-size:10px}.paw-hud-label b{font-size:10px}}
 @media(max-width:390px){.paw-hud-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.paw-stats-hud{padding:9px}}
 
-/* Batch 18 — explicit cosmetic shop equipment state and quieter notifications */
+/* Batch 18 - explicit cosmetic shop equipment state and quieter notifications */
 .v8-item.paw-cosmetic-equipped{border:2px solid #b9a0d9!important;background:linear-gradient(155deg,#fff9fe,#f2edff)!important;box-shadow:0 5px 16px #b69bd322}
 .paw-equipped-label{display:inline-flex;align-items:center;justify-content:center;align-self:center;border-radius:999px;padding:5px 12px;background:#e7ddf7;color:#7454a0!important;font-weight:800;font-size:12px}
 .v8-item.paw-cosmetic-equipped .paw-wardrobe-unequip{background:#f5eafa;border:1px solid #d6bde9;color:#845da0;border-radius:11px;font-weight:800}
@@ -681,7 +680,7 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-
   }
 }
 
-/* Batch 50 — compact friend requests and real pet portraits */
+/* Batch 50 - compact friend requests and real pet portraits */
 .paw-friend-requests-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:20px}
 .paw-friend-requests-heading h3{margin:0;display:flex;align-items:center;gap:8px;min-width:0}
 .paw-requests-count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:99px;background:#fbe7f0;color:#ad6889;font-size:11px;font-weight:800}
@@ -731,7 +730,7 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-
 .paw-dark .paw-friends-panel .paw-friends-title-row .paw-requests-launch:hover{background:transparent!important;opacity:.75}
 .paw-friends-panel .paw-friends-title-row .paw-requests-launch:focus-visible{outline:2px solid currentColor;outline-offset:2px}
 
-/* Batch 54 — consistent, understated PawPal modal close buttons. */
+/* Batch 54 - consistent, understated PawPal modal close buttons. */
 .paw-modal .paw-modal-close {
   display: inline-flex !important;
   align-items: center !important;
@@ -1736,3 +1735,1514 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-
 .develop-room-scene.paw-room-sports .paw-room-architecture {
     color: var(--room-accent, #b7a99a);
 }
+
+/* Minigame artwork refresh: show the actual memory hearts rather than color words. */
+.paw-memory-instruction {
+    margin: 17px 0 8px;
+    text-align: center;
+    font-weight: 750;
+    color: #956c85;
+}
+.paw-memory-sequence {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    min-height: 62px;
+    padding: 10px 14px;
+    border: 2px solid #f2dbe7;
+    background: #fff3f8;
+    border-radius: 15px;
+}
+.paw-memory-sequence-heart {
+    width: 37px;
+    height: 37px;
+    display: grid;
+    place-items: center;
+    animation: paw-memory-heart-pop .25s ease-out both;
+}
+.paw-memory-sequence-heart svg {
+    display: block;
+}
+.paw-memory-hidden {
+    font-size: 13px;
+    font-weight: 750;
+    color: #ab7d97;
+}
+.paw-memory-board button:disabled {
+    opacity: 1;
+    cursor: default;
+}
+.paw-memory-board button svg {
+    display: inline-block;
+    vertical-align: middle;
+}
+.paw-memory-board button:not(:disabled):active {
+    transform: scale(.94);
+}
+@keyframes paw-memory-heart-pop {
+    from { opacity: .35; transform: scale(.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Paint palette choices: each palette displays a real paint swatch. */
+.heart-choices.paw-palette-choices {
+    gap: 9px;
+}
+.heart-choices .paw-palette-choice {
+    min-width: 70px;
+    min-height: 76px;
+    padding: 5px;
+    display: grid;
+    place-items: center;
+    color: inherit;
+    background: #fffafc;
+    border: 2px solid #ecd1de;
+    border-radius: 17px;
+    touch-action: manipulation;
+}
+.heart-choices .paw-palette-choice svg {
+    display: block;
+    width: min(65px, 100%);
+    height: auto;
+}
+.heart-choices .paw-palette-choice:focus-visible {
+    outline: 3px solid #b47db2;
+    outline-offset: 2px;
+}
+
+/* Canvas SVG obstacles and the small instruction drawing share PawPal's flat palette. */
+.paw-jump-guide {
+    position: absolute;
+    top: 13%;
+    right: 3%;
+    width: 25%;
+    min-width: 105px;
+    max-width: 164px;
+    pointer-events: none;
+    background: #fff9f3e8;
+    border: 2px solid #dcd1cf;
+    border-radius: 12px;
+    padding: 5px;
+    z-index: 3;
+}
+.paw-jump-guide-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.paw-arcade-touch-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.paw-arcade-touch-controls button {
+    border: 2px solid #e7c2d4;
+    border-radius: 13px;
+    padding: 10px 16px;
+    min-width: 90px;
+    background: #fff0f6;
+    color: #9e6482;
+    font-weight: 800;
+    touch-action: manipulation;
+}
+.paw-arcade-touch-controls button:active {
+    transform: scale(.96);
+}
+.paw-dark .paw-memory-sequence {
+    background: #493749;
+    border-color: #84647c;
+}
+.paw-dark .paw-memory-hidden,
+.paw-dark .paw-memory-instruction {
+    color: #f7d7e5;
+}
+.paw-dark .heart-choices .paw-palette-choice {
+    background: #493749;
+    border-color: #84647c;
+}
+.paw-dark .paw-jump-guide {
+    background: #f8ebf2;
+}
+@media (max-width: 600px) {
+    .paw-memory-sequence { gap: 4px; padding: 9px 6px; }
+    .paw-memory-sequence-heart { width: 30px; height: 30px; }
+    .paw-memory-sequence-heart svg { width: 30px; height: 30px; }
+    .heart-choices .paw-palette-choice { min-width: 56px; min-height: 63px; padding: 3px; }
+    .paw-arcade-touch-controls { gap: 7px; }
+    .paw-arcade-touch-controls button { min-width: 78px; padding: 9px 12px; }
+    .paw-jump-guide { min-width: 88px; top: 13%; }
+}
+
+
+/* Arcade asset gallery: display exactly the same SVGs used by the games. */
+.develop-arcade-art img,
+.develop-arcade-art > svg {
+    display: block;
+    width: min(112px, 100%);
+    height: 112px;
+    object-fit: contain;
+    margin: auto;
+}
+.develop-arcade-guide > svg {
+    display: block;
+    width: min(180px, 100%);
+    height: 88px;
+    margin: auto;
+}
+.develop-art-subheading {
+    font-size: 16px;
+    margin: 25px 0 10px;
+    color: #875a79;
+}
+
+/* Consistent dark-mode surfaces; preserve the actual SVGs and atmosphere colors.
+   Room artwork must not be dimmed by a filter or it stops matching /develop. */
+.paw-dark {
+    --paw-dark-base: #251e2b;
+    --paw-dark-surface: #382c3c;
+    --paw-dark-elevated: #483549;
+    --paw-dark-line: #76556d;
+    --paw-dark-copy: #fbeaf3;
+    --paw-dark-subtle: #e6c6d9;
+    color-scheme: dark;
+}
+.paw-dark .living-room {
+    filter: none;
+}
+.paw-dark :is(
+    .paw-claw-header, .pet-note-editor, .username-warning, .adoption-warning,
+    .v8-preview, .garden-inventory > div, .garden-purchase-grid > div,
+    .paw-mail-card, .paw-mail-detail, .paw-mail-compose, .paw-friend-toast,
+    .paw-modal, .paw-play-picker, .paw-modal-top, .paw-room-select,
+    .paw-market-furniture, .paw-market-tabs-scroll, .paw-wardrobe-card,
+    .paw-furniture-market-art, .paw-game-over-actions, .game-center,
+    .game-stats, .paw-memory-sequence, .paw-claw-odds > div
+) {
+    background: var(--paw-dark-surface) !important;
+    color: var(--paw-dark-copy) !important;
+    border-color: var(--paw-dark-line) !important;
+}
+.paw-dark :is(
+    .paw-claw-header p, .paw-claw-header small, .paw-claw-prize,
+    .paw-claw-motion-hint, .pet-note-editor span, .password-safety-note,
+    .adoption-warning span, .garden-inventory small, .paw-modal small,
+    .paw-memory-instruction, .paw-friend-toast p
+) {
+    color: var(--paw-dark-subtle) !important;
+}
+.paw-dark :is(
+    .paw-arcade-touch-controls button, .paw-market-tabs button,
+    .garden-water-action, .garden-unlock, .paw-note-save:disabled,
+    .pet-note-editor input, .paw-claw-header button.secondary,
+    .paw-game-over-actions button.secondary, .paw-modal input,
+    .paw-modal textarea, .paw-modal select
+) {
+    background: var(--paw-dark-elevated) !important;
+    color: var(--paw-dark-copy) !important;
+    border-color: var(--paw-dark-line) !important;
+}
+.paw-dark :is(input, textarea, select) {
+    color-scheme: dark;
+}
+.paw-dark :is(input, textarea, select)::placeholder {
+    color: #ceb3c5;
+}
+.paw-dark .paw-jump-guide {
+    /* SVG has pastel fills; keep the illustration intact on a neutral inset. */
+    background: #f8ebf2;
+}
+.paw-dark .paw-claw-machine,
+.paw-dark .paw-claw-glass,
+.paw-dark .paw-claw-base,
+.paw-dark .paw-claw-top {
+    /* These are physical parts of the illustrated arcade cabinet, not UI cards. */
+    color-scheme: light;
+}
+.paw-dark :is(.heart-choices .paw-palette-choice, .paw-memory-board button) {
+    background: var(--paw-dark-elevated) !important;
+    border-color: var(--paw-dark-line) !important;
+}
+.paw-dark :is(.paw-palette-choice, .paw-memory-board button):focus-visible {
+    outline: 3px solid #e2a6c8;
+    outline-offset: 3px;
+}
+
+/* Mini-games cards: match Multiplayer's illustrated card style while retaining the arcade's column counts. */
+.games-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    align-items: stretch;
+}
+.games-grid > button {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
+    text-align: left;
+    background: #fffcfd;
+    border: 2px solid #efd8e4;
+    border-radius: 19px;
+    box-shadow: 0 5px 0 #ead4e0;
+    transition: transform .16s, border-color .16s, box-shadow .16s;
+}
+.games-grid > button:hover {
+    transform: translateY(-3px);
+    border-color: #d48bac;
+    box-shadow: 0 8px 0 #e8c5d7;
+}
+.games-grid > button:focus-visible { outline: 3px solid #b8709a; outline-offset: 3px; }
+.games-grid > button > .paw-game-art {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: auto;
+    min-height: 112px;
+    padding: 18px;
+    background: linear-gradient(135deg, #ffe5ed, #efdafa 70%, #e3e5ff);
+}
+.games-grid > button > .paw-game-art > svg,
+.games-grid > button > .paw-game-art > .paw-svg-icon {
+    width: 52px;
+    height: 52px;
+    max-width: 100%;
+    padding: 10px;
+    border: 2px solid #e7bcd1;
+    border-radius: 16px;
+    background: #fff8fc;
+    color: #b86d95;
+    box-shadow: 4px 5px 0 #dfbfd2;
+}
+.games-grid > button > b {
+    display: block;
+    min-height: 0;
+    padding: 12px 11px 3px;
+    font-size: 13px;
+    line-height: 1.3;
+    text-align: left;
+    color: #95617f;
+}
+.games-grid > button > small {
+    display: block;
+    flex: 1;
+    padding: 0 11px;
+    font-size: 10px;
+    line-height: 1.4;
+    text-align: left;
+    color: #a28a9a;
+}
+.games-grid > button > strong {
+    display: block;
+    align-self: stretch;
+    padding: 12px 11px 14px;
+    font-size: 11px;
+    color: #c17b9f;
+}
+.paw-dark .games-grid > button { background: #473645; border-color: #76596d; box-shadow: 0 5px 0 #3d2b3b; }
+.paw-dark .games-grid > button > b { color: #ffe1ef; }
+.paw-dark .games-grid > button > small { color: #e6c6d9; }
+@media (max-width: 800px) { .games-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+    .games-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 9px; }
+    .games-grid > button { min-height: 0; padding: 0 !important; }
+    .games-grid > button > .paw-game-art { height: auto; min-height: 105px; }
+    .games-grid > button > b { font-size: 12px; min-height: 0; }
+}
+@media (max-width: 380px) { .games-grid { grid-template-columns: 1fr !important; } }
+@media (prefers-reduced-motion: reduce) { .games-grid > button { transition: none; } }
+
+/* Arcade palette refresh: identical illustration framing, distinct game colors. */
+.games-grid > button > .paw-game-art,
+.games-grid > button > .paw-game-art-mole {
+    display: grid;
+    place-items: center;
+    min-height: 112px;
+    padding: 18px;
+    color: var(--arcade-ink);
+    background: var(--arcade-bg);
+}
+.games-grid > button:nth-child(1) { --arcade-bg: #dff4ec; --arcade-ink: #3e8c76; --arcade-frame: #b6dfcf; }
+.games-grid > button:nth-child(2) { --arcade-bg: #fff0cf; --arcade-ink: #b47a30; --arcade-frame: #eed5a0; }
+.games-grid > button:nth-child(3) { --arcade-bg: #dceeff; --arcade-ink: #4e86b8; --arcade-frame: #b7d8f1; }
+.games-grid > button:nth-child(4) { --arcade-bg: #ffe1db; --arcade-ink: #bf716b; --arcade-frame: #f0bdb6; }
+.games-grid > button:nth-child(5) { --arcade-bg: #e8e4ff; --arcade-ink: #8171bd; --arcade-frame: #cfc5f1; }
+.games-grid > button:nth-child(6) { --arcade-bg: #e4f3ce; --arcade-ink: #789b45; --arcade-frame: #c9e2a7; }
+.games-grid > button > .paw-game-art > svg,
+.games-grid > button > .paw-game-art > .paw-svg-icon,
+.games-grid > button > .paw-game-art-mole > svg {
+    display: block;
+    width: 52px !important;
+    height: 52px !important;
+    max-height: none !important;
+    max-width: 100%;
+    padding: 10px;
+    border: 2px solid var(--arcade-frame);
+    border-radius: 16px;
+    background: #fffdfa;
+    color: var(--arcade-ink);
+    box-shadow: 4px 5px 0 var(--arcade-frame);
+    box-sizing: border-box;
+}
+.paw-dark .games-grid > button > .paw-game-art {
+    background: var(--arcade-bg);
+    color: var(--arcade-ink);
+}
+@media (max-width: 600px) {
+    .games-grid > button > .paw-game-art,
+    .games-grid > button > .paw-game-art-mole { min-height: 105px; }
+    .games-grid > button > .paw-game-art > svg,
+    .games-grid > button > .paw-game-art > .paw-svg-icon,
+    .games-grid > button > .paw-game-art-mole > svg {
+        width: 48px !important;
+        height: 48px !important;
+    }
+}
+
+
+/* Sticky site-wide header: keep greeting, alerts, theme and logout on screen. */
+.app > .nav {
+    position: sticky;
+    top: 0;
+    z-index: 1400;
+    width: 100%;
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 3px 16px rgba(116, 76, 104, .08);
+}
+.paw-dark .app > .nav {
+    background: rgba(43, 34, 49, .98);
+}
+/* Modal screens always appear above the sticky site header. */
+.app .overlay { z-index: 5000; }
+/* The notification popover stays anchored to the sticky bell button. */
+.app > .nav .paw-notifications-panel {
+    max-height: min(65dvh, 480px);
+    overscroll-behavior: contain;
+}
+@media (max-width: 600px) {
+    .app > .nav {
+        min-height: 65px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+}
+
+
+/* Garden cards are the same dimensions at every growth stage and plot count. */
+.garden-plots { align-items: stretch; }
+.garden-plot-card, .garden-plot-card.garden-unlock {
+    height: 172px;
+    min-height: 172px;
+    max-height: 172px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+.garden-plot-card .garden-plant-button {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    width: 100%;
+    padding-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+.garden-plot-card .garden-plant-button > svg {
+    width: min(100%, 78px);
+    height: 78px;
+    flex: 0 0 78px;
+}
+.garden-plot-card .garden-water-action {
+    flex: 0 0 26px;
+    min-height: 26px;
+    max-height: 26px;
+    white-space: nowrap;
+}
+.garden-plot-card .garden-flower-details-trigger { cursor: pointer; }
+.garden-plot-detail-hint { font-size: 10px; line-height: 1.15; font-weight: 850; color: #945f7a; }
+.garden-details-backdrop { z-index: 12000; }
+.garden-details-modal { width: min(420px, calc(100vw - 24px)); max-height: 90dvh; overflow-y: auto; text-align: center; padding: 20px; }
+.garden-details-modal .paw-modal-top { text-align: left; }
+.garden-details-art { width: min(190px, 52vw); height: min(190px, 52vw); margin: 12px auto 4px; padding: 10px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle, #fffef3 0%, #f9e1eb 74%, transparent 75%); }
+.garden-details-art svg { width: 100%; height: 100%; }
+.garden-details-modal h3 { margin: 4px 0 9px; font-size: 23px; color: #83536c; }
+.garden-details-rarity { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 30px; background: #fce2ed; color: #9d547b; font-weight: 900; }
+.garden-details-wilted { background: #e3d1d0; color: #7d6066; }
+.garden-details-uncommon { background: #e9e1ff; color: #7256ad; }
+.garden-details-rare { background: #def5fe; color: #377c9e; }
+.garden-details-legendary { background: #fff0c9; color: #a07026; }
+.garden-details-reward { display: flex; gap: 10px; align-items: center; justify-content: center; margin: 17px 0 8px; padding: 12px; border: 1px solid #f0d3af; border-radius: 14px; background: #fff6e8; color: #946d38; }
+.garden-details-reward div { text-align: left; display: grid; gap: 2px; }
+.garden-details-reward small { font-size: 11px; }
+.garden-details-reward strong { font-size: 17px; }
+.garden-details-timer { margin: 10px 0 12px; color: #905d7b; font-size: 13px; font-weight: 750; }
+.garden-details-harvest { width: 100%; border: 0; border-radius: 12px; padding: 12px; background: #d77eaa; color: white; font-size: 14px; font-weight: 900; cursor: pointer; }
+.garden-details-harvest:disabled { opacity: .62; cursor: not-allowed; }
+.paw-dark .garden-plot-detail-hint, .paw-dark .garden-details-modal h3, .paw-dark .garden-details-timer { color: #ffe2ee; }
+.paw-dark .garden-details-reward { background: #564654; border-color: #896f5e; color: #ffe6b6; }
+.paw-dark .garden-details-modal { background: #453444; }
+@media (max-width: 750px) {
+    .garden-plot-card, .garden-plot-card.garden-unlock { height: 160px; min-height: 160px; max-height: 160px; }
+    .garden-plot-card .garden-plant-button > svg { width: min(100%, 70px); height: 70px; flex-basis: 70px; }
+}
+@media (max-width: 390px) {
+    .garden-plot-card, .garden-plot-card.garden-unlock { height: 155px; min-height: 155px; max-height: 155px; }
+}
+
+
+/* Garden flower encyclopedia: opens from the Info button, never from harvesting. */
+.garden-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.garden-heading h2 { margin:0; }
+.garden-info-button { display:inline-grid; place-items:center; flex:0 0 34px; width:34px; height:34px; min-width:34px; min-height:34px; padding:0; border:2px solid #d9a8c3; border-radius:50%; background:#fff1f7; color:#8d4d70; font-size:17px; font-weight:900; line-height:1; cursor:pointer; }
+.garden-info-button:focus-visible { outline:3px solid #ba7199; outline-offset:3px; }
+.garden-info-button:hover { background:#fbe1ed; }
+.garden-catalog-modal { width:min(760px,calc(100vw - 22px)); max-height:min(88dvh,790px); overflow-y:auto; padding:20px; }
+.garden-catalog-intro { font-size:13px; line-height:1.5; color:#946d85; margin:6px 0 0; }
+.garden-catalog-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:18px 0; }
+.garden-catalog-flower { min-width:0; display:flex; align-items:center; gap:12px; border:1px solid #edcfdf; border-radius:16px; padding:12px; background:#fff8fb; }
+.garden-catalog-art { flex:0 0 92px; width:92px; height:100px; display:grid; place-items:center; background:radial-gradient(circle,#fff9e8,#f9e7f1); border-radius:14px; }
+.garden-catalog-art svg { width:82px; height:90px; }
+.garden-catalog-description { min-width:0; }
+.garden-catalog-description h3 { font-size:16px; color:#84546e; margin:0 0 8px; }
+.garden-catalog-description .garden-details-rarity { font-size:11px; padding:4px 9px; }
+.garden-catalog-coins { display:flex; align-items:center; flex-wrap:wrap; gap:5px; color:#8b6840; font-size:12px; margin:10px 0 6px; }
+.garden-catalog-description > small { color:#967a89; font-size:11px; }
+.garden-catalog-footnote { font-size:12px; line-height:1.55; color:#8f7081; }
+.garden-growing-flower { cursor:default; }
+.garden-harvest-action { font-weight:800; color:#fff; background:#9b6683; }
+.paw-dark .garden-info-button { background:#67465c; color:#ffe4f0; border-color:#a2708e; }
+.paw-dark .garden-catalog-flower { background:#554152; border-color:#90667e; }
+.paw-dark .garden-catalog-description h3, .paw-dark .garden-catalog-intro, .paw-dark .garden-catalog-footnote { color:#ffe3ef; }
+.paw-dark .garden-catalog-coins, .paw-dark .garden-catalog-description > small { color:#ffe0ac; }
+@media(max-width:570px) { .garden-catalog-modal { padding:13px; } .garden-catalog-grid { grid-template-columns:1fr; gap:9px; } .garden-catalog-art { flex-basis:80px; width:80px; height:88px; } .garden-catalog-art svg { width:74px; height:82px; } .garden-heading { flex-wrap:wrap; } }
+
+
+/* Account dashboard: Paw Coins, Level and Friends are the primary account indicators. */
+.heading.paw-dashboard-heading {
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 23px;
+}
+.paw-dashboard-greeting {
+    min-width: 0;
+    flex: 1 1 260px;
+}
+.paw-dashboard-greeting h1 {
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+.paw-account-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+    flex: 0 1 495px;
+    min-width: min(100%, 440px);
+}
+.paw-account-stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 78px;
+    padding: 12px;
+    border: 2px solid transparent;
+    border-radius: 19px;
+    box-shadow: 0 4px 0 #c3a0b523, 0 8px 20px #96768b11;
+}
+.paw-account-coins {
+    background: linear-gradient(145deg, #fff2d2, #ffe8b6);
+    border-color: #f0ce82;
+    color: #8c612a;
+}
+.paw-account-level {
+    background: linear-gradient(145deg, #eee8ff, #e4daff);
+    border-color: #cfc1f3;
+    color: #6e579a;
+}
+.paw-account-friends {
+    background: linear-gradient(145deg, #ffe7f2, #ffdae9);
+    border-color: #ecc1d8;
+    color: #945273;
+}
+.paw-account-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+    background: #ffffffb5;
+    box-shadow: inset 0 1px 0 #fff8;
+}
+.paw-account-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    gap: 2px;
+}
+.paw-account-copy small {
+    display: block;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .6px;
+    white-space: nowrap;
+}
+.paw-account-copy strong {
+    display: block;
+    font-family: Nunito, sans-serif;
+    font-size: clamp(18px, 2.25vw, 25px);
+    font-weight: 1000;
+    line-height: 1.08;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+.paw-account-xp {
+    display: block;
+    height: 4px;
+    width: 100%;
+    margin-top: 3px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #a99ad352;
+}
+.paw-account-xp > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #9b79d9;
+}
+.paw-dark .paw-account-coins { background: #58472e; border-color: #937b51; color: #ffe3aa; }
+.paw-dark .paw-account-level { background: #493d5b; border-color: #7c6a9d; color: #f1e2ff; }
+.paw-dark .paw-account-friends { background: #593c50; border-color: #956983; color: #ffe0ef; }
+.paw-dark .paw-account-icon { background: #ffffff17; }
+@media (max-width: 850px) {
+    .heading.paw-dashboard-heading { align-items: stretch; }
+    .paw-dashboard-greeting { flex-basis: 100%; }
+    .paw-account-summary { width: 100%; flex: 1 1 100%; min-width: 0; }
+}
+@media (max-width: 600px) {
+    .heading.paw-dashboard-heading { position: relative; gap: 12px; }
+    .paw-dashboard-greeting { padding-right: 43px; }
+    .paw-dashboard-greeting h1 { font-size: clamp(23px, 6vw, 32px); }
+    .paw-account-summary { gap: 6px; }
+    .paw-account-stat { min-height: 70px; gap: 5px; padding: 9px 7px; border-radius: 13px; flex-direction: column; text-align: center; }
+    .paw-account-icon { flex: 0 0 26px; height: 26px; width: 26px; border-radius: 9px; }
+    .paw-account-icon svg { width: 17px; height: 17px; }
+    .paw-account-copy { width: 100%; align-items: center; gap: 3px; }
+    .paw-account-copy small { font-size: 9px; letter-spacing: .1px; }
+    .paw-account-copy strong { font-size: clamp(16px, 5.2vw, 22px); }
+    .paw-account-xp { width: 85%; }
+    .paw-account-summary .mobile-menu-toggle {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+        margin: 0;
+    }
+}
+@media (max-width: 360px) {
+    .paw-account-stat { padding-inline: 4px; }
+    .paw-account-copy small { font-size: 8px; }
+    .paw-account-copy strong { font-size: 16px; }
+}
+
+
+/* Arcade mini-game UI refresh: consistent title alignment, score HUD, and touch targets. */
+.overlay:has(.game-modal) {
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    overflow: hidden;
+}
+.game-modal.arcade-modal,
+.game-modal.paw-claw-modal {
+    width: min(100%, 740px);
+    max-height: calc(100dvh - 16px);
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+}
+.game-modal.mole-modal { width: min(100%, 540px); }
+.game-modal.paw-claw-modal { width: min(100%, 620px); }
+.game-modal .paw-arcade-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+}
+.game-modal .paw-arcade-modal-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    margin: 0;
+    line-height: 1.23;
+    font-size: clamp(18px, 4vw, 25px);
+}
+.game-modal .paw-arcade-modal-header h2 > svg {
+    display: block;
+    width: 23px;
+    height: 23px;
+    flex: 0 0 23px;
+    align-self: center;
+}
+.game-modal .paw-arcade-modal-header h2 > span { min-width: 0; }
+.game-modal .paw-arcade-exit {
+    display: grid;
+    place-items: center;
+    flex: 0 0 36px;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0;
+    border: 1px solid #e7bfce;
+    border-radius: 12px;
+    background: #fff0f6;
+    color: #885972;
+    cursor: pointer;
+    box-shadow: none;
+}
+.game-modal .paw-arcade-exit:disabled { opacity: .55; cursor: progress; }
+.game-modal .paw-arcade-exit:hover:not(:disabled) { background: #ffe3ef; }
+.game-modal .paw-arcade-exit:focus-visible { outline: 3px solid #be79a5; outline-offset: 2px; }
+.game-modal .paw-arcade-hud {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: clamp(5px, 1.5vw, 12px);
+    margin: 12px 0 11px;
+    padding: 8px 3px;
+    font-weight: 800;
+    font-size: clamp(11px, 2.4vw, 14px);
+    color: #81576d;
+}
+.game-modal .paw-arcade-hud > span { display: inline-flex; align-items: center; gap: 4px; min-width: 0; white-space: nowrap; }
+.game-modal .paw-arcade-hud .paw-arcade-hearts { display: inline-flex; gap: 1px; flex: 0 0 auto; }
+.game-modal .paw-arcade-hud .mole-heart { display: inline-flex; margin: 0; line-height: 1; }
+.game-modal .paw-arcade-hud .mole-heart svg { width: clamp(15px, 4vw, 21px); height: clamp(15px, 4vw, 21px); }
+.paw-arcade-gesture-hint { text-align: center; margin: 9px 0 3px; color: #96748a; font-size: 12px; font-weight: 750; line-height: 1.4; }
+.paw-color-match-prompt { text-align: center; margin: 9px 0 0; font-weight: 800; }
+.arcade-modal .target-heart { margin: 7px auto 11px; }
+.arcade-modal .target-heart svg { width: min(105px, 21dvh); height: auto; }
+.arcade-modal .heart-choices.paw-palette-choices {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: min(100%, 412px);
+    max-width: 100%;
+    gap: 9px;
+    margin: 0 auto;
+}
+.arcade-modal .heart-choices .paw-palette-choice {
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    padding: 4px;
+    aspect-ratio: 1;
+}
+.arcade-modal .heart-choices .paw-palette-choice svg { width: min(82px, 100%); max-height: 100%; }
+.paw-arcade-reward-error { color: #bd4f74; font-weight: 750; font-size: 13px; }
+.game-modal .paw-game-over-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 450px; margin: 10px auto; gap: 10px; }
+.game-modal .paw-game-over-actions > button { min-width: 0; width: 100%; margin: 0; white-space: normal; min-height: 42px; }
+.paw-dark .game-modal .paw-arcade-hud,
+.paw-dark .paw-arcade-gesture-hint { color: #f5d9e8; }
+.paw-dark .game-modal .paw-arcade-exit { background: #5d4158; color: #ffedf6; border-color: #956d86; }
+@media (max-width: 600px) {
+    .game-modal.arcade-modal, .game-modal.paw-claw-modal { padding: 13px; }
+    .game-modal .paw-arcade-modal-header h2 { gap: 7px; font-size: clamp(17px, 4.8vw, 21px); }
+    .game-modal .paw-arcade-hud { gap: 5px; margin: 9px 0; }
+    .game-modal .paw-arcade-hud .paw-hud-clock svg { width: 14px; height: 14px; }
+    .game-modal .paw-game-over-actions { gap: 7px; }
+    .game-modal .paw-game-over-actions > button { padding: 9px 7px; font-size: 11px; }
+    .arcade-modal .heart-choices.paw-palette-choices { gap: 5px; }
+    .arcade-modal .heart-choices .paw-palette-choice { padding: 2px; min-height: 0; }
+    .arcade-modal .target-heart { margin: 4px auto 7px; }
+    .game-modal .game-center { padding: min(25px, 3vh) 8px; }
+    .game-modal .paw-arcade-gesture-hint { font-size: 11px; }
+}
+@media (max-height: 540px) and (orientation: landscape) {
+    .game-modal.arcade-modal, .game-modal.paw-claw-modal { padding: 8px 12px; }
+    .game-modal .paw-arcade-hud { margin: 4px 0; padding: 4px 0; }
+    .arcade-modal .target-heart svg { width: 68px; }
+    .arcade-modal .target-heart { margin: 2px auto; }
+    .arcade-modal .heart-choices.paw-palette-choices { width: min(100%, 365px); }
+    .arcade-modal .heart-choices .paw-palette-choice { max-height: 67px; }
+}
+
+/* October refresh: compact tabs keep cooking and pantry items within reach. */
+.paw-kitchen .kitchen-shelf-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 16px;position:sticky;top:8px;z-index:12;padding:6px;border:1px solid #ebc8da;border-radius:16px;background:var(--card,#fff5f9);box-shadow:0 3px 12px #7b476015}
+.paw-kitchen .kitchen-shelf-tabs button{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:40px;padding:8px 5px;border:1px solid #edd1df;border-radius:11px;background:var(--card,#fffafd);color:inherit;font-weight:800;font-size:clamp(10px,1.3vw,13px);cursor:pointer}
+.paw-kitchen .kitchen-shelf-tabs button.active{background:#f3bfd7;border-color:#c984aa;color:#6d3154}
+.paw-kitchen .kitchen-shelf-tabs button span{font-size:10px;background:#fff7fc;border-radius:100px;min-width:21px;padding:2px}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions{grid-column:2;grid-row:4;display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px;width:100%;min-width:0}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions button{width:100%;min-width:0;min-height:32px;padding:5px 3px;border-radius:9px;font-size:clamp(9px,1vw,11px);line-height:1.18;white-space:normal}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions .secondary{background:#fff0de;color:#97614d;border:1px solid #edc9a6}
+.paw-kitchen .kitchen-pantry-item{display:flex;flex-direction:row;align-items:center;gap:12px;padding:12px;text-align:left}
+.paw-kitchen .kitchen-pantry-item .kitchen-art{flex:0 0 60px;width:60px;height:60px;margin:0}
+.paw-kitchen .kitchen-pantry-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.paw-kitchen .kitchen-pantry-copy b{font-size:13px}.paw-kitchen .kitchen-pantry-copy small{font-size:11px}
+.paw-kitchen .kitchen-pantry-item>button{min-width:70px;width:auto;margin:0}
+.paw-kitchen .kitchen-empty{grid-column:1/-1;padding:22px;border:1px dashed #dca7c4;border-radius:13px;text-align:center}
+@media(max-width:800px){.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions{grid-column:2;grid-row:4}.paw-kitchen .kitchen-pantry-item{min-height:66px}.paw-kitchen .kitchen-pantry-item .kitchen-art{flex-basis:45px;width:45px;height:45px}}
+@media(max-width:390px){.paw-kitchen .kitchen-shelf-tabs{gap:4px;padding:4px}.paw-kitchen .kitchen-shelf-tabs button{padding:6px 2px;font-size:10px}.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions{gap:4px}.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions button{font-size:9px;padding:5px 2px}}
+.paw-dark .paw-kitchen .kitchen-shelf-tabs{background:#443446;border-color:#75576a}.paw-dark .paw-kitchen .kitchen-shelf-tabs button{background:#524158;border-color:#80667b}.paw-dark .paw-kitchen .kitchen-shelf-tabs button.active{background:#b985a8;color:#2d1931}.paw-dark .paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions .secondary{background:#584454;color:#ffdfcd}
+/* Equal-height, one-line Wardrobe navigation on narrow phones. */
+@media(max-width:700px){.paw-wardrobe-toolbar .v8-tabs button,.paw-wardrobe-toolbar .v8-slots button{height:42px!important;min-height:42px!important;max-height:42px!important;box-sizing:border-box}.paw-wardrobe-toolbar .v8-slots button b{line-height:1.05}.paw-wardrobe-toolbar .v8-tabs{align-items:stretch}}
+@media(max-width:370px){.paw-wardrobe-toolbar .v8-tabs button{font-size:9px!important;padding:5px 3px!important}.paw-wardrobe-toolbar .v8-slots button b{font-size:8px!important}.paw-wardrobe-toolbar{gap:3px!important}}
+/* Shared compact circular info triggers; full dialog content is unchanged. */
+.garden-info-button{width:29px;min-width:29px;height:29px;min-height:29px;flex-basis:29px;font-size:14px;border-width:1.5px}
+/* PawPal Missions: easily scanned quest tabs, compact reward bar, and milestone categories. */
+.paw-missions-refreshed .paw-missions-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.paw-missions-refreshed .paw-missions-heading h2{margin:0}
+.paw-missions-reward-ready{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:800;color:#92547c;padding:8px 11px;background:#fff0d5;border:1px solid #eccfa1;border-radius:50px}
+.paw-missions-kinds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:18px 0 10px}
+.paw-missions-kinds button{min-width:0;min-height:65px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;background:var(--card,#fff7fb);border:2px solid #e4c9da;border-radius:15px;color:inherit;cursor:pointer}
+.paw-missions-kinds button span{font-weight:900;font-size:14px}.paw-missions-kinds button small{font-size:11px;opacity:.8}
+.paw-missions-kinds button.active{background:#f3d6e8;border-color:#d18db5;color:#75415f;box-shadow:0 3px 0 #e4afcc}
+.paw-missions-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border:1px solid #ead1df;border-radius:14px;background:var(--card,#fff8fb)}
+.paw-missions-reset{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums;min-width:0;overflow-wrap:anywhere}
+.paw-missions-claim-all{display:flex;align-items:center;justify-content:center;gap:6px;flex:0 0 auto;min-height:35px;padding:8px 12px;border:0;border-radius:11px;background:#d889ac;color:white;font-weight:900;font-size:12px;cursor:pointer}
+.paw-missions-claim-all:disabled{opacity:.5;cursor:not-allowed}
+.paw-missions-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0 16px}
+.paw-missions-overview>div{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:7px;row-gap:2px;min-width:0;padding:10px;border-radius:13px;background:#fff0f6;border:1px solid #eed0dd;color:#8e5875}
+.paw-missions-overview strong{font-size:17px;line-height:1}.paw-missions-overview span{grid-column:1/-1;font-size:11px}
+.paw-missions-refreshed .mission-grid{margin-top:8px;gap:10px}
+.paw-missions-refreshed .mission-card{padding:12px;gap:8px;min-width:0}
+.paw-missions-refreshed .mission-card.claimed{opacity:.7}
+.paw-missions-refreshed .paw-mission-ready{border-color:#daa6c4;background:#fff0fa}
+.paw-mission-category{display:flex;align-items:center;gap:4px;color:#af7893;font-weight:800;font-size:10px;letter-spacing:.02em}
+.paw-mission-category span{display:flex;align-items:center;gap:3px;margin-left:auto}
+.paw-missions-refreshed .mission-top{gap:7px}.paw-missions-refreshed .mission-top b{font-size:13px;min-width:0}.paw-missions-refreshed .mission-top span{font-weight:900}
+.paw-missions-refreshed .mission-footer{gap:6px;flex-wrap:wrap}
+.paw-missions-refreshed .mission-rewards{display:flex;align-items:center;flex-wrap:wrap;gap:4px 6px}
+.paw-missions-refreshed .mission-footer button{min-height:31px;min-width:74px}
+.paw-missions-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.paw-missions-filters button{padding:7px 10px;border:1px solid #ebc6dc;border-radius:100px;background:var(--card,#fff7fc);color:inherit;font-size:11px;font-weight:800;cursor:pointer}
+.paw-missions-filters button.active{background:#eabbd6;border-color:#ce86b2;color:#63314e}
+.paw-missions-show-more{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:15px;padding:12px;border:1px solid #e2bed6;border-radius:12px;background:#f8e7f0;color:#7f4369;font-weight:900;cursor:pointer}
+.paw-dark .paw-missions-reward-ready,.paw-dark .paw-missions-overview>div,.paw-dark .paw-missions-show-more{background:#544052;color:#ffdbec;border-color:#77576d}
+.paw-dark .paw-missions-kinds button,.paw-dark .paw-missions-toolbar,.paw-dark .paw-missions-filters button{background:#48374a;border-color:#72556c;color:#ffe7ef}
+.paw-dark .paw-missions-kinds button.active,.paw-dark .paw-missions-filters button.active{background:#875d79;border-color:#d8a3c1;color:white}
+@media(max-width:680px){.paw-missions-kinds{gap:5px}.paw-missions-kinds button{min-height:54px;border-radius:11px}.paw-missions-kinds button span{font-size:12px}.paw-missions-kinds button small{font-size:10px}.paw-missions-toolbar{padding:8px;gap:6px}.paw-missions-reset{font-size:10px}.paw-missions-claim-all{padding:8px 9px;font-size:11px;min-height:33px}.paw-missions-overview{gap:5px}.paw-missions-overview>div{padding:8px 6px;column-gap:4px}.paw-missions-overview strong{font-size:15px}.paw-missions-overview span{font-size:9px}.paw-missions-refreshed .mission-card{padding:10px}.paw-missions-refreshed .mission-top b{font-size:12px}}
+@media(max-width:350px){.paw-missions-reward-ready{font-size:10px;padding:7px}.paw-missions-claim-all{gap:3px;padding:7px}.paw-missions-claim-all svg{width:14px}.paw-missions-reset svg{width:14px}}
+
+
+/* Cozy UX refresh: compact Kitchen inventory and clear ingredient readiness */
+.paw-kitchen .kitchen-shelf-tabs{grid-template-columns:repeat(2,minmax(0,1fr));max-width:660px;margin-inline:auto}
+.paw-kitchen .kitchen-recipe-inventory{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:5px;width:100%;margin:5px 0 8px;min-width:0}
+.paw-kitchen .kitchen-recipe-ingredient{display:flex;align-items:center;gap:4px;min-width:0;padding:4px 7px;border-radius:999px;border:1px solid #b4d9b6;background:#f1fff2;color:#386c4c;font-size:10px;white-space:nowrap}
+.paw-kitchen .kitchen-recipe-ingredient.missing{border-color:#e5bac8;background:#fff1f2;color:#a34d68}
+.paw-kitchen .kitchen-recipe-ingredient-icon{display:inline-flex;width:19px;height:19px;flex-shrink:0}
+.paw-kitchen .kitchen-recipe-ingredient-icon svg{width:100%;height:100%}
+.paw-kitchen .kitchen-recipe-ingredient b{font-size:10px;font-variant-numeric:tabular-nums}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-inventory{grid-column:2;grid-row:2;justify-content:flex-start}
+.paw-kitchen .kitchen-recipe-card .kitchen-boosts{grid-column:2;grid-row:3}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions{grid-column:2;grid-row:4}
+.paw-kitchen .kitchen-recipe-actions button:disabled{cursor:not-allowed}
+.paw-dark .paw-kitchen .kitchen-recipe-ingredient.available{color:#b0e7b7;background:#304c3a;border-color:#54735d}
+.paw-dark .paw-kitchen .kitchen-recipe-ingredient.missing{color:#ffcfdb;background:#593948;border-color:#92516c}
+@media(min-width:1080px){.paw-kitchen .kitchen-recipe-card .kitchen-recipe-inventory{justify-content:center}}
+@media(max-width:680px){.paw-kitchen .kitchen-recipe-ingredient{font-size:9px;padding:3px 5px;gap:3px}.paw-kitchen .kitchen-recipe-ingredient-icon{width:16px;height:16px}}
+
+/* Missions: the milestone category bar scrolls sideways instead of wrapping. */
+.paw-missions-refreshed .paw-missions-filters{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;max-width:100%;width:100%;gap:7px;padding:4px 2px 10px;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#dca2bd transparent;-webkit-overflow-scrolling:touch;touch-action:pan-x}
+.paw-missions-refreshed .paw-missions-filters button{flex:0 0 auto;white-space:nowrap;scroll-snap-align:start}
+
+/* Wardrobe: ownership is a navigation mode, accessories are a separate choice. */
+.paw-wardrobe-toolbar{display:flex!important;flex-direction:column!important;align-items:stretch!important;flex-wrap:nowrap!important;gap:12px!important;min-width:0}
+.paw-wardrobe-toolbar .v8-tabs{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%!important;flex:none!important;gap:8px!important;padding:5px!important;border:1px solid #ebcfda;border-radius:15px;background:#fff4f8}
+.paw-wardrobe-toolbar .v8-tabs button{width:100%;min-width:0!important;height:42px!important;min-height:42px!important;max-height:none!important;border-radius:11px;font-size:13px!important;font-weight:850!important}
+.paw-wardrobe-toolbar .v8-tabs button.selected{background:#d988b0!important;color:white!important;box-shadow:0 3px 10px #9c416c30}
+.paw-wardrobe-toolbar .v8-slots{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;width:100%!important;flex:none!important;gap:7px!important}
+.paw-wardrobe-toolbar .v8-slots button{min-width:0!important;width:100%;height:46px!important;min-height:46px!important;max-height:none!important;border-radius:12px!important;font-size:11px!important;padding:6px 3px!important}
+.paw-wardrobe-toolbar .v8-slots button.selected{border-color:#c98aab!important;background:#fce4ee!important;color:#753d60!important}
+.paw-wardrobe-toolbar .v8-slots button b{display:flex;align-items:center;justify-content:center;gap:4px;line-height:1.1;font-size:11px!important}
+.paw-wardrobe-toolbar .v8-slots button svg{width:16px!important;height:16px!important;flex-shrink:0}
+.paw-dark .paw-wardrobe-toolbar .v8-tabs{background:#4a3546;border-color:#84627a}
+@media(max-width:680px){.paw-wardrobe-toolbar{gap:9px!important}.paw-wardrobe-toolbar .v8-tabs button{height:39px!important;min-height:39px!important;font-size:12px!important}.paw-wardrobe-toolbar .v8-slots button{height:48px!important;min-height:48px!important}.paw-wardrobe-toolbar .v8-slots button b{flex-direction:column;gap:3px;font-size:10px!important}.paw-wardrobe-toolbar .v8-slots button svg{width:16px!important;height:16px!important}}
+@media(max-width:350px){.paw-wardrobe-toolbar .v8-slots{gap:4px!important}.paw-wardrobe-toolbar .v8-slots button{padding:5px 1px!important}.paw-wardrobe-toolbar .v8-slots button b{font-size:9px!important}}
+
+/* Room atmosphere is the sole place to purchase and apply themes. */
+.paw-theme-modal .paw-theme-picker-heading{margin-bottom:12px}
+.paw-theme-modal .paw-theme-options{grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:10px}
+.paw-theme-modal .paw-theme-option{position:relative;padding:9px 7px 10px;border:2px solid #ebc9d9;background:#fff8fb;opacity:1;box-shadow:0 3px 8px #90436514;min-height:107px}
+.paw-theme-modal .paw-theme-option.unowned{background:#f9f5fa;border-style:dashed;border-color:#d6c5d1;color:#816d80}
+.paw-theme-modal .paw-theme-option.level-locked{opacity:.72;cursor:not-allowed}
+.paw-theme-modal .paw-theme-option.active{border:2px solid #bc518f;background:#ffe6f2;box-shadow:0 0 0 2px #eaa9cf80,0 4px 14px #a14e7c24;color:#7b2e5b;opacity:1}
+.paw-theme-modal .paw-theme-option.owned:not(.active){border:2px solid #dba1bf;background:#fff8fc}
+.paw-theme-modal .paw-theme-option:disabled:not(.level-locked){opacity:1}
+.paw-theme-modal .paw-theme-option .paw-theme-name{font-size:11px;font-weight:800;line-height:1.1;text-align:center}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label{display:block;min-width:0;color:#78495f;opacity:1;font-size:10px;font-weight:850}
+.paw-theme-modal .paw-theme-option.unowned .paw-theme-action-label{color:#8b667b}
+.paw-theme-current-tag{position:absolute;top:2px;right:3px;display:flex;align-items:center;gap:2px;padding:2px 5px;border-radius:999px;color:#fff;background:#b65c8f;font-size:9px;font-weight:800;z-index:2}
+.paw-theme-modal .paw-theme-option.active .paw-theme-action-label{color:#9e3b74}
+.paw-room-tools button{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0}
+.paw-room-theme-mini{position:relative;display:inline-flex;width:25px;height:25px;flex:0 0 25px;border-radius:7px;border:1px solid #c993ad;box-shadow:inset 0 0 0 1px #ffffff88;overflow:hidden}
+.paw-room-theme-mini i{position:absolute;left:40%;top:29%;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 3px #ffffff66}
+.paw-pet-note-icon{position:relative;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;flex-shrink:0;color:#ac638c}
+.paw-pet-note-icon svg:first-child{position:absolute;z-index:1;top:4px;left:7px;fill:#ffe0ed;transform:rotate(-15deg)}
+.paw-pet-note-icon svg:last-child{transform:rotate(-14deg)}
+@media(max-width:500px){.paw-room-tools .paw-room-tool-label{display:none}.paw-room-tools button{padding:6px!important;min-width:37px;height:37px;justify-content:center}.paw-theme-modal .paw-theme-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.paw-theme-modal .paw-theme-option{padding:5px 3px;min-height:100px}.paw-theme-modal .paw-theme-swatch{height:33px}.paw-theme-modal .paw-theme-option .paw-theme-name{font-size:9px}.paw-theme-current-tag{font-size:8px}}
+.paw-dark .paw-theme-modal .paw-theme-option.unowned{background:#47394b;border-color:#746076;color:#e0c6d6}.paw-dark .paw-theme-modal .paw-theme-option.owned:not(.active){background:#574258;border-color:#a67d9d}.paw-dark .paw-theme-modal .paw-theme-option.active{background:#754666;border-color:#ecadd0;color:#fff}
+
+/* Icon-only room tools: atmosphere preview and pet note illustration. */
+.paw-room-tools button{width:40px!important;min-width:40px!important;height:40px!important;padding:5px!important;display:inline-grid!important;place-items:center!important;border-radius:12px!important}
+.paw-room-theme-svg{display:block;max-width:100%;height:auto;border-radius:7px}
+.paw-room-tools .paw-pet-note-icon{width:28px;height:28px}
+@media(max-width:500px){.paw-room-tools button{width:37px!important;min-width:37px!important;height:37px!important}}
+
+/* Room actions: a full-bleed rectangular atmosphere swatch and centered pet note icon. */
+.main-column .paw-room-tools .paw-room-theme-trigger {
+    display: block !important;
+    width: 78px !important;
+    min-width: 78px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    overflow: hidden;
+    border-radius: 11px !important;
+    flex: 0 0 auto;
+}
+.paw-room-tools .paw-room-theme-trigger .paw-room-theme-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}
+.paw-room-tools .paw-room-note-trigger {
+    display: grid !important;
+    place-items: center !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    flex: 0 0 auto;
+}
+.paw-room-note-trigger .paw-pet-note-icon {
+    width: 27px;
+    height: 27px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    flex: 0 0 27px;
+}
+.paw-room-note-trigger .paw-pet-note-icon svg:first-child {
+    position: static;
+    transform: none;
+    fill: none;
+    width: 22px;
+    height: 22px;
+}
+.paw-room-note-trigger .paw-pet-note-icon svg:last-child {
+    position: absolute;
+    top: 1px;
+    right: 0;
+    left: auto;
+    transform: rotate(12deg);
+    width: 13px;
+    height: 13px;
+    padding: 1px;
+    border-radius: 50%;
+    background: #fff8fc;
+    fill: #ffe0ed;
+}
+
+/* Atmosphere actions use the same pastel buy-button treatment as Market cards. */
+.paw-theme-modal .paw-theme-option {
+    gap: 7px;
+    justify-content: flex-start;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    min-height: 29px;
+    padding: 6px 5px;
+    margin-top: auto;
+    border: 1px solid #f1cddd;
+    border-radius: 10px;
+    background: #f9e6ef;
+    color: #a95c83;
+    font-size: 10px;
+    font-weight: 850;
+    opacity: 1;
+    line-height: 1.15;
+    white-space: normal;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label.is-selected {
+    border-color: #ca8eae;
+    background: #df9dbd;
+    color: #fff;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label.is-locked {
+    background: #f1e8ee;
+    color: #826d7d;
+    border-color: #e2d2de;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label.can-buy {
+    border-color: #ebb7d0;
+    background: #f8dfeb;
+    color: #955072;
+}
+.paw-theme-modal .paw-theme-option:disabled:not(.level-locked) .paw-theme-action-label.is-selected {
+    color: #fff;
+}
+.paw-dark .paw-theme-modal .paw-theme-action-label:not(.is-selected) {
+    background: #62445c;
+    color: #ffe3f0;
+    border-color: #946681;
+}
+.paw-dark .paw-room-note-trigger .paw-pet-note-icon svg:last-child {
+    background: #49374c;
+}
+
+/* Pet Note: small personal postcard with a live speech-bubble preview. */
+.paw-note-modal {
+    width: min(100%, 465px);
+}
+.paw-note-modal .paw-modal-top h2 {
+    margin-bottom: 2px;
+}
+.paw-note-preview {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px solid #efccdc;
+    border-radius: 19px;
+    background: radial-gradient(circle at 8% 5%, #fff 0, transparent 50%), linear-gradient(135deg, #fff1f7, #f6e7fa);
+    box-shadow: inset 0 1px 0 #fff, 0 5px 15px #ab6d9120;
+}
+.paw-note-preview-pet {
+    flex: 0 0 78px;
+    width: 78px;
+    height: 87px;
+    display: grid;
+    place-items: center;
+}
+.paw-note-preview-pet .pet-svg {
+    width: 100%;
+    height: auto;
+    max-height: 85px;
+}
+.paw-note-preview-content {
+    min-width: 0;
+    flex: 1;
+    display: grid;
+    justify-items: start;
+    gap: 7px;
+}
+.paw-note-preview-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #995a83;
+    font-size: 11px;
+    font-weight: 850;
+}
+.paw-note-preview-bubble {
+    display: block;
+    max-width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #d9b0c8;
+    border-radius: 15px 15px 15px 4px;
+    background: #fffdf4;
+    color: #77546d;
+    font-size: 14px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+    box-shadow: 0 2px 0 #d7b5c750;
+}
+.paw-note-modal .paw-note-helper {
+    margin: 12px 2px 15px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #9d7b90;
+}
+.paw-note-form {
+    display: grid;
+    gap: 11px;
+}
+.paw-note-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.paw-note-label-row label {
+    color: #774963;
+    font-weight: 850;
+    font-size: 13px;
+}
+.paw-note-char-count {
+    color: #946e83;
+    background: #f8e8f0;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+.paw-note-form > input {
+    width: 100%;
+    min-width: 0;
+    border: 2px solid #eac3d6;
+    background: #fff;
+    color: #63435a;
+    border-radius: 13px;
+    padding: 13px 14px;
+    font-weight: 650;
+    font-size: 14px;
+}
+.paw-note-form > input:focus-visible {
+    outline: 3px solid #e7accb;
+    outline-offset: 2px;
+}
+.paw-note-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+.paw-note-suggestions > span {
+    color: #aa859a;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 2px;
+}
+.paw-note-suggestion {
+    border: 1px solid #eed2de;
+    border-radius: 999px;
+    background: #fff4fa;
+    color: #945475;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 800;
+}
+.paw-note-suggestion:hover {
+    border-color: #d794b7;
+    background: #ffe2f0;
+}
+.paw-note-actions {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1.25fr);
+    gap: 9px;
+    margin-top: 6px;
+}
+.paw-note-actions button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 42px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 850;
+}
+.paw-note-actions .paw-note-delete {
+    color: #a76988;
+}
+.paw-dark .paw-note-preview {
+    background: linear-gradient(135deg, #46384d, #3d344c);
+    border-color: #76586f;
+}
+.paw-dark .paw-note-preview-bubble {
+    background: #5c465a;
+    border-color: #98788f;
+    color: #fff0f8;
+}
+.paw-dark .paw-note-preview-label,
+.paw-dark .paw-note-label-row label {
+    color: #ffe0ef;
+}
+.paw-dark .paw-note-char-count,
+.paw-dark .paw-note-suggestion {
+    background: #503a50;
+    color: #ffe3ef;
+    border-color: #806077;
+}
+.paw-dark .paw-note-form > input {
+    background: #443449;
+    color: #fff0f8;
+    border-color: #88627c;
+}
+@media (max-width: 500px) {
+    .main-column .paw-room-tools .paw-room-theme-trigger {
+        width: 69px !important;
+        min-width: 69px !important;
+        height: 37px !important;
+    }
+    .paw-room-tools .paw-room-note-trigger {
+        width: 37px !important;
+        min-width: 37px !important;
+        height: 37px !important;
+    }
+    .paw-note-modal {
+        padding: 17px;
+    }
+    .paw-note-preview {
+        gap: 9px;
+        padding: 11px;
+        margin-top: 12px;
+    }
+    .paw-note-preview-pet {
+        width: 66px;
+        height: 75px;
+        flex-basis: 66px;
+    }
+    .paw-note-preview-bubble {
+        font-size: 12px;
+    }
+    .paw-theme-modal .paw-theme-option {
+        padding: 6px 4px;
+    }
+    .paw-theme-modal .paw-theme-option .paw-theme-action-label {
+        font-size: 9px;
+        padding: 5px 2px;
+        gap: 3px;
+    }
+    .paw-theme-modal .paw-theme-option .paw-theme-action-label svg {
+        width: 11px;
+        height: 11px;
+    }
+}
+@media (max-width: 350px) {
+    .paw-note-actions button {
+        padding: 10px 7px;
+        font-size: 11px;
+    }
+    .paw-note-suggestion {
+        padding: 5px 8px;
+    }
+}
+
+/* Room toolbar finishing touches: preserve edge-to-edge SVG artwork and mobile icon centering. */
+@media (max-width: 500px) {
+    .main-column .paw-room-note-trigger .paw-pet-note-icon {
+        transform: translateY(-2px);
+    }
+}
+
+/* Living Room Pet Notes: visible nameplate marker and a compact, non-modal message. */
+.living-room .nameplate.paw-nameplate-has-note {
+    width: max-content;
+    max-width: 140px;
+    padding: 3px 6px;
+}
+.paw-nameplate-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
+}
+.paw-nameplate-title b {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.living-room .paw-note-indicator {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 23px;
+    width: 23px;
+    height: 23px;
+    min-width: 23px;
+    padding: 0;
+    border: 1px solid #eab6d0;
+    border-radius: 50%;
+    background: #ffe3f0;
+    color: #a95080;
+    box-shadow: 0 1px 3px #a64a801f;
+    pointer-events: auto;
+    cursor: pointer;
+    touch-action: manipulation;
+    animation: paw-note-greeting 650ms ease-out 1;
+}
+.living-room .paw-note-indicator svg:first-child {
+    display: block;
+}
+.living-room .paw-note-indicator .paw-note-indicator-heart {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    fill: #f4a3c4;
+    background: #ffe3f0;
+    border-radius: 50%;
+}
+.living-room .paw-note-indicator:hover,
+.living-room .paw-note-indicator.is-open {
+    background: #f6bed9;
+    border-color: #d789b0;
+}
+.living-room .paw-note-indicator:focus-visible,
+.paw-room-note-popover-close:focus-visible {
+    outline: 2px solid #a9518b;
+    outline-offset: 2px;
+}
+@keyframes paw-note-greeting {
+    0%, 100% { transform: translateY(0); }
+    38% { transform: translateY(-3px); }
+    72% { transform: translateY(1px); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .living-room .paw-note-indicator { animation: none; }
+}
+.living-room .paw-room-note-popover {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 120;
+    width: max-content;
+    max-width: min(235px, calc(100% - 24px));
+    min-width: min(176px, calc(100% - 24px));
+    padding: 11px 12px 10px;
+    border: 2px solid #ecc1d6;
+    border-radius: 16px 16px 7px 16px;
+    background: #fffafc;
+    color: #744761;
+    box-shadow: 0 9px 24px #69425c30, inset 0 1px 0 white;
+    pointer-events: auto;
+    overflow-wrap: anywhere;
+    animation: paw-note-card-appear 150ms ease-out;
+}
+@keyframes paw-note-card-appear {
+    from { opacity: .2; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.paw-room-note-popover-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 7px;
+}
+.paw-room-note-popover-from {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    font-size: 11px;
+    font-weight: 850;
+    color: #a15d87;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.paw-room-note-popover-close {
+    flex: 0 0 23px;
+    display: grid;
+    place-items: center;
+    width: 23px;
+    height: 23px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    color: #aa6d90;
+    background: #fbe8f1;
+}
+.paw-room-note-popover p {
+    margin: 9px 0 5px;
+    color: #6d4b60;
+    font-size: 13px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+.paw-room-note-popover > small {
+    display: block;
+    font-size: 10px;
+    color: #a17e93;
+}
+.paw-dark .paw-room-note-popover {
+    background: #493749;
+    border-color: #976b88;
+    color: #ffe3f2;
+}
+.paw-dark .paw-room-note-popover p {
+    color: #fff1f9;
+}
+@media (max-width: 600px) {
+    .living-room .nameplate.paw-nameplate-has-note {
+        max-width: 116px;
+        padding: 2px 4px;
+    }
+    .living-room .paw-note-indicator {
+        flex-basis: 22px;
+        width: 22px;
+        min-width: 22px;
+        height: 22px;
+    }
+    .living-room .paw-room-note-popover {
+        top: 9px;
+        right: 9px;
+        max-width: min(215px, calc(100% - 18px));
+    }
+}
+
+/* PawMail: mailbox, small composer, and collectible envelopes */
+.paw-friends-panel .paw-friends-mail-action{position:relative;color:#a84d85!important}
+.paw-friends-panel .paw-friends-compose-action{color:#a84d85!important}
+.paw-friends-panel .paw-friend-mail{color:#b35b91!important}
+.paw-friends-panel .paw-friends-title-row .paw-requests-launch-row{gap:3px;align-items:center}
+.pawmail-window{box-sizing:border-box;width:min(760px,calc(100vw - 24px));max-width:760px;max-height:min(92dvh,920px);overflow-y:auto;overscroll-behavior:contain}
+.pawmail-window .paw-modal-top{align-items:flex-start;gap:12px;margin-bottom:16px}
+.pawmail-window .paw-modal-top h2{margin:3px 0}
+.pawmail-window button:focus-visible{outline:3px solid #b05a8c;outline-offset:2px}
+.pawmail-window button:disabled{opacity:.54;cursor:not-allowed}
+.pawmail-folder-tabs{display:grid;grid-template-columns:1fr 1fr auto;align-items:stretch;gap:8px;margin-bottom:16px}
+.pawmail-folder-tabs button{border:1px solid #ecc6dc;background:#fff;color:#955778;min-width:0;padding:9px 12px;border-radius:13px;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px}
+.pawmail-folder-tabs button.active{background:#fae0eb;border-color:#cc8bad;color:#874565}
+.pawmail-folder-tabs .pawmail-folder-compose{background:#d985ac;color:#fff;border-color:#cb7da5}
+.pawmail-unread-pill{background:#ce6692;color:#fff;padding:2px 6px;border-radius:20px;font-size:10px}
+.pawmail-letter-list{display:grid;grid-template-columns:1fr;gap:9px}
+.pawmail-list-letter{width:100%;min-width:0;display:flex;align-items:center;gap:13px;text-align:left;border:1px solid #efd0dc;border-radius:16px;padding:10px 13px;background:#fffafd;color:#714b63;box-shadow:0 3px 9px #ae66821a}
+.pawmail-list-letter.unread{background:#fff0f6;border-color:#dca1c0}
+.pawmail-list-icon{width:68px;height:58px;flex:none;position:relative;border-radius:12px;overflow:hidden;display:grid;place-items:center;background:#ffe3ed;color:#b46691}
+.pawmail-list-icon svg{height:49px;width:90%;max-width:90%;opacity:.88}
+.pawmail-list-copy{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px}
+.pawmail-list-copy b{font-size:13px}
+.pawmail-list-copy>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;max-width:100%;opacity:.85}
+.pawmail-list-copy small{font-size:10px;opacity:.68}
+.pawmail-new-dot{width:10px;height:10px;background:#d34f88;border:2px solid white;border-radius:50%;flex:none}
+.pawmail-list-arrow{opacity:.5;flex:none}
+.pawmail-empty{padding:48px 20px;display:flex;align-items:center;flex-direction:column;gap:9px;text-align:center;color:#98617f}
+.pawmail-empty b{font-size:15px}.pawmail-empty span{font-size:12px}
+.pawmail-detail-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0}
+.pawmail-back{display:flex;align-items:center;gap:6px;background:transparent;border:0;color:#a15983;font-weight:800;font-size:13px;cursor:pointer}
+.pawmail-date{font-size:10px;opacity:.7;text-align:right}
+.pawmail-from{font-size:13px;font-weight:800;color:#83526e;margin:12px 0}
+.pawmail-letter-detail{width:min(100%,500px);margin-inline:auto}
+.pawmail-letter-detail .paw-envelope{min-height:260px}
+.pawmail-letter-detail .paw-envelope-illustration{height:94px}
+.pawmail-detail-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+.pawmail-detail-actions button{display:inline-flex;align-items:center;gap:6px;min-height:38px}
+.pawmail-compose-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:17px;align-items:start}
+.pawmail-write-side{display:flex;flex-direction:column;gap:9px;min-width:0}
+.pawmail-write-side label{font-size:12px;font-weight:800;color:#8e5575;display:flex;justify-content:space-between;gap:10px}
+.pawmail-write-side select,.pawmail-write-side textarea{box-sizing:border-box;width:100%;min-width:0;border-radius:12px;border:1px solid #e4b6cc;background:#fff;padding:10px 12px;font:inherit;font-size:13px;color:#764662}
+.pawmail-write-side textarea{resize:vertical;min-height:104px}
+.pawmail-compose-colors{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:2px}
+.pawmail-compose-colors button{min-width:26px;min-height:26px;width:26px;height:26px}
+.pawmail-design-summary{display:flex;align-items:center;gap:10px;padding:9px;background:#fff2f8;border:1px solid #f0ccdf;border-radius:14px;min-width:0}
+.pawmail-design-icon{flex:0 0 46px;width:46px;height:42px;border-radius:9px;display:grid;place-items:center;background:#ffe7ee;overflow:hidden;color:#a36290}
+.pawmail-design-icon svg{width:96%;height:100%}
+.pawmail-design-summary>span:nth-child(2){display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.pawmail-design-summary small{font-size:10px;opacity:.68}.pawmail-design-summary b{font-size:12px;line-height:1.2}
+.pawmail-collection-launch{white-space:nowrap;display:flex;align-items:center;gap:2px;padding:7px!important;border-radius:10px!important;font-size:11px!important;border:1px solid #e6acc8!important;background:#fff!important;color:#a45b84!important}
+.pawmail-send-button{width:100%;min-height:42px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;margin-top:2px}
+.pawmail-live-side{min-width:0;position:sticky;top:0}
+.pawmail-live-title{font-size:10px;font-weight:900;letter-spacing:1.4px;color:#9b6683;margin:0 0 9px}
+.pawmail-live-side .paw-envelope{min-height:280px}
+.pawmail-live-side .paw-envelope-illustration{height:95px}
+.pawmail-collection-window{width:min(850px,calc(100vw - 24px));max-width:850px}
+.pawmail-collection-intro{margin:3px 0 0!important;font-size:12px;color:#99728a}
+.pawmail-collection-count{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;font-size:11px;font-weight:800;color:#976384;background:#fff0f6;border-radius:12px;padding:10px 12px;margin-bottom:14px}
+.pawmail-collection-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.pawmail-collection-card{min-width:0;display:flex;flex-direction:column;align-items:stretch;padding:7px;gap:7px;border-radius:15px;background:#fff9fc;border:1px solid #eac5d8;box-shadow:0 2px 5px #ad72900d}
+.pawmail-collection-card.selected{border:2px solid #c26497;padding:6px;background:#fff0f7}
+.pawmail-collection-card.level-locked .pawmail-collection-art svg{opacity:.6}
+.pawmail-collection-art{position:relative;display:grid;place-items:center;overflow:hidden;isolation:isolate;height:100px;border-radius:11px;background:#ffe6ef;color:#ae6590;border:1px solid #fff9;box-shadow:inset 0 0 0 3px #fff5}
+.pawmail-collection-art svg{position:relative;z-index:1;width:min(95%,145px);height:90px;filter:drop-shadow(0 3px 3px #623e6330)}
+.pawmail-art-lock{position:absolute;inset:auto 4px 4px 4px;z-index:2;display:flex;align-items:center;justify-content:center;gap:4px;min-height:25px;border-radius:9px;background:#fff9fcdf;color:#8d6480;font-weight:800;font-size:10px}
+.pawmail-collection-info{display:flex;flex-direction:column;gap:3px;min-height:40px}
+.pawmail-collection-info b{font-size:12px;line-height:1.2;color:#7d4a69;overflow-wrap:anywhere}
+.pawmail-collection-info small{font-size:10px;color:#a06b86;line-height:1.25}
+.pawmail-collection-card>button{margin-top:auto;width:100%;min-height:34px;padding:7px 4px!important;display:flex;align-items:center;justify-content:center;gap:4px;border-radius:10px!important;font-size:11px!important;font-weight:800!important}
+.pawmail-choose{background:#f7e0ec!important;color:#9d5681!important;border:1px solid #e8b9d0!important}
+.pawmail-choose.chosen{background:#cc78a4!important;color:#fff!important;border-color:#bd6c99!important}
+.pawmail-buy{background:#f8e5ed!important;color:#985777!important;border:1px solid #e8b8cd!important}
+.pawmail-collection-footer{display:flex;justify-content:flex-end;margin-top:14px}
+.pawmail-collection-footer button{min-height:37px}
+/* Distinct collectible backgrounds, with later envelopes becoming more elaborate. */
+.paw-envelope-strawberry_picnic{background-image:radial-gradient(circle at 18% 16%,#ff799466 0 6px,transparent 7px),radial-gradient(circle at 82% 48%,#ed739766 0 7px,transparent 8px),repeating-linear-gradient(145deg,transparent 0 14px,#fff9 15px 17px),linear-gradient(125deg,#ffe3dc,#ffc0d6)}
+.paw-envelope-moonlit_library{background-image:radial-gradient(circle at 80% 20%,#fff9c4 0 18px,transparent 19px),repeating-linear-gradient(90deg,#4f4b8870 0 3px,transparent 3px 18px),linear-gradient(145deg,#7270ae,#aab4df);color:#514c8d}
+.paw-envelope-coral_kingdom{background-image:radial-gradient(circle at 18% 20%,#fff9 0 4px,transparent 5px),repeating-radial-gradient(ellipse at bottom,#53b7c466 0 4px,transparent 5px 26px),linear-gradient(160deg,#b5f7f4,#94d5e6);color:#418f9e}
+.paw-envelope-enchanted_greenhouse{background-image:radial-gradient(circle at 20% 15%,#fff5c6 0 13px,transparent 14px),repeating-linear-gradient(60deg,#82b6a544 0 2px,transparent 2px 19px),linear-gradient(145deg,#e6f4ca,#b2e2c9);color:#478a73}
+.paw-envelope-cloud_palace{background-image:radial-gradient(ellipse at 20% 85%,#fff 0 18px,transparent 19px),radial-gradient(ellipse at 80% 20%,#fff 0 19px,transparent 20px),linear-gradient(135deg,#cce3ff,#e8cafa,#fce6f1);color:#9987cb}
+.paw-envelope-lantern_festival{background-image:radial-gradient(circle at 16% 27%,#ffe9a5 0 14px,transparent 15px),radial-gradient(circle at 80% 50%,#ffc38699 0 16px,transparent 17px),linear-gradient(155deg,#fbd5cf,#c9a0d3);color:#ac678f}
+.paw-envelope-crystal_cavern{background-image:repeating-conic-gradient(from 40deg at 60% 70%,#d9c5f566 0 12deg,#a8dbe955 12deg 30deg),linear-gradient(140deg,#dbefff,#c7bce9);color:#749fc9}
+.paw-envelope-aurora_fox{background-image:radial-gradient(ellipse at 60% 10%,#f0ffaf88,transparent 56%),repeating-linear-gradient(140deg,#8be5db77 0 15px,#bd9eec77 20px 40px,#f0b2d777 50px 65px);color:#8470aa}
+.paw-envelope-sunfire_phoenix{background-image:radial-gradient(circle at 50% 10%,#fff5b7 0 25px,transparent 45px),repeating-linear-gradient(125deg,#e8a17855 0 4px,transparent 5px 18px),linear-gradient(145deg,#ffdab4,#f49bb1);color:#d27783}
+.paw-envelope-dreamscape{background-image:radial-gradient(circle at 20% 30%,#fff8cd 0 12px,transparent 13px),radial-gradient(circle at 85% 65%,#fff8 0 3px,transparent 4px),repeating-conic-gradient(from 10deg at center,#ddc0f255 0 16deg,#a9d7e555 16deg 32deg),linear-gradient(135deg,#d3dafa,#f8cce8);color:#a28dcf}
+.pawmail-collection-art.paw-envelope-cloud_palace::after,.pawmail-collection-art.paw-envelope-dreamscape::after,.pawmail-collection-art.paw-envelope-aurora_fox::after{content:"✧ ✦ ✧";position:absolute;inset:8px auto auto 8px;font-size:15px;letter-spacing:8px;color:#fff;opacity:.85}
+.paw-dark .pawmail-window{background:#382b3c!important;color:#ffeff6!important}
+.paw-dark .pawmail-folder-tabs button,.paw-dark .pawmail-list-letter,.paw-dark .pawmail-collection-card,.paw-dark .pawmail-design-summary{background:#49364a;color:#fff0f7;border-color:#77536d}
+.paw-dark .pawmail-collection-info b,.paw-dark .pawmail-collection-info small,.paw-dark .pawmail-write-side label,.paw-dark .pawmail-list-copy{color:#ffeaf4}
+.paw-dark .pawmail-write-side select,.paw-dark .pawmail-write-side textarea{background:#4a374d;color:#fff;border-color:#845e78}
+@media(max-width:760px){
+ .pawmail-compose-layout{grid-template-columns:1fr;gap:14px}
+ .pawmail-live-side{position:static}
+ .pawmail-live-side .paw-envelope{min-height:195px}
+ .pawmail-live-side .paw-envelope-illustration{height:60px}
+ .pawmail-collection-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:490px){
+ .pawmail-window{max-height:94dvh;padding:14px!important;border-radius:19px}
+ .pawmail-folder-tabs{gap:5px}
+ .pawmail-folder-tabs button{font-size:11px;padding:9px 5px;gap:4px}
+ .pawmail-list-letter{gap:8px;padding:9px}
+ .pawmail-list-icon{width:56px;height:54px}
+ .pawmail-collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .pawmail-collection-art{height:93px}
+ .pawmail-collection-art svg{height:86px}
+ .pawmail-detail-actions{justify-content:stretch}
+ .pawmail-detail-actions button{flex:1;justify-content:center}
+ .pawmail-design-summary{gap:6px}
+ .pawmail-collection-launch{font-size:10px!important}
+ .paw-friends-panel .paw-friend-icon-actions .paw-friend-icon-button{width:31px;height:34px;min-width:31px;flex:0 0 31px;padding:5px}
+ .paw-friends-panel .paw-friends-title-row .paw-requests-launch-row{gap:0}
+}
+@media(max-width:360px){
+ .pawmail-list-icon{width:47px;height:47px}
+ .pawmail-collection-info b{font-size:11px}
+ .pawmail-folder-tabs button{font-size:10px}
+}
+
+/* Subtle tint support for collectible PawMail envelopes.
+   Classic letters retain a full color change. Premium backgrounds keep their
+   original themed artwork, with only a soft wash from the sender's color. */
+.paw-envelope:not(.paw-envelope-classic){
+    background-color:var(--envelope-theme-base,#ffe6ef);
+    box-shadow:
+        inset 0 0 0 5px #ffffff35,
+        inset 0 0 0 1000px color-mix(in srgb,var(--envelope-color) 20%,transparent),
+        0 5px 12px #5b284115;
+}
+.paw-envelope.paw-envelope-rose_garden{--envelope-theme-base:#f9dae8}
+.paw-envelope.paw-envelope-starry_night{--envelope-theme-base:#9b98c5}
+.paw-envelope.paw-envelope-ocean_waves{--envelope-theme-base:#cbeff0}
+.paw-envelope.paw-envelope-cherry_blossom{--envelope-theme-base:#fbe3ec}
+.paw-envelope.paw-envelope-woodland{--envelope-theme-base:#d9ecd8}
+.paw-envelope.paw-envelope-royal{--envelope-theme-base:#e4d8f3}
+.paw-envelope.paw-envelope-sweet_treats{--envelope-theme-base:#fce7d6}
+.paw-envelope.paw-envelope-celestial{--envelope-theme-base:#dcd9f5}
+.paw-envelope.paw-envelope-butterfly{--envelope-theme-base:#e6ddf3}
+.paw-envelope.paw-envelope-winter{--envelope-theme-base:#e0eef9}

@@ -1,72 +1,461 @@
-import {useEffect,useRef} from 'react';
+import { useEffect, useRef } from 'react';
 import PetArt from './PetArt';
-export default function ArcadeCanvas({kind,species='cat',color='classic',breed='classic',cosmetic='none',onScore,onGameOver}:{kind:'dino'|'runner';species?:string;color?:string;breed?:string;cosmetic?:string;onScore:(score:number)=>void;onGameOver:()=>void}){
- const canvas=useRef<HTMLCanvasElement>(null);const avatar=useRef<HTMLDivElement>(null);const callbacks=useRef({onScore,onGameOver});callbacks.current={onScore,onGameOver};
- useEffect(()=>{
- const element=canvas.current;if(!element)return;const context=element.getContext('2d');if(!context)return;const ctx=context;const c=element;const avatarElement=avatar.current;
- let frame=0,last=0,elapsed=0,spawn=0,score=0,ended=false,raf=0;
- let height=0,velocity=0,lane=1,targetLane=1,playerLane=1,landing=0;
- let obstacles:{distance:number,lane:number,passed:boolean}[]=[];
- const jump=()=>{if(kind==='dino'&&height<=0.1){velocity=690;height=1;landing=0}};
- const move=(dir:number)=>{targetLane=Math.max(0,Math.min(2,targetLane+dir))};
- const key=(e:KeyboardEvent)=>{if(['Space','ArrowUp','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.repeat)return;if(e.code==='Space'||e.code==='ArrowUp')jump();if(e.code==='ArrowLeft')move(-1);if(e.code==='ArrowRight')move(1)};
- let touchX=0;const touchStart=(e:TouchEvent)=>{touchX=e.touches[0].clientX};const touchEnd=(e:TouchEvent)=>{if(kind==='dino')jump();else{const dx=e.changedTouches[0].clientX-touchX;if(Math.abs(dx)>20)move(dx>0?1:-1)}};
- // On mobile, the dimmed backdrop around the game modal is also a play surface.
- // Start only on the overlay itself, never on modal buttons or other controls.
- let outsideTouchId:number|null=null;
- let outsideStartX=0;
- let outsideStartY=0;
- const outsideStart=(e:TouchEvent)=>{
-  if(ended||!e.target||!(e.target instanceof Element)||!e.target.classList.contains('overlay'))return;
-  const finger=e.changedTouches[0];if(!finger)return;
-  outsideTouchId=finger.identifier;outsideStartX=finger.clientX;outsideStartY=finger.clientY;
- };
- const outsideMove=(e:TouchEvent)=>{
-  if(outsideTouchId===null||kind!=='runner')return;
-  const finger=Array.from(e.changedTouches).find(t=>t.identifier===outsideTouchId);
-  if(finger&&Math.abs(finger.clientX-outsideStartX)>12)e.preventDefault();
- };
- const outsideEnd=(e:TouchEvent)=>{
-  if(outsideTouchId===null||ended)return;
-  const finger=Array.from(e.changedTouches).find(t=>t.identifier===outsideTouchId);
-  if(!finger)return;
-  outsideTouchId=null;
-  if(kind==='dino'){jump();return}
-  const dx=finger.clientX-outsideStartX,dy=finger.clientY-outsideStartY;
-  if(Math.abs(dx)>24&&Math.abs(dx)>Math.abs(dy)*1.15)move(dx>0?1:-1);
- };
- const outsideCancel=()=>{outsideTouchId=null};
- window.addEventListener('touchstart',outsideStart,{passive:true});
- window.addEventListener('touchmove',outsideMove,{passive:false});
- window.addEventListener('touchend',outsideEnd,{passive:true});
- window.addEventListener('touchcancel',outsideCancel,{passive:true});
- const click=()=>{if(kind==='dino')jump()};window.addEventListener('keydown',key);c.addEventListener('touchstart',touchStart,{passive:true});c.addEventListener('touchend',touchEnd,{passive:true});c.addEventListener('pointerdown',click);
- const round=(x:number,y:number,w:number,h:number,r:number,color:string)=>{ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()};
- const cloud=(x:number,y:number,s:number)=>{ctx.fillStyle='#fffafc';ctx.beginPath();ctx.ellipse(x,y,40*s,16*s,0,0,Math.PI*2);ctx.ellipse(x-20*s,y-9*s,20*s,18*s,0,0,Math.PI*2);ctx.ellipse(x+10*s,y-12*s,25*s,20*s,0,0,Math.PI*2);ctx.fill()};
+import { BUILDING_ART, CACTUS_ART, VEHICLE_ART, JumpGuide, arcadeSpriteSrc } from './ArcadeArt';
+import { ROAD_BOTTOM, ROAD_CENTER, ROAD_HORIZON, PLAYER_ROAD_Y, PLAYER_PASS_DEPTH, laneX, roadHalfWidth, trafficProjection, trafficIsVisible, trafficRowLanes } from './PawRunTraffic';
 
- function render(t:number){if(ended)return;const dt=Math.min(.034,(t-last)/1000||0);last=t;elapsed+=dt;const w=640,h=340;c.width=w;c.height=h;
- const speed=kind==='dino'?175+Math.min(210,elapsed*6):.39+Math.min(.55,elapsed*.012);
- const sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#dcecf5');sky.addColorStop(1,'#fff2f4');ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);for(let i=0;i<4;i++)cloud(((i*220-elapsed*16)%(w+220)+w+220)%(w+220)-50,55+i%2*32,.7+i%2*.25);
- ctx.fillStyle='#a7d2b4';ctx.beginPath();ctx.ellipse(100,290,210,110,0,0,7);ctx.ellipse(530,290,250,115,0,0,7);ctx.fill();
- if(kind==='dino'){
- round(0,275,w,65,0,'#f5dfd2');round(0,274,w,5,0,'#b5d4b7');for(let i=0;i<14;i++){let x=((i*71-elapsed*speed*.6)%720+720)%720;round(x,310,28,4,2,'#e3bcb7')}
- if(height>0){height=Math.max(0,height+velocity*dt);velocity-=1800*dt;if(height===0){landing=1;velocity=0}}landing=Math.max(0,landing-dt*4);
- spawn+=dt;if(spawn>Math.max(.86,1.75-elapsed*.014)){spawn=0;obstacles.push({distance:680,lane:0,passed:false})}
- for(const o of obstacles){o.distance-=speed*dt;round(o.distance,233,24,43,9,'#86bba4');round(o.distance-9,246,11,12,4,'#86bba4');round(o.distance+22,253,10,10,4,'#86bba4');if(o.distance<105&&o.distance>72&&height<42){ended=true;callbacks.current.onGameOver();break}if(o.distance<70&&!o.passed){o.passed=true;score+=15;callbacks.current.onScore(score)}}obstacles=obstacles.filter(o=>o.distance>-40);
- if(avatarElement){avatarElement.style.left=(82/640*100)+'%';avatarElement.style.top=((275-height-68)/340*100)+'%';avatarElement.style.width=(76/640*100)+'%';avatarElement.style.transform=`translateX(-50%) scale(${1-landing*.07})`;}
- }else{
- // Pseudo-3D perspective: the road converges at the horizon; objects scale by depth.
- const horizon=90,bottom=340,center=320;ctx.fillStyle='#d7b3bd';ctx.beginPath();ctx.moveTo(center-44,horizon);ctx.lineTo(center+44,horizon);ctx.lineTo(610,bottom);ctx.lineTo(30,bottom);ctx.closePath();ctx.fill();
- for(let boundary=1;boundary<=2;boundary++){ctx.strokeStyle='#fff9f6';ctx.lineWidth=4;ctx.setLineDash([20,16]);ctx.lineDashOffset=-elapsed*160;ctx.beginPath();ctx.moveTo(center-44+boundary*88/3,horizon);ctx.lineTo(30+boundary*580/3,bottom);ctx.stroke();ctx.setLineDash([])}
- for(let i=0;i<12;i++){const d=((i/12+elapsed*.24)%1);const y=horizon+d*d*(bottom-horizon);const x=320+(i%2===0?-1:1)*(80+d*260);round(x,y,10+d*12,20+d*30,6,'#91c9a6')}
- playerLane+=(targetLane-playerLane)*Math.min(1,dt*12);spawn+=dt;if(spawn>Math.max(.8,1.65-elapsed*.012)){spawn=0;obstacles.push({distance:0,lane:Math.floor(Math.random()*3),passed:false})}
- obstacles.sort((a,b)=>a.distance-b.distance);for(const o of obstacles){o.distance+=speed*dt;const depth=Math.min(1,o.distance);const y=horizon+depth*depth*245;const spread=30+depth*150;const x=center+(o.lane-1)*spread;const size=10+depth*44;round(x-size/2,y-size,size,size,6+depth*6,'#a78cbb');round(x-size*.3,y-size*.82,size*.6,size*.4,5,'#d9c7e7');if(o.distance>.89&&!o.passed){o.passed=true;if(o.lane===targetLane){ended=true;callbacks.current.onGameOver();break}else{score+=15;callbacks.current.onScore(score)}}}obstacles=obstacles.filter(o=>o.distance<1.18);
- const px=center+(playerLane-1)*170;ctx.fillStyle='#7c6377';ctx.beginPath();ctx.ellipse(px,307,29,9,0,0,7);ctx.fill();if(avatarElement){avatarElement.style.left=(px/640*100)+'%';avatarElement.style.top=((301-101+Math.sin(elapsed*15)*3)/340*100)+'%';avatarElement.style.width=(112/640*100)+'%';avatarElement.style.transform='translateX(-50%)';}
- }
- round(14,12,155,30,14,'#fff9f6');ctx.font='bold 16px system-ui';ctx.fillStyle='#866178';ctx.fillText(`Score ${score}`,28,33);
- if(!ended)raf=requestAnimationFrame(render);
- }
- raf=requestAnimationFrame(render);return()=>{cancelAnimationFrame(raf);window.removeEventListener('keydown',key);window.removeEventListener('touchstart',outsideStart);window.removeEventListener('touchmove',outsideMove);window.removeEventListener('touchend',outsideEnd);window.removeEventListener('touchcancel',outsideCancel);c.removeEventListener('touchstart',touchStart);c.removeEventListener('touchend',touchEnd);c.removeEventListener('pointerdown',click)};
- },[kind]);
- return <div className="polished-arcade"><div className="arcade-stage"><canvas ref={canvas} aria-label={kind==='dino'?'Jump over cacti':'Three lane perspective runner'}/><div className="arcade-pet-avatar" ref={avatar}><PetArt species={species} color={color} breed={breed} cosmetic={cosmetic}/></div></div><div className="arcade-controls">{kind==='dino'?<span>Space / ↑ / tap to jump</span>:<span>← → / swipe to change lanes</span>}</div></div>
+type ArcadeProps = {
+    kind: 'dino' | 'runner';
+    species?: string;
+    color?: string;
+    breed?: string;
+    cosmetic?: string;
+    onScore: (score: number) => void;
+    onGameOver: () => void;
+};
+
+type Obstacle = {
+    distance: number;
+    lane: number;
+    passed: boolean;
+    variant: number;
+};
+
+export default function ArcadeCanvas({
+    kind,
+    species = 'cat',
+    color = 'classic',
+    breed = 'classic',
+    cosmetic = 'none',
+    onScore,
+    onGameOver
+}: ArcadeProps) {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const avatarRef = useRef<HTMLDivElement>(null);
+    const callbacks = useRef({ onScore, onGameOver });
+    callbacks.current = { onScore, onGameOver };
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const context = canvas?.getContext('2d');
+        if (!canvas || !context) return;
+
+        const ctx = context;
+        const avatar = avatarRef.current;
+        const width = 640;
+        const heightPx = 340;
+        canvas.width = width;
+        canvas.height = heightPx;
+
+        // Cache illustrations once per round, not once per frame.
+        const loadArt = (documents: string[]) => documents.map(document => {
+            const sprite = new Image();
+            sprite.src = arcadeSpriteSrc(document);
+            return sprite;
+        });
+        const cactusSprites = loadArt(CACTUS_ART);
+        const vehicleSprites = loadArt(VEHICLE_ART);
+        const buildingSprites = loadArt(BUILDING_ART);
+
+        let last = 0;
+        let elapsed = 0;
+        let spawn = 0;
+        let nextCactusSpawn = 1.6 + Math.random() * 0.7;
+        let previousRowWasDouble = false;
+        let score = 0;
+        let ended = false;
+        let requestId = 0;
+        let jumpHeight = 0;
+        let jumpVelocity = 0;
+        let landing = 0;
+        let playerLane = 1;
+        let targetLane = 1;
+        let obstacles: Obstacle[] = [];
+
+        const jump = () => {
+            if (kind === 'dino' && !ended && jumpHeight <= 0.1) {
+                jumpVelocity = 690;
+                jumpHeight = 1;
+                landing = 0;
+            }
+        };
+        const move = (direction: number) => {
+            if (kind === 'runner' && !ended) {
+                targetLane = Math.max(0, Math.min(2, targetLane + direction));
+            }
+        };
+
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (['Space', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
+                event.preventDefault();
+            }
+            if (event.repeat) return;
+            if (event.code === 'Space' || event.code === 'ArrowUp') jump();
+            if (event.code === 'ArrowLeft') move(-1);
+            if (event.code === 'ArrowRight') move(1);
+        };
+
+        let touchStartX = 0;
+        const onTouchStart = (event: TouchEvent) => {
+            touchStartX = event.touches[0]?.clientX ?? 0;
+        };
+        const onTouchEnd = (event: TouchEvent) => {
+            if (kind !== 'runner') return;
+            const dx = (event.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
+            if (Math.abs(dx) > 20) move(dx > 0 ? 1 : -1);
+        };
+        const onPointerDown = (event: PointerEvent) => {
+            if (kind === 'dino' && event.pointerType !== 'mouse' && event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
+            if (kind === 'dino') jump();
+        };
+
+        // The space outside the modal also accepts mobile gestures.
+        let outsideTouchId: number | null = null;
+        let outsideStartX = 0;
+        let outsideStartY = 0;
+        const outsideStart = (event: TouchEvent) => {
+            if (ended || !(event.target instanceof Element) || !event.target.classList.contains('overlay')) return;
+            const finger = event.changedTouches[0];
+            if (!finger) return;
+            outsideTouchId = finger.identifier;
+            outsideStartX = finger.clientX;
+            outsideStartY = finger.clientY;
+        };
+        const outsideMove = (event: TouchEvent) => {
+            if (outsideTouchId === null || kind !== 'runner') return;
+            const finger = Array.from(event.changedTouches).find(touch => touch.identifier === outsideTouchId);
+            if (finger && Math.abs(finger.clientX - outsideStartX) > 12) event.preventDefault();
+        };
+        const outsideEnd = (event: TouchEvent) => {
+            if (outsideTouchId === null || ended) return;
+            const finger = Array.from(event.changedTouches).find(touch => touch.identifier === outsideTouchId);
+            if (!finger) return;
+            outsideTouchId = null;
+            if (kind === 'dino') {
+                jump();
+                return;
+            }
+            const dx = finger.clientX - outsideStartX;
+            const dy = finger.clientY - outsideStartY;
+            if (Math.abs(dx) > 24 && Math.abs(dx) > Math.abs(dy) * 1.15) move(dx > 0 ? 1 : -1);
+        };
+        const outsideCancel = () => {
+            outsideTouchId = null;
+        };
+
+        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('touchstart', outsideStart, { passive: true });
+        window.addEventListener('touchmove', outsideMove, { passive: false });
+        window.addEventListener('touchend', outsideEnd, { passive: true });
+        window.addEventListener('touchcancel', outsideCancel, { passive: true });
+        canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+        canvas.addEventListener('touchend', onTouchEnd, { passive: true });
+        canvas.addEventListener('pointerdown', onPointerDown);
+
+        const rounded = (x: number, y: number, w: number, h: number, radius: number, color: string) => {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, radius);
+            ctx.fill();
+        };
+        const drawCloud = (x: number, y: number, scale: number) => {
+            ctx.fillStyle = '#fffafc';
+            ctx.beginPath();
+            ctx.ellipse(x, y, 40 * scale, 16 * scale, 0, 0, Math.PI * 2);
+            ctx.ellipse(x - 20 * scale, y - 9 * scale, 20 * scale, 18 * scale, 0, 0, Math.PI * 2);
+            ctx.ellipse(x + 10 * scale, y - 12 * scale, 25 * scale, 20 * scale, 0, 0, Math.PI * 2);
+            ctx.fill();
+        };
+        const renderSprite = (image: HTMLImageElement, x: number, y: number, w: number, h: number, fallback: () => void) => {
+            if (image.complete && image.naturalWidth > 0) {
+                ctx.drawImage(image, x, y, w, h);
+            } else {
+                fallback();
+            }
+        };
+
+        const render = (time: number) => {
+            if (ended) return;
+            const dt = Math.min(0.034, (time - last) / 1000 || 0);
+            last = time;
+            elapsed += dt;
+            const speed = kind === 'dino' ? 178 + Math.min(302, elapsed * 5.3) : 0.39 + Math.min(0.55, elapsed * 0.012);
+
+            const sky = ctx.createLinearGradient(0, 0, 0, heightPx);
+            sky.addColorStop(0, kind === 'dino' ? '#bce7ef' : '#dcecf5');
+            sky.addColorStop(1, kind === 'dino' ? '#ffe6d1' : '#fff2f4');
+            ctx.fillStyle = sky;
+            ctx.fillRect(0, 0, width, heightPx);
+            for (let index = 0; index < 4; index++) {
+                const x = ((index * 220 - elapsed * 16) % (width + 220) + width + 220) % (width + 220) - 50;
+                drawCloud(x, 55 + (index % 2) * 32, 0.7 + (index % 2) * 0.25);
+            }
+
+            if (kind === 'dino') {
+                // Sunny pastel desert with layered mesas, distant dunes and a grounded running path.
+                ctx.fillStyle = '#ffeab5';
+                ctx.beginPath();
+                ctx.arc(535, 78, 35, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#e4bbab';
+                for (const [x, y, w, h] of [[20, 178, 114, 59], [390, 173, 139, 61], [558, 192, 75, 45]]) {
+                    rounded(x, y, w, h, 21, '#e4bbab');
+                    rounded(x + w * 0.18, y - 22, w * 0.6, 34, 13, '#e4bbab');
+                    rounded(x + w * 0.22, y - 23, w * 0.53, 8, 3, '#f2d5b6');
+                }
+                ctx.fillStyle = '#f6d2b6';
+                ctx.beginPath();
+                ctx.moveTo(0, 253);
+                ctx.quadraticCurveTo(115, 214, 264, 253);
+                ctx.quadraticCurveTo(460, 215, 640, 245);
+                ctx.lineTo(640, 340);
+                ctx.lineTo(0, 340);
+                ctx.fill();
+                ctx.fillStyle = '#e6c6b3';
+                ctx.beginPath();
+                ctx.moveTo(0, 268);
+                ctx.quadraticCurveTo(175, 252, 305, 270);
+                ctx.quadraticCurveTo(470, 242, 640, 265);
+                ctx.lineTo(640, 340);
+                ctx.lineTo(0, 340);
+                ctx.fill();
+                rounded(0, 276, width, 64, 0, '#f4dfc6');
+                rounded(0, 275, width, 4, 0, '#c7b59c');
+                for (let index = 0; index < 15; index++) {
+                    const x = ((index * 67 - elapsed * speed * 0.6) % 750 + 750) % 750;
+                    rounded(x, 316 + (index % 3) * 5, 24, 3, 2, '#dfb99d');
+                }
+            } else {
+                ctx.fillStyle = '#a7d2b4';
+                ctx.beginPath();
+                ctx.ellipse(100, 290, 210, 110, 0, 0, Math.PI * 2);
+                ctx.ellipse(530, 290, 250, 115, 0, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            if (kind === 'dino') {
+                if (jumpHeight > 0) {
+                    jumpHeight = Math.max(0, jumpHeight + jumpVelocity * dt);
+                    jumpVelocity -= 1800 * dt;
+                    if (jumpHeight === 0) {
+                        landing = 1;
+                        jumpVelocity = 0;
+                    }
+                }
+                landing = Math.max(0, landing - dt * 4);
+                // Spawn one random cactus at a time. Difficulty comes from travel speed,
+                // not increasingly dense obstacle rows that become impossible to clear.
+                spawn += dt;
+                if (spawn >= nextCactusSpawn) {
+                    spawn = 0;
+                    nextCactusSpawn = 1.6 + Math.random() * 0.8;
+                    obstacles.push({
+                        distance: 680,
+                        lane: 0,
+                        passed: false,
+                        variant: Math.floor(Math.random() * cactusSprites.length)
+                    });
+                }
+                for (const obstacle of obstacles) {
+                    obstacle.distance -= speed * dt;
+                    renderSprite(cactusSprites[obstacle.variant], obstacle.distance - 8, 218, 46, 62, () => {
+                        rounded(obstacle.distance, 224, 24, 52, 9, '#86bba4');
+                    });
+                    if (obstacle.distance < 105 && obstacle.distance > 72 && jumpHeight < 42) {
+                        ended = true;
+                        callbacks.current.onGameOver();
+                        break;
+                    }
+                    if (obstacle.distance < 70 && !obstacle.passed) {
+                        obstacle.passed = true;
+                        score += 15;
+                        callbacks.current.onScore(score);
+                    }
+                }
+                obstacles = obstacles.filter(obstacle => obstacle.distance > -50);
+                if (avatar) {
+                    avatar.style.left = `${82 / 640 * 100}%`;
+                    avatar.style.top = `${(276 - jumpHeight - 68) / 340 * 100}%`;
+                    avatar.style.width = `${76 / 640 * 100}%`;
+                    avatar.style.transform = `translateX(-50%) scale(${1 - landing * 0.07})`;
+                }
+            } else {
+                // One road model for the visible asphalt, lane dividers, parked
+                // scenery and approaching traffic: never extrapolate cars outside it.
+                const horizon = ROAD_HORIZON;
+                const bottom = ROAD_BOTTOM;
+                const center = ROAD_CENTER;
+
+                // Pastel neighborhood: buildings stay beyond the edge of the road.
+                // The foreground is drawn before the roadway and never overlaps traffic.
+                ctx.fillStyle = '#c8e0c8';
+                ctx.fillRect(0, horizon, width, bottom - horizon);
+                const blockShift = (elapsed * speed * 0.27) % 1;
+                for (let index = 0; index < 7; index++) {
+                    const depth = (index / 7 + blockShift) % 1;
+                    const position = depth * depth;
+                    const anchorY = horizon + position * (bottom - horizon);
+                    const buildingWidth = 30 + position * 92;
+                    const buildingHeight = buildingWidth * 1.27;
+                    for (const side of [-1, 1]) {
+                        const edge = center + side * roadHalfWidth(anchorY);
+                        const setback = 7 + position * 22;
+                        const x = side < 0 ? edge - setback - buildingWidth : edge + setback;
+                        const artIndex = (index + (side === -1 ? 0 : 2)) % buildingSprites.length;
+                        renderSprite(buildingSprites[artIndex], x, anchorY - buildingHeight, buildingWidth, buildingHeight, () => {
+                            rounded(x, anchorY - buildingHeight, buildingWidth, buildingHeight, 6, '#f5d5df');
+                        });
+                    }
+                }
+
+                // Pavement, pale edging and a straight three-lane highway.
+                ctx.fillStyle = '#c3acb8';
+                ctx.beginPath();
+                ctx.moveTo(center - 53, horizon);
+                ctx.lineTo(center + 53, horizon);
+                ctx.lineTo(623, bottom);
+                ctx.lineTo(17, bottom);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#9d8999';
+                ctx.beginPath();
+                ctx.moveTo(center - 44, horizon);
+                ctx.lineTo(center + 44, horizon);
+                ctx.lineTo(center + roadHalfWidth(bottom), bottom);
+                ctx.lineTo(center - roadHalfWidth(bottom), bottom);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.strokeStyle = '#fff7ec';
+                ctx.lineWidth = 3;
+                for (const side of [-1, 1]) {
+                    ctx.beginPath();
+                    ctx.moveTo(center + side * roadHalfWidth(horizon), horizon);
+                    ctx.lineTo(center + side * roadHalfWidth(bottom), bottom);
+                    ctx.stroke();
+                }
+                // Dash segments grow naturally with perspective and stay in their lanes.
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#fff4e9';
+                for (const divider of [1, 2]) {
+                    for (let index = 0; index < 11; index++) {
+                        const position = (index / 11 + elapsed * speed * 0.22) % 1;
+                        const y1 = horizon + position * position * (bottom - horizon);
+                        const y2 = Math.min(bottom, y1 + 5 + position * 23);
+                        const boundaryX = (y: number) => center + (divider - 1.5) * roadHalfWidth(y) * (2 / 3);
+                        ctx.lineWidth = 1.7 + position * 4;
+                        ctx.beginPath();
+                        ctx.moveTo(boundaryX(y1), y1);
+                        ctx.lineTo(boundaryX(y2), y2);
+                        ctx.stroke();
+                    }
+                }
+
+                playerLane += (targetLane - playerLane) * Math.min(1, dt * 12);
+                spawn += dt;
+                // A row can contain one car or two cars side by side. Paired
+                // cars never fill all three lanes, and the next row is delayed
+                // slightly so players have time to move into the open lane.
+                const rowInterval = Math.max(1.05, 1.65 - elapsed * 0.012) +
+                    (previousRowWasDouble ? 0.28 : 0);
+                if (spawn > rowInterval) {
+                    spawn = 0;
+                    const occupiedLanes = trafficRowLanes();
+                    previousRowWasDouble = occupiedLanes.length === 2;
+
+                    for (const lane of occupiedLanes) {
+                        obstacles.push({
+                            distance: 0,
+                            lane,
+                            passed: false,
+                            variant: Math.floor(Math.random() * vehicleSprites.length)
+                        });
+                    }
+                }
+                // Paint the distant cars first, so nearby traffic naturally
+                // passes in front of them instead of popping over one another.
+                obstacles.sort((first, second) => first.distance - second.distance);
+                for (const obstacle of obstacles) {
+                    obstacle.distance += speed * dt;
+                    const vehicle = trafficProjection(obstacle.lane, obstacle.distance);
+
+                    // Anchor the front bumper to the lane at its road position.
+                    // Rotation then points the roof toward the vanishing point:
+                    // left/right cars follow the diagonal lanes instead of
+                    // remaining upright or drifting toward the road's center.
+                    ctx.save();
+                    ctx.translate(vehicle.x, vehicle.y);
+                    ctx.rotate(vehicle.angle);
+                    renderSprite(
+                        vehicleSprites[obstacle.variant],
+                        -vehicle.width / 2,
+                        -vehicle.height,
+                        vehicle.width,
+                        vehicle.height,
+                        () => rounded(-vehicle.width / 2, -vehicle.height, vehicle.width, vehicle.height, 8, '#b6a4e4')
+                    );
+                    ctx.restore();
+
+                    // Check contact when the car actually reaches the player's
+                    // road position, using the displayed (interpolated) lane.
+                    // Safe cars remain visible as they drive below the player
+                    // and completely off the bottom of the canvas.
+                    if (obstacle.distance >= PLAYER_PASS_DEPTH && !obstacle.passed) {
+                        obstacle.passed = true;
+                        if (Math.abs(playerLane - obstacle.lane) < 0.48) {
+                            ended = true;
+                            callbacks.current.onGameOver();
+                            break;
+                        }
+                        score += 15;
+                        callbacks.current.onScore(score);
+                    }
+                }
+                obstacles = obstacles.filter(obstacle => trafficIsVisible(obstacle.lane, obstacle.distance));
+                const petX = laneX(playerLane, PLAYER_ROAD_Y);
+                ctx.fillStyle = '#7c6377';
+                ctx.beginPath();
+                ctx.ellipse(petX, 307, 29, 9, 0, 0, Math.PI * 2);
+                ctx.fill();
+                if (avatar) {
+                    avatar.style.left = `${petX / 640 * 100}%`;
+                    avatar.style.top = `${(301 - 101 + Math.sin(elapsed * 15) * 3) / 340 * 100}%`;
+                    avatar.style.width = `${112 / 640 * 100}%`;
+                    avatar.style.transform = 'translateX(-50%)';
+                }
+            }
+
+            if (!ended) requestId = requestAnimationFrame(render);
+        };
+
+        requestId = requestAnimationFrame(render);
+        return () => {
+            ended = true;
+            cancelAnimationFrame(requestId);
+            window.removeEventListener('keydown', onKeyDown);
+            window.removeEventListener('touchstart', outsideStart);
+            window.removeEventListener('touchmove', outsideMove);
+            window.removeEventListener('touchend', outsideEnd);
+            window.removeEventListener('touchcancel', outsideCancel);
+            canvas.removeEventListener('touchstart', onTouchStart);
+            canvas.removeEventListener('touchend', onTouchEnd);
+            canvas.removeEventListener('pointerdown', onPointerDown);
+        };
+    }, [kind]);
+
+    return (
+        <div className="polished-arcade">
+            <div className="arcade-stage">
+                <canvas ref={canvasRef} aria-label={kind === 'dino' ? 'Jump over spiky cacti' : 'Dodge colorful cars on the three-lane road'} />
+                <div className="arcade-pet-avatar" ref={avatarRef}>
+                    <PetArt species={species} color={color} breed={breed} cosmetic={cosmetic} />
+                </div>
+                {kind === 'dino' && <div className="paw-jump-guide"><JumpGuide /></div>}
+            </div>
+            <p className="paw-arcade-gesture-hint">
+                {kind === 'dino'
+                    ? 'Tap the game or press Space to jump.'
+                    : 'Swipe left or right, or use the arrow keys to dodge.'}
+            </p>
+        </div>
+    );
 }
