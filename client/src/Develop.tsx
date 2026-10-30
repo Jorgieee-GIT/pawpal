@@ -1,10 +1,11 @@
+import {GardenBedArt, type GardenGrowthStage} from './GardenBedArt';
 import {GardenIcon, GARDEN_FLOWER_CATALOG} from './GardenArt';
 import RoomArchitecture from './RoomArchitecture';
 import {useEffect, useRef, useState} from 'react';
 import {ArrowLeft, Eye, LockKeyhole, LogOut, ShieldCheck, BrainCircuit, Sprout, Rabbit, Heart, RefreshCw} from 'lucide-react';
 import PetArt from './PetArt';
 import {DEFAULTS, FURNITURE, FurnitureArt, RoomFurniture, furnitureLayout} from './RoomFurniture';
-import {FoodArt, FOOD_ART_IDS} from './Kitchen';
+import {FoodArt, FOOD_ART_IDS, KitchenToolArt, KitchenPrepArt, KitchenEffectArt, KITCHEN_TOOL_IDS, KITCHEN_PREP_IDS, KITCHEN_EFFECT_IDS} from './KitchenArt';
 import {COSMETIC_SLOTS, SLOT_NAMES, type OutfitSlot} from './outfitCatalog';
 import {MoleArt} from './WhackAMole';
 import {ENVELOPE_DESIGNS, EnvelopeArtwork} from './PawMailArt';
@@ -239,7 +240,7 @@ export default function Develop() {
                         ['accessories', 'Outfits & accessories'],
                         ['furniture', 'Furniture'],
                         ['atmosphere', 'Atmosphere'],
-                        ['food', 'Food & ingredients'],
+                        ['food', 'Kitchen studio'],
                         ['garden', 'Garden'],
                         ['arcade', 'Arcade artwork'],
                         ['pawmail', 'PawMail'],
@@ -261,7 +262,7 @@ export default function Develop() {
                         </article>)}
                     </div>
                     <h2>Every in-game flower variant (0–3)</h2>
-                    <p className="develop-hint">The server randomly selects one of four variants at planting. The player Garden passes the same rarity and variant properties shown below.</p>
+                    <p className="develop-hint">The server randomly selects one of four variants at planting. The server selects one of four variants when planting, but the player only sees it when they harvest. These previews are for developers.</p>
                     <div className="develop-garden-grid">
                         {GARDEN_FLOWER_CATALOG.flatMap(flower => GARDEN_VARIANTS.map(variant =>
                             <article className={`develop-garden-card develop-garden-${flower.rarity.toLowerCase()}`} key={`${flower.rarity}-${variant}`}>
@@ -277,6 +278,15 @@ export default function Develop() {
                             <div className="develop-garden-art"><GardenIcon kind={kind}/></div>
                             <h3>{label}</h3>
                             <small>Original artwork used in the player Garden</small>
+                        </article>)}
+                    </div>
+                    <h2>Raised-bed garden stages (actual player SVGs)</h2>
+                    <p className="develop-hint">All planted flowers remain mystery buds until harvested. These SVGs are shared with the player Garden: no rarity art leaks during growth.</p>
+                    <div className="develop-garden-grid develop-garden-utilities">
+                        {(['empty','seed','sprout','bud','ready','locked'] as GardenGrowthStage[]).map(stage => <article className="develop-garden-card" key={stage}>
+                            <div className="develop-garden-art"><GardenBedArt stage={stage}/></div>
+                            <h3>{stage[0].toUpperCase()+stage.slice(1)} bed</h3>
+                            <small>Player Garden · {stage} stage</small>
                         </article>)}
                     </div>
                     <h2>Growth-stage SVG preview</h2>
@@ -422,15 +432,37 @@ export default function Develop() {
                         </article>)}
                     </div>
                 </>}
-                {section === 'food' && <>
-                    <p className="develop-hint">Kitchen ingredients and prepared dishes using the exact FoodArt component.</p>
+                {section === 'food' && <section className="develop-kitchen-gallery">
+                    <p className="develop-hint">Every Kitchen SVG is listed here. These are the actual components used in the Recipe Book, Experiment Station and cooking minigames, including every new preparation stage and visual effect. This gallery is read-only.</p>
+                    <h2>Ingredients & finished meals ({FOOD_ART_IDS.length})</h2>
                     <div className="develop-grid develop-furniture">
                         {FOOD_ART_IDS.map(id => <article key={id} className="develop-tile">
                             <div className="develop-furniture-art"><FoodArt id={id}/></div>
                             <b>{titleCase(id)}</b><small>{id}</small>
                         </article>)}
                     </div>
-                </>}
+                    <h2>Cooking tools & equipment ({KITCHEN_TOOL_IDS.length})</h2>
+                    <div className="develop-grid develop-furniture">
+                        {KITCHEN_TOOL_IDS.map(id => <article key={id} className="develop-tile">
+                            <div className="develop-furniture-art"><KitchenToolArt id={id}/></div>
+                            <b>{titleCase(id)}</b><small>{id}</small>
+                        </article>)}
+                    </div>
+                    <h2>Preparation & transformation stages ({KITCHEN_PREP_IDS.length})</h2>
+                    <div className="develop-grid develop-furniture">
+                        {KITCHEN_PREP_IDS.map(id => <article key={id} className="develop-tile">
+                            <div className="develop-furniture-art"><KitchenPrepArt id={id}/></div>
+                            <b>{titleCase(id)}</b><small>{id}</small>
+                        </article>)}
+                    </div>
+                    <h2>Cooking effects ({KITCHEN_EFFECT_IDS.length})</h2>
+                    <div className="develop-grid develop-furniture">
+                        {KITCHEN_EFFECT_IDS.map(id => <article key={id} className="develop-tile">
+                            <div className="develop-furniture-art"><KitchenEffectArt id={id}/></div>
+                            <b>{titleCase(id)}</b><small>{id}</small>
+                        </article>)}
+                    </div>
+                </section>}
                 {section === 'pawmail' && <section className="develop-mail">
                     <div className="develop-mail-heading">
                         <div>

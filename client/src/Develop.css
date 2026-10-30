@@ -236,3 +236,5 @@
 @media(max-width:900px){.develop-mail-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:620px){.develop-mail-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.develop-mail-card{padding:7px;gap:7px;border-radius:14px}.develop-mail-card .develop-mail-art{height:105px}.develop-mail-card-details b{font-size:12px}.develop-mail-card-details>small{font-size:10px}.develop-mail-meta span{font-size:10px;padding:5px}.develop-mail-filters{gap:9px}.develop-mail-filters label{flex:1 1 130px}}
 @media(max-width:360px){.develop-mail-card .develop-mail-art{height:92px}.develop-mail-meta{flex-direction:column;align-items:flex-start}.develop-mail-meta span{max-width:100%}}
+/* The player garden SVGs are wider than the individual flower illustrations. */
+.develop-garden-card:has(.paw-garden-bed-svg) .develop-garden-art svg { width:100%; max-width:240px; height:auto; max-height:170px; }

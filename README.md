@@ -1,3 +1,104 @@
+## Kitchen Rhythm Mixing — keyboard and full-screen swipe controls
+
+- On desktop, follow the randomized arrow sequence using **Left / Up / Right / Down** on the keyboard. The game listens at the window level and prevents the arrow keys from scrolling the page while the mixing step is active.
+- On touchscreens, swipe in the requested direction **anywhere on screen, including outside the cooking modal**. Swipes shorter than 42px or ambiguous diagonal gestures are ignored; scrolling is suppressed only for active swipe movements. The overlay remains open on backdrop touches during Rhythm Mixing; use the close (X) control to leave.
+- No on-screen arrow-tap buttons for Rhythm Mixing. Progress and correct steps are shown in the arrow sequence. Other minigames keep their existing controls.
+- Frontend-only change; no Render deployment or database migration is needed. Redeploy Vercel.
+
+# Kitchen randomized tap sequences (October 30, 2026)
+
+The Kitchen minigames **Cake Decorating**, **Plate Puzzle**, and **Rhythm Mixing** now generate a fresh shuffled tapping sequence for each new cooking step/attempt. The order appears on screen and the buttons are checked against that same order. A new attempt does not repeat the immediately previous pattern. For Rhythm Mixing, arrows remain in fixed button positions while the displayed sequence changes, so the player actually follows the new pattern rather than pressing the buttons left to right.
+
+These are frontend-only changes. No new SVG assets, Render deployment, or Neon migration are necessary. The original **66 Kitchen SVGs** and their Develop > Kitchen studio gallery remain intact. Redeploy Vercel only. All other gameplay and existing inventories are preserved.
+
+---
+
+# Kitchen animation, artwork and responsive UI polish (October 30, 2026)
+
+This frontend-only follow-up to the 21-recipe Kitchen revamp preserves recipes, cooking progress, backend rewards, database migrations and the existing Develop > Kitchen studio SVG catalog.
+
+- The sliding timing indicators in Precision Chopping, Pancake Flip, and Boiling Point use `requestAnimationFrame` and composited transforms instead of reacting to a 100 ms UI timer. Click scoring samples the same continuous animation clock so the displayed center position and earned score agree more closely.
+- Larger food SVG artwork now fills the complete left section of recipe cards on tablet/desktop; on phones, the food illustration uses a full-width area above the recipe details and actions.
+- The four Kitchen section buttons align their SVGs and labels on mobile, with a separate overlaid Pantry count badge.
+- Removed the `k3-hero` block and the four redundant section description paragraphs. Original SVG artwork and the Develop gallery remain unchanged.
+
+Verification: client and server TypeScript checks pass; existing Garden, Kitchen, PawMail and Paw Brawl catalog tests pass. Static page-layout checks passed at widths 320, 360, 390, 430, 600, 768, 900, 1024, 1280 and 1440 px. Browser timing test measured 32 unique frame positions and a near-center click scored 99/100. These are layout/integration fixtures, not live account testing. Local Vite production bundling is still unavailable from the archived Windows dependencies; use clean `npm ci` on Vercel.
+
+**Deployment:** Redeploy Vercel only. No Render update or Neon migration is needed for these frontend-only changes.
+
+---
+
+## Kitchen 3: recipe discovery, cooking games and the Develop gallery
+
+This release includes the original 12 recipes plus 9 new dishes (21 total), 18 shop ingredients, 6 starter recipes and 15 discoverable recipes for **new** players, deterministic recipe discovery, recipe clues, an experiment station, a pantry, recipe records, and nine distinct cooking interactions (rinse, precision chop, flip, bake, simmer/boil, pour, frost, plate, rhythm mix). Recipes use the same ingredient item IDs and existing meal storage, so existing stocks and prepared meals are not reset. Finished meals restore the same amount of pet stats regardless of cooking grade; cooking scores are visual/journal-only and award **no additional Paw Coins or XP**.
+
+### Required Neon migration (one time, before deploying the new Render backend)
+
+Apply `database/migrations/013_kitchen_discovery.sql` to your **current** Neon database before deploying the updated server. You can paste it into Neon's SQL Editor or run `psql "$DATABASE_URL" -f database/migrations/013_kitchen_discovery.sql`. This adds three JSONB columns to `pet_kitchens` and an idempotent migration marker. It preserves all 12 original recipes as known for existing Kitchen users; new users begin with the six starter recipes. Rerunning the migration will not unlock legacy recipes for newly created accounts. Do not run old schema initialization scripts against an already-live database.
+
+Then redeploy **Render and Vercel**. Both must use this updated API/UI contract. Do not deploy only the new frontend against the old Kitchen API.
+
+`/develop` → **Kitchen studio** includes every Kitchen SVG from the actual player art components: **39 ingredient/dish illustrations, 10 cooking tools, 12 preparation-stage variants, and 5 visual effects = 66 previews**. All new artwork is within `client/src/KitchenArt.tsx`, reused by `Kitchen.tsx` and `Develop.tsx`.
+
+### Server-side protection
+
+Ingredient purchase and experiment consumption, discovery and recipe completion use database transactions and locked pet/Kitchen rows. Recipes are predefined; unsuccessful experiments use one ingredient only. The server hides unknown recipes' ingredient lists and steps. A server time threshold limits instant step completion. The client sends a cooking quality score for a **cosmetic personal record only**, not for coins, XP, pet stat bonuses, or competitive rankings. Completely preventing fabricated journal scores would require authoritative game simulation on the server.
+
+Run `npm run test:kitchen` in `server/` to check recipe uniqueness, exact ingredient matching, hidden recipe metadata, meal prices and rating thresholds.
+
+---
+
+# PawPal — Garden Timer, Tablet Navigation & Unified Headings (October 2026)
+
+- Garden beds now show a stable, single-line countdown (`MM:SS`) with tabular numerals. Growth-stage details remain available as accessible labels and hover titles. Ready plots display a short **Ready!** badge instead of a multiline message.
+- Navigation collapses behind the existing hamburger toggle at phone and tablet widths up to **1100px**; wider desktops retain the persistent sidebar. Opening and closing the menu preserves the existing navigation functionality.
+- The four Lucky Garden inventory counters (Seeds, Watering cans, Harvested, Discovered) remain in **one row** at widths up to **700px**.
+- Main page headings for Friends, Market, Wardrobe, Mini-games, Multiplayer, Kitchen, Missions and Lucky Garden now use one shared SVG/icon component and consistent alignment.
+- The navigation label **Missions & stats** is shortened to **Missions**, matching the main page title.
+- This is a **frontend-only** update: server logic, Garden odds, Paw Coins, database records and multiplayer rules are unchanged. Redeploy **Vercel only**.
+
+---
+
+# PawPal Lucky Garden — Compact Layout Update (October 2026)
+
+- Garden navigation label now reads **Lucky Garden**. Removed the requested extra descriptive text from the Garden header, under the plots, and inside the Flower Book dialog.
+- Flower beds now display **three per row on mobile and tablet**, and **six per row on desktop**. Each raised-bed graphic and its action controls have been resized to suit the denser grid.
+- Garden Shed supply cards use stacked, full-width purchase controls on mobile; quantities and Buy buttons remain accessible at narrow widths.
+- These are presentation-only changes. The Garden harvest rates, prices, saved plots, backend, and database schema are unchanged. **Redeploy the Vercel frontend only.**
+
+## Previous Garden update
+
+
+## Garden gameplay
+
+The **Garden** tab has been rebuilt around a mystery-flower harvest loop while preserving the original three starting plots, twelve-plot expansion prices, existing flower inventory, coins, XP, and other PawPal systems.
+
+- **Plant:** a mystery seed costs **40 Paw Coins** and grows over **5 minutes**.
+- **Water:** a watering can now costs **10 Paw Coins** and reduces remaining growth by one minute. Watering does **not** improve rarity odds.
+- **Harvest:** the server chooses the flower rarity, variant, and coin reward when planted, but does not transmit that unrevealed information in normal pet responses. The actual flower and payout are shown only after a successful server-validated harvest.
+- **Flower Book:** five discoverable flower types, with per-rarity discovery counts and best payouts, persist in each pet's existing `garden` JSONB column. Players can view their discoveries and the published odds/reward guide directly from Garden.
+- **Visuals:** the six new illustrated raised-bed states (empty, seed, sprout, bud, ready and locked) are shared with **Develop → Garden**. Garden has a grassy outdoor background, fence, flower-bed signs, growing animations, and a compact 3-column mobile/tablet and 6-column desktop layout.
+
+| Rarity | Probability | Paw Coins per harvest |
+|---|---:|---:|
+| Wilted | 10% | 20–30 |
+| Common | 55% | 37–50 |
+| Uncommon | 25% | 55–80 |
+| Rare | 9% | 100–150 |
+| Legendary | 1% | 400–600 |
+
+Expected coin payout is **59.55 coins per 40-coin seed**, before watering costs. Existing growing plots retain their previously assigned rewards so players do not lose progress. Discovery tracking starts with the first harvest after this update; historical flower rarities cannot be reconstructed from a total-harvest count alone.
+
+### Technical notes
+
+- New files: `server/src/gardenRules.ts`, `server/tests/gardenRules.test.ts`, `client/src/GardenBedArt.tsx` and `client/src/GardenPanel.tsx`.
+- Updated: `server/src/index.ts`, `client/src/GardenArt.tsx`, `client/src/Develop.tsx`, `client/src/Develop.css`, `client/src/App.tsx` and `client/src/style.css`.
+- All normal pet responses redact pre-harvest rarity/reward/variant. Harvest replies include a one-time `gardenReveal` receipt with the actual result. Existing Garden JSONB handles discoveries: **no database migration required**.
+- This source archive restores `database/schema.sql` and existing SQL migration files absent from the immediately preceding ZIP; these are not new migrations for Garden.
+- Run `npm run test:garden` in `server/` and `npm run build` in both `client/` and `server/` after installing dependencies (`npm ci`). Deploy both **Vercel and Render**.
+
+---
+
 # PawMail Envelope Color and Unlock Progression Update
 
 - The Classic Letter still adopts the chosen envelope color fully.

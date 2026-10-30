@@ -3246,3 +3246,754 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex]{-webkit-tap-
 .paw-envelope.paw-envelope-celestial{--envelope-theme-base:#dcd9f5}
 .paw-envelope.paw-envelope-butterfly{--envelope-theme-base:#e6ddf3}
 .paw-envelope.paw-envelope-winter{--envelope-theme-base:#e0eef9}
+
+/* Lucky Garden revamp — a shared outdoor setting with miniature raised beds. */
+.paw-garden-panel { --garden-rose:#9c6484; --garden-ink:#76536c; overflow:hidden; }
+.paw-garden-header { display:flex; gap:14px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; margin-bottom:14px; }
+.paw-garden-header-copy h2 { display:flex; align-items:center; gap:9px; margin:3px 0 6px; }
+.paw-garden-header-copy h2 svg { color:#d88ba3; }
+.paw-garden-header-copy p { margin:0; color:#9c738b; font-size:13px; line-height:1.5; }
+.paw-garden-header-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.paw-garden-header-actions button { display:inline-flex; align-items:center; gap:7px; border:1.5px solid #eac3d2; background:#fff9fa; color:#945976; padding:9px 12px; border-radius:13px; font-size:12px; font-weight:800; cursor:pointer; }
+.paw-garden-header-actions button:hover { background:#fce8f1; }
+.paw-garden-header-actions button span { padding:2px 6px; border-radius:8px; background:#f2dbe6; font-size:10px; }
+.paw-garden-stock { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; margin-bottom:16px; }
+.paw-garden-stock > div { display:flex; align-items:center; justify-content:center; gap:9px; min-width:0; border:1px solid #efd9d7; border-radius:15px; padding:10px 6px; background:#fff9f4; }
+.paw-garden-stock > div:nth-child(2) { background:#f0f8fc; }
+.paw-garden-stock > div:nth-child(3) { background:#fdf0f6; }
+.paw-garden-stock > div:nth-child(4) { background:#f1f9ed; }
+.paw-garden-stock svg { flex:0 0 auto; width:32px; height:32px; color:#8eb18a; }
+.paw-garden-stock span { display:grid; gap:2px; min-width:0; }
+.paw-garden-stock strong { font-size:17px; line-height:1.1; color:#76536c; }
+.paw-garden-stock small { font-size:10px; color:#9e7c8d; }
+.paw-garden-landscape { position:relative; isolation:isolate; overflow:hidden; border:2px solid #bad5ab; border-radius:24px; padding:25px 16px 17px; background:linear-gradient(180deg,#d9f4f7 0%,#e3f4d7 19%,#a9d797 36%,#b8dba4 100%); box-shadow:inset 0 4px 13px #ffffff99; }
+.paw-garden-scenery { position:absolute; z-index:-1; inset:0; overflow:hidden; pointer-events:none; }
+.paw-garden-sun { position:absolute; top:20px; right:15%; width:47px; height:47px; border-radius:50%; background:#fff4bd; box-shadow:0 0 0 11px #fff9d65c; }
+.paw-garden-cloud { position:absolute; top:19px; left:11%; width:89px; height:22px; border-radius:99px; background:#fffefa9c; box-shadow:18px -12px 0 -2px #fffefa9c,48px -8px 0 0 #fffefa9c; }
+.paw-garden-cloud.cloud-two { left:auto; right:30%; top:64px; transform:scale(.65); opacity:.8; }
+.paw-garden-hill { position:absolute; top:73px; left:-12%; height:98px; width:72%; border-radius:55% 55% 0 0; background:#9ed08f; opacity:.9; }
+.paw-garden-hill.hill-two { left:44%; top:82px; width:79%; background:#8fc481; }
+.paw-garden-fence { position:absolute; top:132px; left:0; right:0; height:26px; opacity:.42; background:repeating-linear-gradient(90deg,transparent 0 7px,#f9f0d9 7px 17px,transparent 17px 23px),linear-gradient(transparent 8px,#f9f0d9 8px 14px,transparent 14px); }
+.paw-garden-butterfly { position:absolute; right:6%; top:70px; color:#fff2f6; font-size:24px; text-shadow:2px 2px #da86a3; }
+.paw-garden-scene-title { position:relative; z-index:1; display:flex; align-items:center; gap:7px; width:max-content; max-width:100%; padding:8px 13px; border:1px solid #c5d8b0; border-radius:99px; background:#fff9eae8; color:#64836a; font-size:12px; font-weight:900; margin-bottom:16px; box-shadow:0 3px 0 #80aa723d; }
+.paw-garden-scene-title small { font-size:10px; font-weight:700; color:#82957f; margin-left:5px; }
+.paw-garden-bed-grid { position:relative; z-index:1; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px 13px; }
+.paw-garden-bed { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; min-width:0; min-height:227px; padding:31px 9px 11px; border:1px solid #afd29a; border-radius:20px; background:linear-gradient(160deg,#ffffff4d,#f9f5dd35 50%,#7abf7550); box-shadow:0 8px 0 #78ac6740, inset 0 1px 1px #ffffffb5; color:var(--garden-ink); text-align:center; }
+.paw-garden-bed::before { content:''; position:absolute; bottom:44px; left:6%; right:6%; height:28%; border-radius:50%; background:#8fbc81a1; filter:blur(12px); pointer-events:none; }
+.paw-garden-wood-sign { position:absolute; top:9px; left:9px; z-index:2; padding:4px 8px 5px; border:2px solid #926b54; border-radius:6px 6px 9px 9px; background:linear-gradient(#f8d8a5,#d4a379); box-shadow:0 3px 0 #986548; color:#764e3b; text-shadow:0 1px #ffe8c4; letter-spacing:.7px; font-size:9px; font-weight:950; }
+.paw-garden-bed-art { position:relative; width:100%; max-width:245px; flex:1; display:flex; align-items:center; justify-content:center; min-height:112px; }
+.paw-garden-bed-svg { width:100%; max-height:164px; overflow:visible; filter:drop-shadow(0 6px 3px #547b5033); }
+.paw-garden-live-plant { transform-origin:50% 75%; animation:paw-garden-sway 3.8s ease-in-out infinite alternate; }
+@keyframes paw-garden-sway { from{transform:rotate(-2deg)}to{transform:rotate(2deg)} }
+.paw-garden-bud-sparkles { animation:paw-garden-glitter 1.7s ease-in-out infinite alternate; }
+@keyframes paw-garden-glitter { from{opacity:.4}to{opacity:1} }
+.paw-garden-bed-status { position:relative; z-index:1; display:inline-flex; justify-content:center; align-items:center; gap:5px; min-width:0; max-width:100%; padding:5px 8px; border-radius:10px; color:#695e56; background:#fffcefdb; font-size:10px; font-weight:800; white-space:nowrap; }
+.paw-garden-bed-status.is-ready { background:#ffedc3; color:#916329; }
+.paw-garden-plot-action { position:relative; z-index:1; display:inline-flex; justify-content:center; align-items:center; gap:6px; min-height:34px; margin-top:7px; padding:7px 10px; width:100%; border:1px solid #b38f7d; border-radius:11px; background:#fff5e8; color:#825c61; font-weight:900; font-size:11px; cursor:pointer; box-shadow:0 3px 0 #a679654c; }
+.paw-garden-plot-action.plant { background:#fff0e4; }
+.paw-garden-plot-action.harvest { background:#d18caa; border-color:#b67c9a; color:#fff; box-shadow:0 3px 0 #93567866; }
+.paw-garden-plot-action.water { background:#e6f5fa; color:#527f95; border-color:#a9c4d0; }
+.paw-garden-plot-action:disabled { cursor:not-allowed; opacity:.55; }
+.paw-garden-locked-bed { border:2px dashed #94af8c; cursor:pointer; font:inherit; }
+.paw-garden-locked-bed:disabled { cursor:not-allowed; opacity:.7; }
+.paw-garden-locked-label { display:flex; gap:6px; align-items:center; justify-content:center; padding:5px 8px; font-size:11px; font-weight:900; border-radius:9px; background:#fff8ed; }
+.paw-garden-locked-price { display:flex; gap:5px; align-items:center; justify-content:center; width:100%; min-height:34px; margin-top:7px; border:1px solid #bc9c77; background:#f7d49c; border-radius:11px; font-weight:900; font-size:12px; }
+.paw-garden-landscape-foot { display:flex; align-items:center; gap:6px; color:#486d4e; font-size:11px; font-weight:700; line-height:1.45; margin-top:20px; padding:8px 12px; border-radius:11px; background:#e7f2dddb; }
+.paw-garden-landscape-foot svg { flex:none; }
+.paw-garden-supplies { margin-top:20px; }
+.paw-garden-supplies-intro { margin-bottom:11px; }
+.paw-garden-supplies h3 { color:var(--garden-ink); font-size:19px; margin:0 0 5px; }
+.paw-garden-supplies p { color:#9d7d8c; font-size:12px; line-height:1.5; margin:0; }
+.paw-garden-shop-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.paw-garden-shop-card { min-width:0; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; padding:12px; border:1px solid #ecd1d9; background:#fff8f6; border-radius:17px; }
+.paw-garden-shop-heading { display:flex; align-items:center; gap:8px; min-width:0; }
+.paw-garden-shop-heading svg { width:44px; height:44px; flex:none; }
+.paw-garden-shop-heading strong { display:block; font-size:13px; color:#81536f; }
+.paw-garden-shop-heading small { display:block; font-size:11px; color:#96778b; }
+.paw-garden-shop-controls { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+.paw-garden-qty { display:flex; height:34px; border:1px solid #e2b7ca; border-radius:10px; overflow:hidden; background:white; }
+.paw-garden-qty button { width:29px; border:0; border-radius:0; color:#a56786; background:#ffeaf2; font-weight:900; font-size:17px; cursor:pointer; }
+.paw-garden-qty output { min-width:25px; padding-top:7px; font-size:12px; text-align:center; color:#81536f; font-weight:900; }
+.paw-garden-shop-buy { display:flex; align-items:center; justify-content:center; gap:5px; border:0; border-radius:10px; padding:10px 11px; color:white; background:#cf80a8; font-size:11px; font-weight:900; cursor:pointer; white-space:nowrap; }
+.paw-garden-shop-buy:disabled { opacity:.55; cursor:not-allowed; }
+.paw-garden-modal-backdrop { z-index:13000; }
+.paw-garden-guide-modal { width:min(760px,calc(100vw - 22px)); max-height:90dvh; overflow-y:auto; padding:20px; }
+.paw-garden-guide-modal .paw-modal-top p { margin:4px 0 0; font-size:12px; color:#97728c; }
+.paw-garden-guide-tabs { display:flex; flex-wrap:wrap; gap:7px; margin-top:15px; }
+.paw-garden-guide-tabs button { display:inline-flex; align-items:center; gap:6px; padding:9px 12px; border:1px solid #e6bfd0; border-radius:10px; color:#996782; background:#fff6fa; font-size:11px; font-weight:800; cursor:pointer; }
+.paw-garden-guide-tabs button.active { background:#d58eac; border-color:#b8799b; color:white; }
+.paw-garden-discovery-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; margin-top:16px; }
+.paw-garden-discovery { display:flex; align-items:center; gap:12px; min-width:0; border:1px solid #ebd1d9; border-radius:16px; padding:10px; background:#fff9fa; }
+.paw-garden-discovery-art { display:grid; place-items:center; width:90px; height:96px; flex:0 0 90px; background:radial-gradient(circle,#fffbe5,#f7e6f2); border-radius:14px; position:relative; }
+.paw-garden-discovery-art > svg { width:80px; height:86px; }
+.paw-garden-mystery-flower { font-size:46px; font-weight:900; color:#c9b8c1; }
+.paw-garden-discovery-art > svg:last-child:not(:first-child) { position:absolute; right:8px; bottom:9px; width:18px; height:18px; }
+.paw-garden-discovery-info { min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:7px; }
+.paw-garden-discovery-info h3 { margin:0; color:#815b74; font-size:14px; line-height:1.25; }
+.paw-garden-rarity { font-size:10px; line-height:1.2; font-weight:900; padding:5px 9px; border-radius:99px; background:#f4dfea; color:#9e597c; }
+.paw-garden-rarity.rarity-wilted { background:#ebe0dc; color:#8c7167; }
+.paw-garden-rarity.rarity-uncommon { background:#e9dcfb; color:#7861ac; }
+.paw-garden-rarity.rarity-rare { background:#d9f4fb; color:#3b829c; }
+.paw-garden-rarity.rarity-legendary { background:#fff1ba; color:#a06a22; }
+.paw-garden-discovery-info p { display:flex; align-items:center; gap:4px; font-size:11px; line-height:1.25; margin:0; color:#987787; }
+.paw-garden-discovery-info strong { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:#9c7542; }
+.paw-garden-guide-note { color:#957a89; line-height:1.55; font-size:12px; margin:15px 0 0; }
+.paw-garden-reveal { width:min(420px,calc(100vw - 26px)); text-align:center; max-height:90dvh; overflow-y:auto; padding:24px; border:2px solid #eed5c9; background:linear-gradient(#fffdfa,#fff0f6); }
+.paw-garden-reveal-stars { color:#eebd70; font-size:20px; letter-spacing:11px; margin-bottom:6px; }
+.paw-garden-reveal-art { width:185px; height:180px; max-width:58vw; margin:4px auto 8px; display:grid; place-items:center; border-radius:50%; background:radial-gradient(circle,#fff7d9,#f6d8e5 65%,transparent 70%); }
+.paw-garden-reveal-art svg { width:100%; height:100%; filter:drop-shadow(0 5px 3px #aa709c33); }
+.paw-garden-reveal h2 { margin:9px 0 10px; color:#85546e; }
+.paw-garden-reveal-reward { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin:16px 0; padding:12px; background:#fff2d4; border:1px solid #f0d6a3; border-radius:14px; color:#936934; }
+.paw-garden-reveal-reward strong { font-size:18px; }
+.paw-garden-reveal-reward small { font-size:11px; }
+.paw-garden-reveal.rarity-legendary { border-color:#ebc57f; background:linear-gradient(#fffdf4,#fff1cd); }
+.paw-garden-first-find { display:flex; align-items:center; justify-content:center; gap:7px; padding:10px; border-radius:10px; background:#e7f5e5; color:#5c8a66; font-size:12px; font-weight:900; }
+.paw-garden-reveal-close { display:flex; align-items:center; justify-content:center; gap:7px; margin-top:7px; width:100%; padding:12px; border:0; border-radius:12px; background:#d187a8; color:#fff; font-weight:900; cursor:pointer; }
+.paw-garden-view-book { margin-top:9px; background:none; border:0; color:#976d88; font-size:12px; font-weight:800; text-decoration:underline; cursor:pointer; }
+.paw-dark .paw-garden-header-copy p,.paw-dark .paw-garden-supplies p { color:#e9c3d8; }
+.paw-dark .paw-garden-header-actions button { background:#64465a; color:#ffe6f1; border-color:#926d83; }
+.paw-dark .paw-garden-stock > div { background:#5a4655; border-color:#8e6a7c; }
+.paw-dark .paw-garden-stock strong,.paw-dark .paw-garden-supplies h3 { color:#ffe7ee; }
+.paw-dark .paw-garden-stock small { color:#e8c1d3; }
+.paw-dark .paw-garden-shop-card,.paw-dark .paw-garden-discovery { background:#594452; border-color:#8d657a; }
+.paw-dark .paw-garden-shop-heading strong,.paw-dark .paw-garden-discovery-info h3 { color:#ffe3ed; }
+.paw-dark .paw-garden-shop-heading small,.paw-dark .paw-garden-guide-note,.paw-dark .paw-garden-guide-modal .paw-modal-top p { color:#e0bfd0; }
+.paw-dark .paw-garden-guide-modal { background:#453444; }
+.paw-dark .paw-garden-guide-tabs button { background:#654a60; color:#f9dce9; border-color:#977289; }
+.paw-dark .paw-garden-guide-tabs button.active { background:#b87a9a; }
+@media(max-width:1100px) { .paw-garden-bed-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:700px) { .paw-garden-header-actions { width:100%; } .paw-garden-header-actions button { flex:1; justify-content:center; } .paw-garden-bed-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px 9px; } .paw-garden-landscape { padding:18px 8px 13px; } .paw-garden-bed { padding:28px 6px 8px; min-height:195px; border-radius:15px; } .paw-garden-bed-art { min-height:100px; } .paw-garden-bed-svg { max-height:135px; } .paw-garden-stock { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; } .paw-garden-shop-grid { grid-template-columns:1fr; } }
+@media(max-width:520px) { .paw-garden-discovery-grid { grid-template-columns:1fr; } .paw-garden-guide-modal { padding:14px; } .paw-garden-discovery-art { width:72px; height:79px; flex-basis:72px; } .paw-garden-discovery-art > svg { width:65px; height:72px; } }
+@media(max-width:370px) { .paw-garden-bed { padding:28px 4px 7px; min-height:185px; } .paw-garden-bed-status { font-size:9px; padding:5px 4px; } .paw-garden-plot-action { font-size:10px; padding:6px 4px; } .paw-garden-shop-card { padding:9px; } .paw-garden-shop-heading svg { width:34px; height:34px; } .paw-garden-shop-buy { font-size:10px; } .paw-garden-stock > div { gap:6px; } }
+@media(prefers-reduced-motion:reduce) { .paw-garden-live-plant,.paw-garden-bud-sparkles { animation:none; } }
+
+
+/* Lucky Garden — compact beds and mobile-friendly supplies (October 2026). */
+.paw-garden-bed-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px 8px;
+}
+.paw-garden-bed {
+    min-height: 163px;
+    padding: 26px 5px 8px;
+    border-radius: 14px;
+}
+.paw-garden-wood-sign {
+    top: 6px;
+    left: 6px;
+    padding: 3px 5px;
+    font-size: 8px;
+}
+.paw-garden-bed-art {
+    min-height: 78px;
+}
+.paw-garden-bed-svg {
+    max-height: 113px;
+}
+.paw-garden-bed-status {
+    min-height: 28px;
+    padding: 4px 3px;
+    font-size: 9px;
+    line-height: 1.15;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.paw-garden-plot-action,
+.paw-garden-locked-price {
+    min-height: 31px;
+    padding: 6px 3px;
+    margin-top: 5px;
+    font-size: 9px;
+    line-height: 1.15;
+    gap: 3px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.paw-garden-locked-label {
+    min-height: 28px;
+    font-size: 9px;
+    padding: 4px 3px;
+    gap: 3px;
+}
+.paw-garden-plot-action svg,
+.paw-garden-locked-label svg,
+.paw-garden-locked-price svg,
+.paw-garden-bed-status svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+.paw-garden-shop-grid {
+    align-items: stretch;
+}
+.paw-garden-shop-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 10px;
+}
+.paw-garden-shop-controls {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+.paw-garden-qty {
+    min-width: 0;
+    justify-content: space-between;
+}
+.paw-garden-shop-buy {
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.2;
+    text-align: center;
+}
+@media (max-width: 1100px) {
+    .paw-garden-bed-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 620px;
+        margin: 0 auto;
+    }
+}
+@media (max-width: 700px) {
+    .paw-garden-bed-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 9px 6px;
+    }
+    .paw-garden-landscape {
+        padding: 17px 6px 13px;
+    }
+    .paw-garden-bed {
+        padding: 24px 3px 6px;
+        min-height: 151px;
+        border-radius: 12px;
+    }
+    .paw-garden-bed-art {
+        min-height: 69px;
+    }
+    .paw-garden-bed-svg {
+        max-height: 96px;
+    }
+    .paw-garden-bed-status {
+        font-size: 8px;
+        min-height: 27px;
+    }
+    .paw-garden-plot-action,
+    .paw-garden-locked-price {
+        font-size: 8.5px;
+        min-height: 30px;
+    }
+    .paw-garden-shop-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+    .paw-garden-shop-card {
+        padding: 12px;
+    }
+    .paw-garden-shop-heading {
+        gap: 10px;
+    }
+    .paw-garden-shop-controls {
+        grid-template-columns: minmax(94px, auto) minmax(0, 1fr);
+    }
+    .paw-garden-qty {
+        height: 38px;
+    }
+    .paw-garden-qty button {
+        width: 32px;
+    }
+    .paw-garden-qty output {
+        padding-top: 9px;
+    }
+    .paw-garden-shop-buy {
+        padding: 8px 10px;
+        min-height: 38px;
+        font-size: 12px;
+    }
+}
+@media (max-width: 370px) {
+    .paw-garden-bed-grid {
+        gap: 8px 4px;
+    }
+    .paw-garden-bed {
+        min-height: 141px;
+        padding: 23px 2px 6px;
+    }
+    .paw-garden-wood-sign {
+        font-size: 7px;
+        padding: 2px 4px;
+    }
+    .paw-garden-bed-art {
+        min-height: 61px;
+    }
+    .paw-garden-bed-svg {
+        max-height: 83px;
+    }
+    .paw-garden-bed-status {
+        font-size: 7.5px;
+        min-height: 26px;
+    }
+    .paw-garden-plot-action,
+    .paw-garden-locked-price,
+    .paw-garden-locked-label {
+        font-size: 8px;
+    }
+    .paw-garden-plot-action svg,
+    .paw-garden-locked-label svg,
+    .paw-garden-locked-price svg,
+    .paw-garden-bed-status svg {
+        width: 10px;
+        height: 10px;
+    }
+    .paw-garden-shop-controls {
+        grid-template-columns: minmax(94px, auto) minmax(0, 1fr);
+        gap: 6px;
+    }
+}
+
+
+/* Unified SVG heading treatment across all main gameplay pages. */
+.paw-section-title {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    max-width: 100%;
+    margin: 3px 0 14px;
+}
+.paw-section-title > svg {
+    display: block;
+    flex: 0 0 23px;
+    width: 23px;
+    height: 23px;
+    color: #d88ba3;
+    stroke: currentColor;
+}
+.paw-garden-header-copy .paw-section-title {
+    margin: 3px 0 6px;
+}
+.paw-dark .paw-section-title > svg {
+    color: #e9afcf;
+}
+
+/* The timer has one stable numeric line; stage detail remains in its accessible label. */
+.paw-garden-bed-status {
+    box-sizing: border-box;
+    flex: 0 0 28px;
+    width: 100%;
+    height: 28px;
+    min-height: 28px;
+    max-height: 28px;
+    overflow: hidden;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.paw-garden-bed-status svg {
+    flex: 0 0 auto;
+}
+.paw-garden-countdown {
+    display: inline-block;
+    min-width: 5ch;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+    white-space: nowrap;
+    text-align: center;
+}
+
+/* Tablets navigate with the same collapsible menu as phones. */
+@media (max-width: 1100px) {
+    .layout {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+    .sidebar:not(.menu-open) {
+        display: none !important;
+    }
+    .sidebar.menu-open {
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        max-height: 70dvh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        animation: paw-menu-reveal .25s cubic-bezier(.2,.8,.2,1) both;
+    }
+    .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .paw-account-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) 40px;
+    }
+    .paw-account-summary .mobile-menu-toggle {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        min-height: 40px;
+        margin: auto 0;
+        padding: 0;
+        border: 0 !important;
+        background: transparent !important;
+        color: inherit !important;
+        box-shadow: none !important;
+    }
+}
+@media (max-width: 700px) {
+    .sidebar nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .heading.paw-dashboard-heading {
+        position: relative;
+    }
+    .paw-dashboard-greeting {
+        padding-right: 43px;
+    }
+    .paw-account-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .paw-account-summary .mobile-menu-toggle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+        min-height: 38px;
+    }
+}
+
+/* All four stock counters stay together in one compact mobile / small-tablet row. */
+@media (max-width: 700px) {
+    .paw-garden-stock {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 5px;
+    }
+    .paw-garden-stock > div {
+        box-sizing: border-box;
+        min-width: 0;
+        padding: 7px 2px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        border-radius: 11px;
+    }
+    .paw-garden-stock svg {
+        width: 23px;
+        height: 23px;
+    }
+    .paw-garden-stock span {
+        justify-items: center;
+        gap: 1px;
+        width: 100%;
+        text-align: center;
+    }
+    .paw-garden-stock strong {
+        font-size: 14px;
+        line-height: 1.15;
+    }
+    .paw-garden-stock small {
+        font-size: clamp(7px, 2.1vw, 9px);
+        line-height: 1.15;
+        white-space: nowrap;
+        letter-spacing: -.15px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sidebar.menu-open {
+        animation: none;
+    }
+}
+
+/* Kitchen 3: illustrated recipe discovery studio — shared art between game and /develop. */
+.kitchen-revamp{--k3-pink:#d38dad;--k3-ink:#6c4c5e;--k3-line:#f0d7e1;--k3-soft:#fff6f9;min-width:0}
+.kitchen-revamp .k3-active-bar{display:flex;align-items:center;gap:11px;background:#fff3e6;border:1px solid #eecfac;border-radius:14px;padding:10px;margin-bottom:15px}
+.kitchen-revamp .k3-active-art{height:56px;width:57px;flex:0 0 57px}
+.kitchen-revamp .k3-active-bar>div:nth-child(2){flex:1;min-width:0;display:grid;gap:3px}
+.kitchen-revamp .k3-active-bar b{font-size:12px}.kitchen-revamp .k3-active-bar small{color:#9d7d7a;font-size:10px}
+.kitchen-revamp .k3-active-bar button{min-width:105px;padding:10px 12px;font-size:12px}
+.kitchen-revamp .kitchen-shelf-tabs.k3-tabs{grid-template-columns:repeat(4,minmax(0,1fr));max-width:none;width:100%;position:relative;top:auto;z-index:1;background:#fff5f9;box-shadow:none;margin:12px 0 18px}
+.kitchen-revamp .k3-tabs button{font-size:12px;min-height:44px;gap:6px}.kitchen-revamp .k3-tabs button svg{flex-shrink:0}
+.kitchen-revamp .k3-section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 13px}
+.kitchen-revamp .k3-section-heading h3{margin:0;font-size:20px;color:#855876}
+.kitchen-revamp .k3-section-heading p{margin:3px 0 0;font-size:12px;color:#a38595}
+.kitchen-revamp .k3-filters{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:13px}
+.kitchen-revamp .k3-search{display:flex;align-items:center;gap:7px;flex:1 1 190px;min-width:0;background:#fffafd;border:1px solid #efd7e1;border-radius:13px;padding:0 11px;color:#b8819d}
+.kitchen-revamp .k3-search input{border:0;background:transparent;outline:0;box-shadow:none;min-width:0;padding:10px 2px;font-size:13px}
+.kitchen-revamp .k3-filter-buttons{display:flex;align-items:center;gap:5px}
+.kitchen-revamp .k3-filter-buttons button{border:1px solid #ead2e1;border-radius:11px;background:#fff8fb;color:#986984;padding:9px 11px;font-size:12px;font-weight:800}
+.kitchen-revamp .k3-filter-buttons button.active{background:#f2c6db;border-color:#d59bb8;color:#7b3b5c}
+.kitchen-revamp .k3-recipe-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr));gap:11px}
+.kitchen-revamp .k3-recipe{display:flex;align-items:flex-start;gap:12px;min-width:0;padding:13px;background:#fffafd;border:1px solid #f1dbe5;border-radius:17px;box-shadow:0 4px 13px #ad7f9720}
+.kitchen-revamp .k3-recipe.locked{background:linear-gradient(150deg,#fff9fb,#faf5fd)}
+.kitchen-revamp .k3-recipe-art{position:relative;width:89px;height:92px;flex:0 0 89px;border-radius:15px;background:radial-gradient(ellipse at 50% 20%,#fff9e7,#fae0ec);display:grid;place-items:center;padding:6px}
+.kitchen-revamp .k3-recipe-art svg{width:100%;height:100%}.kitchen-revamp .k3-recipe-art>.k3-mystery-silhouette{width:100%;height:100%;filter:grayscale(1) brightness(.8);opacity:.23;overflow:hidden}
+.kitchen-revamp .k3-recipe-art>.k3-recipe-lock{position:absolute;width:30px;height:30px;color:#92769d;filter:drop-shadow(0 2px 1px #fff)}
+.kitchen-revamp .k3-recipe-details{min-width:0;flex:1;display:flex;flex-direction:column;gap:7px}
+.kitchen-revamp .k3-title-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:20px}
+.kitchen-revamp .k3-title-row b{font-size:13px;color:#83546c}
+.kitchen-revamp .k3-starter-chip{font-size:9px;font-weight:800;background:#e9f5df;color:#5f895e;border-radius:15px;padding:3px 7px}
+.kitchen-revamp .k3-ingredients-list{display:flex;flex-wrap:wrap;gap:4px}
+.kitchen-revamp .k3-ingredients-list>span{display:inline-flex;align-items:center;gap:3px;border:1px solid #e3bdd0;background:#fff0f4;border-radius:16px;font-size:9px;font-weight:750;color:#a45b79;white-space:nowrap;padding:2px 5px}
+.kitchen-revamp .k3-ingredients-list>span.available{border-color:#b9d8be;background:#f0fcf1;color:#4d8159}
+.kitchen-revamp .k3-ingredients-list>span span{width:17px;height:17px;flex:0 0 17px}
+.kitchen-revamp .k3-benefits{display:flex;flex-wrap:wrap;gap:4px 7px}
+.kitchen-revamp .k3-benefits span{display:flex;align-items:center;gap:3px;font-size:10px;color:#aa738d}
+.kitchen-revamp .k3-record{display:block;font-size:10px;color:#b39ba6}
+.kitchen-revamp .k3-clue{display:flex;align-items:flex-start;flex-wrap:wrap;gap:5px;color:#927b98;font-size:11px;line-height:1.4}
+.kitchen-revamp .k3-clue svg{flex:0 0 14px;margin-top:1px}
+.kitchen-revamp .k3-clue>span{flex:1 1 160px}
+.kitchen-revamp .k3-clue small{width:100%;color:#9f8da6;font-size:10px}
+.kitchen-revamp .k3-recipe-buttons{display:flex;gap:6px;margin-top:auto;padding-top:3px;min-width:0}
+.kitchen-revamp .k3-recipe-buttons button{min-width:0;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:9px 7px;font-size:11px;line-height:1.25;white-space:normal}
+.kitchen-revamp .k3-recipe-buttons button svg{flex-shrink:0}
+.kitchen-revamp .k3-recipe-buttons .secondary{background:#fff4e8;color:#996d55;border:1px solid #edd3b4}
+.kitchen-revamp .k3-experiment-layout{display:grid;grid-template-columns:minmax(235px,.85fr) minmax(0,1.15fr);gap:14px;align-items:start}
+.kitchen-revamp .k3-experiment-bench,.kitchen-revamp .k3-experiment-pantry{border:1px solid #eed6e2;border-radius:19px;background:#fff9fc;padding:16px;min-width:0}
+.kitchen-revamp .k3-experiment-bench{text-align:center;background:linear-gradient(160deg,#fff0f7,#fffaf5)}
+.kitchen-revamp .k3-bench-art{position:relative;width:140px;height:125px;margin:0 auto 5px}
+.kitchen-revamp .k3-bench-art svg:first-child{width:100%;height:100%}
+.kitchen-revamp .k3-bench-art svg:last-child{position:absolute;width:46px;height:46px;right:-5px;top:4px}
+.kitchen-revamp .k3-experiment-layout h4{margin:8px 0 10px;color:#8c557b;font-size:15px}
+.kitchen-revamp .k3-selected{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;min-height:65px;border:1px dashed #dbb4cb;border-radius:13px;padding:9px;background:#ffffffa8}
+.kitchen-revamp .k3-selected>p{font-size:12px;margin:0}
+.kitchen-revamp .k3-selected button{display:flex;align-items:center;gap:3px;background:#ffedf5;border:1px solid #e8c8d9;border-radius:18px;padding:4px 7px 4px 3px;font-size:10px;color:#8b577a;font-weight:750}
+.kitchen-revamp .k3-selected button>svg{width:13px}.kitchen-revamp .k3-selected button>svg:first-child{display:none}
+.kitchen-revamp .k3-selected button svg{flex-shrink:0}
+.kitchen-revamp .k3-selected button>span:first-child{width:24px;height:24px;display:inline-flex}
+.kitchen-revamp .k3-experiment-disclaimer{font-size:11px;color:#978094;margin:12px 0;line-height:1.45}
+.kitchen-revamp .k3-experiment-action{width:100%;display:inline-flex;gap:7px;align-items:center;justify-content:center;padding:12px 8px;font-size:12px}
+.kitchen-revamp .k3-experiment-small-actions{display:flex;gap:7px;justify-content:center;margin-top:8px}
+.kitchen-revamp .k3-experiment-small-actions button{flex:1;font-size:11px}
+.kitchen-revamp .k3-ingredient-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.kitchen-revamp .k3-ingredient-choices button{position:relative;border:1px solid #ebcfdd;border-radius:13px;background:#fffefd;min-width:0;min-height:103px;padding:8px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#76546a}
+.kitchen-revamp .k3-ingredient-choices button.selected{background:#ffe7f1;border-color:#cd7da5;box-shadow:0 0 0 2px #f5c3dc}
+.kitchen-revamp .k3-ingredient-choices button:disabled:not(.selected){opacity:.5}
+.kitchen-revamp .k3-choice-art{width:48px;height:47px;display:block}
+.kitchen-revamp .k3-ingredient-choices b{font-size:11px;text-align:center;line-height:1.15}
+.kitchen-revamp .k3-ingredient-choices small{font-size:9px;color:#a58b9b}
+.kitchen-revamp .k3-choice-check{position:absolute;right:5px;top:5px;color:#a84e7e}
+.kitchen-revamp .k3-hint-title{display:flex;align-items:center;gap:8px;margin:23px 0 9px;color:#936180}
+.kitchen-revamp .k3-hints{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(205px,100%),1fr));gap:8px}
+.kitchen-revamp .k3-hints>div{display:grid;grid-template-columns:17px minmax(0,1fr);gap:4px 6px;padding:10px;background:#fffafc;border:1px solid #e9d8e1;border-radius:12px;min-width:0;color:#ac87a2}
+.kitchen-revamp .k3-hints svg{margin-top:3px}.kitchen-revamp .k3-hints p{margin:0;font-size:11px;line-height:1.4}.kitchen-revamp .k3-hints small{grid-column:2;font-size:10px;color:#a18d9e}
+.kitchen-revamp .k3-market-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:11px}
+.kitchen-revamp .k3-market-card{display:grid;grid-template-columns:72px minmax(0,1fr);grid-template-rows:auto auto;gap:6px 10px;border-radius:16px;border:1px solid #efdce6;background:#fffafd;padding:11px;align-items:center;min-width:0}
+.kitchen-revamp .k3-market-art{width:72px;height:75px;grid-row:1 / 3;border-radius:13px;background:#fff0f5;padding:7px}
+.kitchen-revamp .k3-market-copy{display:grid;gap:3px;min-width:0}.kitchen-revamp .k3-market-copy>b{font-size:13px;color:#885875}
+.kitchen-revamp .k3-market-copy small{font-size:11px;color:#96798c}.kitchen-revamp .k3-market-copy span{font-size:11px;color:#b27690;font-weight:700}
+.kitchen-revamp .k3-market-buy{display:flex;gap:7px;align-items:center;min-width:0}
+.kitchen-revamp .k3-market-buy>.primary{flex:1;min-width:0;font-size:11px;padding:9px 5px;white-space:nowrap}
+.kitchen-revamp .k3-qty{display:flex;align-items:center;border-radius:10px;border:1px solid #eccedd;background:#fff;overflow:hidden;flex:none}
+.kitchen-revamp .k3-qty button{display:grid;place-items:center;border:0;background:#fff2f8;color:#a65b80;width:29px;height:34px;padding:0}
+.kitchen-revamp .k3-qty>span{min-width:25px;text-align:center;font-size:11px;font-variant-numeric:tabular-nums;font-weight:800}
+.kitchen-revamp .k3-pantry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:11px}
+.kitchen-revamp .k3-pantry-card{display:flex;align-items:center;gap:10px;border:1px solid #eedae3;background:#fff9fc;border-radius:14px;padding:9px;min-width:0}
+.kitchen-revamp .k3-pantry-art{width:64px;height:65px;flex:0 0 64px;border-radius:12px;background:#fff0f6;padding:4px}
+.kitchen-revamp .k3-pantry-card>div:nth-child(2){flex:1;min-width:0;display:grid;gap:4px}
+.kitchen-revamp .k3-pantry-card b{font-size:12px;color:#8b5874}.kitchen-revamp .k3-pantry-card small{font-size:10px;color:#a18696}
+.kitchen-revamp .k3-pantry-card button{display:flex;align-items:center;gap:5px;font-size:11px;padding:10px 8px}
+.kitchen-revamp .k3-empty{display:grid;justify-items:center;gap:5px;border:1px dashed #e6bad0;border-radius:15px;padding:27px;text-align:center;background:#fff9fb;color:#9d7691}
+.kitchen-revamp .k3-empty h4{margin:0}.kitchen-revamp .k3-empty p{font-size:12px;margin:0 0 9px}
+.kitchen-revamp .k3-game-modal{height:auto;max-height:calc(100dvh - 20px);width:min(500px,100%);display:flex;gap:0;overflow-y:auto;padding:20px}
+.kitchen-revamp .k3-game-modal .kitchen-game-head{min-height:65px}
+.kitchen-revamp .k3-game-modal .kitchen-game-head h3{font-size:17px}
+.kitchen-revamp .k3-game-modal .kitchen-game-steps{margin:10px 0 6px}
+.kitchen-revamp .k3-game-modal .kitchen-game-instructions{margin:6px 0 10px;font-size:12px;min-height:0;line-height:1.4}
+.kitchen-revamp .k3-game-stage{height:210px;min-height:160px;flex:0 0 210px;position:relative;overflow:hidden;border:2px solid #eac8d8;border-radius:17px;background:radial-gradient(ellipse at 50% 7%,#fffefc,#fff1e6 80%,#f5d8cb);box-shadow:inset 0 -8px #f1d6ca}
+.kitchen-revamp .k3-game-prop{position:absolute;inset:20px auto auto 50%;transform:translateX(-50%);width:190px;height:165px;opacity:.92}
+.kitchen-revamp .k3-game-food{position:absolute;inset:auto auto 15px 50%;transform:translateX(-50%);width:102px;height:90px;filter:drop-shadow(0 4px 3px #9f708b33)}
+.kitchen-revamp .k3-game-effect{position:absolute;right:17px;top:16px;width:55px;height:55px;opacity:.8;pointer-events:none}
+.kitchen-revamp .k3-chopping-knife{position:absolute;width:95px;height:95px;right:-48px;top:5px;transform:rotate(-20deg);filter:drop-shadow(0 3px 2px #5d496755)}
+.kitchen-revamp .k3-timing{position:absolute;left:10%;bottom:12px;width:80%;height:13px;background:#f2d2df;border:1px solid #df9eba;border-radius:99px}
+.kitchen-revamp .k3-timing-zone{position:absolute;left:40%;width:20%;height:100%;border-radius:5px;background:#a6d9ab;box-shadow:0 0 0 1px #75b98e}
+.kitchen-revamp .k3-timing-pointer{position:absolute;top:-5px;height:21px;width:5px;border-radius:5px;background:#98567b;left:0;transform:translate3d(0,0,0);box-shadow:0 0 0 1px white}
+.kitchen-revamp .k3-oven-status{position:absolute;right:11px;top:16px;display:grid;gap:5px;min-width:110px;max-width:42%;border-radius:12px;background:#ffffffdf;padding:8px;text-align:center}
+.kitchen-revamp .k3-oven-status>span{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;color:#a76b70}
+.kitchen-revamp .k3-oven-status small{font-size:9px;line-height:1.3;color:#936a83}
+.kitchen-revamp .k3-oven-track{height:6px;background:#f5dadd;border-radius:10px;overflow:hidden}
+.kitchen-revamp .k3-oven-track>div{height:100%;background:linear-gradient(90deg,#f4be76,#ea8c92);border-radius:10px}
+.kitchen-revamp .k3-pour-track{position:absolute;right:15%;top:21px;width:45px;height:132px;border:3px solid #a3cad8;border-radius:8px 8px 18px 18px;background:#ffffff80;overflow:hidden}
+.kitchen-revamp .k3-pour-track>div:last-child{position:absolute;bottom:0;width:100%;background:linear-gradient(#f5c5db,#e6a0c1);transition:height .08s linear}
+.kitchen-revamp .k3-pour-target{position:absolute;top:25%;height:2px;width:100%;background:#cd668f;z-index:1}
+.kitchen-revamp .k3-stage-sequence{position:absolute;bottom:7px;left:10px;right:10px;display:flex;justify-content:space-between;font-size:11px;font-weight:800;color:#996781;background:#fffef8c9;border-radius:9px;padding:7px}
+.kitchen-revamp .k3-game-actions{min-height:62px;display:flex;align-items:center;justify-content:center;padding-top:12px}
+.kitchen-revamp .k3-game-actions>.primary{width:100%;max-width:300px;font-size:13px}
+.kitchen-revamp .k3-game-actions button{touch-action:manipulation}
+.kitchen-revamp .k3-bake-controls{display:flex;justify-content:center;gap:11px;width:100%}
+.kitchen-revamp .k3-bake-controls button{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;max-width:170px;min-height:43px;border:1px solid #e7bcce;border-radius:12px;background:#ffebf3;color:#935b79;font-weight:800}
+.kitchen-revamp .k3-pour-button{touch-action:none;user-select:none;min-height:47px}
+.kitchen-revamp .k3-pour-button.holding{background:#ba7ca6;box-shadow:inset 0 3px 7px #6e4a6b66}
+.kitchen-revamp .k3-order-controls,.kitchen-revamp .k3-rhythm,.kitchen-revamp .k3-wash{width:100%}
+.kitchen-revamp .k3-order-controls p,.kitchen-revamp .k3-rhythm p{margin:1px 0 7px;text-align:center;font-size:11px;font-weight:800;color:#a16d8b;white-space:pre-wrap}
+.kitchen-revamp .k3-order-controls>div,.kitchen-revamp .k3-rhythm>div{display:flex;justify-content:center;gap:7px}
+.kitchen-revamp .k3-order-controls button{display:flex;gap:4px;align-items:center;justify-content:center;flex:1;max-width:130px;border:1px solid #e2bbcd;background:#fff2f7;border-radius:11px;padding:6px;color:#87516b;font-weight:800;font-size:11px;min-height:43px}
+.kitchen-revamp .k3-order-controls button svg{width:29px;height:29px}
+.kitchen-revamp .k3-rhythm button{border:1px solid #dbb8cc;border-radius:11px;width:52px;height:46px;background:#ffedf5;color:#995e86;font-size:23px;font-weight:800}
+.kitchen-revamp .k3-rhythm button.hit{background:#e3f3e6;color:#519b68}
+.kitchen-revamp .k3-wash{display:flex;align-items:center;gap:8px}
+.kitchen-revamp .k3-wash-pad{flex:1;min-width:0;display:flex;align-items:center;gap:7px;justify-content:center;border:1px dashed #c6a0c0;background:#f8f0fb;border-radius:10px;padding:5px;touch-action:none;user-select:none;color:#98728d;font-size:11px;font-weight:800}
+.kitchen-revamp .k3-wash-pad svg{width:31px;height:31px}.kitchen-revamp .k3-wash>button{padding:10px;font-size:11px}
+.kitchen-revamp .k3-game-bottom{display:flex;justify-content:space-between;gap:8px;align-items:center;min-height:32px;padding-top:9px}
+.kitchen-revamp .k3-feedback{color:#9e758e;font-size:11px;line-height:1.35}
+.kitchen-revamp .k3-mistakes{white-space:nowrap;font-size:10px;color:#ad7690}
+.kitchen-revamp .k3-result{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;width:min(430px,100%);max-height:calc(100dvh - 20px);overflow-y:auto;border-radius:25px;padding:22px 23px;background:linear-gradient(155deg,#fff5fa,#fffaf0);box-shadow:0 22px 70px #2c1b2a55}
+.kitchen-revamp .k3-result-art{position:relative;width:156px;height:137px;margin:0 auto 2px}
+.kitchen-revamp .k3-result-art>svg{width:100%;height:100%}.kitchen-revamp .k3-result-sparkle{position:absolute;right:-12px;top:-8px;width:63px;height:63px}
+.kitchen-revamp .k3-result>small{display:flex;align-items:center;gap:5px;font-size:11px;letter-spacing:1.2px;font-weight:850;color:#af6896}
+.kitchen-revamp .k3-result h2{color:#8d5778;margin:2px 0;font-size:24px}
+.kitchen-revamp .k3-rating{font-size:18px;color:#9a7cc1}.kitchen-revamp .k3-rating-score{font-size:13px;color:#a27993}
+.kitchen-revamp .k3-result p{font-size:12px;line-height:1.55;max-width:280px;margin:2px 0 8px}
+.kitchen-revamp .k3-result>.primary{min-width:180px}
+.develop-kitchen-gallery h2{margin:20px 0 13px;font-size:19px}
+@media(max-width:1000px){.kitchen-revamp .k3-experiment-layout{grid-template-columns:1fr}.kitchen-revamp .k3-ingredient-choices{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:700px){
+ .kitchen-revamp .k3-tabs button{font-size:10px;gap:4px;min-height:41px;padding:5px 3px}
+ .kitchen-revamp .k3-tabs button svg{width:15px;height:15px}
+ .kitchen-revamp .k3-recipe-grid,.kitchen-revamp .k3-market-grid{grid-template-columns:minmax(0,1fr)}
+ .kitchen-revamp .k3-experiment-layout{grid-template-columns:minmax(0,1fr)}
+ .kitchen-revamp .k3-ingredient-choices{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .kitchen-revamp .k3-active-bar{flex-wrap:wrap}.kitchen-revamp .k3-active-bar button{margin-left:auto}
+ .kitchen-revamp .k3-game-modal{padding:14px}
+ .kitchen-revamp .k3-game-stage{height:180px;min-height:180px;flex-basis:180px}
+ .kitchen-revamp .k3-game-prop{width:166px;height:144px;top:13px}
+ .kitchen-revamp .k3-game-food{width:82px;height:74px}
+ .kitchen-revamp .k3-game-effect{width:43px;height:43px}
+ .kitchen-revamp .k3-oven-status{right:8px;top:9px}
+}
+@media(max-width:390px){
+ .kitchen-revamp .k3-tabs button{font-size:9px;padding:5px 2px;gap:3px;flex-direction:column}
+ .kitchen-revamp .k3-tabs button svg{width:16px;height:16px}
+ .kitchen-revamp .k3-recipe{gap:8px;padding:9px}
+ .kitchen-revamp .k3-recipe-art{width:61px;height:70px;flex-basis:61px;padding:3px}
+ .kitchen-revamp .k3-recipe-details{gap:5px}
+ .kitchen-revamp .k3-title-row b{font-size:12px}
+ .kitchen-revamp .k3-ingredients-list>span{font-size:8px}
+ .kitchen-revamp .k3-recipe-buttons button{font-size:10px;padding:8px 4px}
+ .kitchen-revamp .k3-filter-buttons button{font-size:10px;padding:7px 8px}
+ .kitchen-revamp .k3-market-card{grid-template-columns:57px minmax(0,1fr);gap:5px 7px;padding:8px}
+ .kitchen-revamp .k3-market-art{width:57px;height:65px}
+ .kitchen-revamp .k3-market-buy>.primary{font-size:10px}
+ .kitchen-revamp .k3-qty button{width:25px}
+ .kitchen-revamp .k3-qty>span{min-width:22px}
+ .kitchen-revamp .k3-game-modal .kitchen-game-steps{margin:5px 0}
+ .kitchen-revamp .k3-game-modal .kitchen-game-instructions{font-size:11px}
+ .kitchen-revamp .k3-game-stage{height:151px;min-height:151px;flex-basis:151px}
+ .kitchen-revamp .k3-game-prop{height:130px;width:150px;top:7px}
+ .kitchen-revamp .k3-game-food{width:74px;height:68px;bottom:7px}
+ .kitchen-revamp .k3-order-controls button{padding:4px 2px;font-size:10px}
+ .kitchen-revamp .k3-order-controls button svg{width:23px;height:23px}
+ .kitchen-revamp .k3-pantry-card{gap:6px;padding:7px}.kitchen-revamp .k3-pantry-art{width:52px;height:52px;flex-basis:52px}
+ .kitchen-revamp .k3-pantry-card button{font-size:10px;padding:8px 6px}
+}
+.paw-dark .kitchen-revamp .k3-recipe,.paw-dark .kitchen-revamp .k3-experiment-bench,.paw-dark .kitchen-revamp .k3-experiment-pantry,.paw-dark .kitchen-revamp .k3-market-card,.paw-dark .kitchen-revamp .k3-pantry-card,.paw-dark .kitchen-revamp .k3-empty,.paw-dark .kitchen-revamp .k3-hints>div{background:#413447;border-color:#70566e}
+.paw-dark .kitchen-revamp .k3-tabs,.paw-dark .kitchen-revamp .k3-search,.paw-dark .kitchen-revamp .k3-filter-buttons button,.paw-dark .kitchen-revamp .k3-ingredient-choices button{background:#4b3a51;border-color:#765d77;color:#ffe1ee}
+.paw-dark .kitchen-revamp .k3-recipe.locked{background:#45394c}
+.paw-dark .kitchen-revamp .k3-recipe-art,.paw-dark .kitchen-revamp .k3-market-art,.paw-dark .kitchen-revamp .k3-pantry-art{background:#5b4456}
+.paw-dark .kitchen-revamp .k3-experiment-layout h4,.paw-dark .kitchen-revamp .k3-hint-title{color:#f7c6df}
+.paw-dark .kitchen-revamp .k3-selected{background:#554257;border-color:#916d89}
+.paw-dark .kitchen-revamp .k3-result{background:linear-gradient(160deg,#423344,#534051)}
+.paw-dark .kitchen-revamp .k3-result h2{color:#fbdcec}
+@media(prefers-reduced-motion:reduce){.kitchen-revamp *, .kitchen-revamp *::before, .kitchen-revamp *::after{animation:none!important;transition:none!important}}
+
+
+/* Kitchen refinement: the recipe artwork is a full-height card panel instead of
+   a thumbnail above the actions. It grows with long recipe descriptions. */
+.kitchen-revamp .k3-recipe-grid{
+    grid-template-columns:repeat(auto-fit,minmax(min(430px,100%),1fr));
+    align-items:stretch;
+    gap:13px;
+}
+.kitchen-revamp .k3-recipe{
+    align-items:stretch;
+    gap:0;
+    padding:0;
+    overflow:hidden;
+    min-height:203px;
+}
+.kitchen-revamp .k3-recipe-art{
+    align-self:stretch;
+    width:clamp(150px,34%,190px);
+    height:auto;
+    min-height:203px;
+    flex:0 0 clamp(150px,34%,190px);
+    border-radius:0;
+    padding:9px;
+    overflow:hidden;
+    isolation:isolate;
+    background:radial-gradient(ellipse at 50% 35%,#fff9e7,#f9dbe9 92%);
+}
+.kitchen-revamp .k3-recipe-art>svg:first-child,
+.kitchen-revamp .k3-mystery-silhouette>svg{
+    display:block;
+    width:100%;
+    height:100%;
+    transform:scale(1.22);
+    transform-origin:center;
+}
+.kitchen-revamp .k3-recipe-art>.k3-mystery-silhouette{overflow:visible}
+.kitchen-revamp .k3-recipe-art>.k3-recipe-lock{transform:none}
+.kitchen-revamp .k3-recipe-details{padding:14px;justify-content:flex-start;gap:9px;min-width:0}
+.kitchen-revamp .k3-recipe-buttons{margin-top:auto;padding-top:7px}
+.kitchen-revamp .k3-recipe-buttons button{min-height:37px}
+/* Four equal, centered section buttons; the Pantry badge never pushes its label. */
+.kitchen-revamp .kitchen-shelf-tabs.k3-tabs{margin:8px 0 19px;gap:7px}
+.kitchen-revamp .k3-tabs button{position:relative;min-width:0;min-height:46px;padding:8px;gap:7px;line-height:1.2;text-align:center;white-space:normal}
+.kitchen-revamp .k3-tabs button>svg{flex:0 0 18px;width:18px;height:18px}
+.kitchen-revamp .k3-tab-label{display:block;min-width:0;font-size:inherit;background:none;border:0;padding:0;overflow-wrap:normal}
+.kitchen-revamp .k3-tabs .k3-tab-count{
+    position:absolute;right:2px;top:2px;min-width:17px;height:17px;
+    border-radius:99px;padding:1px 3px;font-size:9px;line-height:15px;
+    background:#fff7fc;color:#985575;font-weight:850;
+}
+.kitchen-revamp .k3-timing-pointer{will-change:transform;pointer-events:none}
+@media(max-width:900px){
+    .kitchen-revamp .k3-recipe-grid{grid-template-columns:repeat(1,minmax(0,1fr))}
+}
+@media(max-width:700px){
+    .kitchen-revamp .k3-tabs button{flex-direction:column;gap:4px;min-height:62px;padding:7px 2px;justify-content:center;align-items:center}
+    .kitchen-revamp .k3-tabs button>svg{width:19px;height:19px;flex:0 0 19px}
+    .kitchen-revamp .k3-tab-label{font-size:clamp(9px,2.6vw,12px);line-height:1.15;text-align:center}
+    .kitchen-revamp .k3-recipe{min-height:188px}
+    .kitchen-revamp .k3-recipe-art{width:clamp(130px,34%,170px);min-height:188px;flex-basis:clamp(130px,34%,170px)}
+    .kitchen-revamp .k3-recipe-details{padding:11px;gap:6px}
+}
+@media(max-width:480px){
+    .kitchen-revamp .k3-recipe{flex-direction:column;min-height:0}
+    .kitchen-revamp .k3-recipe-art{
+        flex:none;width:100%;min-height:154px;height:154px;
+        border-radius:0;padding:1px;
+    }
+    .kitchen-revamp .k3-recipe-art>svg:first-child,
+    .kitchen-revamp .k3-mystery-silhouette>svg{
+        width:175px;height:100%;margin:0 auto;transform:scale(1.15)
+    }
+    .kitchen-revamp .k3-recipe-details{padding:12px;gap:7px}
+    .kitchen-revamp .k3-recipe-buttons{margin-top:6px;padding-top:0}
+    .kitchen-revamp .k3-tabs button{font-size:10px;min-height:64px;padding:7px 1px;gap:5px}
+    .kitchen-revamp .k3-tabs button>svg{width:20px;height:20px;flex-basis:20px}
+    .kitchen-revamp .k3-tabs .k3-tab-count{right:1px;top:1px}
+}
+@media(prefers-reduced-motion:reduce){
+    .kitchen-revamp .k3-timing-pointer{will-change:auto}
+}
+
+/* Rhythm Mixing: whole-screen touch gestures / hardware keyboard controls */
+.kitchen-revamp .k3-rhythm{display:grid;justify-items:center;gap:8px;max-width:100%}
+.kitchen-revamp .k3-rhythm-sequence{display:flex;justify-content:center;align-items:center;flex-wrap:nowrap;gap:clamp(5px,2vw,12px);width:100%}
+.kitchen-revamp .k3-rhythm-arrow{display:grid;place-items:center;width:clamp(43px,12vw,60px);height:clamp(43px,12vw,60px);flex:0 1 auto;background:#fff2f8;border:2px solid #e9c6d8;border-radius:14px;color:#986684;font-size:clamp(23px,5vw,30px);font-weight:900;transition:background-color .16s,border-color .16s,transform .16s;user-select:none}
+.kitchen-revamp .k3-rhythm-arrow.next{background:#f9dfea;border-color:#c8799b;box-shadow:0 0 0 3px #f6d9e8;transform:translateY(-2px)}
+.kitchen-revamp .k3-rhythm-arrow.completed{background:#e4f5ec;border-color:#9bd1ae;color:#5a9b74}
+.kitchen-revamp .k3-rhythm-desktop-hint,.kitchen-revamp .k3-rhythm-touch-hint{margin:0;text-align:center;font-size:12px;font-weight:800;color:#966b83}
+.kitchen-revamp .k3-rhythm-touch-hint{display:none}
+@media (hover:none) and (pointer:coarse){
+    .kitchen-revamp .k3-rhythm-desktop-hint{display:none}
+    .kitchen-revamp .k3-rhythm-touch-hint{display:block}
+}

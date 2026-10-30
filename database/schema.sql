@@ -103,3 +103,17 @@ CREATE TABLE IF NOT EXISTS multiplayer_challenges (
 CREATE INDEX IF NOT EXISTS multiplayer_challenges_challenger_idx ON multiplayer_challenges(challenger_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS multiplayer_challenges_challenged_idx ON multiplayer_challenges(challenged_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS multiplayer_challenges_expiring_idx ON multiplayer_challenges(status, expires_at);
+
+-- Kitchen discovery, recipe mastery and visual-only cooking quality.
+-- Run migration 010 before this if upgrading from the oldest version.
+CREATE TABLE IF NOT EXISTS pet_kitchens (
+ user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+ ingredients JSONB NOT NULL DEFAULT '{}'::jsonb,
+ meals JSONB NOT NULL DEFAULT '{}'::jsonb,
+ active_recipe TEXT,
+ recipe_step INTEGER NOT NULL DEFAULT 0,
+ cooking_started_at TIMESTAMPTZ
+);
+ALTER TABLE pet_kitchens ADD COLUMN IF NOT EXISTS discovered_recipes JSONB NOT NULL DEFAULT '[]'::jsonb;
+ALTER TABLE pet_kitchens ADD COLUMN IF NOT EXISTS recipe_records JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE pet_kitchens ADD COLUMN IF NOT EXISTS step_scores JSONB NOT NULL DEFAULT '[]'::jsonb;

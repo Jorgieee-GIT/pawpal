@@ -3,6 +3,7 @@ import type {CSSProperties} from 'react';
 import {Check, ChevronDown, CircleHelp, Clock3, Coins, Gamepad2, Shield, Sparkles, Swords, Trophy, Users, X, Zap} from 'lucide-react';
 import PetArt from './PetArt';
 import './Multiplayer.css';
+import SectionHeading from './SectionHeading';
 
 type Friend = {friend_id: string; username: string; status: string};
 type Player = {
@@ -359,7 +360,7 @@ export default function Multiplayer({api, token, userId, friends, coins, refresh
 
     return <section className="panel paw-multiplayer">
         <div className="eyebrow">PLAY TOGETHER, PAWS TOGETHER</div>
-        <div className="paw-multiplayer-heading"><h2>Multiplayer</h2><button ref={recentBattlesTriggerRef} type="button" className="paw-multi-header-history" aria-haspopup="dialog" aria-expanded={showRecentBattles} onClick={() => setShowRecentBattles(true)}><Trophy size={16}/> Recent Battles{history.length > 0 && <small>{history.length}</small>}</button></div>
+        <div className="paw-multiplayer-heading"><SectionHeading title="Multiplayer" Icon={Swords}/><button ref={recentBattlesTriggerRef} type="button" className="paw-multi-header-history" aria-haspopup="dialog" aria-expanded={showRecentBattles} onClick={() => setShowRecentBattles(true)}><Trophy size={16}/> Recent Battles{history.length > 0 && <small>{history.length}</small>}</button></div>
         <div className="paw-multi-game-library">
             <button type="button" className={`paw-multi-game-tile ${gameId === 'paw_brawl' ? 'selected' : ''}`} onClick={() => setGameId('paw_brawl')} aria-pressed={gameId === 'paw_brawl'}>
                 <span className="paw-multi-game-art paw-multi-game-art-brawl"><span className="paw-multi-game-art-circle"><Swords size={46}/></span><span className="paw-multi-game-status"><Sparkles size={13}/> PLAYABLE</span></span>

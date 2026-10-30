@@ -1,3 +1,5 @@
+import {kitchenRecipes, kitchenPrices, readyMealPrices, findRecipeByIngredients, knownRecipe, publicKitchenRecipes, cookingRating} from './kitchenCatalog.js';
+import {FLOWER_RULES,GARDEN_SEED_PRICE,GARDEN_WATER_PRICE,GARDEN_GROWTH_MS,createGardenFlower,gardenHarvestReady,publicPetGarden,recordFlowerDiscovery} from './gardenRules.js';
 import 'dotenv/config';
 
 import express from 'express';
@@ -348,7 +350,7 @@ app.get('/api/me',auth,handle(async(req,res)=>{
       pet=result.rows[0];
     }
     await c.query('COMMIT');
-    res.json({user:u.rows[0],pet});
+    res.json({user:u.rows[0],pet:publicPetGarden(pet)});
   }catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}
 }));
 
@@ -356,9 +358,9 @@ app.post('/api/adopt',auth,handle(async(req,res)=>{const v=z.object({name:z.stri
 
 // One-time migration of the old anonymous pet. Explicit ownership claim requires its UUID and an account with no pet.
 
-app.post('/api/claim',auth,handle(async(req,res)=>{if(!z.string().uuid().safeParse(req.body?.petId).success)return void res.status(400).json({error:'Invalid old pet ID.'});const q=await pool.query(`UPDATE pets SET owner_id=$1 WHERE id=$2 AND owner_id IS NULL AND NOT EXISTS(SELECT 1 FROM pets WHERE owner_id=$1) RETURNING ${fields}`,[req.userId,req.body.petId]);if(!q.rows[0])return void res.status(409).json({error:'Pet already claimed, missing, or account already has a pet.'});res.json({pet:q.rows[0]})}));
+app.post('/api/claim',auth,handle(async(req,res)=>{if(!z.string().uuid().safeParse(req.body?.petId).success)return void res.status(400).json({error:'Invalid old pet ID.'});const q=await pool.query(`UPDATE pets SET owner_id=$1 WHERE id=$2 AND owner_id IS NULL AND NOT EXISTS(SELECT 1 FROM pets WHERE owner_id=$1) RETURNING ${fields}`,[req.userId,req.body.petId]);if(!q.rows[0])return void res.status(409).json({error:'Pet already claimed, missing, or account already has a pet.'});res.json({pet:publicPetGarden(q.rows[0])})}));
 
-async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const wasSleepingAtRequest=applyPetDecay(p);p._wasSleepingAtRequest=wasSleepingAtRequest;const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',scrub:'bathe',pet_stroke:'cuddle',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':req.path==='/api/item'&&req.body?.mode==='equip'&&(catalog[req.body?.item]?.type==='theme')?'atmosphere':req.path==='/api/item'&&req.body?.mode==='equip'?'outfit':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');if(req.path==='/api/care'&&action==='sleep_toggle'){const friends=await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId]);publishLive([String(req.userId),...friends.rows.map((r:any)=>String(r.friend_id))],'pet_sleep_changed')}publishLive([String(req.userId)],'pet_updated');if(req.path==='/api/item'||(req.path==='/api/care'&&['sleep_toggle','scrub','pet_stroke','feed','play','bathe','cuddle'].includes(action)))void publishPetToFriends(String(req.userId),action==='sleep_toggle'||req.path==='/api/item').catch(console.error);res.json({pet:out.rows[0],message})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
+async function mutate(req:any,res:any,fn:(p:any)=>string|Promise<string>){const c=await pool.connect();try{await c.query('BEGIN');const q=await c.query(`SELECT ${fields} FROM pets WHERE owner_id=$1 FOR UPDATE`,[req.userId]);if(!q.rows[0]){await c.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}const p=q.rows[0];const wasSleepingAtRequest=applyPetDecay(p);p._wasSleepingAtRequest=wasSleepingAtRequest;const message=await fn(p);const action=String(req.body?.action||'');const metric=req.path==='/api/care'?({feed:'feed',play:'play',sleep:'sleep',bathe:'bathe',scrub:'bathe',pet_stroke:'cuddle',cuddle:'cuddle',food:'buy',toy:'buy'} as Record<string,string>)[action]:req.path==='/api/garden'?({plant:'plant',harvest:'harvest',water:'water',seeds:'buy',buy_water:'buy'} as Record<string,string>)[action]:req.path==='/api/item'&&req.body?.mode==='buy'?'buy':req.path==='/api/item'&&req.body?.mode==='equip'&&(catalog[req.body?.item]?.type==='theme')?'atmosphere':req.path==='/api/item'&&req.body?.mode==='equip'?'outfit':null;const failed=/^(Buy |Too tired|Not enough|Already |Unknown |Choose |This |That |Unlock |Unlocks |Plant |Your flower|Not ready|All twelve|You need |Please use|Incorrect |Item removed|Look updated)/.test(message);if(metric&&!failed)await recordMissionEvent(c,req.userId,metric);while(p.xp>=p.level*100){p.xp-=p.level*100;p.level++;p.coins+=60}const out=await c.query(`UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,[p.id,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.coins,p.xp,p.level,p.food,p.toys,JSON.stringify(p.owned_cosmetics),p.equipped_cosmetic,JSON.stringify(p.owned_colors),p.color,JSON.stringify(p.owned_breeds),p.breed,p.room_theme,JSON.stringify(p.owned_items),JSON.stringify(p.placed_items),JSON.stringify(p.garden),p.last_daily,p.last_game_at,JSON.stringify(p.equipped_outfit||{head:null,eyes:null,neck:null,clothes:null})]);await c.query('COMMIT');if(req.path==='/api/care'&&action==='sleep_toggle'){const friends=await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)",[req.userId]);publishLive([String(req.userId),...friends.rows.map((r:any)=>String(r.friend_id))],'pet_sleep_changed')}publishLive([String(req.userId)],'pet_updated');if(req.path==='/api/item'||(req.path==='/api/care'&&['sleep_toggle','scrub','pet_stroke','feed','play','bathe','cuddle'].includes(action)))void publishPetToFriends(String(req.userId),action==='sleep_toggle'||req.path==='/api/item').catch(console.error);res.json({pet:publicPetGarden(out.rows[0]),message,...(req.gardenReveal?{gardenReveal:req.gardenReveal}:{})})}catch(e){await c.query('ROLLBACK');throw e}finally{c.release()}}
 
 // Atomic claim: a row lock prevents concurrent requests from claiming twice.
 
@@ -380,7 +382,7 @@ app.post('/api/daily/claim',auth,handle(async(req,res)=>{
   await recordMissionEvent(client,req.userId,'daily_surprise');
   await client.query('COMMIT');
   publishLive([String(req.userId)],'daily_reward');
-  res.json({pet:updated.rows[0],message:'Daily Surprise: +120 coins, +2 regular meals, and +5 Berry Parfaits!',nextClaimAt:nextMidnight});
+  res.json({pet:publicPetGarden(updated.rows[0]),message:'Daily Surprise: +120 coins, +2 regular meals, and +5 Berry Parfaits!',nextClaimAt:nextMidnight});
  }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
 }));
 
@@ -622,13 +624,13 @@ app.get('/api/room',auth,handle(async(req,res)=>{const q=await pool.query(`SELEC
 
 const plotPrices=[0,0,0,750,1500,2500,4000,6000,9000,13000,18000,25000];
 
-const flowerKinds=[{name:'Wilted',min:30,max:39,weight:10},{name:'Common',min:40,max:60,weight:55},{name:'Uncommon',min:61,max:90,weight:23},{name:'Rare',min:91,max:115,weight:9},{name:'Legendary',min:116,max:130,weight:3}];
+// Flower chances and rewards are defined in gardenRules.ts.
 
 function gardenState(raw:any){const g=raw||{};g.seeds=Number(g.seeds)||0;g.flowers=Number(g.flowers)||0;g.watering_cans=Number(g.watering_cans)||0;g.unlocked_plots=Math.min(12,Math.max(3,Number(g.unlocked_plots)||3));g.plots=Array.isArray(g.plots)?g.plots.slice(0,12):[];if(g.planted_at&&!g.plots.some((x:any)=>x?.planted_at)){g.plots[0]={planted_at:g.planted_at,watered_minutes:Number(g.watered_minutes)||0,rarity:'Common',reward:50,variant:0}};while(g.plots.length<g.unlocked_plots)g.plots.push(null);delete g.planted_at;delete g.watered_minutes;return g;}
 
 app.post('/api/garden',auth,handle(async(req,res)=>mutate(req,res,p=>{const g=gardenState(p.garden);const action=String(req.body?.action||'');const qty=Number(req.body?.quantity??1);const idx=Number(req.body?.plotIndex??0);const validPlot=Number.isInteger(idx)&&idx>=0&&idx<g.unlocked_plots;
 
-if(['seeds','buy_water'].includes(action)){if(!Number.isSafeInteger(qty)||qty<1||qty>99)return 'Choose a quantity from 1 to 99.';const cost=qty*(action==='seeds'?40:25);if(p.coins<cost)return 'Not enough coins.';p.coins-=cost;if(action==='seeds')g.seeds+=qty;else g.watering_cans+=qty;p.garden=g;return `Purchased ${qty} ${action==='seeds'?'seeds':'watering cans'}!`;}
+if(['seeds','buy_water'].includes(action)){if(!Number.isSafeInteger(qty)||qty<1||qty>99)return 'Choose a quantity from 1 to 99.';const cost=qty*(action==='seeds'?GARDEN_SEED_PRICE:GARDEN_WATER_PRICE);if(p.coins<cost)return 'Not enough coins.';p.coins-=cost;if(action==='seeds')g.seeds+=qty;else g.watering_cans+=qty;p.garden=g;return `Purchased ${qty} ${action==='seeds'?'seeds':'watering cans'}!`;}
 
 if(action==='unlock_plot'){if(g.unlocked_plots>=12)return 'All twelve plots are unlocked.';const cost=plotPrices[g.unlocked_plots];if(p.coins<cost)return `You need ${cost} coins to unlock this plot.`;p.coins-=cost;g.unlocked_plots++;g.plots.push(null);p.garden=g;return `Plot ${g.unlocked_plots} unlocked!`;}
 
@@ -636,11 +638,11 @@ if(!validPlot)return 'Choose an unlocked garden plot.';
 
 const plot=g.plots[idx];
 
-if(action==='plant'){if(plot?.planted_at)return 'This plot already has a flower.';if(g.seeds<1)return 'Buy more seeds.';g.seeds--;const roll=Math.random()*100;let running=0;let kind=flowerKinds[1];for(const candidate of flowerKinds){running+=candidate.weight;if(roll<running){kind=candidate;break;}}g.plots[idx]={planted_at:new Date().toISOString(),watered_minutes:0,rarity:kind.name,reward:kind.min+Math.floor(Math.random()*(kind.max-kind.min+1)),variant:Math.floor(Math.random()*4)};p.garden=g;p.energy=clamp(p.energy-2);p.cleanliness=clamp(p.cleanliness-3);return `Seed planted in plot ${idx+1}!`;}
+if(action==='plant'){if(plot?.planted_at)return 'This plot already has a flower.';if(g.seeds<1)return 'Buy more seeds.';g.seeds--;g.plots[idx]=createGardenFlower();p.garden=g;p.energy=clamp(p.energy-2);p.cleanliness=clamp(p.cleanliness-3);return `Seed planted in plot ${idx+1}!`;}
 
-if(action==='water'){if(!plot?.planted_at)return 'Plant a flower in this plot first.';if(g.watering_cans<1)return 'Buy a watering can first.';const remaining=300000-(Date.now()-new Date(plot.planted_at).getTime())-(plot.watered_minutes||0)*60000;if(remaining<=0)return 'Your flower is ready!';g.watering_cans--;plot.watered_minutes=Math.min(5,(plot.watered_minutes||0)+1);p.garden=g;p.energy=clamp(p.energy-2);p.cleanliness=clamp(p.cleanliness-2);return `Plot ${idx+1} watered! One minute removed.`;}
+if(action==='water'){if(!plot?.planted_at)return 'Plant a flower in this plot first.';if(g.watering_cans<1)return 'Buy a watering can first.';const remaining=GARDEN_GROWTH_MS-(Date.now()-new Date(plot.planted_at).getTime())-(plot.watered_minutes||0)*60000;if(remaining<=0)return 'Your flower is ready!';g.watering_cans--;plot.watered_minutes=Math.min(5,(plot.watered_minutes||0)+1);p.garden=g;p.energy=clamp(p.energy-2);p.cleanliness=clamp(p.cleanliness-2);return `Plot ${idx+1} watered! One minute removed.`;}
 
-if(action==='harvest'){if(!plot?.planted_at)return 'Plant a flower first.';if(Date.now()-new Date(plot.planted_at).getTime()+(plot.watered_minutes||0)*60000<300000)return 'Not ready to harvest.';const reward=Number(plot.reward)||50;const rarity=String(plot.rarity||'Common');g.plots[idx]=null;g.flowers++;p.coins+=reward;p.xp+=15;p.garden=g;p.energy=clamp(p.energy-3);p.cleanliness=clamp(p.cleanliness-4);return `${rarity} flower harvested! +${reward} coins and +15 EXP.`;}
+if(action==='harvest'){if(!plot?.planted_at)return 'Plant a flower first.';if(!gardenHarvestReady(plot))return 'Not ready to harvest.';const rarity=String(plot.rarity||'Common');const flower=FLOWER_RULES.find(item=>item.rarity===rarity)||FLOWER_RULES[1];const reward=Number(plot.reward)||50;const newlyDiscovered=recordFlowerDiscovery(g,flower.rarity,reward);req.gardenReveal={rarity:flower.rarity,name:flower.name,reward,variant:Number(plot.variant)||0,plotIndex:idx,newlyDiscovered};g.plots[idx]=null;g.flowers++;p.coins+=reward;p.xp+=15;p.garden=g;p.energy=clamp(p.energy-3);p.cleanliness=clamp(p.cleanliness-4);return `${rarity} flower harvested! +${reward} coins and +15 EXP.`;}
 
 return 'Unknown garden action.'})));
 
@@ -668,83 +670,141 @@ app.post('/api/claw/play',auth,handle(async(req,res)=>{
 }));
 app.post('/api/game',auth,handle(async(req,res)=>{const v=z.object({game:z.enum(['memory','dino','runner','pattern','mole']),score:z.number().int().min(0).max(100000)}).safeParse(req.body);if(!v.success)return void res.status(400).json({error:'Invalid score.'});const result:any={};await mutate(req,{json:(x:any)=>Object.assign(result,x),status:()=>({json:()=>{}})},p=>{if(p.last_game_at&&Date.now()-new Date(p.last_game_at).getTime()<8000)return 'Wait 8 seconds between rewards.';p.last_game_at=new Date().toISOString();const reward=Math.min(75,10+Math.floor(v.data.score/3));p.coins+=reward;p.xp+=Math.min(40,5+Math.floor(v.data.score/8));p.happiness=clamp(p.happiness+8);p.energy=clamp(p.energy-7);p.cleanliness=clamp(p.cleanliness-5);return `Arcade reward: +${reward} coins!`});if(result.pet && !String(result.message||'').startsWith('Wait '))await Promise.all([recordMissionEvent(pool,req.userId,'arcade'),recordMissionEvent(pool,req.userId,v.data.game)]);if(result.pet)await pool.query('INSERT INTO game_records(user_id,game,best) VALUES($1,$2,$3) ON CONFLICT(user_id,game) DO UPDATE SET best=GREATEST(game_records.best,EXCLUDED.best)',[req.userId,v.data.game,v.data.score]);res.json(result)}));
 
-// Batch 12: Kitchen 2.0. Ingredients, recipe progress, meals and pet buffs are server-owned.
-const kitchenRecipes: Record<string,{name:string;ingredients:Record<string,number>;steps:string[];hunger:number;happiness:number;energy:number;xp:number}> = {
- berry_parfait:{name:'Berry Parfait',ingredients:{berries:2,milk:1},steps:['wash','mix','chill'],hunger:24,happiness:14,energy:0,xp:20},
- cloud_pancakes:{name:'Cloud Pancakes',ingredients:{flour:2,milk:1,berries:1},steps:['mix','cook','plate'],hunger:36,happiness:9,energy:4,xp:28},
- cozy_soup:{name:'Cozy Soup',ingredients:{carrot:2,milk:1},steps:['chop','simmer','serve'],hunger:32,happiness:5,energy:14,xp:25},
- moon_cookies:{name:'Moon Cookies',ingredients:{flour:2,berries:1},steps:['mix','bake','decorate'],hunger:20,happiness:22,energy:0,xp:32},
- honey_toast:{name:'Honey Toast',ingredients:{bread:2,honey:1,butter:1},steps:['mix','cook','plate'],hunger:33,happiness:15,energy:6,xp:34},
- starry_omelet:{name:'Starry Omelet',ingredients:{egg:2,cheese:1,butter:1},steps:['mix','cook','serve'],hunger:39,happiness:11,energy:10,xp:38},
- peach_smoothie:{name:'Peach Smoothie',ingredients:{peach:2,milk:1,honey:1},steps:['wash','mix','chill'],hunger:23,happiness:21,energy:7,xp:36},
- pumpkin_pie:{name:'Pumpkin Pie',ingredients:{pumpkin:2,flour:2,butter:1},steps:['chop','mix','bake','decorate'],hunger:44,happiness:22,energy:0,xp:48},
- garden_salad:{name:'Garden Salad',ingredients:{lettuce:2,carrot:1,tomato:2},steps:['wash','chop','mix','plate'],hunger:28,happiness:12,energy:17,xp:42},
- cheesy_pasta:{name:'Cheesy Pasta',ingredients:{pasta:2,cheese:2,tomato:1},steps:['chop','cook','mix','serve'],hunger:49,happiness:16,energy:8,xp:50},
- starlight_cake:{name:'Starlight Cake',ingredients:{flour:2,egg:2,milk:1,honey:1},steps:['mix','bake','chill','decorate'],hunger:47,happiness:30,energy:3,xp:58},
- moonlight_ramen:{name:'Moonlight Ramen',ingredients:{noodles:2,egg:1,carrot:1},steps:['chop','simmer','cook','serve'],hunger:52,happiness:19,energy:13,xp:55}
-};
-const kitchenPrices:Record<string,number>={berries:24,milk:20,flour:18,carrot:16,bread:22,honey:35,butter:26,egg:30,cheese:38,peach:32,pumpkin:28,lettuce:18,tomato:23,pasta:34,noodles:36};
-// The convenience fee is precisely 2x the ingredients' market value.
-const readyMealPrices:Record<string,number>=Object.fromEntries(Object.entries(kitchenRecipes).map(([id,recipe])=>[id,2*Object.entries(recipe.ingredients).reduce((sum,[ingredient,amount])=>sum+kitchenPrices[ingredient]*amount,0)]));
-app.get('/api/kitchen',auth,handle(async(req,res)=>{
- const q=await pool.query('SELECT ingredients,meals,active_recipe,recipe_step,cooking_started_at FROM pet_kitchens WHERE user_id=$1',[req.userId]);
- res.json({kitchen:q.rows[0]||{ingredients:{},meals:{},active_recipe:null,recipe_step:0,cooking_started_at:null},recipes:kitchenRecipes,prices:kitchenPrices,mealPrices:readyMealPrices});
+// Kitchen 3: recipe discovery is deterministic and all inventory changes are transactional.
+app.get('/api/kitchen', auth, handle(async(req, res) => {
+    const q = await pool.query('SELECT ingredients,meals,active_recipe,recipe_step,cooking_started_at,discovered_recipes,recipe_records,step_scores FROM pet_kitchens WHERE user_id=$1', [req.userId]);
+    const kitchen = q.rows[0] || {ingredients:{},meals:{},active_recipe:null,recipe_step:0,cooking_started_at:null,discovered_recipes:[],recipe_records:{},step_scores:[]};
+    const discovered = Array.isArray(kitchen.discovered_recipes) ? kitchen.discovered_recipes : [];
+    res.json({kitchen, recipes: publicKitchenRecipes(discovered), prices: kitchenPrices, mealPrices: readyMealPrices});
 }));
-app.post('/api/kitchen',auth,handle(async(req,res)=>{
- const action=String(req.body?.action||'');const item=String(req.body?.item||'');const quantity=Number(req.body?.quantity??1);
- const client=await pool.connect();
- try{
-  await client.query('BEGIN');
-  const petQ=await client.query('SELECT id,coins,hunger,happiness,energy,xp,level FROM pets WHERE owner_id=$1 FOR UPDATE',[req.userId]);
-  if(!petQ.rows[0]){await client.query('ROLLBACK');return void res.status(404).json({error:'Adopt a pet first.'})}
-  await client.query('INSERT INTO pet_kitchens(user_id) VALUES($1) ON CONFLICT DO NOTHING',[req.userId]);
-  const kitchenQ=await client.query('SELECT * FROM pet_kitchens WHERE user_id=$1 FOR UPDATE',[req.userId]);
-  const k=kitchenQ.rows[0];const ingredients:Record<string,number>={...k.ingredients};const meals:Record<string,number>={...k.meals};
-  let active:string|null=k.active_recipe;let step=Number(k.recipe_step)||0;let started=k.cooking_started_at;let message='';let coinDelta=0;let stats:{hunger:number;happiness:number;energy:number;xp:number;level:number}|null=null;
-  const fail=async(error:string)=>{await client.query('ROLLBACK');res.status(400).json({error})};
-  if(action==='buy'){
-   if(!(item in kitchenPrices)||!Number.isSafeInteger(quantity)||quantity<1||quantity>20)return void await fail('Choose an ingredient and a quantity from 1 to 20.');
-   const cost=kitchenPrices[item]*quantity;if(petQ.rows[0].coins<cost)return void await fail('Not enough coins.');
-   coinDelta=-cost;ingredients[item]=(ingredients[item]||0)+quantity;message=`Purchased ${quantity} ${item}!`;
-  }else if(action==='buy_meal'){
-   const recipe=kitchenRecipes[item];
-   if(!recipe)return void await fail('Unknown meal.');
-   if(!Number.isSafeInteger(quantity)||quantity!==1)return void await fail('Buy one ready-made meal at a time.');
-   const cost=readyMealPrices[item];
-   if(petQ.rows[0].coins<cost)return void await fail('Not enough Paw Coins.');
-   coinDelta=-cost;
-   meals[item]=(meals[item]||0)+1;
-   message=`Bought ${recipe.name} for ${cost} Paw Coins! Ready in your pantry.`;
-  }else if(action==='start'){
-   const recipe=kitchenRecipes[item];if(!recipe)return void await fail('Unknown recipe.');
-   if(active)return void await fail('Finish your current recipe first.');
-   for(const [ingredient,amount] of Object.entries(recipe.ingredients))if((ingredients[ingredient]||0)<amount)return void await fail('Not enough ingredients for this recipe.');
-   for(const [ingredient,amount] of Object.entries(recipe.ingredients))ingredients[ingredient]-=amount;
-   active=item;step=0;started=new Date();message=`Started ${recipe.name}!`;
-  }else if(action==='step'){
-   if(!active||!kitchenRecipes[active])return void await fail('Start a recipe first.');
-   const recipe=kitchenRecipes[active];const expected=recipe.steps[step];
-   if(item!==expected)return void await fail('Not quite! Choose the correct next cooking step.');
-   if(!started||Date.now()-new Date(started).getTime()<800)return void await fail('Take a moment between cooking steps.');
-   step++;started=new Date();message=`${expected} complete!`;
-   if(step>=recipe.steps.length){meals[active]=(meals[active]||0)+1;message=`${recipe.name} is ready! Added to your pantry.`;active=null;step=0;started=null;}
-  }else if(action==='serve'){
-   const recipe=kitchenRecipes[item];if(!recipe||!(meals[item]>0))return void await fail('Cook this meal before serving it.');
-   meals[item]--;const pet=petQ.rows[0];let xp=pet.xp+recipe.xp;let level=pet.level;let earnedCoins=0;
-   while(xp>=level*100){xp-=level*100;level++;earnedCoins+=60;}
-   coinDelta=earnedCoins;stats={hunger:clamp(pet.hunger+recipe.hunger),happiness:clamp(pet.happiness+recipe.happiness),energy:clamp(pet.energy+recipe.energy),xp,level};
-   message=`Served ${recipe.name}! +${recipe.xp} XP`;
-  }else return void await fail('Unknown kitchen action.');
-  await client.query('UPDATE pet_kitchens SET ingredients=$2::jsonb,meals=$3::jsonb,active_recipe=$4,recipe_step=$5,cooking_started_at=$6 WHERE user_id=$1',[req.userId,JSON.stringify(ingredients),JSON.stringify(meals),active,step,started]);
-  if(stats)await client.query('UPDATE pets SET coins=coins+$2,hunger=$3,happiness=$4,energy=$5,xp=$6,level=$7,updated_at=NOW() WHERE owner_id=$1',[req.userId,coinDelta,stats.hunger,stats.happiness,stats.energy,stats.xp,stats.level]);
-  else if(coinDelta)await client.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1',[req.userId,coinDelta]);
-  if(action==='buy'||action==='buy_meal'||action==='serve'||(action==='step'&&!active)){
-   await recordMissionEvent(client,req.userId,action==='buy'?'buy':action==='buy_meal'?'meal_buy':action==='serve'?'serve':'cook');
-   if(action==='buy_meal')await recordMissionEvent(client,req.userId,'buy');
-  }await client.query('COMMIT');publishLive([String(req.userId)],'kitchen_updated');res.json({message,kitchen:{ingredients,meals,active_recipe:active,recipe_step:step,cooking_started_at:started}});
- }catch(e){await client.query('ROLLBACK');throw e}finally{client.release()}
+app.post('/api/kitchen', auth, handle(async(req, res) => {
+    const action = String(req.body?.action || '');
+    const item = String(req.body?.item || '');
+    const quantity = Number(req.body?.quantity ?? 1);
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        const petQ = await client.query('SELECT id,coins,hunger,happiness,energy,xp,level FROM pets WHERE owner_id=$1 FOR UPDATE', [req.userId]);
+        if (!petQ.rows[0]) {await client.query('ROLLBACK'); return void res.status(404).json({error:'Adopt a pet first.'});}
+        await client.query('INSERT INTO pet_kitchens(user_id) VALUES($1) ON CONFLICT DO NOTHING', [req.userId]);
+        const kitchenQ = await client.query('SELECT * FROM pet_kitchens WHERE user_id=$1 FOR UPDATE', [req.userId]);
+        const k = kitchenQ.rows[0];
+        const ingredients: Record<string,number> = {...k.ingredients};
+        const meals: Record<string,number> = {...k.meals};
+        const discovered: string[] = Array.isArray(k.discovered_recipes) ? [...k.discovered_recipes] : [];
+        const records: Record<string,{cooked:number;best:number}> = {...k.recipe_records};
+        let scores: number[] = Array.isArray(k.step_scores) ? [...k.step_scores] : [];
+        let active: string | null = k.active_recipe;
+        let step = Number(k.recipe_step) || 0;
+        let started = k.cooking_started_at;
+        let message = '';
+        let coinDelta = 0;
+        let result: {recipeId:string;name:string;score:number;rating:string;firstTime:boolean} | null = null;
+        let stats: {hunger:number;happiness:number;energy:number;xp:number;level:number} | null = null;
+        const fail = async (error: string) => {await client.query('ROLLBACK'); res.status(400).json({error});};
+        if (action === 'buy') {
+            if (!Object.hasOwn(kitchenPrices,item) || !Number.isSafeInteger(quantity) || quantity < 1 || quantity > 20) return void await fail('Choose an ingredient and a quantity from 1 to 20.');
+            const cost = kitchenPrices[item] * quantity;
+            if (petQ.rows[0].coins < cost) return void await fail('Not enough coins.');
+            coinDelta = -cost;
+            ingredients[item] = (ingredients[item] || 0) + quantity;
+            message = `Purchased ${quantity} ${item}!`;
+        } else if (action === 'buy_meal') {
+            const recipe = kitchenRecipes[item];
+            if (!recipe) return void await fail('Unknown meal.');
+            if (!knownRecipe(item,discovered)) return void await fail('Discover this recipe before buying a ready-made serving.');
+            if (quantity !== 1) return void await fail('Buy one ready-made meal at a time.');
+            const cost = readyMealPrices[item];
+            if (petQ.rows[0].coins < cost) return void await fail('Not enough Paw Coins.');
+            coinDelta = -cost;
+            meals[item] = (meals[item] || 0) + 1;
+            message = `Bought ${recipe.name} for ${cost} Paw Coins! Ready in your pantry.`;
+        } else if (action === 'experiment') {
+            if (active) return void await fail('Finish your current meal before experimenting.');
+            const selected: unknown = req.body?.ingredients;
+            if (!Array.isArray(selected) || selected.length < 2 || selected.length > 4 || !selected.every(v => typeof v === 'string' && Object.hasOwn(kitchenPrices,v)) || new Set(selected).size !== selected.length) return void await fail('Select 2 to 4 different ingredients.');
+            const chosen = selected as string[];
+            if (chosen.some(id => (ingredients[id] || 0) < 1)) return void await fail('You need at least one of each selected ingredient.');
+            const match = findRecipeByIngredients(chosen);
+            if (match && knownRecipe(match,discovered)) {
+                message = `You already know ${kitchenRecipes[match].name}! Find it in your Recipe Book. No ingredients used.`;
+            } else if (match) {
+                // Discovery uses exactly one unit of each selected ingredient, not the whole recipe cost.
+                for (const id of chosen) ingredients[id]--;
+                discovered.push(match);
+                message = `New recipe discovered: ${kitchenRecipes[match].name}! Added to your Recipe Book.`;
+                result = {recipeId:match,name:kitchenRecipes[match].name,score:0,rating:'Discovery',firstTime:true};
+            } else {
+                // A failed try consumes ONE ingredient, never the entire selected combination.
+                const spent = [...chosen].sort((a,b) => kitchenPrices[a] - kitchenPrices[b])[0];
+                ingredients[spent]--;
+                message = `Nothing quite came together. Used 1 ${spent}; the other ingredients were saved. Try a Recipe Book clue!`;
+            }
+        } else if (action === 'start') {
+            const recipe = kitchenRecipes[item];
+            if (!recipe) return void await fail('Unknown recipe.');
+            if (!knownRecipe(item,discovered)) return void await fail('Discover this recipe in the Experiment Station first.');
+            if (active) return void await fail('Finish your current recipe first.');
+            for (const [ingredient,amount] of Object.entries(recipe.ingredients)) {
+                if ((ingredients[ingredient] || 0) < amount) return void await fail('Not enough ingredients for this recipe.');
+            }
+            for (const [ingredient,amount] of Object.entries(recipe.ingredients)) ingredients[ingredient] -= amount;
+            active = item;
+            step = 0;
+            scores = [];
+            started = new Date();
+            message = `Started ${recipe.name}!`;
+        } else if (action === 'step') {
+            if (!active || !kitchenRecipes[active]) return void await fail('Start a recipe first.');
+            const recipe = kitchenRecipes[active];
+            const expected = recipe.steps[step];
+            if (item !== expected) return void await fail('Not quite! Choose the correct next cooking step.');
+            const score = Number(req.body?.score);
+            if (!Number.isInteger(score) || score < 0 || score > 100) return void await fail('Invalid cooking result.');
+            // Time limit reduces instant API completion; score is cosmetic, never a source of coins or XP.
+            if (!started || Date.now() - new Date(started).getTime() < 2200) return void await fail('Give this cooking step a little more time.');
+            scores.push(score);
+            step++;
+            started = new Date();
+            message = `${expected} complete!`;
+            if (step >= recipe.steps.length) {
+                meals[active] = (meals[active] || 0) + 1;
+                const average = Math.round(scores.reduce((a,b) => a+b, 0) / Math.max(1, scores.length));
+                const prior = records[active] || {cooked:0,best:0};
+                records[active] = {cooked:Math.max(0,prior.cooked)+1,best:Math.max(prior.best||0,average)};
+                result = {recipeId:active,name:recipe.name,score:average,rating:cookingRating(average),firstTime:prior.cooked === 0};
+                message = `${recipe.name} is ready! ${cookingRating(average)} cooking · added to your pantry.`;
+                active = null;
+                step = 0;
+                scores = [];
+                started = null;
+            }
+        } else if (action === 'serve') {
+            const recipe = kitchenRecipes[item];
+            if (!recipe || !(meals[item] > 0)) return void await fail('Cook this meal before serving it.');
+            meals[item]--;
+            const pet = petQ.rows[0];
+            let xp = pet.xp + recipe.xp;
+            let level = pet.level;
+            let earnedCoins = 0;
+            while (xp >= level * 100) {xp -= level*100;level++;earnedCoins += 60;}
+            coinDelta = earnedCoins;
+            stats = {hunger:clamp(pet.hunger+recipe.hunger),happiness:clamp(pet.happiness+recipe.happiness),energy:clamp(pet.energy+recipe.energy),xp,level};
+            message = `Served ${recipe.name}! +${recipe.xp} XP`;
+        } else return void await fail('Unknown kitchen action.');
+        await client.query(`UPDATE pet_kitchens SET ingredients=$2::jsonb,meals=$3::jsonb,active_recipe=$4,recipe_step=$5,cooking_started_at=$6,discovered_recipes=$7::jsonb,recipe_records=$8::jsonb,step_scores=$9::jsonb WHERE user_id=$1`, [req.userId,JSON.stringify(ingredients),JSON.stringify(meals),active,step,started,JSON.stringify(discovered),JSON.stringify(records),JSON.stringify(scores)]);
+        if (stats) await client.query('UPDATE pets SET coins=coins+$2,hunger=$3,happiness=$4,energy=$5,xp=$6,level=$7,updated_at=NOW() WHERE owner_id=$1', [req.userId,coinDelta,stats.hunger,stats.happiness,stats.energy,stats.xp,stats.level]);
+        else if (coinDelta) await client.query('UPDATE pets SET coins=coins+$2 WHERE owner_id=$1', [req.userId,coinDelta]);
+        if (action === 'buy' || action === 'buy_meal' || action === 'serve' || (action === 'step' && !active)) {
+            await recordMissionEvent(client,req.userId,action === 'buy' ? 'buy' : action === 'buy_meal' ? 'meal_buy' : action === 'serve' ? 'serve' : 'cook');
+            if (action === 'buy_meal') await recordMissionEvent(client,req.userId,'buy');
+        }
+        await client.query('COMMIT');
+        publishLive([String(req.userId)],'kitchen_updated');
+        const kitchen = {ingredients,meals,active_recipe:active,recipe_step:step,cooking_started_at:started,discovered_recipes:discovered,recipe_records:records,step_scores:scores};
+        res.json({message,kitchen,recipes:publicKitchenRecipes(discovered),result});
+    } catch (error) {await client.query('ROLLBACK');throw error;} finally {client.release();}
 }));
-
 
 // Batch 13: Mission Center. All rewards and progress are server-authoritative.
 type MissionKind='daily'|'weekly'|'milestone';

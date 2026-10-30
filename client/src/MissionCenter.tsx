@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {Check, CheckCheck, Clock3, Coins, Sparkles, PawPrint, ChevronDown} from 'lucide-react';
+import {Check, CheckCheck, Clock3, Coins, Sparkles, PawPrint, ChevronDown, Trophy} from 'lucide-react';
+import SectionHeading from './SectionHeading';
 
 type MissionKind = 'daily' | 'weekly' | 'milestone';
 type Mission = {
@@ -141,7 +142,7 @@ export default function MissionCenter({token, api, onPetChange, onToast}: {
 
     return <section className="panel mission-center paw-missions-refreshed">
         <div className="eyebrow">YOUR LITTLE ADVENTURES</div>
-        <div className="paw-missions-heading"><h2>Missions</h2></div>
+        <div className="paw-missions-heading"><SectionHeading title="Missions" Icon={Trophy}/></div>
         <div className="paw-missions-kinds" role="tablist" aria-label="Mission schedule">
             {types.map(item => {
                 const missions = (data?.missions || []).filter(mission => mission.kind === item.id);
