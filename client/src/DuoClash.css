@@ -1,0 +1,343 @@
+/* Duo Clash is fully scoped: Classic 1v1 styles and calculations stay unchanged. */
+.paw-duo-root, .paw-duo-root * { box-sizing: border-box; }
+.paw-duo-root { color: #845b78; }
+.paw-duo-entry, .paw-duo-lobby, .paw-duo-result { padding: 20px; border: 1px solid #eccfdf; border-radius: 19px; background: #fffbfd; margin: 13px 0; }
+.paw-duo-entry-head { display: flex; gap: 12px; align-items: center; color: #a7678c; margin-bottom: 17px; }
+.paw-duo-entry-head h3 { margin: 0; font-size: 18px; }
+.paw-duo-entry-head p { margin: 3px 0 0; font-size: 12px; color: #977e91; }
+.paw-duo-entry-columns, .paw-duo-lobby-teams { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 13px; }
+.paw-duo-entry-block, .paw-duo-team-panel { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 15px; border-radius: 15px; border: 1px solid #ecd8e5; background: #fff5fa; }
+.paw-duo-entry-block label, .paw-duo-entry-block small { font-size: 11px; color: #957a8b; }
+.paw-duo-entry-block input { background: #fff; color: #6f4966; width: 100%; border-radius: 10px; padding: 12px; border: 1px solid #debccf; }
+.paw-duo-entry-block > button, .paw-duo-lobby-actions > button, .paw-duo-result > button { display: inline-flex; justify-content: center; align-items: center; gap: 8px; font-weight: 800; border: 0; border-radius: 11px; background: #bd7a9d; color: #fff; min-height: 40px; padding: 10px 14px; cursor: pointer; }
+.paw-duo-entry-block button:disabled, .paw-duo-lobby button:disabled { opacity: .5; cursor: not-allowed; }
+.paw-duo-team-pick { display: flex; gap: 7px; }
+.paw-duo-team-pick button { flex: 1; background: #fff; border: 1px solid #e7cddd; border-radius: 9px; padding: 9px 4px; font-size: 12px; color: #87607d; cursor: pointer; }
+.paw-duo-team-pick button.selected { background: #e8d2e1; border-color: #a76f9a; font-weight: 800; }
+.paw-duo-statline, .paw-duo-wager-note { display: flex; align-items: center; gap: 7px; font-size: 12px; margin: 15px 0 0; }
+.paw-duo-room-code { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; background: #f9eaf3; border-radius: 12px; font-size: 12px; }
+.paw-duo-room-code strong { font-size: 18px; letter-spacing: 1px; padding-left: 7px; }
+.paw-duo-room-code button { border: 0; background: #fff; color: #9c6185; border-radius: 9px; cursor: pointer; display: flex; align-items: center; padding: 9px; gap: 5px; }
+.paw-duo-lobby-teams { margin-top: 15px; }
+.paw-duo-team-panel.is-team-0 { background: #eaf5fb; border-color: #c5deec; }
+.paw-duo-team-panel.is-team-1 { background: #fff0f7; border-color: #ecd0df; }
+.paw-duo-team-panel h4 { margin: 0; font-size: 13px; }
+.paw-duo-lobby-slot { display: flex; align-items: center; gap: 7px; min-width: 0; background: #ffffffa8; padding: 10px; border-radius: 10px; font-size: 12px; }
+.paw-duo-lobby-slot span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.paw-duo-lobby-slot small { font-size: 10px; white-space: nowrap; }
+.paw-duo-lobby-actions { display: flex; gap: 10px; margin-top: 14px; }
+.paw-duo-lobby-actions .is-secondary { background: #f6edf3; color: #996a86; border: 1px solid #e2c6d8; }
+.paw-duo-backdrop { position: fixed; inset: 0; z-index: 2500; display: grid; place-items: center; padding: 8px; background: #382b40d4; }
+.paw-duo-battle { position: relative; display: flex; flex-direction: column; min-width: 0; width: min(1090px, 100%); height: min(790px, calc(100dvh - 16px)); overflow: hidden; border-radius: 19px; background: #fff7fc; border: 2px solid #eac8dd; box-shadow: 0 18px 65px #24152b65; }
+.paw-duo-battle-head { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 10px; min-height: 59px; padding: 10px 18px; background: linear-gradient(105deg,#f5dce9,#e8dcf7); }
+.paw-duo-battle-head h2 { font-size: 17px; margin: 0; display: flex; gap: 8px; align-items: center; color: #8c527c; }
+.paw-duo-battle-head small { display: block; color: #a77c9b; margin-top: 3px; font-size: 10px; }
+.paw-duo-close, .paw-duo-overlay-head button { display: grid; place-items: center; border: 1px solid #d6adc4; border-radius: 50%; width: 34px; height: 34px; color: #91607e; background: #fffcfe; cursor: pointer; }
+.paw-duo-score-row { flex: 0 0 auto; display: flex; gap: 6px; justify-content: space-between; align-items: center; background: #f9edf6; color: #906787; padding: 6px 16px; font-size: 11px; font-weight: 800; }
+.paw-duo-score-row > span { display: flex; gap: 4px; align-items: center; }
+.paw-duo-arena { min-height: 0; flex: 1 1 auto; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 46px 18% 8px; background: radial-gradient(ellipse at 50% 65%,#fbeaf3 0 24%,#e7d8f3 60%,#c6afd8 100%); isolation: isolate; }
+.paw-duo-arena::before { content: ""; position: absolute; left: 10%; right: 10%; top: 25%; bottom: -19%; border: 7px solid #f8e9fa; border-radius: 50%; box-shadow: 0 0 0 7px #b9a0d4, inset 0 0 0 4px #d1b8e0; transform: perspective(520px) rotateX(52deg); opacity: .7; z-index: -1; }
+.paw-duo-arena-lines { position: absolute; left: 13%; right: 13%; top: -13%; height: 35%; border: 12px solid #bfa9d7; border-bottom: 0; border-radius: 90px 90px 0 0; opacity: .5; z-index: -1; }
+.paw-duo-arena-side { min-height: 0; flex: 1 1 45%; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: end; gap: 12px; }
+.paw-duo-arena-side.is-enemy { padding-left: 10%; padding-right: 10%; }
+.paw-duo-arena-side.is-ally { padding: 0 1%; }
+.paw-duo-fighter { display: flex; flex-direction: column; justify-content: end; align-items: center; position: relative; min-height: 0; height: 100%; }
+.paw-duo-fighter-hud { position: relative; width: min(100%,190px); flex: 0 0 auto; border: 1px solid #e0bcca; border-radius: 10px; padding: 5px 7px; color: #794d71; background: #fffbfedc; box-shadow: 0 2px 9px #4c304521; z-index: 3; }
+.paw-duo-fighter-hud > div:first-child { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.paw-duo-fighter-hud > div:first-child b { font-size: 10px; max-width: 55%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.paw-duo-fighter-hud small { display: block; font-size: 9px; color: #98788e; }
+.paw-duo-health { height: 5px; border-radius: 9px; background: #e0cbd5; overflow: hidden; margin: 3px 0; }
+.paw-duo-health i { display: block; background: linear-gradient(90deg,#67b599,#94d7b3); height: 100%; }
+.paw-duo-ministats { font-size: 9px; white-space: nowrap; }
+.paw-duo-fighter-hud .paw-brawl-status-row { max-height: 20px; }
+.paw-duo-pet-art { position: relative; display: grid; place-items: end center; width: 100%; height: clamp(40px, 6.5vh, 78px); min-height: 0; z-index: 2; }
+.paw-duo-pet-art > svg { width: 100%; height: 100%; max-width: 95px; max-height: 95px; }
+.paw-duo-pet-art svg { max-height: 100%; }
+.paw-duo-platform { width: min(86%,135px); height: 15px; background: radial-gradient(ellipse,#fff9ff 15%,#d3b7df 58%,#a17ac1 100%); border: 2px solid #fff1ff; border-radius: 50%; box-shadow: 0 6px 7px #4e2d6438; flex: 0 0 auto; margin-top: -5px; z-index: 1; }
+.paw-duo-fighter.is-mine .paw-duo-platform { border-color: #acd9e8; }
+.paw-duo-fighter.is-downed .paw-duo-pet-art { opacity: .45; filter: grayscale(.8); }
+.paw-duo-downed { position: absolute; bottom: 22px; padding: 4px 7px; color: #9e365e; background: #fff5fa; border-radius: 9px; font-size: 10px; z-index: 3; }
+.paw-duo-center-vs { color: #a37bac; text-align: center; font-weight: 900; font-size: 11px; line-height: 13px; flex: 0 0 auto; }
+.paw-duo-order { position: absolute; top: 9px; left: 10px; z-index: 6; padding: 5px 7px; background: #fff7fcde; border: 1px solid #e1c5e3; border-radius: 10px; color: #8b668c; }
+.paw-duo-order > span { display: block; font-size: 8px; font-weight: 900; letter-spacing: .7px; margin-bottom: 3px; }
+.paw-duo-order > div { display: flex; gap: 5px; }
+.paw-duo-order-pet { width: 36px; height: 41px; display: flex; align-items: center; flex-direction: column; background: #fff; border: 2px solid #d98fad; border-radius: 9px; padding: 1px; }
+.paw-duo-order-pet.ally { border-color: #80bbcf; }
+.paw-duo-order-pet svg { width: 26px; height: 26px; }
+.paw-duo-order-pet small { font-size: 8px; font-weight: 900; }
+.paw-duo-actions { flex: 0 0 auto; display: flex; flex-direction: column; gap: 6px; padding: 8px 12px 7px; background: #fff9fc; min-height: 0; }
+.paw-duo-move-item { position:relative; min-width:0; display:flex; }
+.paw-duo-move-item > button:first-child { width:100%; }
+.paw-duo-move-list { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 6px; }
+.paw-duo-move-item > button:first-child { position: relative; min-width: 0; min-height: 62px; display: flex; flex-direction: column; gap: 2px; justify-content: center; align-items: center; padding: 7px 5px; border: 1.5px solid #e7cddd; color: #815875; background: #fff; border-radius: 10px; cursor: pointer; }
+.paw-duo-move-item > button:first-child > span { display: block; font-weight: 800; max-width: 100%; font-size: 10px; text-align: center; overflow: hidden; text-overflow: ellipsis; }
+.paw-duo-move-item > button:first-child small { font-size: 9px; color: #a07d95; text-align: center; }
+.paw-duo-move-item > button:first-child.is-selected { border-color: #c67caa; background: #fbe8f3; box-shadow: inset 0 0 0 1px #dca6c5; }
+.paw-duo-move-item > button:first-child:disabled { opacity: .42; cursor: not-allowed; }
+.paw-duo-skill-help { position: absolute; top: 2px; right: 2px; cursor: help; color: #a36688; display: grid; place-items: center; width: 18px; height: 18px; padding:0; border:0; background:transparent; z-index:2; }
+.paw-duo-target-row { display: flex; gap: 6px; align-items: center; white-space: nowrap; overflow-x: auto; max-height: 39px; min-height: 28px; font-size: 11px; }
+.paw-duo-target-row > button { border: 1px solid #e2bfd3; background: #fff; color: #8e627e; border-radius: 8px; font-size: 11px; padding: 6px 9px; flex: 0 0 auto; cursor: pointer; }
+.paw-duo-target-row > button.is-selected { background: #f3ddea; border-color: #c178a3; font-weight: 800; }
+.paw-duo-target-row small { color: #b688a2; }
+.paw-duo-lock { display: block; width: 100%; min-height: 35px; border: 0; border-radius: 9px; background: #b77097; color: #fff; font-weight: 900; cursor: pointer; font-size: 12px; }
+.paw-duo-lock:disabled { opacity: .45; cursor: not-allowed; }
+.paw-duo-locked { min-height: 90px; display: flex; align-items: center; justify-content: center; gap: 7px; font-weight: 800; color: #9b618b; font-size: 13px; }
+.paw-duo-foot { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 10px; color: #947c90; }
+.paw-duo-foot button { border: 0; background: transparent; color: #a86a93; font-size: 10px; font-weight: 800; cursor: pointer; }
+.paw-duo-overlay { position: absolute; inset: 0; z-index: 100; background: #32233eb8; display: grid; place-items: center; padding: 10px; }
+.paw-duo-overlay-panel { width: min(460px,100%); max-height: min(420px,85%); overflow: auto; background: #fffafd; border-radius: 15px; padding: 18px; color: #815a78; }
+.paw-duo-overlay-head { display: flex; align-items: center; justify-content: space-between; gap: 7px; }
+.paw-duo-overlay-head h3 { margin: 0; font-size: 17px; }
+.paw-duo-overlay-panel p { line-height: 1.5; }
+.paw-duo-log { overflow: auto; max-height: 285px; }
+.paw-duo-log p { border-bottom: 1px solid #f2e5ec; margin: 0; padding: 8px 0; font-size: 12px; }
+.paw-duo-result { display: grid; justify-items: center; gap: 9px; }
+.paw-duo-result h3,.paw-duo-result p { margin: 0; }
+.paw-brawl-turn-order { position: absolute; top: 9px; left: 9px; z-index: 20; display: flex; flex-direction: column; gap: 3px; padding: 5px 7px; border: 1px solid #ead3e7; border-radius: 11px; background: #fff6f9dd; }
+.paw-brawl-turn-order strong { color: #9b7698; font-size: 9px; letter-spacing: .5px; }
+.paw-brawl-turn-order .is-line { display: flex; gap: 5px; }
+.paw-brawl-turn-order .is-portrait { width: 38px; height: 43px; display: grid; justify-items: center; border: 2px solid #d998b3; border-radius: 8px; background: #fff; }
+.paw-brawl-turn-order .is-portrait.is-mine { border-color: #86c4dc; }
+.paw-brawl-turn-order .is-portrait > svg { width: 28px; height: 28px; }
+.paw-brawl-turn-order .is-portrait small { font-size: 8px; font-weight: 800; color: #946a82; }
+@media(max-width:700px) {
+    .paw-duo-battle { height: calc(100dvh - 8px); border-radius: 12px; }
+    .paw-duo-battle-head { padding: 7px 11px; min-height: 50px; }
+    .paw-duo-battle-head h2 { font-size: 14px; }
+    .paw-duo-arena { padding: 50px 10% 5px; }
+    .paw-duo-arena-side { gap: 6px; }
+    .paw-duo-arena-side.is-enemy { padding-left: 4%; padding-right: 4%; }
+    .paw-duo-fighter-hud { padding: 3px 4px; }
+    .paw-duo-fighter-hud > div:first-child b,.paw-duo-fighter-hud small { font-size: 8px; }
+    .paw-duo-ministats { font-size: 8px; }
+    .paw-duo-pet-art { height: clamp(34px,7vh,68px); }
+    .paw-duo-move-list { grid-template-columns: repeat(4,minmax(0,1fr)); }
+    .paw-duo-move-item > button:first-child { min-height: 49px; padding: 4px 2px; }
+    .paw-duo-move-item > button:first-child > svg { width: 14px; height: 14px; }
+    .paw-duo-move-item > button:first-child > span { font-size: 10px; }
+    .paw-duo-move-item > button:first-child small { font-size: 8px; }
+    .paw-duo-order-pet { width: 28px; height: 36px; }
+    .paw-duo-order-pet svg { width: 21px; height: 21px; }
+    .paw-duo-score-row { font-size: 10px; padding: 5px 8px; }
+    .paw-duo-actions { padding: 5px 7px; gap: 4px; }
+    .paw-duo-foot span { display: none; }
+    .paw-duo-entry-columns, .paw-duo-lobby-teams { grid-template-columns: 1fr; }
+    .paw-brawl-turn-order .is-portrait { width: 30px; height: 37px; }
+    .paw-brawl-turn-order .is-portrait > svg { width: 22px; height: 22px; }
+}
+@media(max-width:380px), (max-height:670px) {
+    .paw-duo-battle-head { min-height: 43px; }
+    .paw-duo-arena { padding-top: 40px; }
+    .paw-duo-fighter-hud .paw-brawl-status-row { display: none; }
+    .paw-duo-pet-art { height: clamp(25px,5.5vh,50px); }
+    .paw-duo-move-item > button:first-child { min-height: 40px; }
+    .paw-duo-move-item > button:first-child small { display: none; }
+    .paw-duo-locked { min-height: 62px; }
+}
+@media(prefers-reduced-motion: reduce) { .paw-duo-root * { scroll-behavior: auto; animation-duration: .01ms !important; } }
+
+.paw-duo-invites { background:#fff3fa; border:1px solid #e6c8da; padding:12px; border-radius:12px; display:grid; gap:8px; margin-top:12px; }
+.paw-duo-invites > div { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12px; }
+.paw-duo-invites button, .paw-duo-invite-friend button { border:0; border-radius:9px; background:#be7e9f; color:#fff; padding:9px 12px; font-weight:800; cursor:pointer; }
+.paw-duo-invite-friend { margin-top:13px; display:flex; align-items:center; gap:9px; }
+.paw-duo-invite-friend select { flex:1; min-width:0; background:#fff; color:#875974; border:1px solid #e5c5d7; border-radius:9px; padding:10px; }
+.paw-duo-invite-friend button:disabled { opacity:.45; }
+
+.paw-duo-floating { position:absolute; bottom:26%; right:-8%; z-index:7; pointer-events:none; display:flex; flex-direction:column; align-items:center; gap:2px; animation:duo-float 1.7s ease-out forwards; }
+.paw-duo-floating span { color:#bd355e; font-size:12px; font-weight:1000; text-shadow:0 1px 2px #fff,0 -1px 2px #fff; white-space:nowrap; }
+.paw-duo-floating .is-poison { color:#893fba; }.paw-duo-floating .is-heal { color:#218d65; }.paw-duo-floating .is-shield { color:#367dbd; }.paw-duo-floating .is-focus { color:#a5751d; }
+@keyframes duo-float { 0% { opacity:0; transform:translateY(10px) scale(.92); } 20%,75% { opacity:1; } 100% {opacity:0;transform:translateY(-24px);} }
+
+/* PawPal's dark mode applies to every Duo surface. */
+.paw-dark .paw-duo-entry,.paw-dark .paw-duo-lobby,.paw-dark .paw-duo-result,.paw-dark .paw-duo-entry-block,.paw-dark .paw-duo-room-code,.paw-dark .paw-duo-invites { background:#342a3c; border-color:#67516b; color:#f5d9eb; }
+.paw-dark .paw-duo-entry-head,.paw-dark .paw-duo-statline,.paw-dark .paw-duo-wager-note,.paw-dark .paw-duo-entry-head h3 { color:#f3c5db; }
+.paw-dark .paw-duo-entry-head p,.paw-dark .paw-duo-entry-block label,.paw-dark .paw-duo-entry-block small { color:#c6a9be; }
+.paw-dark .paw-duo-team-panel.is-team-0 {background:#304457;border-color:#49687a;} .paw-dark .paw-duo-team-panel.is-team-1 {background:#4a3349;border-color:#74546b;}
+.paw-dark .paw-duo-entry-block input,.paw-dark .paw-duo-team-pick button,.paw-dark .paw-duo-invite-friend select { background:#46384c; color:#ffe2f2; border-color:#765975; }
+.paw-dark .paw-duo-lobby-slot,.paw-dark .paw-duo-room-code button { background:#4a3b50; color:#f3deeb; }
+.paw-dark .paw-duo-battle {background:#30283a;border-color:#6e5470;} .paw-dark .paw-duo-battle-head {background:linear-gradient(105deg,#5a4059,#3f365a);} .paw-dark .paw-duo-battle-head h2 {color:#f4d4e9;} .paw-dark .paw-duo-score-row {background:#4a3950;color:#f2d0e4;}
+.paw-dark .paw-duo-actions {background:#34283b;} .paw-dark .paw-duo-move-item > button:first-child,.paw-dark .paw-duo-target-row > button,.paw-dark .paw-duo-order,.paw-dark .paw-duo-fighter-hud {background:#4b394f;color:#f4d4e5;border-color:#705673;}
+.paw-dark .paw-duo-move-item > button:first-child.is-selected,.paw-dark .paw-duo-target-row > button.is-selected {background:#6b4668;border-color:#e5a3cc;} .paw-dark .paw-duo-foot {color:#c5aec8;}
+
+/* Paw Brawl 3.1: both mode entries use the same Challenge a Friend modal shell. */
+.paw-duo-modal-dialog {
+    width: min(680px, 100%);
+    max-height: min(760px, calc(100dvh - 20px));
+}
+.paw-duo-modal-dialog .paw-duo-dialog-content {
+    padding: 15px 18px 20px;
+    overflow-x: hidden;
+}
+.paw-duo-dialog-content > .paw-duo-entry,
+.paw-duo-dialog-content > .paw-duo-lobby,
+.paw-duo-dialog-content > .paw-duo-result {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: transparent;
+}
+.paw-duo-dialog-content .paw-duo-entry-head { display: none; }
+.paw-duo-dialog-content .paw-duo-entry-columns { gap: 12px; }
+.paw-duo-dialog-content .paw-duo-entry-block,
+.paw-duo-dialog-content .paw-duo-team-panel { min-width: 0; }
+.paw-duo-modal-dialog .paw-multi-dialog-header {
+    flex: 0 0 auto;
+}
+.paw-duo-modal-dialog .paw-multi-dialog-close {
+    flex-shrink: 0;
+}
+.paw-duo-dialog-content input,
+.paw-duo-dialog-content select { min-width: 0; }
+@media (max-width: 570px) {
+    .paw-duo-dialog-content .paw-duo-entry-columns,
+    .paw-duo-dialog-content .paw-duo-lobby-teams { grid-template-columns: 1fr; }
+    .paw-duo-modal-dialog .paw-duo-dialog-content { padding: 12px 14px 16px; }
+}
+.paw-dark .paw-duo-modal-dialog .paw-duo-dialog-content > .paw-duo-entry,
+.paw-dark .paw-duo-modal-dialog .paw-duo-dialog-content > .paw-duo-lobby,
+.paw-dark .paw-duo-modal-dialog .paw-duo-dialog-content > .paw-duo-result {
+    border: 0;
+    background: transparent;
+}
+
+/* The in-battle headers and skill/history dialogs share the same header controls. */
+.paw-duo-battle > .paw-duo-battle-head.paw-multi-dialog-header {
+    align-items: center;
+    padding: 10px 18px;
+}
+.paw-duo-battle-head .paw-duo-close.paw-multi-dialog-close {
+    flex-shrink: 0;
+}
+.paw-duo-overlay-panel .paw-duo-overlay-head.paw-multi-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+}
+.paw-duo-overlay-panel .paw-duo-overlay-head .paw-multi-dialog-close {
+    flex-shrink: 0;
+}
+
+/* Paw Brawl 3.2: Classic-style stakes, host-generated codes, and pet-themed teams. */
+.paw-duo-entry-block .paw-duo-auto-code {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 0;
+    padding: 10px 11px;
+    border: 1px solid #ecd6e8;
+    border-radius: 11px;
+    background: #fffafd;
+    color: #926b87;
+    font-size: 11px;
+    line-height: 1.5;
+}
+.paw-duo-auto-code svg { flex: 0 0 auto; margin-top: 1px; color: #bc7ca3; }
+.paw-duo-entry-block .paw-duo-wager-label { font-weight: 800; color: #97708a; font-size: 12px; }
+.paw-duo-entry-block .paw-duo-wager-input { min-height: 44px; }
+.paw-duo-entry-block .paw-duo-wager-input input {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 0;
+    border: 0 !important;
+    border-radius: 0;
+    outline: none;
+    background: transparent !important;
+    box-shadow: none;
+    color: #76546b;
+    font-family: inherit;
+    font-size: 13px;
+}
+.paw-duo-wager-presets { margin-top: 0; }
+.paw-duo-wager-presets button { cursor: pointer; }
+.paw-duo-wager-presets button:focus-visible,
+.paw-duo-team-pick button:focus-visible { outline: 2px solid #a572ac; outline-offset: 2px; }
+.paw-duo-entry-block .paw-duo-prize { margin: 3px 0 0; padding: 11px; gap: 7px; }
+.paw-duo-prize > div { flex-wrap: wrap; }
+.paw-duo-prize strong { white-space: nowrap; }
+.paw-duo-entry-block .paw-duo-team-pick { gap: 8px; }
+.paw-duo-team-pick button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 42px;
+    font-size: 11px;
+    font-weight: 750;
+    transition: border-color .14s ease, box-shadow .14s ease;
+}
+.paw-duo-team-pick button.is-moonpaws { color: #736097; background: #f7f2ff; border-color: #d7c9ec; }
+.paw-duo-team-pick button.is-starwhiskers { color: #a66a66; background: #fff3ed; border-color: #f0d1bf; }
+.paw-duo-team-pick button.is-moonpaws.selected { background: #e9defc; border-color: #9c81cd; box-shadow: inset 0 0 0 1px #b4a0db; }
+.paw-duo-team-pick button.is-starwhiskers.selected { background: #ffe4d4; border-color: #d79f82; box-shadow: inset 0 0 0 1px #edc0a8; }
+.paw-duo-team-panel.is-team-0 { background: #f1eafa; border-color: #d9c9e9; }
+.paw-duo-team-panel.is-team-1 { background: #fff0e8; border-color: #edd0c0; }
+.paw-duo-team-panel h4 { display: flex; align-items: center; gap: 6px; }
+.paw-duo-team-panel.is-team-0 h4 { color: #78629a; }
+.paw-duo-team-panel.is-team-1 h4 { color: #a56a65; }
+.paw-duo-room-code > span { display: grid; gap: 3px; min-width: 0; }
+.paw-duo-room-code > span > small { color: #9b7692; font-size: 10px; font-weight: 850; letter-spacing: .7px; }
+.paw-duo-room-code strong { padding-left: 0; font-size: clamp(15px,3vw,19px); letter-spacing: 1.4px; user-select: all; overflow-wrap: anywhere; }
+.paw-duo-room-code button { flex: 0 0 auto; font-weight: 800; }
+.paw-duo-room-code button:focus-visible { outline: 2px solid #aa74a6; outline-offset: 2px; }
+.paw-dark .paw-duo-entry-block .paw-duo-auto-code { background: #48394d; border-color: #705873; color: #e6c6dc; }
+.paw-dark .paw-duo-entry-block .paw-duo-wager-input { background: #46384c; border-color: #765975; }
+.paw-dark .paw-duo-entry-block .paw-duo-wager-input input { color: #ffe2f2 !important; }
+.paw-dark .paw-duo-entry-block .paw-duo-prize { background: #49364c; border-color: #705372; }
+.paw-dark .paw-duo-prize > span,.paw-dark .paw-duo-prize > div { color: #e6c6dc; }
+.paw-dark .paw-duo-prize b { color: #ffe7f6; }
+.paw-dark .paw-duo-team-pick button.is-moonpaws { background: #403653; color: #ded0ff; border-color: #715e92; }
+.paw-dark .paw-duo-team-pick button.is-starwhiskers { background: #50393f; color: #ffdbc9; border-color: #916e69; }
+.paw-dark .paw-duo-team-pick button.is-moonpaws.selected { background: #594776; border-color: #af95de; }
+.paw-dark .paw-duo-team-pick button.is-starwhiskers.selected { background: #704c4c; border-color: #d9a48d; }
+.paw-dark .paw-duo-team-panel.is-team-0 { background: #403653; border-color: #715e92; }
+.paw-dark .paw-duo-team-panel.is-team-1 { background: #50393f; border-color: #916e69; }
+.paw-dark .paw-duo-team-panel.is-team-0 h4 { color: #e5d3ff; }
+.paw-dark .paw-duo-team-panel.is-team-1 h4 { color: #ffe1d0; }
+.paw-dark .paw-duo-room-code > span > small { color: #ddbdd5; }
+@media (max-width: 400px) {
+    .paw-duo-team-pick { flex-direction: column; }
+    .paw-duo-room-code { padding: 10px; }
+}
+
+/* Paw Brawl 3.4: compact SVG-only feedback and clear targeting (no audio imports). */
+.paw-duo-fighter.is-targetable { cursor: pointer; border-radius: 14px; outline: 2px solid transparent; outline-offset: -2px; transition: outline-color 130ms ease, filter 130ms ease; }
+.paw-duo-fighter.is-targetable:hover, .paw-duo-fighter.is-targetable:focus-visible { outline-color: #d49abc; background: #ffe2f533; }
+.paw-duo-fighter.is-selected-target { outline: 2px solid #ce75a4; outline-offset: -2px; border-radius: 14px; background: #fce1ef55; }
+.paw-duo-fighter.is-acting .paw-duo-pet-art { animation: paw-duo-action-lunge 330ms ease-out both; }
+.paw-duo-fighter.is-impacted .paw-duo-pet-art { animation: paw-duo-hit-flinch 340ms ease-out both; }
+.paw-duo-order-pet.is-acting { border-color: #edbd6c !important; background: #fff0bd; box-shadow: 0 0 0 2px #f3c675; }
+.paw-duo-fighter-marker, .paw-duo-fighter-suggested, .paw-duo-fighter-ready { position: absolute; z-index: 6; border-radius: 6px; font-size: 8px; font-weight: 900; padding: 3px 5px; white-space: nowrap; }
+.paw-duo-fighter-marker { top: 0; right: 0; color: #fff; background: #bd6d96; }
+.paw-duo-fighter-suggested { bottom: 20px; left: 0; color: #764369; background: #ffe9a9; }
+.paw-duo-fighter-ready { top: 0; left: 0; display: inline-flex; align-items: center; gap: 2px; color: #2d8066; background: #dcf5e9; }
+.paw-duo-target-row > button { display: inline-flex; align-items: center; gap: 4px; }
+.paw-duo-signal { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; border: 1px solid #dcbad0; border-radius: 8px; padding: 5px 9px; color: #8d5b80; background: #fff1f8; font-size: 10px; font-weight: 800; cursor: pointer; }
+.paw-duo-signal:disabled { opacity: .5; cursor: not-allowed; }
+.paw-duo-signal-note { font-size: 10px; color: #9d6586; }
+.paw-duo-results-stats { width: 100%; display: grid; gap: 5px; text-align: left; padding: 10px; border: 1px solid #edd5e5; border-radius: 12px; background: #fff8fc; }
+.paw-duo-results-stats h4 { margin: 0 0 5px; font-size: 12px; }
+.paw-duo-results-head,.paw-duo-results-player { display: grid; grid-template-columns: minmax(85px,1fr) repeat(3,minmax(46px,.7fr)); gap: 5px; align-items: center; }
+.paw-duo-results-head { color: #95758a; font-weight: 800; font-size: 9px; }
+.paw-duo-results-player { padding: 5px; border-radius: 8px; background: #fff; font-size: 11px; }
+.paw-duo-results-player span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 800; }
+.paw-duo-results-player span small { display: block; font-size: 9px; font-weight: 500; color: #9b7990; }
+.paw-duo-results-player b { font-size: 11px; }
+.paw-duo-awards { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.paw-duo-awards span { display: inline-flex; align-items: center; gap: 3px; padding: 5px 7px; border-radius: 7px; background: #f4e5f2; font-size: 10px; font-weight: 700; }
+.paw-dark .paw-duo-results-stats { background: #3f3046; color: #f7dced; border-color: #765875; }
+.paw-dark .paw-duo-results-player { background: #523e55; color: #fce9f5; }
+.paw-dark .paw-duo-awards span { background: #5e4665; }
+.paw-dark .paw-duo-signal { background: #563b57; color: #fce2f2; border-color: #886581; }
+.paw-dark .paw-duo-fighter.is-selected-target { background: #77436455; }
+@keyframes paw-duo-action-lunge { 0% { transform: translateY(0) scale(1); } 45% { transform: translateY(-9px) scale(1.1); } 100% { transform: translateY(0) scale(1); } }
+@keyframes paw-duo-hit-flinch { 0%,100% { transform: translateX(0); filter: none; } 30% { transform: translateX(-6px); filter: brightness(1.17); } 60% { transform: translateX(5px); } }
+@media (max-width: 550px) { .paw-duo-signal { font-size: 9px; padding: 4px 7px; } .paw-duo-fighter-marker,.paw-duo-fighter-suggested,.paw-duo-fighter-ready { font-size: 7px; padding: 2px 3px; } }
+@media (prefers-reduced-motion: reduce) { .paw-duo-fighter.is-acting .paw-duo-pet-art, .paw-duo-fighter.is-impacted .paw-duo-pet-art { animation: none; } }
+
+/* Clear reasons and recovery when the server is resolving/reconnecting. */
+.paw-duo-action-reason { display: block; color: #985373; background: #fff0f6; border: 1px solid #e8c7d8; padding: 6px 9px; border-radius: 9px; font-size: 11px; line-height: 1.35; }
+.paw-duo-refresh-turn { align-self: stretch; border: 1px solid #cfa7c2; border-radius: 9px; background: #fcecf5; color: #9d6381; padding: 7px; font-size: 11px; font-weight: 700; cursor: pointer; }
+.paw-dark .paw-duo-action-reason, .paw-dark .paw-duo-refresh-turn { background: #463448; color: #f5d5e7; border-color: #876682; }

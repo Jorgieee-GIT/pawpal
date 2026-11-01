@@ -1,31 +1,451 @@
-import GardenPanel from './GardenPanel';
-import SectionHeading from './SectionHeading';
-import RoomArchitecture from './RoomArchitecture';
-import { MEMORY_HEARTS, MemoryHeart, PaintPalette, TargetHeart, PAW_COLOR_PALETTE, MoleGameIcon, ClawMenuIcon } from './ArcadeArt';
-import {Clock3, AlertTriangle, House, Users, UserRoundPlus, UserRoundMinus, ShoppingBag, Shirt, Gamepad2, Flower2, CookingPot, Trophy, Coins, Star, PawPrint, Bell, LogOut, Gift, Mail, MailPlus, Send, ArrowRight, Heart, Utensils, Bath, Moon, Sun, Sparkles, Zap, Droplets, Menu, LockKeyhole, BedDouble, RefreshCw, ChevronDown, BrainCircuit, Sprout, Rabbit, HeartHandshake, Check, Glasses, Crown, Ribbon, CircleUserRound, X, ArrowLeft, RotateCcw, Swords} from 'lucide-react';
-import MissionCenter from './MissionCenter';
-import Multiplayer from './Multiplayer';
-import Kitchen, {FoodArt} from './Kitchen';
-import {useEffect,useRef,useState} from 'react';
-import './style.css';
-import ArcadeCanvas from './ArcadeCanvas';
-import WhackAMole from './WhackAMole';
-import PawClaw from './PawClaw';
-import PetArt from './PetArt';
-import {ENVELOPE_DESIGNS, EnvelopeArtwork} from './PawMailArt';
-import {COSMETIC_SLOTS,NEW_COSMETICS,SLOT_NAMES,normalizeOutfit,type Outfit,type OutfitSlot} from './outfitCatalog';
-import {RoomFurniture,FURNITURE,FURNITURE_UNLOCK_LEVELS,DEFAULTS,furnitureLayout,FurnitureArt} from './RoomFurniture';
-type Pet={id:string;name:string;species:string;color:string;breed:string;level:number;xp:number;coins:number;hunger:number;happiness:number;energy:number;cleanliness:number;affection:number;food:number;toys:number;owned_cosmetics:string[];equipped_cosmetic:string;equipped_outfit:Outfit;owned_colors:string[];owned_breeds:string[];room_theme:string;active_room?:string;unlocked_rooms?:string[];room_layouts?:Record<string,{id:string,x:number,y:number}[]>;owned_items:string[];placed_items:string[];garden:{seeds:number;flowers:number;planted_at?:string|null;watering_cans?:number;watered_minutes?:number;unlocked_plots?:number;plots?:({planted_at:string;watered_minutes:number}|null)[];discoveries?:Record<string,{count:number;first_at:string;best_reward:number}>;_sleeping?:boolean};last_daily:string|null;daily_claimed_at:string|null};
-type PawNotification={kind:string;actor:string;event_id:string;created_at:string;unread:boolean;game_name?:string|null;wager?:number|null};type PawMail={id:string;sender_id:string;sender_username:string;design:string;message:string;color?:string;sender_pet?:any;created_at:string;expires_at:string;read_at:string|null;recipient_username?:string};type RoomPet={id:string;name:string;species:string;color:string;breed:string;level:number;hunger:number;happiness:number;energy:number;cleanliness:number;affection:number;equipped_cosmetic:string;equipped_outfit:Outfit;username:string;user_id:string;pet_note?:string|null;note_expires_at?:string|null;sleeping?:boolean};type Friend={requester_id:string;recipient_id:string;friend_id:string;username:string;status:string};
-const PAW_ICONS:Record<string,React.ComponentType<{size?:number;strokeWidth?:number;className?:string}>>={home:House,friends:Users,shop:ShoppingBag,wardrobe:Shirt,games:Gamepad2,multiplayer:Swords,garden:Flower2,kitchen:CookingPot,missions:Trophy,memory:BrainCircuit,dino:Sprout,runner:Rabbit,pattern:Heart,mole:Gamepad2,feed:Utensils,play:Gamepad2,sleep:Moon,bathe:Bath,cuddle:Heart};
-function PawIcon({name,size=19}:{name:string;size?:number}){const Component=PAW_ICONS[name]||Sparkles;return <Component size={size} strokeWidth={2.2} className="paw-svg-icon"/>}
-function PawSlotIcon({slot}:{slot:string}){const Icon=slot==='head'?Crown:slot==='eyes'?Glasses:slot==='neck'?Heart:Shirt;return <Icon size={16} aria-hidden="true"/>}
-const API=import.meta.env.VITE_API_URL||'';const species=['cat','dog','bunny','fox','hamster','panda','penguin','axolotl'];
-const ITEM_LEVEL_REQUIREMENTS:Record<string,number>={crystal_circlet:4,cherry_blossom_crown:6,moonlit_veil:8,dragon_horns:10,aurora_halo:12,butterfly_crown:15,pirate_tricorn:18,royal_diadem:22,galaxy_antlers:27,phoenix_plume:35,cat_eye_frames:4,starlight_specs:6,pixel_shades:8,rose_gold_glasses:10,emerald_goggles:12,snowflake_lenses:15,cyber_visor:18,nebula_shades:22,royal_mask:27,prismatic_monocle:35,moon_choker:4,emerald_pendant:6,flower_garland:8,silk_cravat:10,pearl_choker:12,sun_medallion:15,frost_necklace:18,royal_sash:22,cosmic_locket:27,phoenix_pendant:35,strawberry_cardigan:4,forest_cloak:6,moonlight_kimono:8,dragon_armor:10,aurora_dress:12,butterfly_cape:15,pirate_coat:18,royal_uniform:22,galaxy_robe:27,phoenix_armor:35,eurasian_lynx:33,snow_leopard:42,smilodon:50,gray_wolf:33,african_wild_dog:42,dire_wolf:50,pygmy_rabbit:33,volcano_rabbit:42,nuralagus:50,kit_fox:33,swift_fox:42,island_fox:50,campbells_dwarf:33,european_hamster:42,brandts_hamster:50,grizzly_bear:33,polar_bear:42,short_faced_bear:50,african_penguin:33,king_penguin:42,waitaha_penguin:50,tiger_salamander:33,andersons_salamander:42,ambystoma_dumerilii:50,cloud_sofa:5,moon_crown:12,night_room:8,maine_coon:24,red_panda_cub:24,witch_hat:10,star_tiara:20,calico:1,tabby:1,tuxedo:1,fluffy:5,siamese:10,british_shorthair:16,golden:1,dalmatian:1,husky:1,corgi:5,beagle:10,shiba:16,border_collie:24,lop:1,dutch:1,angora:1,spotted:5,lionhead:10,rex:16,himalayan:24,red_fox:1,arctic_fox:1,fennec:1,silver_fox:5,cross_fox:10,marble_fox:16,bat_eared_fox:24,syrian:1,dwarf:1,roborovski:1,banded:5,winter_white:10,chinese_hamster:16,teddy_bear:24,giant_panda:1,red_panda:1,snow_panda:1,baby_panda:5,qinling_panda:10,brown_panda:16,emperor:1,adelie:1,gentoo:1,chinstrap:5,rockhopper:10,little_blue:16,macaroni:24,leucistic:1,wild_type:1,melanoid:1,golden_albino:5,copper:10,piebald:16,mosaic:24,aurora_prism:12,cosmic_nebula:20,crystal_lagoon:28,solar_eclipse:36,celestial_opal:45};
-const store=[['bow','bow','cosmetic',420],['cap','cap','cosmetic',550],['crown','crown','cosmetic',2400],['glasses','glasses','cosmetic',720],['flower','flower','cosmetic',460],['scarf','scarf','cosmetic',790],['halo','halo','cosmetic',3000],['party','party','cosmetic',850],['pink','pink','color',550],['cream','cream','color',450],['gray','gray','color',600],['orange','orange','color',650],['black','black','color',650],['lavender','lavender','color',950],['mint','mint','color',950],['cloud_sofa','sofa','furniture',2400],['plant','plant','furniture',580],['lamp','lamp','furniture',950],['bookshelf','books','furniture',1800],['rug','rug','furniture',950],['cat_tree','tree','furniture',2200],['plush','plush','furniture',750],['blush','♡','theme',0],['lavender_room','lavender','theme',2500],['mint_room','mint','theme',2500],['night_room','moon','theme',3500],['strawberry_milk','✿','theme',2100],['lavender_dream','✿','theme',2300],['mint_garden','✿','theme',2300],['blueberry_sky','✿','theme',2500],['honey_cottage','✿','theme',2700],['peach_blossom','✿','theme',2700],['moonlight','✿','theme',3300],['sage_forest','✿','theme',2900],['aurora_prism','✦','theme',5600],['cosmic_nebula','✦','theme',7400],['crystal_lagoon','✦','theme',9200],['solar_eclipse','✦','theme',11500],['celestial_opal','✦','theme',14500]] as const;
-const breedsBySpecies:Record<string,string[]>={"cat": ["calico", "tabby", "tuxedo", "fluffy"], "dog": ["golden", "dalmatian", "husky", "corgi"], "bunny": ["lop", "dutch", "angora", "spotted"], "fox": ["red_fox", "arctic_fox", "fennec", "silver_fox"], "hamster": ["syrian", "dwarf", "roborovski", "banded"], "panda": ["giant_panda", "red_panda", "snow_panda", "baby_panda"], "penguin": ["emperor", "adelie", "gentoo", "chinstrap"], "axolotl": ["leucistic", "wild_type", "melanoid", "golden_albino"]};
-const extraBreedStore=[["calico", "paw", "breed", 7500], ["tabby", "paw", "breed", 8100], ["tuxedo", "paw", "breed", 8700], ["fluffy", "paw", "breed", 9300], ["golden", "paw", "breed", 7500], ["dalmatian", "paw", "breed", 8100], ["husky", "paw", "breed", 8700], ["corgi", "paw", "breed", 9300], ["lop", "paw", "breed", 7500], ["dutch", "paw", "breed", 8100], ["angora", "paw", "breed", 8700], ["spotted", "paw", "breed", 9300], ["red_fox", "paw", "breed", 7500], ["arctic_fox", "paw", "breed", 8100], ["fennec", "paw", "breed", 8700], ["silver_fox", "paw", "breed", 9300], ["syrian", "paw", "breed", 7500], ["dwarf", "paw", "breed", 8100], ["roborovski", "paw", "breed", 8700], ["banded", "paw", "breed", 9300], ["giant_panda", "paw", "breed", 7500], ["red_panda", "paw", "breed", 8100], ["snow_panda", "paw", "breed", 8700], ["baby_panda", "paw", "breed", 9300], ["emperor", "paw", "breed", 7500], ["adelie", "paw", "breed", 8100], ["gentoo", "paw", "breed", 8700], ["chinstrap", "paw", "breed", 9300], ["leucistic", "paw", "breed", 7500], ["wild_type", "paw", "breed", 8100], ["melanoid", "paw", "breed", 8700], ["golden_albino", "paw", "breed", 9300]] as const;
-const addedBreedsBySpecies:Record<string,string[]>={"cat": ["siamese", "british_shorthair", "maine_coon", "eurasian_lynx", "snow_leopard", "smilodon"], "dog": ["beagle", "shiba", "border_collie", "gray_wolf", "african_wild_dog", "dire_wolf"], "bunny": ["lionhead", "rex", "himalayan", "pygmy_rabbit", "volcano_rabbit", "nuralagus"], "fox": ["cross_fox", "marble_fox", "bat_eared_fox", "kit_fox", "swift_fox", "island_fox"], "hamster": ["winter_white", "chinese_hamster", "teddy_bear", "campbells_dwarf", "european_hamster", "brandts_hamster"], "panda": ["qinling_panda", "brown_panda", "red_panda_cub", "grizzly_bear", "polar_bear", "short_faced_bear"], "penguin": ["rockhopper", "little_blue", "macaroni", "african_penguin", "king_penguin", "waitaha_penguin"], "axolotl": ["copper", "piebald", "mosaic", "tiger_salamander", "andersons_salamander", "ambystoma_dumerilii"]};
+import GardenPanel from "./GardenPanel";
+import BackgroundMusic from "./BackgroundMusic";
+import SettingsModal from "./SettingsModal";
+import type { AppearanceChoice } from "./SettingsArt";
+import { musicZoneForTab, readAudioPreferences } from "./musicTracks";
+import SectionHeading from "./SectionHeading";
+import RoomArchitecture from "./RoomArchitecture";
+import {
+    MEMORY_HEARTS,
+    MemoryHeart,
+    PaintPalette,
+    TargetHeart,
+    PAW_COLOR_PALETTE,
+    MoleGameIcon,
+    ClawMenuIcon
+} from "./ArcadeArt";
+import {
+    Clock3,
+    AlertTriangle,
+    House,
+    Users,
+    UserRoundPlus,
+    UserRoundMinus,
+    ShoppingBag,
+    Shirt,
+    Gamepad2,
+    Flower2,
+    CookingPot,
+    Trophy,
+    Coins,
+    Star,
+    PawPrint,
+    Bell,
+    LogOut,
+    Gift,
+    Mail,
+    MailPlus,
+    Send,
+    ArrowRight,
+    Heart,
+    Utensils,
+    Bath,
+    Moon,
+    Sun,
+    Sparkles,
+    Zap,
+    Droplets,
+    Menu,
+    LockKeyhole,
+    BedDouble,
+    RefreshCw,
+    ChevronDown,
+    BrainCircuit,
+    Sprout,
+    Rabbit,
+    HeartHandshake,
+    Check,
+    Glasses,
+    Crown,
+    Ribbon,
+    CircleUserRound,
+    X,
+    ArrowLeft,
+    RotateCcw,
+    Swords,
+    Settings
+} from "lucide-react";
+import MissionCenter from "./MissionCenter";
+import Multiplayer from "./Multiplayer";
+import Kitchen, { FoodArt } from "./Kitchen";
+import { useEffect, useRef, useState } from "react";
+import "./style.css";
+import ArcadeCanvas from "./ArcadeCanvas";
+import WhackAMole from "./WhackAMole";
+import PawClaw from "./PawClaw";
+import PetArt from "./PetArt";
+import { ENVELOPE_DESIGNS, EnvelopeArtwork } from "./PawMailArt";
+import { COSMETIC_SLOTS, NEW_COSMETICS, SLOT_NAMES, normalizeOutfit, type Outfit, type OutfitSlot } from "./outfitCatalog";
+import { RoomFurniture, FURNITURE, FURNITURE_UNLOCK_LEVELS, DEFAULTS, furnitureLayout, FurnitureArt } from "./RoomFurniture";
+type Pet = {
+    id: string;
+    name: string;
+    species: string;
+    color: string;
+    breed: string;
+    level: number;
+    xp: number;
+    coins: number;
+    hunger: number;
+    happiness: number;
+    energy: number;
+    cleanliness: number;
+    affection: number;
+    food: number;
+    toys: number;
+    owned_cosmetics: string[];
+    equipped_cosmetic: string;
+    equipped_outfit: Outfit;
+    owned_colors: string[];
+    owned_breeds: string[];
+    room_theme: string;
+    active_room?: string;
+    unlocked_rooms?: string[];
+    room_layouts?: Record<string, {
+        id: string,
+        x: number,
+        y: number
+    }[]>;
+    owned_items: string[];
+    placed_items: string[];
+    garden: {
+        seeds: number;
+        flowers: number;
+        planted_at?: string | null;
+        watering_cans?: number;
+        watered_minutes?: number;
+        unlocked_plots?: number;
+        plots?: ({
+            planted_at: string;
+            watered_minutes: number
+        } | null)[];
+        discoveries?: Record<string, {
+            count: number;
+            first_at: string;
+            best_reward: number
+        }>;
+        _sleeping?: boolean
+    };
+    last_daily: string | null;
+    daily_claimed_at: string | null
+};
+type PawNotification = {
+    kind: string;
+    actor: string;
+    event_id: string;
+    created_at: string;
+    unread: boolean;
+    game_name?: string | null;
+    wager?: number | null
+};
+type PawMail = {
+    id: string;
+    sender_id: string;
+    sender_username: string;
+    design: string;
+    message: string;
+    color?: string;
+    sender_pet?: any;
+    created_at: string;
+    expires_at: string;
+    read_at: string | null;
+    recipient_username?: string
+};
+type RoomPet = {
+    id: string;
+    name: string;
+    species: string;
+    color: string;
+    breed: string;
+    level: number;
+    hunger: number;
+    happiness: number;
+    energy: number;
+    cleanliness: number;
+    affection: number;
+    equipped_cosmetic: string;
+    equipped_outfit: Outfit;
+    username: string;
+    user_id: string;
+    pet_note?: string | null;
+    note_expires_at?: string | null;
+    sleeping?: boolean
+};
+type Friend = {
+    requester_id: string;
+    recipient_id: string;
+    friend_id: string;
+    username: string;
+    status: string;
+    created_at: string
+};
+const PAW_ICONS: Record<string, React.ComponentType<{
+    size?: number;
+    strokeWidth?: number;
+    className?: string
+}>> = {
+    home: House,
+    friends: Users,
+    shop: ShoppingBag,
+    wardrobe: Shirt,
+    games: Gamepad2,
+    multiplayer: Swords,
+    garden: Flower2,
+    kitchen: CookingPot,
+    missions: Trophy,
+    memory: BrainCircuit,
+    dino: Sprout,
+    runner: Rabbit,
+    pattern: Heart,
+    mole: Gamepad2,
+    feed: Utensils,
+    play: Gamepad2,
+    sleep: Moon,
+    bathe: Bath,
+    cuddle: Heart
+};
+function PawIcon({ name, size = 19 }: {
+    name: string;
+    size?: number
+}) {
+    const Component = PAW_ICONS[name] || Sparkles;
+    return <Component size={size} strokeWidth={2.2} className="paw-svg-icon" />
+}
+function PawSlotIcon({ slot }: {
+    slot: string
+}) {
+    const Icon = slot === "head" ? Crown : slot === "eyes" ? Glasses : slot === "neck" ? Heart : Shirt;
+    return <Icon size={16} aria-hidden="true" />
+}
+const API = import.meta.env.VITE_API_URL || "";
+const species = ["cat", "dog", "bunny", "fox", "hamster", "panda", "penguin", "axolotl"];
+const ITEM_LEVEL_REQUIREMENTS: Record<string, number> = {
+    crystal_circlet: 4,
+    cherry_blossom_crown: 6,
+    moonlit_veil: 8,
+    dragon_horns: 10,
+    aurora_halo: 12,
+    butterfly_crown: 15,
+    pirate_tricorn: 18,
+    royal_diadem: 22,
+    galaxy_antlers: 27,
+    phoenix_plume: 35,
+    cat_eye_frames: 4,
+    starlight_specs: 6,
+    pixel_shades: 8,
+    rose_gold_glasses: 10,
+    emerald_goggles: 12,
+    snowflake_lenses: 15,
+    cyber_visor: 18,
+    nebula_shades: 22,
+    royal_mask: 27,
+    prismatic_monocle: 35,
+    moon_choker: 4,
+    emerald_pendant: 6,
+    flower_garland: 8,
+    silk_cravat: 10,
+    pearl_choker: 12,
+    sun_medallion: 15,
+    frost_necklace: 18,
+    royal_sash: 22,
+    cosmic_locket: 27,
+    phoenix_pendant: 35,
+    strawberry_cardigan: 4,
+    forest_cloak: 6,
+    moonlight_kimono: 8,
+    dragon_armor: 10,
+    aurora_dress: 12,
+    butterfly_cape: 15,
+    pirate_coat: 18,
+    royal_uniform: 22,
+    galaxy_robe: 27,
+    phoenix_armor: 35,
+    eurasian_lynx: 33,
+    snow_leopard: 42,
+    smilodon: 50,
+    gray_wolf: 33,
+    african_wild_dog: 42,
+    dire_wolf: 50,
+    pygmy_rabbit: 33,
+    volcano_rabbit: 42,
+    nuralagus: 50,
+    kit_fox: 33,
+    swift_fox: 42,
+    island_fox: 50,
+    campbells_dwarf: 33,
+    european_hamster: 42,
+    brandts_hamster: 50,
+    grizzly_bear: 33,
+    polar_bear: 42,
+    short_faced_bear: 50,
+    african_penguin: 33,
+    king_penguin: 42,
+    waitaha_penguin: 50,
+    tiger_salamander: 33,
+    andersons_salamander: 42,
+    ambystoma_dumerilii: 50,
+    cloud_sofa: 5,
+    moon_crown: 12,
+    night_room: 8,
+    maine_coon: 24,
+    red_panda_cub: 24,
+    witch_hat: 10,
+    star_tiara: 20,
+    calico: 1,
+    tabby: 1,
+    tuxedo: 1,
+    fluffy: 5,
+    siamese: 10,
+    british_shorthair: 16,
+    golden: 1,
+    dalmatian: 1,
+    husky: 1,
+    corgi: 5,
+    beagle: 10,
+    shiba: 16,
+    border_collie: 24,
+    lop: 1,
+    dutch: 1,
+    angora: 1,
+    spotted: 5,
+    lionhead: 10,
+    rex: 16,
+    himalayan: 24,
+    red_fox: 1,
+    arctic_fox: 1,
+    fennec: 1,
+    silver_fox: 5,
+    cross_fox: 10,
+    marble_fox: 16,
+    bat_eared_fox: 24,
+    syrian: 1,
+    dwarf: 1,
+    roborovski: 1,
+    banded: 5,
+    winter_white: 10,
+    chinese_hamster: 16,
+    teddy_bear: 24,
+    giant_panda: 1,
+    red_panda: 1,
+    snow_panda: 1,
+    baby_panda: 5,
+    qinling_panda: 10,
+    brown_panda: 16,
+    emperor: 1,
+    adelie: 1,
+    gentoo: 1,
+    chinstrap: 5,
+    rockhopper: 10,
+    little_blue: 16,
+    macaroni: 24,
+    leucistic: 1,
+    wild_type: 1,
+    melanoid: 1,
+    golden_albino: 5,
+    copper: 10,
+    piebald: 16,
+    mosaic: 24,
+    aurora_prism: 12,
+    cosmic_nebula: 20,
+    crystal_lagoon: 28,
+    solar_eclipse: 36,
+    celestial_opal: 45
+};
+const store = [
+    ["bow", "bow", "cosmetic", 420],
+    ["cap", "cap", "cosmetic", 550],
+    ["crown", "crown", "cosmetic", 2400],
+    ["glasses", "glasses", "cosmetic", 720],
+    ["flower", "flower", "cosmetic", 460],
+    ["scarf", "scarf", "cosmetic", 790],
+    ["halo", "halo", "cosmetic", 3000],
+    ["party", "party", "cosmetic", 850],
+    ["pink", "pink", "color", 550],
+    ["cream", "cream", "color", 450],
+    ["gray", "gray", "color", 600],
+    ["orange", "orange", "color", 650],
+    ["black", "black", "color", 650],
+    ["lavender", "lavender", "color", 950],
+    ["mint", "mint", "color", 950],
+    ["cloud_sofa", "sofa", "furniture", 2400],
+    ["plant", "plant", "furniture", 580],
+    ["lamp", "lamp", "furniture", 950],
+    ["bookshelf", "books", "furniture", 1800],
+    ["rug", "rug", "furniture", 950],
+    ["cat_tree", "tree", "furniture", 2200],
+    ["plush", "plush", "furniture", 750],
+    ["blush", "♡", "theme", 0],
+    ["lavender_room", "lavender", "theme", 2500],
+    ["mint_room", "mint", "theme", 2500],
+    ["night_room", "moon", "theme", 3500],
+    ["strawberry_milk", "✿", "theme", 2100],
+    ["lavender_dream", "✿", "theme", 2300],
+    ["mint_garden", "✿", "theme", 2300],
+    ["blueberry_sky", "✿", "theme", 2500],
+    ["honey_cottage", "✿", "theme", 2700],
+    ["peach_blossom", "✿", "theme", 2700],
+    ["moonlight", "✿", "theme", 3300],
+    ["sage_forest", "✿", "theme", 2900],
+    ["aurora_prism", "✦", "theme", 5600],
+    ["cosmic_nebula", "✦", "theme", 7400],
+    ["crystal_lagoon", "✦", "theme", 9200],
+    ["solar_eclipse", "✦", "theme", 11500],
+    ["celestial_opal", "✦", "theme", 14500]
+] as const;
+const breedsBySpecies: Record<string, string[]> = {
+    "cat": ["calico", "tabby", "tuxedo", "fluffy"],
+    "dog": ["golden", "dalmatian", "husky", "corgi"],
+    "bunny": ["lop", "dutch", "angora", "spotted"],
+    "fox": ["red_fox", "arctic_fox", "fennec", "silver_fox"],
+    "hamster": ["syrian", "dwarf", "roborovski", "banded"],
+    "panda": ["giant_panda", "red_panda", "snow_panda", "baby_panda"],
+    "penguin": ["emperor", "adelie", "gentoo", "chinstrap"],
+    "axolotl": ["leucistic", "wild_type", "melanoid", "golden_albino"]
+};
+const extraBreedStore = [
+    ["calico", "paw", "breed", 7500],
+    ["tabby", "paw", "breed", 8100],
+    ["tuxedo", "paw", "breed", 8700],
+    ["fluffy", "paw", "breed", 9300],
+    ["golden", "paw", "breed", 7500],
+    ["dalmatian", "paw", "breed", 8100],
+    ["husky", "paw", "breed", 8700],
+    ["corgi", "paw", "breed", 9300],
+    ["lop", "paw", "breed", 7500],
+    ["dutch", "paw", "breed", 8100],
+    ["angora", "paw", "breed", 8700],
+    ["spotted", "paw", "breed", 9300],
+    ["red_fox", "paw", "breed", 7500],
+    ["arctic_fox", "paw", "breed", 8100],
+    ["fennec", "paw", "breed", 8700],
+    ["silver_fox", "paw", "breed", 9300],
+    ["syrian", "paw", "breed", 7500],
+    ["dwarf", "paw", "breed", 8100],
+    ["roborovski", "paw", "breed", 8700],
+    ["banded", "paw", "breed", 9300],
+    ["giant_panda", "paw", "breed", 7500],
+    ["red_panda", "paw", "breed", 8100],
+    ["snow_panda", "paw", "breed", 8700],
+    ["baby_panda", "paw", "breed", 9300],
+    ["emperor", "paw", "breed", 7500],
+    ["adelie", "paw", "breed", 8100],
+    ["gentoo", "paw", "breed", 8700],
+    ["chinstrap", "paw", "breed", 9300],
+    ["leucistic", "paw", "breed", 7500],
+    ["wild_type", "paw", "breed", 8100],
+    ["melanoid", "paw", "breed", 8700],
+    ["golden_albino", "paw", "breed", 9300]
+] as const;
+const addedBreedsBySpecies: Record<string, string[]> = {
+    "cat": ["siamese", "british_shorthair", "maine_coon", "eurasian_lynx", "snow_leopard", "smilodon"],
+    "dog": ["beagle", "shiba", "border_collie", "gray_wolf", "african_wild_dog", "dire_wolf"],
+    "bunny": ["lionhead", "rex", "himalayan", "pygmy_rabbit", "volcano_rabbit", "nuralagus"],
+    "fox": ["cross_fox", "marble_fox", "bat_eared_fox", "kit_fox", "swift_fox", "island_fox"],
+    "hamster": ["winter_white", "chinese_hamster", "teddy_bear", "campbells_dwarf", "european_hamster", "brandts_hamster"],
+    "panda": ["qinling_panda", "brown_panda", "red_panda_cub", "grizzly_bear", "polar_bear", "short_faced_bear"],
+    "penguin": ["rockhopper", "little_blue", "macaroni", "african_penguin", "king_penguin", "waitaha_penguin"],
+    "axolotl": ["copper", "piebald", "mosaic", "tiger_salamander", "andersons_salamander", "ambystoma_dumerilii"]
+};
 // Append new breed IDs to addedBreedsBySpecies for their species.
 // Every additional breed unlocks five levels after that species' previous breed.
 // Existing levels never change when breeds are appended.
@@ -43,378 +463,3205 @@ for (const speciesId of Object.keys(breedsBySpecies)) {
     });
 }
 
-const uniqueCosmeticsBySpecies:Record<string,string[]>={"cat": ["fish_clip", "yarn_hat"], "dog": ["bone_tag", "puppy_bandana"], "bunny": ["carrot_clip", "clover_crown"], "fox": ["leaf_cape", "forest_crown"], "hamster": ["seed_pouch", "cheek_bow"], "panda": ["bamboo_clip", "bamboo_hat"], "penguin": ["sailor_hat", "ice_scarf"], "axolotl": ["bubble_crown", "coral_clip"]};
-const addedCosmeticStore=[["star_clip", "✦", "cosmetic", 800], ["heart_shades", "✦", "cosmetic", 970], ["pearl_necklace", "✦", "cosmetic", 1140], ["moon_crown", "✦", "cosmetic", 1310], ["rainbow_scarf", "✦", "cosmetic", 1480], ["fish_clip", "✦", "cosmetic", 1250], ["yarn_hat", "✦", "cosmetic", 1700], ["bone_tag", "✦", "cosmetic", 1250], ["puppy_bandana", "✦", "cosmetic", 1700], ["carrot_clip", "✦", "cosmetic", 1250], ["clover_crown", "✦", "cosmetic", 1700], ["leaf_cape", "✦", "cosmetic", 1250], ["forest_crown", "✦", "cosmetic", 1700], ["seed_pouch", "✦", "cosmetic", 1250], ["cheek_bow", "✦", "cosmetic", 1700], ["bamboo_clip", "✦", "cosmetic", 1250], ["bamboo_hat", "✦", "cosmetic", 1700], ["sailor_hat", "✦", "cosmetic", 1250], ["ice_scarf", "✦", "cosmetic", 1700], ["bubble_crown", "✦", "cosmetic", 1250], ["coral_clip", "✦", "cosmetic", 1700]] as const;
-const addedBreedStore=[["siamese", "paw", "breed", 13500], ["british_shorthair", "paw", "breed", 14850], ["maine_coon", "paw", "breed", 16200], ["beagle", "paw", "breed", 13500], ["shiba", "paw", "breed", 14850], ["border_collie", "paw", "breed", 16200], ["lionhead", "paw", "breed", 13500], ["rex", "paw", "breed", 14850], ["himalayan", "paw", "breed", 16200], ["cross_fox", "paw", "breed", 13500], ["marble_fox", "paw", "breed", 14850], ["bat_eared_fox", "paw", "breed", 16200], ["winter_white", "paw", "breed", 13500], ["chinese_hamster", "paw", "breed", 14850], ["teddy_bear", "paw", "breed", 16200], ["qinling_panda", "paw", "breed", 13500], ["brown_panda", "paw", "breed", 14850], ["red_panda_cub", "paw", "breed", 16200], ["rockhopper", "paw", "breed", 13500], ["little_blue", "paw", "breed", 14850], ["macaroni", "paw", "breed", 16200], ["copper", "paw", "breed", 13500], ["piebald", "paw", "breed", 14850], ["mosaic", "paw", "breed", 16200]] as const;
-const wildSpeciesStore=[["eurasian_lynx","paw","breed",24000],["snow_leopard","paw","breed",30975],["smilodon","paw","breed",41825],["gray_wolf","paw","breed",24000],["african_wild_dog","paw","breed",30975],["dire_wolf","paw","breed",41825],["pygmy_rabbit","paw","breed",24000],["volcano_rabbit","paw","breed",30975],["nuralagus","paw","breed",41825],["kit_fox","paw","breed",24000],["swift_fox","paw","breed",30975],["island_fox","paw","breed",41825],["campbells_dwarf","paw","breed",24000],["european_hamster","paw","breed",30975],["brandts_hamster","paw","breed",41825],["grizzly_bear","paw","breed",24000],["polar_bear","paw","breed",30975],["short_faced_bear","paw","breed",41825],["african_penguin","paw","breed",24000],["king_penguin","paw","breed",30975],["waitaha_penguin","paw","breed",41825],["tiger_salamander","paw","breed",24000],["andersons_salamander","paw","breed",30975],["ambystoma_dumerilii","paw","breed",41825]] as const;
-const breedFor=(species:string,breed:string)=>[...(breedsBySpecies[species]||[]),...(addedBreedsBySpecies[species]||[])].includes(breed)||breed==='classic';
-const themes:Record<string,[string,string,string]>={blush:['#ffeaf0','#f6d5cc','#bc6482'],lavender_room:['#f0e9ff','#e3d5ed','#8966b1'],mint_room:['#e9faf0','#d2eadc','#4d9275'],night_room:['#dcd6ed','#b7a5c8','#655383'],strawberry_milk:['#ffe1eb','#f4c2cb','#c95379'],lavender_dream:['#eee4ff','#d6c4ed','#7753ad'],mint_garden:['#dff9ed','#bde7d3','#34866f'],blueberry_sky:['#e3edff','#b9cdec','#5579bc'],honey_cottage:['#fff2ce','#e8cd96','#aa7631'],peach_blossom:['#ffe8dd','#f4c6b8','#c77460'],moonlight:['#dce0f5','#a7acd5','#4e588d'],sage_forest:['#e6eee0','#c0d3b4','#617f56'],aurora_prism:['#e9e5fa','#cfc8ed','#8b7bbf'],cosmic_nebula:['#e7e4f5','#c9c1e3','#8272af'],crystal_lagoon:['#ddf2ef','#b6dcd8','#4d9c9a'],solar_eclipse:['#f9e7d8','#e9c6b6','#c48a77'],celestial_opal:['#f5e9f2','#e3d2e9','#a87fae']};
-const roomThemeNames:Record<string,string>={blush:'Cozy Blush',lavender_room:'Lavender Room',mint_room:'Mint Room',night_room:'Night Room',strawberry_milk:'Strawberry Milk',lavender_dream:'Lavender Dream',mint_garden:'Mint Garden',blueberry_sky:'Blueberry Sky',honey_cottage:'Honey Cottage',peach_blossom:'Peach Blossom',moonlight:'Moonlight',sage_forest:'Sage Forest',aurora_prism:'Aurora Prism',cosmic_nebula:'Cosmic Nebula',crystal_lagoon:'Crystal Lagoon',solar_eclipse:'Solar Eclipse',celestial_opal:'Celestial Opal'};
+const uniqueCosmeticsBySpecies: Record<string, string[]> = {
+    "cat": ["fish_clip", "yarn_hat"],
+    "dog": ["bone_tag", "puppy_bandana"],
+    "bunny": ["carrot_clip", "clover_crown"],
+    "fox": ["leaf_cape", "forest_crown"],
+    "hamster": ["seed_pouch", "cheek_bow"],
+    "panda": ["bamboo_clip", "bamboo_hat"],
+    "penguin": ["sailor_hat", "ice_scarf"],
+    "axolotl": ["bubble_crown", "coral_clip"]
+};
+const addedCosmeticStore = [
+    ["star_clip", "✦", "cosmetic", 800],
+    ["heart_shades", "✦", "cosmetic", 970],
+    ["pearl_necklace", "✦", "cosmetic", 1140],
+    ["moon_crown", "✦", "cosmetic", 1310],
+    ["rainbow_scarf", "✦", "cosmetic", 1480],
+    ["fish_clip", "✦", "cosmetic", 1250],
+    ["yarn_hat", "✦", "cosmetic", 1700],
+    ["bone_tag", "✦", "cosmetic", 1250],
+    ["puppy_bandana", "✦", "cosmetic", 1700],
+    ["carrot_clip", "✦", "cosmetic", 1250],
+    ["clover_crown", "✦", "cosmetic", 1700],
+    ["leaf_cape", "✦", "cosmetic", 1250],
+    ["forest_crown", "✦", "cosmetic", 1700],
+    ["seed_pouch", "✦", "cosmetic", 1250],
+    ["cheek_bow", "✦", "cosmetic", 1700],
+    ["bamboo_clip", "✦", "cosmetic", 1250],
+    ["bamboo_hat", "✦", "cosmetic", 1700],
+    ["sailor_hat", "✦", "cosmetic", 1250],
+    ["ice_scarf", "✦", "cosmetic", 1700],
+    ["bubble_crown", "✦", "cosmetic", 1250],
+    ["coral_clip", "✦", "cosmetic", 1700]
+] as const;
+const addedBreedStore = [
+    ["siamese", "paw", "breed", 13500],
+    ["british_shorthair", "paw", "breed", 14850],
+    ["maine_coon", "paw", "breed", 16200],
+    ["beagle", "paw", "breed", 13500],
+    ["shiba", "paw", "breed", 14850],
+    ["border_collie", "paw", "breed", 16200],
+    ["lionhead", "paw", "breed", 13500],
+    ["rex", "paw", "breed", 14850],
+    ["himalayan", "paw", "breed", 16200],
+    ["cross_fox", "paw", "breed", 13500],
+    ["marble_fox", "paw", "breed", 14850],
+    ["bat_eared_fox", "paw", "breed", 16200],
+    ["winter_white", "paw", "breed", 13500],
+    ["chinese_hamster", "paw", "breed", 14850],
+    ["teddy_bear", "paw", "breed", 16200],
+    ["qinling_panda", "paw", "breed", 13500],
+    ["brown_panda", "paw", "breed", 14850],
+    ["red_panda_cub", "paw", "breed", 16200],
+    ["rockhopper", "paw", "breed", 13500],
+    ["little_blue", "paw", "breed", 14850],
+    ["macaroni", "paw", "breed", 16200],
+    ["copper", "paw", "breed", 13500],
+    ["piebald", "paw", "breed", 14850],
+    ["mosaic", "paw", "breed", 16200]
+] as const;
+const wildSpeciesStore = [
+    ["eurasian_lynx", "paw", "breed", 24000],
+    ["snow_leopard", "paw", "breed", 30975],
+    ["smilodon", "paw", "breed", 41825],
+    ["gray_wolf", "paw", "breed", 24000],
+    ["african_wild_dog", "paw", "breed", 30975],
+    ["dire_wolf", "paw", "breed", 41825],
+    ["pygmy_rabbit", "paw", "breed", 24000],
+    ["volcano_rabbit", "paw", "breed", 30975],
+    ["nuralagus", "paw", "breed", 41825],
+    ["kit_fox", "paw", "breed", 24000],
+    ["swift_fox", "paw", "breed", 30975],
+    ["island_fox", "paw", "breed", 41825],
+    ["campbells_dwarf", "paw", "breed", 24000],
+    ["european_hamster", "paw", "breed", 30975],
+    ["brandts_hamster", "paw", "breed", 41825],
+    ["grizzly_bear", "paw", "breed", 24000],
+    ["polar_bear", "paw", "breed", 30975],
+    ["short_faced_bear", "paw", "breed", 41825],
+    ["african_penguin", "paw", "breed", 24000],
+    ["king_penguin", "paw", "breed", 30975],
+    ["waitaha_penguin", "paw", "breed", 41825],
+    ["tiger_salamander", "paw", "breed", 24000],
+    ["andersons_salamander", "paw", "breed", 30975],
+    ["ambystoma_dumerilii", "paw", "breed", 41825]
+] as const;
+const breedFor = (species: string, breed: string) => [...(breedsBySpecies[species] || []), ...(addedBreedsBySpecies[species] || [])].includes(breed) || breed === "classic";
+const themes: Record<string, [string, string, string]> = {
+    blush: ["#ffeaf0", "#f6d5cc", "#bc6482"],
+    lavender_room: ["#f0e9ff", "#e3d5ed", "#8966b1"],
+    mint_room: ["#e9faf0", "#d2eadc", "#4d9275"],
+    night_room: ["#dcd6ed", "#b7a5c8", "#655383"],
+    strawberry_milk: ["#ffe1eb", "#f4c2cb", "#c95379"],
+    lavender_dream: ["#eee4ff", "#d6c4ed", "#7753ad"],
+    mint_garden: ["#dff9ed", "#bde7d3", "#34866f"],
+    blueberry_sky: ["#e3edff", "#b9cdec", "#5579bc"],
+    honey_cottage: ["#fff2ce", "#e8cd96", "#aa7631"],
+    peach_blossom: ["#ffe8dd", "#f4c6b8", "#c77460"],
+    moonlight: ["#dce0f5", "#a7acd5", "#4e588d"],
+    sage_forest: ["#e6eee0", "#c0d3b4", "#617f56"],
+    aurora_prism: ["#e9e5fa", "#cfc8ed", "#8b7bbf"],
+    cosmic_nebula: ["#e7e4f5", "#c9c1e3", "#8272af"],
+    crystal_lagoon: ["#ddf2ef", "#b6dcd8", "#4d9c9a"],
+    solar_eclipse: ["#f9e7d8", "#e9c6b6", "#c48a77"],
+    celestial_opal: ["#f5e9f2", "#e3d2e9", "#a87fae"]
+};
+const roomThemeNames: Record<string, string> = {
+    blush: "Cozy Blush",
+    lavender_room: "Lavender Room",
+    mint_room: "Mint Room",
+    night_room: "Night Room",
+    strawberry_milk: "Strawberry Milk",
+    lavender_dream: "Lavender Dream",
+    mint_garden: "Mint Garden",
+    blueberry_sky: "Blueberry Sky",
+    honey_cottage: "Honey Cottage",
+    peach_blossom: "Peach Blossom",
+    moonlight: "Moonlight",
+    sage_forest: "Sage Forest",
+    aurora_prism: "Aurora Prism",
+    cosmic_nebula: "Cosmic Nebula",
+    crystal_lagoon: "Crystal Lagoon",
+    solar_eclipse: "Solar Eclipse",
+    celestial_opal: "Celestial Opal"
+};
 
 
 // Batch 11: status artwork is driven by saved pet stats, including friends' pets.
-function PetCondition({pet}:{pet:RoomPet}){
- const dirty=pet.cleanliness<35, sad=pet.happiness<35, sleepy=pet.energy<30, hungry=pet.hunger<30, lonely=pet.affection<30;
- if(!dirty&&!sad&&!sleepy&&!hungry&&!lonely)return null;
- return <div className="paw-condition-overlay" aria-label={[dirty?'Needs a bath':null,sad?'Feeling sad':null,sleepy?'Sleepy':null,hungry?'Hungry':null,lonely?'Lonely':null].filter(Boolean).join(', ')}>
- {dirty&&<svg className="paw-condition-dirt" viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="26" cy="64" rx="10" ry="6" fill="#b19b87" opacity=".55"/><ellipse cx="73" cy="70" rx="8" ry="5" fill="#b19b87" opacity=".5"/><circle cx="43" cy="78" r="4" fill="#aa917d" opacity=".45"/></svg>}
- {(sad||hungry||lonely)&&<svg className="paw-condition-face" viewBox="0 0 100 100" aria-hidden="true"><path d="M43 70 Q50 63 57 70" stroke="#835a73" strokeWidth="3.5" strokeLinecap="round" fill="none"/>{sad&&<path d="M28 56 Q25 63 29 67 Q34 64 28 56" fill="#8bc5e8"/>}{hungry&&<path d="M63 73 Q68 76 72 73" stroke="#9a647d" strokeWidth="2" fill="none"/>}</svg>}
- {sleepy&&<span className="paw-condition-sleep" aria-hidden="true">z<sup>z</sup></span>}
- {lonely&&<span className="paw-condition-heart" aria-hidden="true">♡</span>}
- </div>
+function PetCondition({ pet }: {
+    pet: RoomPet
+}) {
+    const dirty = pet.cleanliness < 35, sad = pet.happiness < 35, sleepy = pet.energy < 30, hungry = pet.hunger < 30, lonely = pet.affection < 30;
+    if (!dirty && !sad && !sleepy && !hungry && !lonely) {
+        return null;
+    }
+    return <div className="paw-condition-overlay" aria-label={[
+        dirty ? "Needs a bath" : null,
+        sad ? "Feeling sad" : null,
+        sleepy ? "Sleepy" : null,
+        hungry ? "Hungry" : null,
+        lonely ? "Lonely" : null
+    ].filter(Boolean).join(", ")}>
+        {dirty && <svg className="paw-condition-dirt" viewBox="0 0 100 100" aria-hidden="true">
+            <ellipse cx="26" cy="64" rx="10" ry="6" fill="#b19b87" opacity=".55" />
+            <ellipse cx="73" cy="70" rx="8" ry="5" fill="#b19b87" opacity=".5" />
+            <circle cx="43" cy="78" r="4" fill="#aa917d" opacity=".45" />
+        </svg>}
+        {(sad || hungry || lonely) && <svg className="paw-condition-face" viewBox="0 0 100 100" aria-hidden="true">
+            <path d="M43 70 Q50 63 57 70" stroke="#835a73" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+            {sad && <path d="M28 56 Q25 63 29 67 Q34 64 28 56" fill="#8bc5e8" />}
+            {hungry && <path d="M63 73 Q68 76 72 73" stroke="#9a647d" strokeWidth="2" fill="none" />}
+        </svg>}
+        {sleepy && <span className="paw-condition-sleep" aria-hidden="true">z<sup>z</sup>
+        </span>}
+        {lonely && <span className="paw-condition-heart" aria-hidden="true">♡</span>}
+    </div>
 }
-function Wanderer({pet,own,index,sleeping=false,bathing=false,cuddling=false,onScrub,onPet,onToggleNote,noteOpen}:{pet:RoomPet;own:boolean;index:number;sleeping?:boolean;bathing?:boolean;cuddling?:boolean;onScrub?:()=>void;onPet?:()=>void;onToggleNote?:(petId:string)=>void;noteOpen?:boolean}){const [x,setX]=useState(12+(index*19)%76);const [flip,setFlip]=useState(false);const [pose,setPose]=useState('walk');const spongeRef=useRef<HTMLSpanElement|null>(null);const hasActiveNote=Boolean(pet.pet_note?.trim()&&pet.note_expires_at&&new Date(pet.note_expires_at).getTime()>Date.now());const moveSponge=(e:React.PointerEvent<HTMLDivElement>)=>{if(!bathing||!own||!spongeRef.current)return;const rect=e.currentTarget.getBoundingClientRect();const x=Math.max(0,Math.min(100,(e.clientX-rect.left)/rect.width*100));const y=Math.max(0,Math.min(100,(e.clientY-rect.top)/rect.height*100));spongeRef.current.style.left=x+'%';spongeRef.current.style.top=y+'%';spongeRef.current.classList.add('is-visible')};useEffect(()=>{if(sleeping){setPose('nap');return}const wander=()=>{if(document.visibilityState!=='visible')return;const next=10+Math.random()*80;setX(previous=>{setFlip(next<previous);return next});setPose(Math.random()<.22?'nap':'walk')};const timer=window.setInterval(wander,2600+index*270);return()=>window.clearInterval(timer)},[index,sleeping]);return <div className={'wanderer '+(own?'own':'')+(sleeping?' paw-is-sleeping':'')} style={{left:`${x}%`,bottom:`${8+(index%3)*7}%`,zIndex:10+index}}><div className={'nameplate'+(hasActiveNote?' paw-nameplate-has-note':'')}><div className="paw-nameplate-title"><b>{pet.name}</b>{hasActiveNote&&<button type="button" className={'paw-note-indicator'+(noteOpen?' is-open':'')} aria-label={`Read ${pet.name}'s Pet Note`} title={`${pet.name} has a note`} aria-expanded={Boolean(noteOpen)} aria-controls={noteOpen?"paw-room-note-popover":undefined} onClick={event=>{event.stopPropagation();onToggleNote?.(pet.id)}}><Mail size={14} strokeWidth={2.3} aria-hidden="true"/><Heart size={7} strokeWidth={2.4} className="paw-note-indicator-heart" aria-hidden="true"/></button>}</div><small>@{pet.username}{own?' · YOU':''}</small></div><div className={'pet-body '+(sleeping||pose==='nap'?'nap':'')+((bathing||cuddling)&&own?' paw-scrub-target':'')+(cuddling&&own?' paw-cuddle-target':'')} onPointerDown={e=>{moveSponge(e);if((bathing||cuddling)&&own){e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);if(bathing)onScrub?.();else onPet?.()}}} onPointerMove={e=>{moveSponge(e);if((bathing||cuddling)&&own&&(e.buttons===1||e.pointerType==='touch'&&e.currentTarget.hasPointerCapture(e.pointerId))){if(bathing)onScrub?.();else onPet?.()}}} onPointerLeave={()=>spongeRef.current?.classList.remove('is-visible')} onPointerUp={e=>{if(e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId)}} onPointerCancel={e=>{if(e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId)}} ><div className="paw-pet-art-transform" style={{transform:`scaleX(${flip?-1:1}) scale(${pet.level<5?0.7:pet.level<30?1:1.3})`}}><PetArt species={pet.species} color={pet.color} breed={pet.breed} cosmetic={pet.equipped_cosmetic} outfit={pet.equipped_outfit} sleeping={sleeping||cuddling}/><PetCondition pet={pet}/></div>{bathing&&own&&<span ref={spongeRef} className="paw-svg-sponge" style={{left:'50%',top:'50%'}} aria-hidden="true"><svg viewBox="0 0 64 64" width="54" height="54" xmlns="http://www.w3.org/2000/svg"><path d="M11 20 Q13 8 28 9 L47 13 Q57 15 54 29 L49 47 Q46 56 33 53 L15 48 Q7 45 9 34 Z" fill="#ffe3a0" stroke="#9b7751" strokeWidth="3.5" strokeLinejoin="round"/><path d="M16 22 Q28 14 46 21" fill="none" stroke="#fff6d7" strokeWidth="4" strokeLinecap="round"/><circle cx="23" cy="31" r="3" fill="#d7b878"/><circle cx="39" cy="38" r="4" fill="#d7b878"/><circle cx="32" cy="22" r="2" fill="#d7b878"/><circle cx="20" cy="43" r="2" fill="#d7b878"/><circle cx="49" cy="9" r="5" fill="#d7f4ff" stroke="#8ccbd9" strokeWidth="2"/><circle cx="57" cy="17" r="3" fill="#d7f4ff" stroke="#8ccbd9" strokeWidth="1.5"/></svg></span>}{cuddling&&own&&<span className="paw-cuddle-hearts" aria-hidden="true">♡ ♡</span>}{sleeping&&<span className="paw-sleep-zzz" aria-label="Sleeping">Z<sup>z</sup></span>}</div></div>}
-const PAW_GAMES: Array<[string,string,string]> = [['memory','memory','Memory Tiles'],['dino','cactus','Cactus Jump'],['runner','runner','Paw Run'],['pattern','heart','Heart Color Match'],['mole','mole','Whack-a-Mole'],['claw','plush','Paw Claw']];
-function ArcadeLives({lives,maxLives}:{lives:number;maxLives:number}){
+function Wanderer({ pet, own, index, sleeping = false, bathing = false, cuddling = false, onScrub, onPet, onToggleNote, noteOpen }: {
+    pet: RoomPet;
+    own: boolean;
+    index: number;
+    sleeping?: boolean;
+    bathing?: boolean;
+    cuddling?: boolean;
+    onScrub?: () => void;
+    onPet?: () => void;
+    onToggleNote?: (petId: string) => void;
+    noteOpen?: boolean
+}) {
+    const [x, setX] = useState(12 + (index * 19) % 76);
+    const [flip, setFlip] = useState(false);
+    const [pose, setPose] = useState("walk");
+    const spongeRef = useRef<HTMLSpanElement | null>(null);
+    const hasActiveNote = Boolean(pet.pet_note?.trim() && pet.note_expires_at && new Date(pet.note_expires_at).getTime() > Date.now());
+    const moveSponge = (e: React.PointerEvent<HTMLDivElement>) => {
+        if (!bathing || !own || !spongeRef.current) {
+            return;
+
+        } const rect = e.currentTarget.getBoundingClientRect();
+        const x = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
+        const y = Math.max(0, Math.min(100, (e.clientY - rect.top) / rect.height * 100));
+        spongeRef.current.style.left = x + "%";
+        spongeRef.current.style.top = y + "%";
+        spongeRef.current.classList.add("is-visible")
+    };
+    useEffect(() => {
+        if (sleeping) {
+            setPose("nap");
+            return
+        }
+        const wander = () => {
+            if (document.visibilityState !== "visible") {
+                return;
+
+            } const next = 10 + Math.random() * 80;
+            setX(previous => {
+                setFlip(next < previous);
+                return next
+            });
+            setPose(Math.random() < .22 ? "nap" : "walk")
+        };
+        const timer = window.setInterval(wander, 2600 + index * 270);
+        return () => window.clearInterval(timer)
+    }, [index, sleeping]);
+    return <div className={"wanderer " + (own ? "own" : "") + (sleeping ? " paw-is-sleeping" : "")} style={{
+        left: `${x}%`,
+        bottom: `${8 + (index % 3) * 7}%`,
+        zIndex: 10 + index
+    }}>
+        <div className={"nameplate" + (hasActiveNote ? " paw-nameplate-has-note" : "")}>
+            <div className="paw-nameplate-title">
+                <b>
+                    {pet.name}
+                </b>
+                {hasActiveNote && <button
+                    type="button"
+                    className={"paw-note-indicator" + (noteOpen ? " is-open" : "")}
+                    aria-label={`Read ${pet.name}'s Pet Note`}
+                    title={`${pet.name} has a note`}
+                    aria-expanded={Boolean(noteOpen)}
+                    aria-controls={noteOpen ? "paw-room-note-popover" : undefined}
+                    onClick={event => {
+                        event.stopPropagation();
+                        onToggleNote?.(pet.id)
+                    }}
+                >
+                    <Mail size={14} strokeWidth={2.3} aria-hidden="true" />
+                    <Heart size={7} strokeWidth={2.4} className="paw-note-indicator-heart" aria-hidden="true" />
+                </button>}
+            </div>
+            <small>@{pet.username}
+                {own ? " · YOU" : ""}
+            </small>
+        </div>
+        <div
+            className={"pet-body " + (sleeping || pose === "nap" ? "nap" : "") + ((bathing || cuddling) && own ? " paw-scrub-target" : "") + (cuddling && own ? " paw-cuddle-target" : "")}
+            onPointerDown={e => {
+                moveSponge(e);
+                if ((bathing || cuddling) && own) {
+                    e.preventDefault();
+                    e.currentTarget.setPointerCapture(e.pointerId);
+                    if (bathing) {
+                        onScrub?.();
+                    } else {
+                        onPet?.()
+
+                    }
+                }
+            }}
+            onPointerMove={e => {
+                moveSponge(e);
+                if ((bathing || cuddling) && own && (e.buttons === 1 || e.pointerType === "touch" && e.currentTarget.hasPointerCapture(e.pointerId))) {
+                    if (bathing) {
+                        onScrub?.();
+                    } else {
+                        onPet?.()
+
+                    }
+                }
+            }}
+            onPointerLeave={() => spongeRef.current?.classList.remove("is-visible")}
+            onPointerUp={e => {
+                if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                    e.currentTarget.releasePointerCapture(e.pointerId)
+
+                }
+            }}
+            onPointerCancel={e => {
+                if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                    e.currentTarget.releasePointerCapture(e.pointerId)
+
+                }
+            }}
+        >
+            <div className="paw-pet-art-transform" style={{
+                transform: `scaleX(${flip ? -1 : 1}) scale(${pet.level < 5 ? 0.7 : pet.level < 30 ? 1 : 1.3})`
+            }}>
+                <PetArt
+                    species={pet.species}
+                    color={pet.color}
+                    breed={pet.breed}
+                    cosmetic={pet.equipped_cosmetic}
+                    outfit={pet.equipped_outfit}
+                    sleeping={sleeping || cuddling}
+                />
+                <PetCondition pet={pet} />
+            </div>
+            {bathing && own && <span ref={spongeRef} className="paw-svg-sponge" style={{
+                left: "50%",
+                top: "50%"
+            }} aria-hidden="true">
+                <svg viewBox="0 0 64 64" width="54" height="54" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M11 20 Q13 8 28 9 L47 13 Q57 15 54 29 L49 47 Q46 56 33 53 L15 48 Q7 45 9 34 Z"
+                        fill="#ffe3a0"
+                        stroke="#9b7751"
+                        strokeWidth="3.5"
+                        strokeLinejoin="round"
+                    />
+                    <path d="M16 22 Q28 14 46 21" fill="none" stroke="#fff6d7" strokeWidth="4" strokeLinecap="round" />
+                    <circle cx="23" cy="31" r="3" fill="#d7b878" />
+                    <circle cx="39" cy="38" r="4" fill="#d7b878" />
+                    <circle cx="32" cy="22" r="2" fill="#d7b878" />
+                    <circle cx="20" cy="43" r="2" fill="#d7b878" />
+                    <circle cx="49" cy="9" r="5" fill="#d7f4ff" stroke="#8ccbd9" strokeWidth="2" />
+                    <circle cx="57" cy="17" r="3" fill="#d7f4ff" stroke="#8ccbd9" strokeWidth="1.5" />
+                </svg>
+            </span>}
+            {cuddling && own && <span className="paw-cuddle-hearts" aria-hidden="true">♡ ♡</span>}
+            {sleeping && <span className="paw-sleep-zzz" aria-label="Sleeping">Z<sup>z</sup>
+            </span>}
+        </div>
+    </div>
+}
+const PAW_GAMES: Array<[string, string, string]> = [
+    ["memory", "memory", "Memory Tiles"],
+    ["dino", "cactus", "Cactus Jump"],
+    ["runner", "runner", "Paw Run"],
+    ["pattern", "heart", "Heart Color Match"],
+    ["mole", "mole", "Whack-a-Mole"],
+    ["claw", "plush", "Paw Claw"]
+];
+function ArcadeLives({ lives, maxLives }: {
+    lives: number;
+    maxLives: number
+}) {
     return <span className="paw-arcade-hearts" aria-label={`${lives} of ${maxLives} lives remaining`}>
-        {Array.from({length:maxLives},(_,index)=><span key={index} className={index<lives?'mole-heart':'mole-heart spent'}>
+        {Array.from({
+            length: maxLives
+        }, (_, index) => <span key={index} className={index < lives ? "mole-heart" : "mole-heart spent"}>
             <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
-                <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" fill={index<lives?'#ed799d':'none'} stroke={index<lives?'#ed799d':'#c7b4c0'} strokeWidth="2"/>
+                <path
+                    d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"
+                    fill={index < lives ? "#ed799d" : "none"}
+                    stroke={index < lives ? "#ed799d" : "#c7b4c0"}
+                    strokeWidth="2"
+                />
             </svg>
         </span>)}
     </span>;
 }
 
-function MiniGame({kind,pet,onQuit,onFinish}:{kind:string;pet:Pet;onQuit:()=>void;onFinish:(score:number)=>Promise<boolean>}){
- const [phase,setPhase]=useState<'ready'|'playing'|'over'>('ready');const [score,setScore]=useState(0);const [level,setLevel]=useState(1);const [lives,setLives]=useState(1);
- const [sequence,setSequence]=useState<number[]>([]);const [input,setInput]=useState(0);const [show,setShow]=useState(true);const [heart,setHeart]=useState(0);const [lane,setLane]=useState(1);const [jump,setJump]=useState(false);const [obstacle,setObstacle]=useState<{x:number;lane:number;kind:string}[]>([]);const [ticks,setTicks]=useState(0);const [time,setTime]=useState(30);const [target,setTarget]=useState(0);const keys=useRef<Record<string,boolean>>({});const state=useRef({phase:'ready',kind,lane:1,jump:false,obstacle:[] as {x:number;lane:number;kind:string}[],level:1,ticks:0});
- const [claiming,setClaiming]=useState(false);
- const [rewardError,setRewardError]=useState(false);
- const claimRef=useRef(false);
- const palette=PAW_COLOR_PALETTE;const [colors,setColors]=useState(()=>palette.slice(0,8));const count=Math.min(8,3+Math.floor((level-1)/5));
- async function claimRound(replay:boolean){
-     if(claimRef.current)return;
-     claimRef.current=true;
-     setClaiming(true);
-     setRewardError(false);
-     try{
-         const rewarded=await onFinish(score);
-         if(rewarded){
-             if(replay)reset();
-             else onQuit();
-         }else setRewardError(true);
-     }catch{
-         setRewardError(true);
-     }finally{
-         claimRef.current=false;
-         setClaiming(false);
-     }
- }
- const closeGame=()=>{if(phase==='over')void claimRound(false);else onQuit()};
- function reset(){setColors(palette.slice(0,8));setScore(0);setLevel(1);setLives(kind==='memory'||kind==='pattern'?3:1);setTime(30);setInput(0);setSequence([Math.floor(Math.random()*4),Math.floor(Math.random()*4)]);setShow(true);setHeart(Math.floor(Math.random()*3));setLane(1);setJump(false);setObstacle([]);setTicks(0);setTarget(0);setPhase('playing')}
- useEffect(()=>{state.current={phase,kind,lane,jump,obstacle,level,ticks}},[phase,kind,lane,jump,obstacle,level,ticks]);
- useEffect(()=>{if(phase!=='playing'||kind!=='memory')return;setShow(true);const t=setTimeout(()=>setShow(false),Math.max(1000,2500-level*85));return()=>clearTimeout(t)},[sequence,phase,kind,level]);
- useEffect(()=>{if(phase!=='playing'||kind!=='pattern')return;const t=setInterval(()=>setTime(x=>{if(x<=1){setPhase('over');return 0}return x-1}),1000);return()=>clearInterval(t)},[phase,kind]);
-
-
- function memoryPress(n:number){if(show)return;if(sequence[input]!==n){setLives(x=>{if(x<=1)setPhase('over');return Math.max(0,x-1)});setInput(0);setShow(true);setSequence(x=>[...x]);return}if(input+1===sequence.length){setScore(x=>x+20+level*4);setLevel(x=>x+1);setInput(0);setSequence(x=>[...x,Math.floor(Math.random()*4)])}else setInput(x=>x+1)}
- function colorPress(n:number){if(n!==heart){setLives(x=>{if(x<=1)setPhase('over');return Math.max(0,x-1)});return}setScore(x=>x+15+level*3);setLevel(x=>x+1);if((level+1)%5===0 && level+1>=20){const shuffled=[...palette];for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}setColors(shuffled.slice(0,8));}setTime(x=>Math.min(30,x+3));const nextCount=Math.min(8,3+Math.floor(level/5));setHeart(Math.floor(Math.random()*nextCount))}
- const labels:{[key:string]:string}={memory:'Memory Tiles',pattern:'Heart Color Match',dino:'Cactus Jump',runner:'Paw Run'};
- return <div className="overlay"><div className="game-modal arcade-modal"><header className="paw-arcade-modal-header"><h2><Gamepad2 size={23} aria-hidden="true"/><span>{labels[kind]}</span></h2><button className="paw-arcade-exit" type="button" aria-label="Close game" title="Close game" disabled={claiming} onClick={closeGame}><X size={20}/></button></header>{phase==='ready'?<div className="game-center"><div className="huge"><PawIcon name={kind} size={68}/></div><p>{kind==='dino'?'Tap or press Space to jump over incoming cacti. Survive as speed increases.':kind==='runner'?'Swipe left or right, or use arrow keys to dodge obstacles.':kind==='memory'?'Remember the hearts in order. The sequence gets longer after every round.':'Match the big heart with the correct paint color.'}</p><button className="primary" onClick={reset}>Start game</button></div>:phase==='over'?<div className="game-center"><div className="huge"><Trophy size={62} aria-hidden="true"/></div><h2>Game over</h2><h3>{score} points · Level {level}</h3>{rewardError&&<p className="paw-arcade-reward-error" role="alert">Reward wasn't saved. Try again to claim it.</p>}<div className="actions centered paw-game-over-actions"><button className="primary" disabled={claiming} onClick={()=>void claimRound(true)}>{claiming?'Collecting reward...':'Retry'}</button><button className="secondary" disabled={claiming} onClick={()=>void claimRound(false)}>Collect coins & quit</button></div></div>:<><div className="mole-hud paw-arcade-hud"><span className="paw-hud-score"><Star size={18} aria-hidden="true" fill="#f4ce7b" color="#aa8192"/> {score} points</span><span className="paw-hud-round">Level {level}</span><ArcadeLives lives={lives} maxLives={kind==='memory'||kind==='pattern'?3:1}/>{kind==='pattern'&&<span className="paw-hud-clock"><Clock3 size={16} aria-hidden="true"/> {time}s</span>}</div>{kind==='memory'?<><p className="paw-memory-instruction">{show?'Watch the hearts in order!':`Your turn! ${input}/${sequence.length}`}</p>
-            <div className="paw-memory-sequence" aria-label={show?`Memorize ${sequence.length} colored hearts in order`:"Sequence hidden; repeat it using the four hearts below"}>
-                {show ? sequence.map((index, position) => (
-                    <span className="paw-memory-sequence-heart" key={`${position}-${index}`}>
-                        <MemoryHeart index={index} size={34} />
-                    </span>
-                )) : <span className="paw-memory-hidden">Repeat the pattern below</span>}
-            </div>
-            <div className="memory-board paw-memory-board">{MEMORY_HEARTS.map((entry,i)=><button key={i} disabled={show} onClick={()=>memoryPress(i)} aria-label={`${entry.label} heart`}><MemoryHeart index={i} size={38}/></button>)}</div></>:kind==='pattern'?<><p className="paw-color-match-prompt">Match this heart!</p><div className="target-heart"><TargetHeart color={colors[heart]}/></div><div className="heart-choices paw-palette-choices">{colors.slice(0,count).map((c,i)=>(
-                <button key={i} onClick={()=>colorPress(i)} aria-label={`Choose paint palette ${i + 1}`} className="paw-palette-choice" type="button">
-                    <PaintPalette color={c}/>
-                </button>
-            ))}</div></>:<><ArcadeCanvas species={window.localStorage.getItem("pawpal-arcade-species")||"cat"} kind={kind as 'dino'|'runner'} onScore={points=>{setScore(points);setLevel(1+Math.floor(points/120))}} onGameOver={()=>setPhase('over')}/></>}</>}</div></div>
-}
-
-function OutfitWardrobe({pet,execute,busy}:{pet:Pet;execute:(path:string,body?:unknown,method?:string)=>Promise<any>;busy:boolean}){
- const [section,setSection]=useState<'outfit'|'shop'>('outfit');const [slot,setSlot]=useState<OutfitSlot>('head');const [tryOn,setTryOn]=useState<string|null>(null);
- const current=normalizeOutfit(pet.equipped_outfit);const preview={...current,...(tryOn?{[COSMETIC_SLOTS[tryOn]]:tryOn}:{})};
- const base=[...store,...addedCosmeticStore].filter(item=>item[2]==='cosmetic').map(([id,, ,price])=>({id,slot:COSMETIC_SLOTS[id],price}));
- const available=[...base,...NEW_COSMETICS].filter(x=>x.slot===slot&&(!Object.values(uniqueCosmeticsBySpecies).some(list=>list.includes(x.id))||uniqueCosmeticsBySpecies[pet.species]?.includes(x.id))).sort((a,b)=>(ITEM_LEVEL_REQUIREMENTS[a.id]||1)-(ITEM_LEVEL_REQUIREMENTS[b.id]||1)||a.price-b.price);
- const own=(id:string)=>pet.owned_cosmetics.includes(id);
- const change=(id:string,mode:string)=>{setTryOn(null);void execute('/item',{item:id,mode,slot:COSMETIC_SLOTS[id]});};
- return <div className="v8-wardrobe"><div className="v8-preview"><div className="v8-pet"><PetArt species={pet.species} breed={pet.breed} color={pet.color} outfit={preview} cosmetic="none"/></div><div><h3>{pet.name}'s outfit</h3>{tryOn&&<span className="v8-try">Previewing {tryOn.replaceAll('_',' ')} · not equipped</span>}</div></div><div className="paw-wardrobe-toolbar"><div className="v8-tabs"><button className={section==='outfit'?'selected':''} onClick={()=>{setSection('outfit');setTryOn(null)}}>Owned</button><button className={section==='shop'?'selected':''} onClick={()=>setSection('shop')}>Shop</button></div><div className="v8-slots">{SLOT_NAMES.map(s=><button key={s} className={slot===s?'selected':''} onClick={()=>{setSlot(s);setTryOn(null)}}><b>{<PawSlotIcon slot={s}/>} {s}</b></button>)}</div></div>{section==='outfit'?<div className="v8-owned"><h3>{slot[0].toUpperCase()+slot.slice(1)} accessories</h3><div className="v8-collection">{available.filter(x=>own(x.id)).length===0?<p className="paw-wardrobe-empty">You don't own any {slot} items yet.</p>:available.filter(x=>own(x.id)).map(x=><div className="v8-item" key={x.id}><div className="v8-item-art"><PetArt species={pet.species} breed={pet.breed} outfit={{...current,[slot]:x.id}} cosmetic="none"/></div><b>{x.id.replaceAll('_',' ')}</b><button className={current[slot]===x.id?'paw-wardrobe-unequip':'paw-wardrobe-equip'} disabled={busy} onClick={()=>change(x.id,current[slot]===x.id?'unequip':'equip')}>{current[slot]===x.id?'Unequip':'Equip'}</button></div>)}</div>{current[slot]&&<button className="secondary" disabled={busy} onClick={()=>change(current[slot]!, 'unequip')}>Remove {slot} accessory</button>}</div>:<div><h3>Shop · {slot}</h3><div className="v8-collection">{available.filter(x=>!own(x.id)).map(x=><div className={"v8-item "+(current[slot]===x.id?"paw-cosmetic-equipped ":"")+(!own(x.id)&&pet.level<(ITEM_LEVEL_REQUIREMENTS[x.id]||0)?"paw-level-locked":"")} key={x.id}><div className="v8-item-art"><PetArt species={pet.species} breed={pet.breed} outfit={{...current,[slot]:x.id}} cosmetic="none"/></div>{current[slot]===x.id&&<span className="paw-equipped-badge"><Check size={13}/> Equipped</span>}<b>{x.id.replaceAll('_',' ')}</b><small className={current[slot]===x.id?"paw-equipped-label":""}>{!own(x.id)&&pet.level<(ITEM_LEVEL_REQUIREMENTS[x.id]||0)?`Unlocks at Level ${ITEM_LEVEL_REQUIREMENTS[x.id]}`:current[slot]===x.id?<><Check size={14} aria-hidden="true"/> Equipped</>:own(x.id)?"Owned":`${x.price} coins`}</small>{!own(x.id)&&pet.level<(ITEM_LEVEL_REQUIREMENTS[x.id]||0)&&<div className="paw-level-overlay"><LockKeyhole size={16}/> Level {ITEM_LEVEL_REQUIREMENTS[x.id]}</div>}<div className="v8-actions"><button className="secondary" disabled={busy} onClick={()=>setTryOn(x.id)}>Try on</button><button className="paw-wardrobe-market-buy" disabled={busy||pet.level<(ITEM_LEVEL_REQUIREMENTS[x.id]||0)} onClick={()=>change(x.id,"buy")}>{pet.level<(ITEM_LEVEL_REQUIREMENTS[x.id]||0)?"Locked":`Buy · ${x.price.toLocaleString()} coins`}</button></div></div>)}</div></div>}</div>
-}
-
-const ENVELOPE_COLORS=[['blush','Blush','#ffe1eb'],['rose','Rose','#f5bdcf'],['peach','Peach','#ffdcc7'],['apricot','Apricot','#ffe4b8'],['butter','Butter','#fff2b8'],['mint','Mint','#d9f4df'],['sage','Sage','#d3e4ce'],['aqua','Aqua','#d3f1f2'],['sky','Sky','#d6eafa'],['periwinkle','Periwinkle','#dcdfff'],['lavender','Lavender','#e8dcfc'],['lilac','Lilac','#efddf5'],['cream','Cream','#fff5e6'],['coral','Coral','#ffd2cb'],['slate','Twilight','#ccd8e9']] as const;
-function PawPostcard({design,message,color='blush',senderPet}:{design:string;message:string;color?:string;senderPet?:{species:string;color:string;breed:string;equipped_cosmetic?:string;equipped_outfit?:any}|null}){
- const chosen=ENVELOPE_DESIGNS.find(d=>d.id===design)||ENVELOPE_DESIGNS[0];
- const shade=ENVELOPE_COLORS.find(c=>c[0]===color)?.[2]||ENVELOPE_COLORS[0][2];
- return <div className={'paw-envelope paw-envelope-'+chosen.id} style={{'--envelope-color':shade} as React.CSSProperties}>
-  <div className="paw-envelope-top"><span className="paw-envelope-postmark">PAWPAL ✦ SPECIAL DELIVERY</span><span className="paw-envelope-seal" title="Sender's pet wax seal">{senderPet?<PetArt species={senderPet.species} color={senderPet.color} breed={senderPet.breed} cosmetic={senderPet.equipped_cosmetic} outfit={senderPet.equipped_outfit}/>:<span>♡</span>}</span></div>
-  <div className="paw-envelope-illustration" aria-hidden="true"><EnvelopeArtwork design={chosen.id}/></div>
-  <div className="paw-envelope-content"><small>{chosen.title}</small><p>{message||'Your little letter will appear here…'}</p></div>
- </div>
-}
-export default function App(){const [token,setToken]=useState(localStorage.getItem('pawpal-token')||'');const [user,setUser]=useState<{id:string;username:string;pet_note?:string|null;note_expires_at?:string|null}|null>(null);const [pet,setPet]=useState<Pet|null>(null);const [noteDraft,setNoteDraft]=useState('');const [editingNote,setEditingNote]=useState(false);const [openRoomNoteId,setOpenRoomNoteId]=useState<string|null>(null);const [themeModal,setThemeModal]=useState(false);const [mealModal,setMealModal]=useState(false);const [mealData,setMealData]=useState<{meals:Record<string,number>;recipes:Record<string,{name:string;hunger:number;happiness:number;energy:number;xp:number}>}|null>(null);const [mealBusy,setMealBusy]=useState(false);const [roomPets,setRoomPets]=useState<RoomPet[]>([]);const [friends,setFriends]=useState<Friend[]>([]);const [requestsOpen,setRequestsOpen]=useState(false);const [friendToast,setFriendToast]=useState<Friend|null>(null);const [removeFriend,setRemoveFriend]=useState<Friend|null>(null);const [friendDecision,setFriendDecision]=useState<Friend|null>(null);const [mail,setMail]=useState<PawMail[]>([]);const [mailModal,setMailModal]=useState<'inbox'|'compose'|'collection'|null>(null);const [mailFolder,setMailFolder]=useState<'received'|'sent'>('received');const [selectedLetter,setSelectedLetter]=useState<PawMail|null>(null);const [sentMail,setSentMail]=useState<PawMail[]>([]);const [mailCatalog,setMailCatalog]=useState(ENVELOPE_DESIGNS);const [notifications,setNotifications]=useState<PawNotification[]>([]);const [multiplayerSignal,setMultiplayerSignal]=useState(0);const [notificationsOpen,setNotificationsOpen]=useState(false);const [notificationDecisions,setNotificationDecisions]=useState<Record<string,'accepted'|'declined'>>({});const [mailDesign,setMailDesign]=useState('classic');const [mailColor,setMailColor]=useState('blush');const [mailMessage,setMailMessage]=useState('');const [ownedEnvelopes,setOwnedEnvelopes]=useState<string[]>(['classic']);const [mailTo,setMailTo]=useState('');const [tab,setTab]=useState('home');const [notice,setNotice]=useState('');const [menuOpen,setMenuOpen]=useState(false);const [roomMenuOpen,setRoomMenuOpen]=useState(false);const [marketRoom,setMarketRoom]=useState('living');const [editFurniture,setEditFurniture]=useState(false);const [selectedFurniture,setSelectedFurniture]=useState<string|null>(null);const [adoptionAcknowledged,setAdoptionAcknowledged]=useState(false);const [dark,setDark]=useState(()=>localStorage.getItem('pawpal-theme')==='dark');useEffect(()=>{localStorage.setItem('pawpal-theme',dark?'dark':'light');document.documentElement.dataset.pawpalTheme=dark?'dark':'light'},[dark]);useEffect(()=>{if(!notice)return;const timer=setTimeout(()=>setNotice(''),4200);return()=>clearTimeout(timer)},[notice]);const [busy,setBusy]=useState(false);const sleepRequestInFlight=useRef(false);const [sleepPending,setSleepPending]=useState(false);const [bathMode,setBathMode]=useState(false);const [cuddleMode,setCuddleMode]=useState(false);const cuddleActive=useRef(false);const cuddleLastMove=useRef(0);const cuddleRequest=useRef(false);const cuddleSeconds=useRef(0);const bathScrubbing=useRef(false);const bathLastMove=useRef(0);const bathRequest=useRef(false);const [authMode,setAuthMode]=useState('login');const [username,setUsername]=useState('');const [password,setPassword]=useState('');const [petName,setPetName]=useState('');const [choice,setChoice]=useState('cat');const [friendSearch,setFriendSearch]=useState('');const [found,setFound]=useState<{id:string;username:string;pet_note?:string|null;note_expires_at?:string|null}|null>(null);const [playPickerOpen,setPlayPickerOpen]=useState(false);
-const [game,setGame]=useState<string|null>(null);const [records,setRecords]=useState<{game:string;best:number}[]>([]);const [achievements,setAchievements]=useState<string[]>([]);const [nowTick,setNowTick]=useState(Date.now());useEffect(() => {
-    if (tab !== 'garden') return;
-    const tick = () => {
-        if (document.visibilityState === 'visible') setNowTick(Date.now());
-    };
-    tick();
-    const id = window.setInterval(tick, 1000);
-    document.addEventListener('visibilitychange', tick);
-    return () => {
-        window.clearInterval(id);
-        document.removeEventListener('visibilitychange', tick);
-    };
-}, [tab]);const [rotation,setRotation]=useState(0);const oldPetId=localStorage.getItem('pawpal-pet-id');
-// Share identical GET requests while they are in flight. Mutations are never cached.
-const pendingGetRequests = useRef(new Map<string, Promise<any>>());
-async function request(path: string, method = 'GET', body?: unknown) {
-    const fetchData = async () => {
-        const response = await fetch(API + '/api' + path, {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token ? { Authorization: 'Bearer ' + token } : {})
-            },
-            body: body === undefined ? undefined : JSON.stringify(body)
-        });
-        const data = await response.json();
-        if (!response.ok) throw Error(data.error || 'Request failed');
-        return data;
-    };
-    if (method !== 'GET') return fetchData();
-    const key = token + ':' + path;
-    const existing = pendingGetRequests.current.get(key);
-    if (existing) return existing;
-    const promise = fetchData();
-    pendingGetRequests.current.set(key, promise);
-    try {
-        return await promise;
-    } finally {
-        if (pendingGetRequests.current.get(key) === promise) {
-            pendingGetRequests.current.delete(key);
+function MiniGame({ kind, pet, onQuit, onFinish }: {
+    kind: string;
+    pet: Pet;
+    onQuit: () => void;
+    onFinish: (score: number) => Promise<boolean>
+}) {
+    const [phase, setPhase] = useState<"ready" | "playing" | "over">("ready");
+    const [score, setScore] = useState(0);
+    const [level, setLevel] = useState(1);
+    const [lives, setLives] = useState(1);
+    const [sequence, setSequence] = useState<number[]>([]);
+    const [input, setInput] = useState(0);
+    const [show, setShow] = useState(true);
+    const [heart, setHeart] = useState(0);
+    const [lane, setLane] = useState(1);
+    const [jump, setJump] = useState(false);
+    const [obstacle, setObstacle] = useState<{
+        x: number;
+        lane: number;
+        kind: string
+    }[]>([]);
+    const [ticks, setTicks] = useState(0);
+    const [time, setTime] = useState(30);
+    const [target, setTarget] = useState(0);
+    const keys = useRef<Record<string, boolean>>({});
+    const state = useRef({
+        phase: "ready",
+        kind,
+        lane: 1,
+        jump: false,
+        obstacle: [] as {
+            x: number;
+            lane: number;
+            kind: string
+        }[],
+        level: 1,
+        ticks: 0
+    });
+    const [claiming, setClaiming] = useState(false);
+    const [rewardError, setRewardError] = useState(false);
+    const claimRef = useRef(false);
+    const palette = PAW_COLOR_PALETTE;
+    const [colors, setColors] = useState(() => palette.slice(0, 8));
+    const count = Math.min(8, 3 + Math.floor((level - 1) / 5));
+    async function claimRound(replay: boolean) {
+        if (claimRef.current) {
+            return;
         }
-    }
-}
-async function refresh() {
-    if (!token) return;
-    try {
-        // Independent resources load together rather than waiting for /me first.
-        const [data, rp, fs, rs, ac, ml, envelopes, notificationsData] = await Promise.all([
-            request('/me'), request('/room'), request('/friends'), request('/records'),
-            request('/achievements'), request('/mail'), request('/mail/designs'),
-            request('/notifications')
-        ]);
-        setUser(data.user);
-        setPet(data.pet);
-        if (!editingNote) setNoteDraft(data.user?.pet_note || '');
-        setRoomPets(rp);
-        setFriends(fs);
-        setRecords(rs);
-        setAchievements(ac);
-        setMail(ml);
-        setOwnedEnvelopes(envelopes.owned || ['classic']);
-        if(Array.isArray(envelopes.catalog))setMailCatalog(envelopes.catalog);
-        setNotifications(notificationsData);
-    } catch (error: any) {
-        setNotice(error.message);
-    }
-}
-useEffect(()=>{void refresh()},[token]);useEffect(() => {
-    if (!token) return;
-    let active = true;
-    let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
-    let eventTimer: ReturnType<typeof setTimeout> | undefined;
-    let controller: AbortController | undefined;
-    let retryDelay = 1500;
-    const pending = new Set<string>();
-
-    const refreshEvents = async () => {
-        if (!active || document.visibilityState === 'hidden') return;
-        const types = new Set(pending);
-        pending.clear();
-        const requests: Promise<unknown>[] = [];
-        const load = <T,>(path: string, update: (value: T) => void) => {
-            requests.push(request(path).then(update).catch(() => {}));
-        };
-        const social = [...types].some(type => ['friend_request', 'friend_accepted', 'friend_removed'].includes(type));
-        const mail = types.has('mail');
-        const gift = types.has('gift');
-        const multiplayer = types.has('multiplayer_updated');
-        const ownPet = [...types].some(type => ['pet_updated', 'daily_reward', 'kitchen_updated'].includes(type));
-        const room = [...types].some(type => ['friend_pet_updated', 'pet_sleep_changed', 'friend_accepted', 'friend_removed', 'pet_updated'].includes(type));
-        if (social) load<Friend[]>('/friends', list => {
-            setFriends(list);
-            if (types.has('friend_request')) {
-                const incoming = list.find(friend => friend.status === 'pending' && friend.recipient_id === user?.id);
-                if (incoming) setFriendToast(incoming);
+        claimRef.current = true;
+        setClaiming(true);
+        setRewardError(false);
+        try {
+            const rewarded = await onFinish(score);
+            if (rewarded) {
+                if (replay) {
+                    reset();
+                }
+                else {
+                    onQuit();
+                }
+            } else {
+                setRewardError(true);
             }
-        });
-        if (mail) {
-            load<any>('/mail', setMail);
-            load<any>('/mail/designs', data => setOwnedEnvelopes(data.owned || ['classic']));
+        } catch {
+            setRewardError(true);
+        } finally {
+            claimRef.current = false;
+            setClaiming(false);
         }
-        if (ownPet || gift || multiplayer) load<any>('/me', data => {
+    }
+    const closeGame = () => {
+        if (phase === "over") {
+            void claimRound(false);
+        } else {
+            onQuit()
+
+        }
+    };
+    function reset() {
+        setColors(palette.slice(0, 8));
+        setScore(0);
+        setLevel(1);
+        setLives(kind === "memory" || kind === "pattern" ? 3 : 1);
+        setTime(30);
+        setInput(0);
+        setSequence([Math.floor(Math.random() * 4), Math.floor(Math.random() * 4)]);
+        setShow(true);
+        setHeart(Math.floor(Math.random() * 3));
+        setLane(1);
+        setJump(false);
+        setObstacle([]);
+        setTicks(0);
+        setTarget(0);
+        setPhase("playing")
+    }
+    useEffect(() => {
+        state.current = {
+            phase,
+            kind,
+            lane,
+            jump,
+            obstacle,
+            level,
+            ticks
+        }
+    }, [phase, kind, lane, jump, obstacle, level, ticks]);
+    useEffect(() => {
+        if (phase !== "playing" || kind !== "memory") {
+            return;
+
+        } setShow(true);
+        const t = setTimeout(() => setShow(false), Math.max(1000, 2500 - level * 85));
+        return () => clearTimeout(t)
+    }, [sequence, phase, kind, level]);
+    useEffect(() => {
+        if (phase !== "playing" || kind !== "pattern") {
+            return;
+
+        } const t = setInterval(() => setTime(x => {
+            if (x <= 1) {
+                setPhase("over");
+                return 0
+            }
+            return x - 1
+        }), 1000);
+        return () => clearInterval(t)
+    }, [phase, kind]);
+
+
+    function memoryPress(n: number) {
+        if (show) {
+            return;
+
+        } if (sequence[input] !== n) {
+            setLives(x => {
+                if (x <= 1) {
+                    setPhase("over");
+
+                } return Math.max(0, x - 1)
+            });
+            setInput(0);
+            setShow(true);
+            setSequence(x => [...x]);
+            return
+        }
+        if (input + 1 === sequence.length) {
+            setScore(x => x + 20 + level * 4);
+            setLevel(x => x + 1);
+            setInput(0);
+            setSequence(x => [...x, Math.floor(Math.random() * 4)])
+        } else {
+            setInput(x => x + 1)
+
+        }
+    }
+    function colorPress(n: number) {
+        if (n !== heart) {
+            setLives(x => {
+                if (x <= 1) {
+                    setPhase("over");
+
+                } return Math.max(0, x - 1)
+            });
+            return
+        }
+        setScore(x => x + 15 + level * 3);
+        setLevel(x => x + 1);
+        if ((level + 1) % 5 === 0 && level + 1 >= 20) {
+            const shuffled = [...palette];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            setColors(shuffled.slice(0, 8));
+        }
+        setTime(x => Math.min(30, x + 3));
+        const nextCount = Math.min(8, 3 + Math.floor(level / 5));
+        setHeart(Math.floor(Math.random() * nextCount))
+    }
+    const labels: {
+        [key: string]: string
+    } = {
+        memory: "Memory Tiles",
+        pattern: "Heart Color Match",
+        dino: "Cactus Jump",
+        runner: "Paw Run"
+    };
+    return <div className="overlay">
+        <div className="game-modal arcade-modal">
+            <header className="paw-arcade-modal-header">
+                <div className="paw-arcade-heading">
+                <h2>
+                    <Gamepad2 size={23} aria-hidden="true" />
+                    <span>
+                        {labels[kind]}
+                    </span>
+                </h2>
+                <p className="paw-modal-subtitle">Play with your pet</p>
+                </div>
+                <button className="paw-arcade-exit" type="button" aria-label="Close game" title="Close game" disabled={claiming} onClick={closeGame}>
+                    <X size={20} />
+                </button>
+            </header>
+            {phase === "ready" ? <div className="game-center">
+                <div className="huge">
+                    <PawIcon name={kind} size={68} />
+                </div>
+                <p>
+                    {kind === "dino" ? "Tap or press Space to jump over incoming cacti. Survive as speed increases." : kind === "runner" ? "Swipe left or right, or use arrow keys to dodge obstacles." : kind === "memory" ? "Remember the hearts in order. The sequence gets longer after every round." : "Match the big heart with the correct paint color."}
+                </p>
+                <button className="primary" onClick={reset}>Start game</button>
+            </div> : phase === "over" ? <div className="game-center">
+                <div className="huge">
+                    <Trophy size={62} aria-hidden="true" />
+                </div>
+                <h2>Game over</h2>
+                <h3>
+                    {score} points · Level {level}
+                </h3>
+                {rewardError && <p className="paw-arcade-reward-error" role="alert">Reward wasn't saved. Try again to claim it.</p>}
+                <div className="actions centered paw-game-over-actions">
+                    <button className="primary" disabled={claiming} onClick={() => void claimRound(true)}>
+                        {claiming ? "Collecting reward..." : "Retry"}
+                    </button>
+                    <button className="secondary" disabled={claiming} onClick={() => void claimRound(false)}>Collect coins & quit</button>
+                </div>
+            </div> : <>
+                <div className="mole-hud paw-arcade-hud">
+                    <span className="paw-hud-score">
+                        <Star size={18} aria-hidden="true" fill="#f4ce7b" color="#aa8192" /> {score} points</span>
+                    <span className="paw-hud-round">Level {level}
+                    </span>
+                    <ArcadeLives lives={lives} maxLives={kind === "memory" || kind === "pattern" ? 3 : 1} />
+                    {kind === "pattern" && <span className="paw-hud-clock">
+                        <Clock3 size={16} aria-hidden="true" /> {time}s</span>}
+                </div>
+                {kind === "memory" ? <>
+                    <p className="paw-memory-instruction">
+                        {show ? "Watch the hearts in order!" : `Your turn! ${input}/${sequence.length}`}
+                    </p>
+                    <div className="paw-memory-sequence" aria-label={show ? `Memorize ${sequence.length} colored hearts in order` : "Sequence hidden; repeat it using the four hearts below"}>
+                        {show ? sequence.map((index, position) => (
+                            <span className="paw-memory-sequence-heart" key={`${position}-${index}`}>
+                                <MemoryHeart index={index} size={34} />
+                            </span>
+                        )) : <span className="paw-memory-hidden">Repeat the pattern below</span>}
+                    </div>
+                    <div className="memory-board paw-memory-board">
+                        {MEMORY_HEARTS.map((entry, i) => <button key={i} disabled={show} onClick={() => memoryPress(i)} aria-label={`${entry.label} heart`}>
+                            <MemoryHeart index={i} size={38} />
+                        </button>)}
+                    </div>
+                </> : kind === "pattern" ? <>
+                    <p className="paw-color-match-prompt">Match this heart!</p>
+                    <div className="target-heart">
+                        <TargetHeart color={colors[heart]} />
+                    </div>
+                    <div className="heart-choices paw-palette-choices">
+                        {colors.slice(0, count).map((c, i) => (
+                            <button key={i} onClick={() => colorPress(i)} aria-label={`Choose paint palette ${i + 1}`} className="paw-palette-choice" type="button">
+                                <PaintPalette color={c} />
+                            </button>
+                        ))}
+                    </div>
+                </> : <>
+                    <ArcadeCanvas
+                        species={window.localStorage.getItem("pawpal-arcade-species") || "cat"}
+                        kind={kind as "dino" | "runner"}
+                        onScore={points => {
+                            setScore(points);
+                            setLevel(1 + Math.floor(points / 120))
+                        }}
+                        onGameOver={() => setPhase("over")}
+                    />
+                </>}
+            </>}
+        </div>
+    </div>
+}
+
+function OutfitWardrobe({ pet, execute, busy }: {
+    pet: Pet;
+    execute: (path: string, body?: unknown, method?: string) => Promise<any>;
+    busy: boolean
+}) {
+    const [section, setSection] = useState<"outfit" | "shop">("outfit");
+    const [slot, setSlot] = useState<OutfitSlot>("head");
+    const [tryOn, setTryOn] = useState<string | null>(null);
+    const current = normalizeOutfit(pet.equipped_outfit);
+    const preview = {
+        ...current,
+        ...(tryOn ? {
+            [COSMETIC_SLOTS[tryOn]]: tryOn
+        } : {})
+    };
+    const base = [...store, ...addedCosmeticStore].filter(item => item[2] === "cosmetic").map(([id, , , price]) => ({
+        id,
+        slot: COSMETIC_SLOTS[id],
+        price
+    }));
+    const available = [...base, ...NEW_COSMETICS].filter(x => x.slot === slot && (!Object.values(uniqueCosmeticsBySpecies).some(list => list.includes(x.id)) || uniqueCosmeticsBySpecies[pet.species]?.includes(x.id))).sort((a, b) => (ITEM_LEVEL_REQUIREMENTS[a.id] || 1) - (ITEM_LEVEL_REQUIREMENTS[b.id] || 1) || a.price - b.price);
+    const own = (id: string) => pet.owned_cosmetics.includes(id);
+    const change = (id: string, mode: string) => {
+        setTryOn(null);
+        void execute("/item", {
+            item: id,
+            mode,
+            slot: COSMETIC_SLOTS[id]
+        });
+    };
+    return <div className="v8-wardrobe">
+        <div className="v8-preview">
+            <div className="v8-pet">
+                <PetArt species={pet.species} breed={pet.breed} color={pet.color} outfit={preview} cosmetic="none" />
+            </div>
+            <div>
+                <h3>
+                    {pet.name}'s outfit</h3>
+                {tryOn && <span className="v8-try">Previewing {tryOn.replaceAll("_", " ")} · not equipped</span>}
+            </div>
+        </div>
+        <div className="paw-wardrobe-toolbar">
+            <div className="v8-tabs">
+                <button className={section === "outfit" ? "selected" : ""} onClick={() => {
+                    setSection("outfit");
+                    setTryOn(null)
+                }}>Owned</button>
+                <button className={section === "shop" ? "selected" : ""} onClick={() => setSection("shop")}>Shop</button>
+            </div>
+            <div className="v8-slots">
+                {SLOT_NAMES.map(s => <button key={s} className={slot === s ? "selected" : ""} onClick={() => {
+                    setSlot(s);
+                    setTryOn(null)
+                }}>
+                    <b>
+                        {<PawSlotIcon slot={s} />} {s}
+                    </b>
+                </button>)}
+            </div>
+        </div>
+        {section === "outfit" ? <div className="v8-owned">
+            <h3>
+                {slot[0].toUpperCase() + slot.slice(1)} accessories</h3>
+            <div className="v8-collection">
+                {available.filter(x => own(x.id)).length === 0 ? <p className="paw-wardrobe-empty">You don't own any {slot} items yet.</p> : available.filter(x => own(x.id)).map(x => <div className="v8-item" key={x.id}>
+                    <div className="v8-item-art">
+                        <PetArt species={pet.species} breed={pet.breed} outfit={{
+                            ...current,
+                            [slot]: x.id
+                        }} cosmetic="none" />
+                    </div>
+                    <b>
+                        {x.id.replaceAll("_", " ")}
+                    </b>
+                    <button
+                        className={current[slot] === x.id ? "paw-wardrobe-unequip" : "paw-wardrobe-equip"}
+                        disabled={busy}
+                        onClick={() => change(x.id, current[slot] === x.id ? "unequip" : "equip")}
+                    >
+                        {current[slot] === x.id ? "Unequip" : "Equip"}
+                    </button>
+                </div>)}
+            </div>
+            {current[slot] && <button className="secondary" disabled={busy} onClick={() => change(current[slot]!, "unequip")}>Remove {slot} accessory</button>}
+        </div> : <div>
+            <h3>Shop · {slot}
+            </h3>
+            <div className="v8-collection">
+                {available.filter(x => !own(x.id)).map(x => <div className={"v8-item " + (current[slot] === x.id ? "paw-cosmetic-equipped " : "") + (!own(x.id) && pet.level < (ITEM_LEVEL_REQUIREMENTS[x.id] || 0) ? "paw-level-locked" : "")} key={x.id}>
+                    <div className="v8-item-art">
+                        <PetArt species={pet.species} breed={pet.breed} outfit={{
+                            ...current,
+                            [slot]: x.id
+                        }} cosmetic="none" />
+                    </div>
+                    {current[slot] === x.id && <span className="paw-equipped-badge">
+                        <Check size={13} /> Equipped</span>}
+                    <b>
+                        {x.id.replaceAll("_", " ")}
+                    </b>
+                    <small className={current[slot] === x.id ? "paw-equipped-label" : ""}>
+                        {!own(x.id) && pet.level < (ITEM_LEVEL_REQUIREMENTS[x.id] || 0) ? `Unlocks at Level ${ITEM_LEVEL_REQUIREMENTS[x.id]}` : current[slot] === x.id ? <>
+                            <Check size={14} aria-hidden="true" /> Equipped</> : own(x.id) ? "Owned" : `${x.price} coins`}
+                    </small>
+                    {!own(x.id) && pet.level < (ITEM_LEVEL_REQUIREMENTS[x.id] || 0) && <div className="paw-level-overlay">
+                        <LockKeyhole size={16} /> Level {ITEM_LEVEL_REQUIREMENTS[x.id]}
+                    </div>}
+                    <div className="v8-actions">
+                        <button className="secondary" disabled={busy} onClick={() => setTryOn(x.id)}>Try on</button>
+                        <button className="paw-wardrobe-market-buy" disabled={busy || pet.level < (ITEM_LEVEL_REQUIREMENTS[x.id] || 0)} onClick={() => change(x.id, "buy")}>
+                            {pet.level < (ITEM_LEVEL_REQUIREMENTS[x.id] || 0) ? "Locked" : `Buy · ${x.price.toLocaleString()} coins`}
+                        </button>
+                    </div>
+                </div>)}
+            </div>
+        </div>}
+    </div>
+}
+
+const ENVELOPE_COLORS = [
+    ["blush", "Blush", "#ffe1eb"],
+    ["rose", "Rose", "#f5bdcf"],
+    ["peach", "Peach", "#ffdcc7"],
+    ["apricot", "Apricot", "#ffe4b8"],
+    ["butter", "Butter", "#fff2b8"],
+    ["mint", "Mint", "#d9f4df"],
+    ["sage", "Sage", "#d3e4ce"],
+    ["aqua", "Aqua", "#d3f1f2"],
+    ["sky", "Sky", "#d6eafa"],
+    ["periwinkle", "Periwinkle", "#dcdfff"],
+    ["lavender", "Lavender", "#e8dcfc"],
+    ["lilac", "Lilac", "#efddf5"],
+    ["cream", "Cream", "#fff5e6"],
+    ["coral", "Coral", "#ffd2cb"],
+    ["slate", "Twilight", "#ccd8e9"]
+] as const;
+function PawPostcard({ design, message, color = "blush", senderPet }: {
+    design: string;
+    message: string;
+    color?: string;
+    senderPet?: {
+        species: string;
+        color: string;
+        breed: string;
+        equipped_cosmetic?: string;
+        equipped_outfit?: any
+    } | null
+}) {
+    const chosen = ENVELOPE_DESIGNS.find(d => d.id === design) || ENVELOPE_DESIGNS[0];
+    const shade = ENVELOPE_COLORS.find(c => c[0] === color)?.[2] || ENVELOPE_COLORS[0][2];
+    return <div className={"paw-envelope paw-envelope-" + chosen.id} style={{
+        "--envelope-color": shade
+    } as React.CSSProperties}>
+        <div className="paw-envelope-top">
+            <span className="paw-envelope-postmark">PAWPAL ✦ SPECIAL DELIVERY</span>
+            <span className="paw-envelope-seal" title="Sender's pet wax seal">
+                {senderPet ? <PetArt
+                    species={senderPet.species}
+                    color={senderPet.color}
+                    breed={senderPet.breed}
+                    cosmetic={senderPet.equipped_cosmetic}
+                    outfit={senderPet.equipped_outfit}
+                /> : <span>♡</span>}
+            </span>
+        </div>
+        <div className="paw-envelope-illustration" aria-hidden="true">
+            <EnvelopeArtwork design={chosen.id} />
+        </div>
+        <div className="paw-envelope-content">
+            <small>
+                {chosen.title}
+            </small>
+            <p>
+                {message || "Your little letter will appear here…"}
+            </p>
+        </div>
+    </div>
+}
+export default function App() {
+    const [token, setToken] = useState(localStorage.getItem("pawpal-token") || "");
+    const [user, setUser] = useState<{
+        id: string;
+        username: string;
+        pet_note?: string | null;
+        note_expires_at?: string | null
+    } | null>(null);
+    const [pet, setPet] = useState<Pet | null>(null);
+    const [noteDraft, setNoteDraft] = useState("");
+    const [editingNote, setEditingNote] = useState(false);
+    const [openRoomNoteId, setOpenRoomNoteId] = useState<string | null>(null);
+    const [themeModal, setThemeModal] = useState(false);
+    const [mealModal, setMealModal] = useState(false);
+    const [mealData, setMealData] = useState<{
+        meals: Record<string, number>;
+        recipes: Record<string, {
+            name: string;
+            hunger: number;
+            happiness: number;
+            energy: number;
+            xp: number
+        }>
+    } | null>(null);
+    const [mealBusy, setMealBusy] = useState(false);
+    const [roomPets, setRoomPets] = useState<RoomPet[]>([]);
+    const [friends, setFriends] = useState<Friend[]>([]);
+    const [requestsOpen, setRequestsOpen] = useState(false);
+    // Per-account viewed incoming requests. Outgoing requests must never light the badge.
+    const [seenFriendRequestIds, setSeenFriendRequestIds] = useState<string[]>([]);
+    const [missionReady, setMissionReady] = useState(false);
+    const [missionRefreshKey, setMissionRefreshKey] = useState(0);
+    const [friendToast, setFriendToast] = useState<Friend | null>(null);
+    const [removeFriend, setRemoveFriend] = useState<Friend | null>(null);
+    const [friendDecision, setFriendDecision] = useState<Friend | null>(null);
+    const [mail, setMail] = useState<PawMail[]>([]);
+    const [mailModal, setMailModal] = useState<"inbox" | "compose" | "collection" | null>(null);
+    const [mailFolder, setMailFolder] = useState<"received" | "sent">("received");
+    const [selectedLetter, setSelectedLetter] = useState<PawMail | null>(null);
+    const [sentMail, setSentMail] = useState<PawMail[]>([]);
+    const [mailCatalog, setMailCatalog] = useState(ENVELOPE_DESIGNS);
+    const [notifications, setNotifications] = useState<PawNotification[]>([]);
+    const [multiplayerSignal, setMultiplayerSignal] = useState(0);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [notificationDecisions, setNotificationDecisions] = useState<Record<string, "accepted" | "declined">>({});
+    const [mailDesign, setMailDesign] = useState("classic");
+    const [mailColor, setMailColor] = useState("blush");
+    const [mailMessage, setMailMessage] = useState("");
+    const [ownedEnvelopes, setOwnedEnvelopes] = useState<string[]>(["classic"]);
+    const [mailTo, setMailTo] = useState("");
+    const [tab, setTab] = useState("home");
+    const [notice, setNotice] = useState("");
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [roomMenuOpen, setRoomMenuOpen] = useState(false);
+    const [marketRoom, setMarketRoom] = useState("living");
+    const [editFurniture, setEditFurniture] = useState(false);
+    const [selectedFurniture, setSelectedFurniture] = useState<string | null>(null);
+    const [adoptionAcknowledged, setAdoptionAcknowledged] = useState(false);
+    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [appearance, setAppearance] = useState<AppearanceChoice>(() => {
+        const saved = localStorage.getItem("pawpal-theme");
+
+        if (saved === "light" || saved === "dark" || saved === "system") {
+            return saved;
+        }
+
+        return "system";
+    });
+    const [systemDark, setSystemDark] = useState(() => window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const [audioPreferences, setAudioPreferences] = useState(readAudioPreferences);
+    const dark = appearance === "dark" || appearance === "system" && systemDark;
+
+    useEffect(() => {
+        const media = window.matchMedia("(prefers-color-scheme: dark)");
+        const update = () => setSystemDark(media.matches);
+
+        media.addEventListener("change", update);
+        update();
+
+        return () => {
+            media.removeEventListener("change", update);
+        };
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem("pawpal-theme", appearance);
+        document.documentElement.dataset.pawpalTheme = dark ? "dark" : "light";
+    }, [appearance, dark]);
+
+    useEffect(() => {
+        localStorage.setItem("pawpal-audio-preferences", JSON.stringify(audioPreferences));
+    }, [audioPreferences]);
+    useEffect(() => {
+        if (!notice) {
+            return;
+
+        } const timer = setTimeout(() => setNotice(""), 4200);
+        return () => clearTimeout(timer)
+    }, [notice]);
+    const [busy, setBusy] = useState(false);
+    const sleepRequestInFlight = useRef(false);
+    const [sleepPending, setSleepPending] = useState(false);
+    const [bathMode, setBathMode] = useState(false);
+    const [cuddleMode, setCuddleMode] = useState(false);
+    const cuddleActive = useRef(false);
+    const cuddleLastMove = useRef(0);
+    const cuddleRequest = useRef(false);
+    const cuddleSeconds = useRef(0);
+    const bathScrubbing = useRef(false);
+    const bathLastMove = useRef(0);
+    const bathRequest = useRef(false);
+    const [authMode, setAuthMode] = useState("login");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [petName, setPetName] = useState("");
+    const [choice, setChoice] = useState("cat");
+    const [friendSearch, setFriendSearch] = useState("");
+    const [found, setFound] = useState<{
+        id: string;
+        username: string;
+        pet_note?: string | null;
+        note_expires_at?: string | null
+    } | null>(null);
+    const [playPickerOpen, setPlayPickerOpen] = useState(false);
+    const [game, setGame] = useState<string | null>(null);
+    const [records, setRecords] = useState<{
+        game: string;
+        best: number
+    }[]>([]);
+    const [achievements, setAchievements] = useState<string[]>([]);
+    const [nowTick, setNowTick] = useState(Date.now());
+    useEffect(() => {
+        // Check navigation badges while outside the garden too, without
+        // rerendering the entire app every second on other pages.
+        const tick = () => {
+            if (document.visibilityState === "visible") {
+                setNowTick(Date.now());
+            }
+        };
+        tick();
+        const id = window.setInterval(tick, tab === "garden" ? 1000 : 15000);
+        document.addEventListener("visibilitychange", tick);
+        return () => {
+            window.clearInterval(id);
+            document.removeEventListener("visibilitychange", tick);
+        };
+    }, [tab]);
+    const [rotation, setRotation] = useState(0);
+    const oldPetId = localStorage.getItem("pawpal-pet-id");
+    // Share identical GET requests while they are in flight. Mutations are never cached.
+    const pendingGetRequests = useRef(new Map<string, Promise<any>>());
+    async function request(path: string, method = "GET", body?: unknown) {
+        const fetchData = async () => {
+            const response = await fetch(API + "/api" + path, {
+                method,
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(token ? {
+                        Authorization: "Bearer " + token
+                    } : {})
+                },
+                body: body === undefined ? undefined : JSON.stringify(body)
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw Error(data.error || "Request failed");
+            }
+            return data;
+        };
+        if (method !== "GET") {
+            return fetchData();
+        }
+        const key = token + ":" + path;
+        const existing = pendingGetRequests.current.get(key);
+        if (existing) {
+            return existing;
+        }
+        const promise = fetchData();
+        pendingGetRequests.current.set(key, promise);
+        try {
+            return await promise;
+        } finally {
+            if (pendingGetRequests.current.get(key) === promise) {
+                pendingGetRequests.current.delete(key);
+            }
+        }
+    }
+    // Mission status remains current even while the Missions panel is closed.
+    useEffect(() => {
+        if (!token) {
+            setMissionReady(false);
+            return;
+        }
+        let active = true;
+        async function checkMissions() {
+            if (document.visibilityState === "hidden") {
+                return;
+            }
+            try {
+                const data = await request("/missions");
+                if (active) {
+                    setMissionReady(Array.isArray(data.missions) && data.missions.some(
+                        (mission: { claimed: boolean; progress: number; target: number }) =>
+                            !mission.claimed && Number(mission.progress) >= Number(mission.target)
+                    ));
+                }
+            } catch {
+                // Keep the previous indicator on transient connection problems.
+            }
+        }
+        void checkMissions();
+        const interval = window.setInterval(() => void checkMissions(), 45000);
+        document.addEventListener("visibilitychange", checkMissions);
+        return () => {
+            active = false;
+            window.clearInterval(interval);
+            document.removeEventListener("visibilitychange", checkMissions);
+        };
+    }, [token, missionRefreshKey]);
+
+    async function refresh() {
+        if (!token) {
+            return;
+        }
+        try {
+            // Independent resources load together rather than waiting for /me first.
+            const [data, rp, fs, rs, ac, ml, envelopes, notificationsData] = await Promise.all([
+                request("/me"),
+                request("/room"),
+                request("/friends"),
+                request("/records"),
+                request("/achievements"),
+                request("/mail"),
+                request("/mail/designs"),
+                request("/notifications")
+            ]);
             setUser(data.user);
             setPet(data.pet);
-        });
-        if (room) load<RoomPet[]>('/room', setRoomPets);
-        if (social || mail || gift || multiplayer) load<any>('/notifications', setNotifications);
-        if (multiplayer) setMultiplayerSignal(value => value + 1);
-        await Promise.all(requests);
-    };
-    const schedule = (type: string) => {
-        pending.add(type);
-        if (!eventTimer) eventTimer = setTimeout(() => {
-            eventTimer = undefined;
-            void refreshEvents();
-        }, 180);
-    };
-    const onVisible = () => {
-        if (document.visibilityState === 'visible' && pending.size) void refreshEvents();
-    };
-    document.addEventListener('visibilitychange', onVisible);
+            setMissionRefreshKey(value => value + 1);
+            if (!editingNote) {
+                setNoteDraft(data.user?.pet_note || "");
+            }
+            setRoomPets(rp);
+            setFriends(fs);
+            setRecords(rs);
+            setAchievements(ac);
+            setMail(ml);
+            setOwnedEnvelopes(envelopes.owned || ["classic"]);
+            if (Array.isArray(envelopes.catalog)) {
+                setMailCatalog(envelopes.catalog);
+            }
+            setNotifications(notificationsData);
+        } catch (error: any) {
+            setNotice(error.message);
+        }
+    }
+    useEffect(() => {
+        void refresh()
+    }, [token]);
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+        let active = true;
+        let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
+        let eventTimer: ReturnType<typeof setTimeout> | undefined;
+        let controller: AbortController | undefined;
+        let retryDelay = 1500;
+        const pending = new Set<string>();
 
-    async function connect() {
-        controller = new AbortController();
-        try {
-            const response = await fetch(API + '/api/live', {
-                headers: { Authorization: 'Bearer ' + token, Accept: 'text/event-stream' },
-                signal: controller.signal,
-                cache: 'no-store'
-            });
-            if (!response.ok || !response.body) throw Error('Live updates unavailable');
-            retryDelay = 1500;
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            let buffer = '';
-            while (active) {
-                const { value, done } = await reader.read();
-                if (done) break;
-                buffer += decoder.decode(value, { stream: true }).replace(/\r/g, '');
-                const chunks = buffer.split('\n\n');
-                buffer = chunks.pop() || '';
-                for (const chunk of chunks) {
-                    const lines = chunk.split('\n');
-                    if (!lines.some(line => line.trim() === 'event: update')) continue;
-                    const data = lines.filter(line => line.startsWith('data:')).map(line => line.slice(5).trim()).join('\n');
-                    try {
-                        const event = JSON.parse(data) as { type?: string };
-                        if (!event.type) continue;
-                        schedule(event.type);
-                        const messages: Record<string, string> = {
-                            friend_request: 'New friend request!',
-                            friend_accepted: 'Friend request accepted!',
-                            friend_removed: 'Friend list updated.',
-                            mail: 'New PawMail postcard!',
-                            gift: 'Coin gift activity updated!',
-                            multiplayer_updated: 'Paw Brawl activity updated!'
-                        };
-                        if (messages[event.type]) setNotice(messages[event.type]);
-                    } catch { /* Ignore malformed event payloads. */ }
+        const refreshEvents = async () => {
+            if (!active || document.visibilityState === "hidden") {
+                return;
+            }
+            const types = new Set(pending);
+            pending.clear();
+            const requests: Promise<unknown>[] = [];
+            const load = <T,>(path: string, update: (value: T) => void) => {
+                requests.push(request(path).then(update).catch(() => {
+                }));
+            };
+            const social = [...types].some(type => ["friend_request", "friend_accepted", "friend_removed"].includes(type));
+            const mail = types.has("mail");
+            const gift = types.has("gift");
+            const multiplayer = types.has("multiplayer_updated");
+            const ownPet = [...types].some(type => ["pet_updated", "daily_reward", "kitchen_updated"].includes(type));
+            const room = [...types].some(type => ["friend_pet_updated", "pet_sleep_changed", "friend_accepted", "friend_removed", "pet_updated"].includes(type));
+            if (social) {
+                load<Friend[]>("/friends", list => {
+                    setFriends(list);
+                    if (types.has("friend_request")) {
+                        const incoming = list.find(friend => friend.status === "pending" && friend.recipient_id === user?.id);
+                        if (incoming) {
+                            setFriendToast(incoming);
+                        }
+                    }
+                });
+            }
+            if (mail) {
+                load<any>("/mail", setMail);
+                load<any>("/mail/designs", data => setOwnedEnvelopes(data.owned || ["classic"]));
+            }
+            if (ownPet || gift || multiplayer) {
+                load<any>("/me", data => {
+                    setUser(data.user);
+                    setPet(data.pet);
+                });
+            }
+            if (room) {
+                load<RoomPet[]>("/room", setRoomPets);
+            }
+            if (social || mail || gift || multiplayer) {
+                load<any>("/notifications", setNotifications);
+            }
+            if (multiplayer) {
+                setMultiplayerSignal(value => value + 1);
+            }
+            await Promise.all(requests);
+        };
+        const schedule = (type: string) => {
+            pending.add(type);
+            if (!eventTimer) {
+                eventTimer = setTimeout(() => {
+                    eventTimer = undefined;
+                    void refreshEvents();
+                }, 180);
+            }
+        };
+        const onVisible = () => {
+            if (document.visibilityState === "visible" && pending.size) {
+                void refreshEvents();
+            }
+        };
+        document.addEventListener("visibilitychange", onVisible);
+
+        async function connect() {
+            controller = new AbortController();
+            try {
+                const response = await fetch(API + "/api/live", {
+                    headers: {
+                        Authorization: "Bearer " + token,
+                        Accept: "text/event-stream"
+                    },
+                    signal: controller.signal,
+                    cache: "no-store"
+                });
+                if (!response.ok || !response.body) {
+                    throw Error("Live updates unavailable");
+                }
+                retryDelay = 1500;
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = "";
+                while (active) {
+                    const { value, done } = await reader.read();
+                    if (done) {
+                        break;
+                    }
+                    buffer += decoder.decode(value, {
+                        stream: true
+                    }).replace(/\r/g, "");
+                    const chunks = buffer.split("\n\n");
+                    buffer = chunks.pop() || "";
+                    for (const chunk of chunks) {
+                        const lines = chunk.split("\n");
+                        if (!lines.some(line => line.trim() === "event: update")) {
+                            continue;
+                        }
+                        const data = lines.filter(line => line.startsWith("data:")).map(line => line.slice(5).trim()).join("\n");
+                        try {
+                            const event = JSON.parse(data) as {
+                                type?: string
+                            };
+                            if (!event.type) {
+                                continue;
+                            }
+                            schedule(event.type);
+                            const messages: Record<string, string> = {
+                                friend_request: "New friend request!",
+                                friend_accepted: "Friend request accepted!",
+                                friend_removed: "Friend list updated.",
+                                mail: "New PawMail postcard!",
+                                gift: "Coin gift activity updated!",
+                                multiplayer_updated: "Paw Brawl activity updated!"
+                            };
+                            if (messages[event.type]) {
+                                setNotice(messages[event.type]);
+                            }
+                        } catch {
+                            /* Ignore malformed event payloads. */
+                        }
+                    }
+                }
+            } catch (error) {
+                if (active) {
+                    console.warn("Live connection interrupted; reconnecting", error);
                 }
             }
-        } catch (error) {
-            if (active) console.warn('Live connection interrupted; reconnecting', error);
+            if (active) {
+                reconnectTimer = setTimeout(() => void connect(), retryDelay);
+                retryDelay = Math.min(retryDelay * 2, 15000);
+            }
         }
-        if (active) {
-            reconnectTimer = setTimeout(() => void connect(), retryDelay);
-            retryDelay = Math.min(retryDelay * 2, 15000);
+        void connect();
+        const fallback = setInterval(() => {
+            if (document.visibilityState === "visible") {
+                void request("/me").then(data => {
+                    setUser(data.user);
+                    setPet(data.pet);
+                }).catch(() => {
+                });
+                void request("/notifications").then(setNotifications).catch(() => {
+                });
+            }
+        }, 60000);
+        return () => {
+            active = false;
+            controller?.abort();
+            if (reconnectTimer) {
+                clearTimeout(reconnectTimer);
+            }
+            if (eventTimer) {
+                clearTimeout(eventTimer);
+            }
+            clearInterval(fallback);
+            document.removeEventListener("visibilitychange", onVisible);
+        };
+    }, [token]);
+    // Keep the other players' pet states fresh even when live events are delayed or
+    // an existing SSE connection silently stalls (notably on background tabs).
+    useEffect(() => {
+        if (!token) {
+            return;
         }
+        let alive = true;
+        const syncRoom = async () => {
+            try {
+                const pets: RoomPet[] = await request("/room");
+                if (alive) {
+                    setRoomPets(pets)
+
+                }
+            } catch {
+                /* next poll retries */
+            }
+        };
+        const timer = window.setInterval(() => {
+            if (document.visibilityState === "visible") {
+                void syncRoom()
+
+            }
+        }, 20000);
+        const onVisible = () => {
+            if (document.visibilityState === "visible") {
+                void syncRoom()
+
+            }
+        };
+        document.addEventListener("visibilitychange", onVisible);
+        window.addEventListener("focus", onVisible);
+        void syncRoom();
+        return () => {
+            alive = false;
+            window.clearInterval(timer);
+            document.removeEventListener("visibilitychange", onVisible);
+            window.removeEventListener("focus", onVisible)
+        };
+    }, [token]);
+    useEffect(() => {
+        const t = setInterval(() => setRotation(x => x + 1), 14000);
+        return () => clearInterval(t)
+    }, []);
+    async function claimArcadeReward(gameId: string, points: number): Promise<boolean> {
+        // Retry still claims the completed round before a new one begins.
+        // Respect the backend's existing 8-second reward interval, rather than
+        // silently dropping earned coins if a quick round ends too soon.
+        for (let attempt = 0; attempt < 3; attempt++) {
+            const result = await execute("/game", {
+                game: gameId,
+                score: points
+            });
+            const message = String(result?.message || "");
+            if (result?.pet && message.startsWith("Arcade reward:")) {
+                void refresh();
+                return true;
+            }
+            if (!message.startsWith("Wait ")) {
+                return false;
+            }
+            const seconds = Number(message.match(/Wait (\d+)/)?.[1] || 8);
+            if (attempt < 2) {
+                await new Promise<void>(resolve => window.setTimeout(resolve, Math.max(1, seconds) * 1000 + 250));
+            }
+        }
+        setNotice("Could not collect your reward yet. Please retry.");
+        return false;
     }
-    void connect();
-    const fallback = setInterval(() => {
-        if (document.visibilityState === 'visible') {
-            void request('/me').then(data => {
-                setUser(data.user);
+    async function execute(path: string, body?: unknown, method = "POST") {
+        setBusy(true);
+        try {
+            const data = await request(path, method, body);
+            if (data.pet) {
                 setPet(data.pet);
-            }).catch(() => {});
-            void request('/notifications').then(setNotifications).catch(() => {});
+
+            } setNotice(data.message || "Saved!");
+            setMissionRefreshKey(value => value + 1);
+            if (path.includes("friend") || path.includes("gift") || path.includes("adopt") || path.includes("mail") || path.includes("furniture")) {
+                await refresh();
+
+            } return data
+        } catch (e: any) {
+            setNotice(e.message)
+        } finally {
+            setBusy(false)
         }
-    }, 60000);
-    return () => {
-        active = false;
-        controller?.abort();
-        if (reconnectTimer) clearTimeout(reconnectTimer);
-        if (eventTimer) clearTimeout(eventTimer);
-        clearInterval(fallback);
-        document.removeEventListener('visibilitychange', onVisible);
+    }
+    useEffect(() => {
+        if (!bathMode || !pet) {
+            return;
+
+        } const timer = window.setInterval(async () => {
+            if (!bathScrubbing.current || Date.now() - bathLastMove.current > 1150 || bathRequest.current || pet.cleanliness >= 100) {
+                return;
+
+            } bathRequest.current = true;
+            try {
+                const data = await request("/care", "POST", {
+                    action: "scrub"
+                });
+                if (data.pet) {
+                    setPet(data.pet)
+
+                }
+            } catch (e: any) {
+                setNotice(e?.message || "Could not bathe pet")
+            } finally {
+                bathRequest.current = false
+            }
+        }, 1000);
+        return () => window.clearInterval(timer)
+    }, [bathMode, pet?.id, pet?.cleanliness]);
+    useEffect(() => {
+        if (!cuddleMode || !pet) {
+            return;
+
+        } const timer = window.setInterval(async () => {
+            if (!cuddleActive.current || Date.now() - cuddleLastMove.current > 1100 || cuddleRequest.current || pet.affection >= 100) {
+                return;
+
+            } cuddleRequest.current = true;
+            try {
+                const data = await request("/care", "POST", {
+                    action: "pet_stroke"
+                });
+                if (data.pet) {
+                    setPet(data.pet);
+                    cuddleSeconds.current++;
+                }
+            } catch (e: any) {
+                setNotice(e?.message || "Could not cuddle pet")
+            } finally {
+                cuddleRequest.current = false
+            }
+        }, 1000);
+        return () => window.clearInterval(timer)
+    }, [cuddleMode, pet?.id, pet?.affection]);
+    useEffect(() => {
+        const stop = () => {
+            bathScrubbing.current = false;
+            cuddleActive.current = false
+        };
+        window.addEventListener("pointerup", stop);
+        window.addEventListener("pointercancel", stop);
+        return () => {
+            window.removeEventListener("pointerup", stop);
+            window.removeEventListener("pointercancel", stop)
+        }
+    }, []);
+    async function launchGame(id: string, petSpecies: string) {
+        if (pet?.garden?._sleeping) {
+            setPet(current => current ? {
+                ...current,
+                garden: {
+                    ...current.garden,
+                    _sleeping: false
+                }
+            } : current);
+            try {
+                await request("/care/wake", "POST");
+                await refresh()
+            }
+            catch (error) {
+                setNotice(error instanceof Error ? error.message : "Could not wake your pet");
+                return
+            }
+        }
+        localStorage.setItem("pawpal-arcade-species", petSpecies);
+        setGame(id);
+    }
+    async function togglePetSleep() {
+        if (sleepRequestInFlight.current) {
+            return;
+        }
+        sleepRequestInFlight.current = true;
+        setSleepPending(true);
+        try {
+            const data = await request("/care", "POST", {
+                action: "sleep_toggle"
+            });
+            if (data.pet) {
+                setPet(data.pet);
+            }
+            setNotice(data.message || "Sleep updated");
+        } catch (e: any) {
+            setNotice(e?.message || "Could not update sleep");
+        }
+        finally {
+            sleepRequestInFlight.current = false;
+            setSleepPending(false);
+        }
+    }
+    async function authenticate() {
+        setBusy(true);
+        try {
+            const data = await request("/auth/" + (authMode === "login" ? "login" : "register"), "POST", authMode === "login" ? {
+                identity: username,
+                password
+            } : {
+                username,
+                password
+            });
+            localStorage.setItem("pawpal-token", data.token);
+            setToken(data.token);
+            setNotice("Welcome to PawPal!")
+        } catch (e: any) {
+            setNotice(e.message)
+        } finally {
+            setBusy(false)
+        }
+    }
+    function logout() {
+        localStorage.removeItem("pawpal-token");
+        setToken("");
+        setUser(null);
+        setPet(null);
+        setRoomPets([]);
+        setFriends([]);
+        setSeenFriendRequestIds([]);
+        setMissionReady(false);
+        setMail([])
+    }
+    useEffect(() => {
+        if (!friendToast) {
+            return;
+
+        } const t = setTimeout(() => setFriendToast(null), 9000);
+        return () => clearTimeout(t)
+    }, [friendToast]);
+    const openPawComposer = (friendId = "") => {
+        setMailTo(friendId);
+        setSelectedLetter(null);
+        setMailModal("compose")
     };
-}, [token]);
-// Keep the other players' pet states fresh even when live events are delayed or
-// an existing SSE connection silently stalls (notably on background tabs).
-useEffect(()=>{
- if(!token)return;
- let alive=true;
- const syncRoom=async()=>{
-  try{const pets:RoomPet[]=await request('/room');if(alive)setRoomPets(pets)}catch{/* next poll retries */}
- };
- const timer=window.setInterval(()=>{if(document.visibilityState==='visible')void syncRoom()},20000);
- const onVisible=()=>{if(document.visibilityState==='visible')void syncRoom()};
- document.addEventListener('visibilitychange',onVisible);
- window.addEventListener('focus',onVisible);
- void syncRoom();
- return()=>{alive=false;window.clearInterval(timer);document.removeEventListener('visibilitychange',onVisible);window.removeEventListener('focus',onVisible)};
-},[token]);
-useEffect(()=>{const t=setInterval(()=>setRotation(x=>x+1),14000);return()=>clearInterval(t)},[]);
-async function claimArcadeReward(gameId:string,points:number):Promise<boolean>{
-    // Retry still claims the completed round before a new one begins.
-    // Respect the backend's existing 8-second reward interval, rather than
-    // silently dropping earned coins if a quick round ends too soon.
-    for(let attempt=0;attempt<3;attempt++){
-        const result=await execute('/game',{game:gameId,score:points});
-        const message=String(result?.message||'');
-        if(result?.pet && message.startsWith('Arcade reward:')){
-            void refresh();
-            return true;
+    const openPawInbox = () => {
+        setSelectedLetter(null);
+        setMailFolder("received");
+        setMailModal("inbox")
+    };
+    const showSentLetters = async () => {
+        setMailFolder("sent");
+        setSelectedLetter(null);
+        try {
+            setSentMail(await request("/mail/sent"))
+        } catch (error: any) {
+            setNotice(error.message)
         }
-        if(!message.startsWith('Wait '))return false;
-        const seconds=Number(message.match(/Wait (\d+)/)?.[1]||8);
-        if(attempt<2)await new Promise<void>(resolve=>window.setTimeout(resolve,Math.max(1,seconds)*1000+250));
-    }
-    setNotice('Could not collect your reward yet. Please retry.');
-    return false;
+    };
+    const openPawLetter = async (letter: PawMail) => {
+        setSelectedLetter(letter);
+        if (mailFolder === "received" && !letter.read_at) {
+            const result = await execute("/mail/" + letter.id + "/read", undefined, "PATCH");
+            if (result) {
+                setMail(mails => mails.map(m => m.id === letter.id ? {
+                    ...m,
+                    read_at: new Date().toISOString()
+                } : m))
+            }
+        }
+    };
+    const accepted = friends.filter(f => f.status === "accepted");
+    const pending = friends.filter(f => f.status === "pending");
+    const incomingRequests = pending.filter(f => f.recipient_id === user?.id);
+    const requestSeenKey = (friend: Friend) => `${friend.requester_id}:${friend.created_at}`;
+    const unseenIncomingRequests = incomingRequests.filter(friend => !seenFriendRequestIds.includes(requestSeenKey(friend)));
+    const hasHarvestReady = (() => {
+        if (!pet) {
+            return false;
+        }
+        const garden = pet.garden;
+        const plots = [...(garden.plots || [])];
+        if (!plots[0] && garden.planted_at) {
+            plots[0] = {
+                planted_at: garden.planted_at,
+                watered_minutes: garden.watered_minutes || 0
+            };
+        }
+        return plots.some(plot => plot && Number.isFinite(new Date(plot.planted_at).getTime()) &&
+            nowTick >= new Date(plot.planted_at).getTime() + 300000 - (plot.watered_minutes || 0) * 60000);
+    })();
+    const friendRequestIsUnread = (eventId: string) => unseenIncomingRequests.some(friend => friend.requester_id === eventId);
+    useEffect(() => {
+        if (!user?.id) {
+            setSeenFriendRequestIds([]);
+            return;
+        }
+        try {
+            const saved = JSON.parse(localStorage.getItem(`pawpal-seen-friend-requests:${user.id}`) || "[]");
+            setSeenFriendRequestIds(Array.isArray(saved) ? saved.filter((id: unknown) => typeof id === "string") : []);
+        } catch {
+            setSeenFriendRequestIds([]);
+        }
+    }, [user?.id]);
+    useEffect(() => {
+        if (!requestsOpen || !user?.id) {
+            return;
+        }
+        const ids = friends.filter(friend => friend.status === "pending" && friend.recipient_id === user.id)
+            .map(friend => `${friend.requester_id}:${friend.created_at}`);
+        if (!ids.length) {
+            return;
+        }
+        const key = `pawpal-seen-friend-requests:${user.id}`;
+        let stored: string[] = [];
+        try {
+            const previous = JSON.parse(localStorage.getItem(key) || "[]");
+            stored = Array.isArray(previous) ? previous.filter((id: unknown) => typeof id === "string") : [];
+        } catch {
+            // Repair invalid local data if necessary.
+        }
+        const updated = [...new Set([...stored, ...ids])];
+        localStorage.setItem(key, JSON.stringify(updated.slice(-300)));
+        setSeenFriendRequestIds(updated.slice(-300));
+    }, [requestsOpen, friends, user?.id]);
+    const others = roomPets.filter(p => p.user_id !== user?.id);
+    const visible = roomPets.filter(p => p.user_id === user?.id).concat(others.length <= 8 ? others : Array.from({
+        length: 8
+    }, (_, i) => others[(rotation * 8 + i) % others.length]));
+    const roomColors = themes[pet?.room_theme || "blush"] || themes.blush;
+    const openedRoomNote = visible.find(p => p.id === openRoomNoteId && p.pet_note?.trim() && p.note_expires_at && new Date(p.note_expires_at).getTime() > Date.now());
+    useEffect(() => {
+        setOpenRoomNoteId(null)
+    }, [tab, rotation]);
+    useEffect(() => {
+        if (!openRoomNoteId) {
+            return;
+
+        } const closeOutside = (event: PointerEvent) => {
+            const target = event.target;
+            if (target instanceof Element && !target.closest(".paw-note-indicator, .paw-room-note-popover")) {
+                setOpenRoomNoteId(null)
+
+            }
+        };
+        const closeEscape = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                setOpenRoomNoteId(null)
+
+            }
+        };
+        document.addEventListener("pointerdown", closeOutside);
+        document.addEventListener("keydown", closeEscape);
+        return () => {
+            document.removeEventListener("pointerdown", closeOutside);
+            document.removeEventListener("keydown", closeEscape)
+        }
+    }, [openRoomNoteId]);
+    const musicZone = musicZoneForTab(tab, game);
+
+    return <div className={"app " + (dark ? "paw-dark" : "")}>
+        <BackgroundMusic
+            zone={musicZone}
+            preferences={{
+                musicVolume: user ? audioPreferences.musicVolume : 0
+            }}
+        />
+        <header className="nav">
+            <div
+                className="logo paw-logo-home"
+                role="button"
+                tabIndex={0}
+                title="Go to Living Room"
+                onClick={() => {
+                    setTab("home");
+                    setMenuOpen(false);
+                    setNotificationsOpen(false);
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth"
+                    })
+                }}
+                onKeyDown={e => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setTab("home");
+                        setMenuOpen(false);
+                        setNotificationsOpen(false)
+                    }
+                }}
+            >
+                <PawPrint size={25} aria-hidden="true" />
+                <div className="paw-logo-copy">
+                    <b>PawPal</b>
+                    <span>AY NAKATULOG?</span>
+                </div>
+            </div>
+            <div className="nav-right">
+                {user && <span className="paw-header-username">Hi, @{user.username}
+                </span>}
+                {user && <div className="paw-notifications-wrap">
+                    <button
+                        className="secondary paw-notifications-trigger"
+                        aria-label="Notifications"
+                        aria-expanded={notificationsOpen}
+                        title="Notifications"
+                        onClick={() => {
+                            setNotificationsOpen(v => !v);
+                            void request("/notifications").then(setNotifications).catch(() => {
+                            })
+                        }}
+                    >
+                        <Bell size={20} strokeWidth={1.65} aria-hidden="true" />
+                        {notifications.some(n => n.unread && (n.kind !== "friend_request" || friendRequestIsUnread(n.event_id))) && <span className="paw-notifications-dot" />}
+                    </button>
+                    {notificationsOpen && <div className="paw-notifications-panel" role="region" aria-label="Latest notifications">
+                        <div className="paw-notifications-heading">
+                            <b>Notifications</b>
+                            <small>Latest 5</small>
+                            <button className="paw-notifications-close" onClick={() => setNotificationsOpen(false)} aria-label="Close notifications">×</button>
+                        </div>
+                        {notifications.length === 0 ? <p className="paw-notifications-empty">No notifications yet ♡</p> : notifications.map(n => <div key={n.kind + "-" + n.event_id} className={"paw-notification-item " + (n.unread && (n.kind !== "friend_request" || friendRequestIsUnread(n.event_id)) ? "is-unread" : "")}>
+                            <button className="paw-notification-link" onClick={() => {
+                                if (n.kind === "duo_invite") {
+                                    window.sessionStorage.setItem("pawpal_open_duo", "1");
+                                    setMultiplayerSignal(v => v + 1);
+                                }
+                                setTab(n.kind.startsWith("multiplayer") || n.kind === "duo_invite" ? "multiplayer" : "friends");
+                                setNotificationsOpen(false);
+                                setMenuOpen(false);
+                                if (n.kind === "mail") {
+                                    openPawInbox();
+                                } else {
+                                    window.scrollTo({
+                                        top: 0,
+                                        behavior: "smooth"
+                                    })
+
+                                }
+                            }}>
+                                <span className="paw-notification-icon">
+                                    {n.kind.startsWith("multiplayer") || n.kind === "duo_invite" ? <Swords size={16} /> : n.kind === "mail" ? <Mail size={16} /> : <Heart size={16} />}
+                                </span>
+                                <span>
+                                    <b>@{n.actor}
+                                    </b> {n.kind === "mail" ? "sent you PawMail" : n.kind === "friend_request" ? "requested to be friends" : n.kind === "multiplayer_challenge" ? "challenged you to a game" : n.kind === "multiplayer_result" ? "finished a multiplayer match with you" : n.kind === "duo_invite" ? "invited you to Duo Clash 2v2" : "accepted your friend request"}
+                                    <small>
+                                        {new Date(n.created_at).toLocaleString()}
+                                    </small>
+                                </span>
+                            </button>
+                            {(n.kind.startsWith("multiplayer") || n.kind === "duo_invite") && <div className="paw-notification-game">
+                                <Swords size={14} />
+                                <b>
+                                    {n.game_name || "Paw Brawl"}
+                                </b>
+                                <span className="paw-notification-game-wager">· {Number(n.wager || 0).toLocaleString()} Paw Coins each</span>
+                            </div>}
+                            {n.kind === "multiplayer_challenge" && <div className="paw-notification-actions">
+                                <button
+                                    className="paw-notification-accept"
+                                    disabled={busy}
+                                    onClick={async () => {
+                                        const ok = await execute("/multiplayer/challenges/" + n.event_id + "/respond", {
+                                            action: "accept"
+                                        });
+                                        if (ok) {
+                                            setNotificationsOpen(false);
+                                            setTab("multiplayer");
+                                            setMultiplayerSignal(v => v + 1);
+                                            void refresh()
+                                        }
+                                    }}
+                                >Accept</button>
+                                <button
+                                    className="paw-notification-decline"
+                                    disabled={busy}
+                                    onClick={async () => {
+                                        const ok = await execute("/multiplayer/challenges/" + n.event_id + "/respond", {
+                                            action: "decline"
+                                        });
+                                        if (ok) {
+                                            setMultiplayerSignal(v => v + 1);
+                                            void refresh()
+                                        }
+                                    }}
+                                >Decline</button>
+                            </div>}
+                            {n.kind === "friend_request" && (notificationDecisions[n.event_id] ? <div className={"paw-notification-result " + notificationDecisions[n.event_id]} role="status">You {notificationDecisions[n.event_id]} @{n.actor}'s friend request.</div> : <div className="paw-notification-actions">
+                                <button
+                                    className="paw-notification-accept"
+                                    disabled={busy}
+                                    onClick={async () => {
+                                        const ok = await execute("/friends/" + n.event_id + "/accept", {}, "POST");
+                                        if (ok) {
+                                            setNotificationDecisions(prev => ({
+                                                ...prev,
+                                                [n.event_id]: "accepted"
+                                            }));
+                                            void request("/notifications").then(setNotifications).catch(() => {
+                                            })
+                                        }
+                                    }}
+                                >Accept</button>
+                                <button
+                                    className="paw-notification-decline"
+                                    disabled={busy}
+                                    onClick={async () => {
+                                        const ok = await execute("/friends/" + n.event_id, undefined, "DELETE");
+                                        if (ok) {
+                                            setNotificationDecisions(prev => ({
+                                                ...prev,
+                                                [n.event_id]: "declined"
+                                            }));
+                                            void request("/notifications").then(setNotifications).catch(() => {
+                                            })
+                                        }
+                                    }}
+                                >Decline</button>
+                            </div>)}
+                        </div>)}
+                    </div>}
+                </div>}
+                <button
+                    type="button"
+                    className="secondary theme-toggle paw-header-settings"
+                    onClick={() => {
+                        setNotificationsOpen(false);
+                        setSettingsOpen(true);
+                    }}
+                    aria-label="Open Settings"
+                    title="Settings"
+                    aria-haspopup="dialog"
+                    aria-expanded={settingsOpen}
+                >
+                    <Settings size={21} strokeWidth={1.8} aria-hidden="true" />
+                </button>
+                {user && <button className="paw-header-logout" onClick={logout} title="Log out of PawPal">
+                    <LogOut size={16} aria-hidden="true" />
+                    <span>Log out</span>
+                </button>}
+            </div>
+        </header>
+        <SettingsModal
+            open={settingsOpen}
+            onClose={() => setSettingsOpen(false)}
+            appearance={appearance}
+            onAppearanceChange={setAppearance}
+            audio={audioPreferences}
+            onAudioChange={setAudioPreferences}
+            zone={musicZone}
+        />
+        <main className="container">
+            {user && mailModal === "inbox" && <div className="paw-modal-backdrop" onMouseDown={e => {
+                if (e.target === e.currentTarget) {
+                    setMailModal(null)
+
+                }
+            }}>
+                <section className="paw-modal pawmail-window pawmail-inbox-window" role="dialog" aria-modal="true" aria-labelledby="pawmail-inbox-heading">
+                    <div className="paw-modal-top">
+                        <div>
+                            <h2 id="pawmail-inbox-heading">PawMail</h2>
+                            <p className="paw-modal-subtitle">Special delivery</p>
+                        </div>
+                        <button type="button" className="paw-modal-close" aria-label="Close PawMail" onClick={() => setMailModal(null)}>
+                            <X size={19} />
+                        </button>
+                    </div>
+                    {selectedLetter ? <>
+                        <div className="pawmail-detail-top">
+                            <button type="button" className="pawmail-back" onClick={() => setSelectedLetter(null)}>
+                                <ArrowLeft size={16} /> All letters</button>
+                            <span className="pawmail-date">
+                                {new Date(selectedLetter.created_at).toLocaleString()}
+                            </span>
+                        </div>
+                        <p className="pawmail-from">
+                            {mailFolder === "received" ? `From @${selectedLetter.sender_username}` : `To @${selectedLetter.recipient_username}`}
+                        </p>
+                        <div className="pawmail-letter-detail">
+                            <PawPostcard
+                                design={selectedLetter.design}
+                                color={selectedLetter.color || "blush"}
+                                message={selectedLetter.message}
+                                senderPet={selectedLetter.sender_pet}
+                            />
+                        </div>
+                        <div className="pawmail-detail-actions">
+                            {mailFolder === "received" && accepted.some(f => f.friend_id === selectedLetter.sender_id) && <button type="button" className="primary" onClick={() => openPawComposer(selectedLetter.sender_id)}>
+                                <MailPlus size={16} /> Reply</button>}
+                            {mailFolder === "received" && <button
+                                type="button"
+                                className="secondary"
+                                disabled={busy}
+                                onClick={async () => {
+                                    if (await execute("/mail/" + selectedLetter.id, undefined, "DELETE")) {
+                                        setSelectedLetter(null);
+                                        void refresh()
+                                    }
+                                }}
+                            >Delete letter</button>}
+                        </div>
+                    </> : <>
+                        <div className="pawmail-folder-tabs" role="tablist" aria-label="Mail folders">
+                            <button
+                                type="button"
+                                role="tab"
+                                aria-selected={mailFolder === "received"}
+                                className={mailFolder === "received" ? "active" : ""}
+                                onClick={() => {
+                                    setMailFolder("received");
+                                    setSelectedLetter(null)
+                                }}
+                            >
+                                <Mail size={16} /> Inbox {mail.filter(m => !m.read_at).length > 0 && <span className="pawmail-unread-pill">
+                                    {mail.filter(m => !m.read_at).length}
+                                </span>}
+                            </button>
+                            <button
+                                type="button"
+                                role="tab"
+                                aria-selected={mailFolder === "sent"}
+                                className={mailFolder === "sent" ? "active" : ""}
+                                onClick={() => void showSentLetters()}
+                            >
+                                <Send size={16} /> Sent</button>
+                            <button type="button" className="pawmail-folder-compose" onClick={() => openPawComposer()}>
+                                <MailPlus size={16} /> Write</button>
+                        </div>
+                        <div className="pawmail-letter-list">
+                            {(mailFolder === "received" ? mail : sentMail).length === 0 ? <div className="pawmail-empty">
+                                <Mail size={36} />
+                                <b>
+                                    {mailFolder === "received" ? "No letters yet" : "No sent letters yet"}
+                                </b>
+                                <span>
+                                    {mailFolder === "received" ? "Your first postcard will arrive here." : "Write a little letter to a friend."}
+                                </span>
+                            </div> : (mailFolder === "received" ? mail : sentMail).map(m => <button
+                                key={m.id}
+                                type="button"
+                                className={"pawmail-list-letter " + (!m.read_at && mailFolder === "received" ? "unread" : "")}
+                                onClick={() => void openPawLetter(m)}
+                            >
+                                <span className={"pawmail-list-icon paw-envelope-" + m.design}>
+                                    <EnvelopeArtwork design={m.design} />
+                                </span>
+                                <span className="pawmail-list-copy">
+                                    <b>
+                                        {mailFolder === "received" ? `@${m.sender_username}` : `To @${m.recipient_username}`}
+                                    </b>
+                                    <span>
+                                        {m.message}
+                                    </span>
+                                    <small>
+                                        {new Date(m.created_at).toLocaleString()}
+                                    </small>
+                                </span>
+                                {!m.read_at && mailFolder === "received" ? <span className="pawmail-new-dot" aria-label="Unread" /> : <ArrowRight size={16} className="pawmail-list-arrow" />}
+                            </button>)}
+                        </div>
+                    </>}
+                </section>
+            </div>}
+            {user && mailModal === "compose" && pet && <div className="paw-modal-backdrop" onMouseDown={e => {
+                if (e.target === e.currentTarget) {
+                    setMailModal(null)
+
+                }
+            }}>
+                <section className="paw-modal pawmail-window pawmail-composer-window" role="dialog" aria-modal="true" aria-labelledby="pawmail-write-heading">
+                    <div className="paw-modal-top">
+                        <div>
+                            <h2 id="pawmail-write-heading">Write PawMail</h2>
+                            <p className="paw-modal-subtitle">A little letter</p>
+                        </div>
+                        <button type="button" className="paw-modal-close" aria-label="Close letter" onClick={() => setMailModal(null)}>
+                            <X size={19} />
+                        </button>
+                    </div>
+                    <div className="pawmail-compose-layout">
+                        <div className="pawmail-write-side">
+                            <label htmlFor="pawmail-receiver">Send to</label>
+                            <select id="pawmail-receiver" value={mailTo} onChange={e => setMailTo(e.target.value)}>
+                                <option value="">Choose a friend...</option>
+                                {accepted.map(f => <option key={f.friend_id} value={f.friend_id}>@{f.username}
+                                </option>)}
+                            </select>
+                            <label htmlFor="pawmail-body">Your message <span>
+                                {mailMessage.length}/100</span>
+                            </label>
+                            <textarea
+                                id="pawmail-body"
+                                maxLength={100}
+                                rows={4}
+                                value={mailMessage}
+                                onChange={e => setMailMessage(e.target.value.slice(0, 100))}
+                                placeholder="Write something sweet for your friend..."
+                            />
+                            <label>Envelope color</label>
+                            <div className="paw-envelope-colors pawmail-compose-colors">
+                                {ENVELOPE_COLORS.map(([id, name, hex]) => <button
+                                    type="button"
+                                    key={id}
+                                    title={name}
+                                    aria-label={name}
+                                    aria-pressed={mailColor === id}
+                                    className={mailColor === id ? "selected" : ""}
+                                    style={{
+                                        background: hex
+                                    }}
+                                    onClick={() => setMailColor(id)}
+                                />)}
+                            </div>
+                            <div className="pawmail-design-summary">
+                                <span className={"pawmail-design-icon paw-envelope-" + mailDesign}>
+                                    <EnvelopeArtwork design={mailDesign} />
+                                </span>
+                                <span>
+                                    <small>Your envelope</small>
+                                    <b>
+                                        {mailCatalog.find(d => d.id === mailDesign)?.title || "Classic Letter"}
+                                    </b>
+                                </span>
+                                <button type="button" className="pawmail-collection-launch" onClick={() => setMailModal("collection")}>Collection <ArrowRight size={15} />
+                                </button>
+                            </div>
+                            <button
+                                type="button"
+                                className="pawmail-send-button primary"
+                                disabled={busy || !mailTo || !mailMessage.trim()}
+                                onClick={async () => {
+                                    const result = await execute("/mail", {
+                                        friendId: mailTo,
+                                        design: mailDesign,
+                                        color: mailColor,
+                                        message: mailMessage.trim()
+                                    });
+                                    if (result) {
+                                        setMailMessage("");
+                                        setMailModal(null);
+                                        setNotice("Your PawMail was delivered!");
+                                        void refresh()
+                                    }
+                                }}
+                            >
+                                <Send size={17} /> Send PawMail</button>
+                        </div>
+                        <div className="pawmail-live-side">
+                            <div className="pawmail-live-title">LIVE PREVIEW</div>
+                            <PawPostcard design={mailDesign} color={mailColor} message={mailMessage} senderPet={pet} />
+                        </div>
+                    </div>
+                </section>
+            </div>}
+            {user && mailModal === "collection" && pet && <div className="paw-modal-backdrop" onMouseDown={e => {
+                if (e.target === e.currentTarget) {
+                    setMailModal("compose")
+
+                }
+            }}>
+                <section className="paw-modal pawmail-window pawmail-collection-window" role="dialog" aria-modal="true" aria-labelledby="pawmail-collection-heading">
+                    <div className="paw-modal-top">
+                        <div>
+                            <h2 id="pawmail-collection-heading">Envelope Collection</h2>
+                            <p className="paw-modal-subtitle">Discover special letter art as your pet grows.</p>
+                        </div>
+                        <button type="button" className="paw-modal-close" aria-label="Back to writing" onClick={() => setMailModal("compose")}>
+                            <X size={19} />
+                        </button>
+                    </div>
+                    <div className="pawmail-collection-count">
+                        <span>
+                            {ownedEnvelopes.length} / {mailCatalog.length} collected</span>
+                        <span>Your pet: Level {pet.level}
+                        </span>
+                    </div>
+                    <div className="pawmail-collection-grid">
+                        {mailCatalog.map(d => {
+                            const owned = ownedEnvelopes.includes(d.id);
+                            const levelLocked = pet.level < d.level && !owned;
+                            const selected = mailDesign === d.id;
+                            return <article key={d.id} className={"pawmail-collection-card " + (selected ? "selected " : "") + (levelLocked ? "level-locked" : "")}>
+                                <div className={"pawmail-collection-art paw-envelope-" + d.id}>
+                                    <EnvelopeArtwork design={d.id} />
+                                    {levelLocked && <span className="pawmail-art-lock">
+                                        <LockKeyhole size={17} /> Lv. {d.level}
+                                    </span>}
+                                </div>
+                                <div className="pawmail-collection-info">
+                                    <b>
+                                        {d.title}
+                                    </b>
+                                    <small>
+                                        {d.level > 1 ? `Unlocks at Level ${d.level}` : d.id === "classic" ? "Your first letter" : "Available from Level 1"}
+                                    </small>
+                                </div>
+                                {owned ? <button
+                                    type="button"
+                                    className={"pawmail-choose " + (selected ? "chosen" : "")}
+                                    onClick={() => {
+                                        setMailDesign(d.id);
+                                        setMailModal("compose")
+                                    }}
+                                >
+                                    {selected ? "Selected" : "Choose design"}
+                                </button> : <button
+                                    type="button"
+                                    className="pawmail-buy"
+                                    disabled={busy || levelLocked || pet.coins < d.price}
+                                    onClick={async () => {
+                                        const result = await execute("/mail/designs/buy", {
+                                            design: d.id
+                                        });
+                                        if (result) {
+                                            setOwnedEnvelopes(v => [...new Set([...v, d.id])]);
+                                            setMailDesign(d.id)
+                                        }
+                                    }}
+                                >
+                                    {levelLocked ? <>
+                                        <LockKeyhole size={13} /> Level {d.level}
+                                    </> : <>
+                                        <Coins size={13} /> {d.price.toLocaleString()}
+                                    </>}
+                                </button>}
+                            </article>
+                        })}
+                    </div>
+                    <div className="pawmail-collection-footer">
+                        <button className="primary" onClick={() => setMailModal("compose")}>Back to letter</button>
+                    </div>
+                </section>
+            </div>}
+            {user && editingNote && <div className="paw-modal-backdrop" onMouseDown={e => {
+                if (e.target === e.currentTarget) {
+                    setEditingNote(false)
+
+                }
+            }}>
+                <section className="paw-modal paw-note-modal" role="dialog" aria-modal="true" aria-labelledby="paw-note-title">
+                    <div className="paw-modal-top">
+                        <div>
+                            <div className="eyebrow">A LITTLE MESSAGE</div>
+                            <h2 id="paw-note-title">Pet Note ♡</h2>
+                        </div>
+                        <button type="button" className="paw-modal-close" aria-label="Close Pet Note" onClick={() => setEditingNote(false)}>
+                            <X size={19} strokeWidth={1.8} aria-hidden="true" />
+                        </button>
+                    </div>
+                    <div className="paw-note-preview" aria-label="Preview of how your note appears">
+                        <div className="paw-note-preview-pet">
+                            <PetArt species={pet?.species || "cat"} color={pet?.color} breed={pet?.breed} cosmetic={pet?.equipped_cosmetic} outfit={pet?.equipped_outfit} />
+                        </div>
+                        <div className="paw-note-preview-content">
+                            <span className="paw-note-preview-label">
+                                <Sparkles size={13} aria-hidden="true" /> {pet?.name || "Your pet"} says</span>
+                            <span className="paw-note-preview-bubble">
+                                {noteDraft.trim() || "What is on your mind?"}
+                            </span>
+                        </div>
+                    </div>
+                    <p className="paw-note-helper">Friends will spot a note icon beside your pet's name. Tapping it reveals your message.</p>
+                    <form className="paw-note-form" onSubmit={async e => {
+                        e.preventDefault();
+                        const result = await execute("/notes", {
+                            text: noteDraft
+                        });
+                        if (result) {
+                            setEditingNote(false);
+                            await refresh()
+                        }
+                    }}>
+                        <div className="paw-note-label-row">
+                            <label htmlFor="pawpal-note">Write your note</label>
+                            <span className="paw-note-char-count" aria-live="polite">
+                                {noteDraft.length}/20</span>
+                        </div>
+                        <input
+                            id="pawpal-note"
+                            maxLength={20}
+                            value={noteDraft}
+                            onChange={e => setNoteDraft(e.target.value)}
+                            placeholder="A little thought..."
+                            autoComplete="off"
+                        />
+                        <div className="paw-note-actions">
+                            <button
+                                type="button"
+                                className="paw-note-delete secondary"
+                                disabled={busy || !user.pet_note}
+                                onClick={async () => {
+                                    const result = await execute("/notes", undefined, "DELETE");
+                                    if (result) {
+                                        setNoteDraft("");
+                                        setEditingNote(false);
+                                        await refresh()
+                                    }
+                                }}
+                            >Remove note</button>
+                            <button type="submit" className="paw-note-save primary" disabled={busy || !noteDraft.trim()}>
+                                <Check size={17} aria-hidden="true" /> Save note</button>
+                        </div>
+                    </form>
+                </section>
+            </div>}
+            {friendToast && <div className="paw-friend-toast" role="alert">
+                <div>
+                    <b>New friend request ♡</b>
+                    <p>@{friendToast.username} wants to be friends!</p>
+                </div>
+                <button onClick={() => {
+                    setFriendDecision(friendToast);
+                    setFriendToast(null)
+                }}>View request</button>
+                <button className="secondary" aria-label="Dismiss notification" onClick={() => setFriendToast(null)}>×</button>
+            </div>}
+            {friendDecision && <div className="paw-modal-backdrop" onMouseDown={e => {
+                if (e.target === e.currentTarget) {
+                    setFriendDecision(null)
+
+                }
+            }}>
+                <section className="paw-modal" role="dialog" aria-modal="true" aria-labelledby="friend-decision-title">
+                    <div className="paw-modal-top">
+                        <div>
+                            <h2 id="friend-decision-title">New friend request</h2>
+                            <p className="paw-modal-subtitle">@{friendDecision.username} wants to be friends!</p>
+                        </div>
+                        <button type="button" className="paw-modal-close" aria-label="Close friend request" onClick={() => setFriendDecision(null)}>
+                            <X size={19} />
+                        </button>
+                    </div>
+                    <p>Would you like to accept their friend request?</p>
+                    <div className="paw-modal-actions">
+                        <button
+                            disabled={busy}
+                            className="primary"
+                            onClick={async () => {
+                                const ok = await execute("/friends/" + friendDecision.friend_id + "/accept", {}, "POST");
+                                if (ok) {
+                                    setFriendDecision(null)
+
+                                }
+                            }}
+                        >Accept request ✓</button>
+                        <button
+                            disabled={busy}
+                            className="secondary"
+                            onClick={async () => {
+                                const ok = await execute("/friends/" + friendDecision.friend_id, undefined, "DELETE");
+                                if (ok) {
+                                    setFriendDecision(null)
+
+                                }
+                            }}
+                        >Decline</button>
+                        <button className="secondary" onClick={() => setFriendDecision(null)}>Later</button>
+                    </div>
+                </section>
+            </div>}
+            {removeFriend && <div className="paw-modal-backdrop" onMouseDown={e => {
+                if (e.target === e.currentTarget) {
+                    setRemoveFriend(null)
+
+                }
+            }}>
+                <section className="paw-modal" role="dialog" aria-modal="true" aria-labelledby="unfriend-title">
+                    <div className="paw-modal-top">
+                        <div>
+                            <h2 id="unfriend-title">Remove friend?</h2>
+                            <p className="paw-modal-subtitle">You can reconnect with them later.</p>
+                        </div>
+                        <button type="button" className="paw-modal-close" aria-label="Close remove friend confirmation" onClick={() => setRemoveFriend(null)}>
+                            <X size={19} />
+                        </button>
+                    </div>
+                    <p>Remove @{removeFriend.username} from your PawPal friends? You can send another request later.</p>
+                    <div className="paw-modal-actions">
+                        <button className="secondary" onClick={() => setRemoveFriend(null)}>Cancel</button>
+                        <button
+                            className="paw-unfriend-confirm"
+                            disabled={busy}
+                            onClick={async () => {
+                                const ok = await execute("/friends/" + removeFriend.friend_id, undefined, "DELETE");
+                                if (ok) {
+                                    setRemoveFriend(null)
+
+                                }
+                            }}
+                        >Remove friend</button>
+                    </div>
+                </section>
+            </div>}
+            {notice && <div className="notice paw-toast" role="status">
+                <Sparkles size={16} aria-hidden="true" /> {notice}
+                <button onClick={() => setNotice("")}>×</button>
+            </div>}
+            {!token ? <div className="auth-wrap">
+                <div className="auth-art">
+                    <div className="hero-pets paw-auth-svg-pets" role="img" aria-label="A cat, bunny, and dog welcoming you to PawPal">
+                        <div className="paw-auth-pet paw-auth-pet-cat">
+                            <PetArt species="cat" />
+                        </div>
+                        <div className="paw-auth-pet paw-auth-pet-bunny">
+                            <PetArt species="bunny" />
+                        </div>
+                        <div className="paw-auth-pet paw-auth-pet-dog">
+                            <PetArt species="dog" />
+                        </div>
+                    </div>
+                    <h1>Little paws, big friendships.</h1>
+                    <p>A cozy pink world to care, collect, decorate and play.</p>
+                </div>
+                <form className="auth-card" onSubmit={e => {
+                    e.preventDefault();
+                    void authenticate()
+                }}>
+                    <div className="eyebrow">WELCOME TO PAWPAL</div>
+                    <h2>
+                        {authMode === "login" ? "Welcome back!" : "Create your account"}
+                    </h2>
+                    <label>Username</label>
+                    <input
+                        required
+                        minLength={3}
+                        maxLength={24}
+                        pattern="[a-zA-Z0-9_]{3,24}"
+                        autoComplete="username"
+                        value={username}
+                        onChange={e => setUsername(e.target.value)}
+                        placeholder="unique_username"
+                    />
+                    {authMode === "register" && <div className="username-warning" role="note">
+                        <strong>
+                            <AlertTriangle size={16} aria-hidden="true" /> DON'T USE YOUR REAL NAME!</strong>
+                        <span>Use a nickname. Your username appears above your pet and is how friends find you.</span>
+                    </div>}
+                    <label>Password</label>
+                    <input type="password" minLength={6} required value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" />
+                    {authMode === "register" && <small className="password-safety-note">For your security, please use a unique password that you don't use for your email, social media, or other accounts.</small>}
+                    <button disabled={busy} className="primary">
+                        {authMode === "login" ? "Log in" : "Create account"}
+                    </button>
+                    <button type="button" className="link-button" onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}>
+                        {authMode === "login" ? "New here? Create an account" : "Already registered? Log in"}
+                    </button>
+                </form>
+            </div> : !user ? <p>Loading your playhouse…</p> : !pet ? <div className="adopt-card">
+                <div className="eyebrow">ONE FOREVER COMPANION</div>
+                <h1>Choose your best friend ♡</h1>
+                <p>Each account can adopt one pet. Friends' pets will join your living room automatically.</p>
+                {oldPetId && <button className="secondary" onClick={() => void execute("/claim", {
+                    petId: oldPetId
+                })}>Restore my pet from the old PawPal version</button>}
+                <div className="species-grid">
+                    {species.map(s => <button key={s} className={choice === s ? "chosen" : ""} onClick={() => setChoice(s)}>
+                        <span className="paw-adoption-pet-art">
+                            <PetArt species={s} />
+                        </span>
+                        <b>
+                            {s}
+                        </b>
+                    </button>)}
+                </div>
+                <input value={petName} maxLength={24} onChange={e => setPetName(e.target.value)} placeholder="Your pet's name" />
+                <div className="adoption-warning">
+                    <strong>Permanent pet choice</strong>
+                    <p>Your pet species cannot be changed after adoption. You can still customize its breed, color and accessories.</p>
+                    <label className="adoption-check-row">
+                        <input type="checkbox" checked={adoptionAcknowledged} onChange={e => setAdoptionAcknowledged(e.target.checked)} />
+                        <span>I understand that this species choice is permanent.</span>
+                    </label>
+                </div>
+                <button
+                    disabled={busy || !petName.trim() || !adoptionAcknowledged}
+                    className="primary"
+                    onClick={() => {
+                        if (window.confirm("Adopt this " + choice + " permanently?")) {
+                            void execute("/adopt", {
+                                name: petName,
+                                species: choice
+                            })
+
+                        }
+                    }}
+                >Adopt <span className="paw-adopt-inline-pet">
+                        <PetArt species={choice} />
+                    </span> {choice} →</button>
+            </div> : <>
+                <div className="heading paw-dashboard-heading">
+                    <div className="paw-dashboard-greeting">
+                        <h1>Welcome home, <em>
+                            {pet.name}!</em>
+                        </h1>
+                    </div>
+                    <div className="paw-account-summary" aria-label="Your account at a glance">
+                        <div className="paw-account-stat paw-account-coins">
+                            <span className="paw-account-icon">
+                                <Coins size={22} />
+                            </span>
+                            <span className="paw-account-copy">
+                                <small>PAW COINS</small>
+                                <strong>
+                                    {pet.coins.toLocaleString()}
+                                </strong>
+                            </span>
+                        </div>
+                        <div className="paw-account-stat paw-account-level">
+                            <span className="paw-account-icon">
+                                <Star size={22} />
+                            </span>
+                            <span className="paw-account-copy">
+                                <small>PET LEVEL</small>
+                                <strong>
+                                    {pet.level}
+                                </strong>
+                                <span className="paw-account-xp" title={`${pet.xp} / ${pet.level * 100} XP`}>
+                                    <span style={{
+                                        width: `${Math.min(100, 100 * pet.xp / Math.max(1, pet.level * 100))}%`
+                                    }} />
+                                </span>
+                            </span>
+                        </div>
+                        <div className="paw-account-stat paw-account-friends">
+                            <span className="paw-account-icon">
+                                <Users size={22} />
+                            </span>
+                            <span className="paw-account-copy">
+                                <small>FRIENDS</small>
+                                <strong>
+                                    {accepted.length}
+                                </strong>
+                            </span>
+                        </div>
+                        <button className="mobile-menu-toggle" aria-label="Toggle navigation" title="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(x => !x)}>
+                            <span className="paw-menu-icon" aria-hidden="true">
+                                {menuOpen ? <X size={20} strokeWidth={2.4} /> : <Menu size={20} strokeWidth={2.4} />}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <div className="layout">
+                    <aside className={"sidebar " + (menuOpen ? "menu-open" : "")}>
+                        <div className="profile">
+                            <span className="profile-pet-portrait">
+                                <PetArt species={pet.species} color={pet.color} breed={pet.breed} cosmetic={pet.equipped_cosmetic} outfit={pet.equipped_outfit} />
+                            </span>
+                            <div>
+                                <b>
+                                    {pet.name}
+                                </b>
+                                <small>
+                                    {pet.species} · {pet.level < 5 ? "Baby" : pet.level < 30 ? "Teen" : "Adult"}
+                                </small>
+                                <small>@{user.username}
+                                </small>
+                            </div>
+                        </div>
+                        <div className="xp">
+                            <div style={{
+                                width: `${pet.xp / (pet.level * 100) * 100}%`
+                            }} />
+                        </div>
+                        <small>
+                            {pet.xp}/{pet.level * 100} XP</small>
+                        <nav>
+                            {[
+                                ["home", "home", "Room"],
+                                ["friends", "friends", "Friends"],
+                                ["shop", "shop", "Market"],
+                                ["wardrobe", "wardrobe", "Wardrobe"],
+                                ["games", "games", "Mini-games"],
+                                ["multiplayer", "multiplayer", "Multiplayer"],
+                                ["garden", "garden", "Lucky Garden"],
+                                ["kitchen", "kitchen", "Kitchen"],
+                                ["missions", "missions", "Missions"]
+                            ].map(([id, icon, label]) => <button
+                                key={id}
+                                className={tab === id ? "active" : ""}
+                                onClick={() => {
+                                    setTab(id);
+                                    setMenuOpen(false)
+                                }}
+                                aria-label={`${label}${id === "missions" && missionReady ? ", rewards ready to claim" : id === "garden" && hasHarvestReady ? ", flowers ready to harvest" : ""}`}
+                            >
+                                <PawIcon name={id} /> {label}
+                                {(id === "missions" && missionReady || id === "garden" && hasHarvestReady) && <span className="paw-nav-attention" aria-hidden="true" />}
+                                <span>›</span>
+                            </button>)}
+                        </nav>
+                        <div className="daily">
+                            <b>
+                                <Gift size={17} /> Daily surprise</b>
+                            <p>
+                                {pet.daily_claimed_at && nowTick < (Math.floor((new Date(pet.daily_claimed_at).getTime() + 28800000) / 86400000) + 1) * 86400000 - 28800000 ? `Next gift in ${Math.floor(((Math.floor((new Date(pet.daily_claimed_at).getTime() + 28800000) / 86400000) + 1) * 86400000 - 28800000 - nowTick) / 3600000)}h ${Math.floor(((Math.floor((new Date(pet.daily_claimed_at).getTime() + 28800000) / 86400000) + 1) * 86400000 - 28800000 - nowTick) % 3600000 / 60000)}m ${Math.floor(((Math.floor((new Date(pet.daily_claimed_at).getTime() + 28800000) / 86400000) + 1) * 86400000 - 28800000 - nowTick) % 60000 / 1000)}s` : "Daily at 12 AM PH time: 120 coins, 2 meals and 5 Berry Parfaits!"}
+                            </p>
+                            <button disabled={busy || Boolean(pet.daily_claimed_at && Date.now() < (Math.floor((new Date(pet.daily_claimed_at).getTime() + 28800000) / 86400000) + 1) * 86400000 - 28800000)} onClick={() => void execute("/daily/claim", {})}>
+                                {pet.daily_claimed_at && Date.now() < (Math.floor((new Date(pet.daily_claimed_at).getTime() + 28800000) / 86400000) + 1) * 86400000 - 28800000 ? "Cooling down" : "Claim reward"}
+                            </button>
+                        </div>
+                    </aside>
+                    <div className="main-column">
+                        {tab === "home" ? <>
+                            <section className="paw-stats-hud" aria-label="Pet stats">
+                                <div className="paw-hud-title">
+                                    <b>
+                                        {pet.name}
+                                    </b>
+                                    <small>Level {pet.level}
+                                    </small>
+                                </div>
+                                <div className="paw-hud-grid">
+                                    {([
+                                        ["Fullness", pet.hunger, "#eeb06d"],
+                                        ["Happiness", pet.happiness, "#ed91b3"],
+                                        ["Energy", pet.energy, "#9b9fe7"],
+                                        ["Cleanliness", pet.cleanliness, "#79c7d5"],
+                                        ["Affection", pet.affection, "#b69ce3"]
+                                    ] as [string, number, string][]).map(([label, value, color]) => <div className={"paw-hud-stat" + (value < 25 ? " paw-hud-low" : "")} key={label}>
+                                        <div className="paw-hud-label">
+                                            <span>
+                                                {label}
+                                            </span>
+                                            <b>
+                                                {value}%</b>
+                                        </div>
+                                        <div className="paw-hud-track">
+                                            <div style={{
+                                                width: `${Math.max(0, Math.min(100, value))}%`,
+                                                background: color
+                                            }} />
+                                        </div>
+                                    </div>)}
+                                </div>
+                            </section>
+                            <section className="room-card">
+                                <div className="paw-room-toolbar">
+                                    <div className="paw-room-dropdown">
+                                        <button className="paw-room-dropdown-trigger" aria-expanded={roomMenuOpen} onClick={() => setRoomMenuOpen(v => !v)}>☰ {({
+                                            living: "Room",
+                                            bedroom: "Bedroom",
+                                            studio: "Creative Studio",
+                                            sports: "Sports Room"
+                                        } as Record<string, string>)[pet.active_room || "living"]} ▾</button>
+                                        {roomMenuOpen && <div className="paw-room-dropdown-list">
+                                            {([["living", "Room"], ["bedroom", "Bedroom"], ["studio", "Creative Studio"], ["sports", "Sports Room"]] as const).map(([id, label]) => {
+                                                const owned = id === "living" || id === "bedroom" || (pet.unlocked_rooms || []).includes(id);
+                                                return <button
+                                                    key={id}
+                                                    disabled={busy}
+                                                    className={(pet.active_room || "living") === id ? "active" : ""}
+                                                    onClick={async () => {
+                                                        const result = await execute("/rooms", {
+                                                            room: id,
+                                                            action: owned ? "enter" : "unlock"
+                                                        });
+                                                        if (result) {
+                                                            setRoomMenuOpen(false);
+                                                            setSelectedFurniture(null);
+                                                            setEditFurniture(false);
+                                                            await refresh()
+                                                        }
+                                                    }}
+                                                >
+                                                    {label}
+                                                    {!owned && <small>
+                                                        <LockKeyhole size={13} aria-hidden="true" /> {id === "studio" ? "5,000" : "8,000"} coins</small>}
+                                                </button>
+                                            })}
+                                        </div>}
+                                    </div>
+                                    <div className="paw-room-tools">
+                                        <button
+                                            type="button"
+                                            className="paw-room-theme-trigger"
+                                            onClick={() => setThemeModal(true)}
+                                            aria-label="Change room atmosphere"
+                                            title="Room atmosphere"
+                                        >
+                                            <svg className="paw-room-theme-svg" viewBox="0 0 76 42" preserveAspectRatio="none" aria-hidden="true">
+                                                <rect width="76" height="42" fill={roomColors[0]} />
+                                                <path d="M0 25H76V42H0Z" fill={roomColors[1]} />
+                                                <circle cx="45" cy="17" r="10" fill={roomColors[2]} opacity=".72" />
+                                                <path d="M14 11h11M19.5 5.5v11" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="paw-room-note-trigger"
+                                            onClick={() => {
+                                                setNoteDraft(user.pet_note || "");
+                                                setEditingNote(true)
+                                            }}
+                                            aria-label="Edit Pet Note"
+                                            title="Pet Note"
+                                        >
+                                            <span className="paw-pet-note-icon" aria-hidden="true">
+                                                <Mail size={21} strokeWidth={1.85} />
+                                                <PawPrint size={12} strokeWidth={2.1} />
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                                {themeModal && <div className="paw-modal-backdrop" onMouseDown={e => {
+                                    if (e.target === e.currentTarget) {
+                                        setThemeModal(false)
+
+                                    }
+                                }}>
+                                    <section className="paw-modal paw-theme-modal" role="dialog" aria-modal="true" aria-labelledby="paw-theme-title">
+                                        <div className="paw-modal-top">
+                                            <div>
+                                                <h2 id="paw-theme-title">Room atmosphere</h2>
+                                                <p className="paw-modal-subtitle">Make it yours</p>
+                                            </div>
+                                            <button className="paw-modal-close" aria-label="Close atmosphere selector" onClick={() => setThemeModal(false)}>
+                                                <X size={19} strokeWidth={1.8} aria-hidden="true" />
+                                            </button>
+                                        </div>
+                                        <div className="paw-theme-picker">
+                                            <div className="paw-theme-options">
+                                                {Object.entries(roomThemeNames).sort(([a], [b]) => (ITEM_LEVEL_REQUIREMENTS[a] || 1) - (ITEM_LEVEL_REQUIREMENTS[b] || 1)).map(([id, name]) => {
+                                                    const colors = themes[id];
+                                                    const owned = id === "blush" || pet.owned_items.includes(id);
+                                                    const active = (pet.room_theme || "blush") === id;
+                                                    const required = ITEM_LEVEL_REQUIREMENTS[id] || 1;
+                                                    const unlocked = pet.level >= required;
+                                                    const price = store.find(item => item[0] === id)?.[3] || 0;
+                                                    return <button
+                                                        key={id}
+                                                        type="button"
+                                                        className={"paw-theme-option " + (active ? "active " : owned ? "owned " : "") + (!owned ? "unowned " : "") + (!unlocked && !owned ? "level-locked" : "")}
+                                                        disabled={busy || active || (!owned && !unlocked)}
+                                                        title={active ? "Currently applied" : owned ? "Apply this atmosphere" : !unlocked ? `Unlocks at Level ${required}` : `Buy for ${price.toLocaleString()} Paw Coins`}
+                                                        onClick={() => void execute("/item", {
+                                                            item: id,
+                                                            mode: owned ? "equip" : "buy"
+                                                        })}
+                                                    >
+                                                        {active && <span className="paw-theme-current-tag">
+                                                            <Check size={12} /> In use</span>}
+                                                        <span className="paw-theme-swatch" style={{
+                                                            background: `linear-gradient(155deg, ${colors[0]} 54%, ${colors[1]} 54%)`
+                                                        }}>
+                                                            <i style={{
+                                                                background: colors[2]
+                                                            }} />
+                                                        </span>
+                                                        <span className="paw-theme-name">
+                                                            {name}
+                                                        </span>
+                                                        <span className={"paw-theme-action-label " + (active ? "is-selected" : owned ? "can-apply" : unlocked ? "can-buy" : "is-locked")}>
+                                                            {active ? <>
+                                                                <Check size={12} aria-hidden="true" /> Selected</> : owned ? "Apply" : unlocked ? <>
+                                                                    <Coins size={13} aria-hidden="true" /> Buy · {price.toLocaleString()}
+                                                                </> : <>
+                                                                    <LockKeyhole size={12} aria-hidden="true" /> Level {required}
+                                                                </>}
+                                                        </span>
+                                                    </button>
+                                                })}
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>}
+                                <div className={"living-room paw-themed-room " + (pet.garden?._sleeping ? "paw-room-sleeping " : "") + "paw-theme-" + (pet.room_theme || "blush") + " paw-room-" + (pet.active_room || "living")} style={{
+                                    "--wall": roomColors[0],
+                                    "--floor": roomColors[1],
+                                    "--room-accent": roomColors[2]
+                                } as React.CSSProperties}>
+                                    {pet.garden?._sleeping && <div className="paw-room-night-overlay" aria-hidden="true" />}
+                                    <button
+                                        type="button"
+                                        className="paw-room-meals-trigger"
+                                        aria-label="Feed pet"
+                                        title="Feed pet"
+                                        onClick={async () => {
+                                            setMealModal(true);
+                                            setMealBusy(true);
+                                            try {
+                                                const response = await fetch(API + "/api/kitchen", {
+                                                    headers: {
+                                                        Authorization: "Bearer " + token
+                                                    }
+                                                });
+                                                const data = await response.json();
+                                                if (!response.ok) {
+                                                    throw Error(data.error || "Unable to load meals");
+
+                                                } setMealData({
+                                                    meals: data.kitchen?.meals || {},
+                                                    recipes: data.recipes || {}
+                                                })
+                                            } catch (e) {
+                                                setNotice(e instanceof Error ? e.message : "Unable to load meals")
+                                            } finally {
+                                                setMealBusy(false)
+                                            }
+                                        }}
+                                    >
+                                        <Utensils size={21} strokeWidth={2} aria-hidden="true" />
+                                    </button>
+                                    <button type="button" className="paw-room-action paw-room-play" aria-label="Play games" title="Play games" onClick={() => setPlayPickerOpen(true)}>
+                                        <Gamepad2 size={21} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={"paw-room-action paw-room-nap " + (pet.garden?._sleeping ? "active" : "")}
+                                        aria-label={pet.garden?._sleeping ? "Wake pet" : "Put pet to sleep"}
+                                        title={pet.garden?._sleeping ? "Wake pet" : "Put pet to sleep"}
+                                        aria-busy={sleepPending}
+                                        onClick={() => void togglePetSleep()}
+                                    >
+                                        {pet.garden?._sleeping ? <Sun size={21} /> : <Moon size={21} />}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={"paw-room-action paw-room-bathe " + (bathMode ? "active" : "")}
+                                        aria-label={bathMode ? "Finish bathing" : "Bathe pet"}
+                                        title={bathMode ? "Finish bathing" : "Bathe pet"}
+                                        onClick={() => {
+                                            setBathMode(v => !v);
+                                            setCuddleMode(false);
+                                            bathScrubbing.current = false;
+                                            cuddleActive.current = false
+                                        }}
+                                    >
+                                        <Bath size={21} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={"paw-room-action paw-room-cuddle " + (cuddleMode ? "active" : "")}
+                                        aria-label={cuddleMode ? "Finish cuddling" : "Cuddle pet"}
+                                        title={cuddleMode ? "Finish cuddling" : "Cuddle pet"}
+                                        onClick={() => {
+                                            setCuddleMode(v => !v);
+                                            setBathMode(false);
+                                            bathScrubbing.current = false;
+                                            cuddleActive.current = false
+                                        }}
+                                    >
+                                        <HeartHandshake size={21} />
+                                    </button>
+                                    {cuddleMode && <div className="paw-cuddle-hint" role="status">
+                                        <Heart size={14} /> Gently stroke your pet · +4 affection/sec</div>}
+                                    {bathMode && <div className="paw-bath-hint" role="status">
+                                        <Droplets size={14} /> Hold and scrub your pet · +5 cleanliness/sec</div>}
+                                    {pet.garden?._sleeping && <div className="paw-sleep-status" role="status">
+                                        <Moon size={14} /> Sleeping · 25% slower stat decay</div>}
+                                    <div className="wall-art">♡</div>
+                                    <RoomArchitecture room={pet.active_room || "living"} />
+                                    <RoomFurniture
+                                        room={pet.active_room || "living"}
+                                        layout={furnitureLayout(pet.active_room || "living", pet.room_layouts)}
+                                        editing={editFurniture}
+                                        selected={selectedFurniture}
+                                        onSelect={setSelectedFurniture}
+                                        onMove={(id, x, y) => void execute("/furniture", {
+                                            room: pet.active_room || "living",
+                                            action: "move",
+                                            item: id,
+                                            x,
+                                            y
+                                        })}
+                                    />
+                                    {pet.active_room === "bedroom" && <div className="paw-room-feature paw-bedroom-feature">☾ <span>Dream nook</span>
+                                    </div>}
+                                    {pet.active_room === "studio" && <div className="paw-room-feature paw-studio-feature">✎ <span>Art corner</span>
+                                    </div>}
+                                    {pet.active_room === "sports" && <div className="paw-room-feature paw-sports-feature">✦ <span>Play zone</span>
+                                    </div>}
+                                    <div className="room-lights">✦ ✧ ✦ ✧ ✦</div>
+                                    <div className="rug">♡</div>
+                                    {visible.map((p, i) => <Wanderer
+                                        key={p.id}
+                                        pet={p}
+                                        own={p.user_id === user.id}
+                                        index={i}
+                                        sleeping={p.user_id === user.id ? !!pet.garden?._sleeping : !!p.sleeping}
+                                        bathing={bathMode && p.user_id === user.id}
+                                        cuddling={cuddleMode && p.user_id === user.id}
+                                        onPet={() => {
+                                            cuddleActive.current = true;
+                                            cuddleLastMove.current = Date.now()
+                                        }}
+                                        onScrub={() => {
+                                            bathScrubbing.current = true;
+                                            bathLastMove.current = Date.now()
+                                        }}
+                                        onToggleNote={petId => setOpenRoomNoteId(current => current === petId ? null : petId)}
+                                        noteOpen={openRoomNoteId === p.id}
+                                    />)}
+                                    {openedRoomNote && <aside
+                                        id="paw-room-note-popover"
+                                        className="paw-room-note-popover"
+                                        role="region"
+                                        aria-label={`${openedRoomNote.name}'s Pet Note`}
+                                        onClick={event => event.stopPropagation()}
+                                    >
+                                        <div className="paw-room-note-popover-header">
+                                            <span className="paw-room-note-popover-from">
+                                                <Mail size={15} aria-hidden="true" /> {openedRoomNote.name}'s note</span>
+                                            <button type="button" className="paw-room-note-popover-close" aria-label="Close Pet Note" onClick={() => setOpenRoomNoteId(null)}>
+                                                <X size={15} aria-hidden="true" />
+                                            </button>
+                                        </div>
+                                        <p>
+                                            {openedRoomNote.pet_note}
+                                        </p>
+                                        <small>@{openedRoomNote.username}
+                                        </small>
+                                    </aside>}
+                                </div>
+                                <div className="paw-furniture-editor">
+                                    <div className="paw-furniture-editor-top">
+                                        <b>Room furniture</b>
+                                        <button className="secondary" onClick={() => {
+                                            setEditFurniture(v => !v);
+                                            setSelectedFurniture(null)
+                                        }}>
+                                            {editFurniture ? "Done decorating" : "Decorate"}
+                                        </button>
+                                    </div>
+                                    {editFurniture && <>
+                                        <div className="paw-furniture-placed">
+                                            {furnitureLayout(pet.active_room || "living", pet.room_layouts).map(f => <button className={selectedFurniture === f.id ? "active" : ""} key={f.id} onClick={() => setSelectedFurniture(f.id)}>
+                                                {FURNITURE[f.id]?.name || f.id}
+                                            </button>)}
+                                        </div>
+                                        {selectedFurniture && <button className="secondary" onClick={async () => {
+                                            const r = await execute("/furniture", {
+                                                room: pet.active_room || "living",
+                                                action: "store",
+                                                item: selectedFurniture
+                                            });
+                                            if (r) {
+                                                setSelectedFurniture(null)
+
+                                            }
+                                        }}>Store selected furniture</button>}
+                                        <h4>Available to place</h4>
+                                        <div className="paw-furniture-placed">
+                                            {[
+                                                ...DEFAULTS[pet.active_room || "living"],
+                                                ...pet.owned_items.filter(id => FURNITURE[id]?.room === (pet.active_room || "living"))
+                                            ].filter(id => !furnitureLayout(pet.active_room || "living", pet.room_layouts).some(f => f.id === id)).map(id => <button key={id} onClick={() => void execute("/furniture", {
+                                                room: pet.active_room || "living",
+                                                action: "place",
+                                                item: id
+                                            })}>＋ {FURNITURE[id]?.name}
+                                            </button>)}
+                                        </div>
+                                        <button className="secondary" onClick={() => void execute("/furniture", {
+                                            room: pet.active_room || "living",
+                                            action: "reset"
+                                        })}>Restore default layout</button>
+                                    </>}
+                                </div>
+                            </section>
+                            {mealModal && <div className="paw-meals-backdrop" onMouseDown={e => {
+                                if (e.target === e.currentTarget) {
+                                    setMealModal(false)
+
+                                }
+                            }}>
+                                <section className="paw-meals-modal" role="dialog" aria-modal="true" aria-label="Feed your pet">
+                                    <div className="paw-meals-header">
+                                        <div>
+                                            <h3>Feed your pet</h3>
+                                            <p className="paw-modal-subtitle">From your Kitchen</p>
+                                        </div>
+                                        <button type="button" className="paw-modal-close" aria-label="Close meals" onClick={() => setMealModal(false)}>
+                                            <X size={19} />
+                                        </button>
+                                    </div>
+                                    {mealBusy ? <p>Loading meals…</p> : !mealData || !Object.entries(mealData.meals).some(([id, n]) => n > 0 && mealData.recipes[id]) ? <p className="paw-meals-empty">No cooked meals yet. Visit the Kitchen to cook something!</p> : <div className="paw-meals-list">
+                                        {Object.entries(mealData.meals).filter(([id, n]) => n > 0 && !!mealData.recipes[id]).map(([id, n]) => {
+                                            const recipe = mealData.recipes[id];
+                                            return <div className="paw-meal-row" key={id}>
+                                                <div className="paw-meal-art">
+                                                    <FoodArt id={id} />
+                                                </div>
+                                                <div className="paw-meal-info">
+                                                    <b>
+                                                        {recipe.name}
+                                                    </b>
+                                                    <small>
+                                                        {n} available</small>
+                                                    <span>
+                                                        {[[recipe.hunger, "Hunger"], [recipe.happiness, "Happiness"], [recipe.energy, "Energy"], [recipe.xp, "XP"]].filter(([v]) => Number(v) > 0).map(([v, label]) => `+${v} ${label}`).join(" · ")}
+                                                    </span>
+                                                </div>
+                                                <button
+                                                    className="primary"
+                                                    disabled={mealBusy}
+                                                    onClick={async () => {
+                                                        setMealBusy(true);
+                                                        try {
+                                                            const response = await fetch(API + "/api/kitchen", {
+                                                                method: "POST",
+                                                                headers: {
+                                                                    "Content-Type": "application/json",
+                                                                    Authorization: "Bearer " + token
+                                                                },
+                                                                body: JSON.stringify({
+                                                                    action: "serve",
+                                                                    item: id
+                                                                })
+                                                            });
+                                                            const data = await response.json();
+                                                            if (!response.ok) {
+                                                                throw Error(data.error || "Could not serve meal");
+
+                                                            } setMealData(prev => prev ? {
+                                                                ...prev,
+                                                                meals: data.kitchen?.meals || {}
+                                                            } : prev);
+                                                            setNotice(data.message || "Meal served!");
+                                                            await refresh()
+                                                        } catch (e) {
+                                                            setNotice(e instanceof Error ? e.message : "Unable to serve meal")
+                                                        } finally {
+                                                            setMealBusy(false)
+                                                        }
+                                                    }}
+                                                >Serve</button>
+                                            </div>
+                                        })}
+                                    </div>}
+                                </section>
+                            </div>}
+                        </> : tab === "friends" ? <section className="panel paw-friends-panel">
+                            <div className="eyebrow">YOUR LITTLE COMMUNITY</div>
+                            <div className="paw-friends-title-row">
+                                <SectionHeading title="Friends" Icon={Users} />
+                                <div className="paw-requests-launch-row">
+                                    <button
+                                        type="button"
+                                        className={"paw-requests-launch paw-friends-mail-action " + (mail.some(m => !m.read_at) ? "has-unread" : "")}
+                                        onClick={openPawInbox}
+                                        aria-label={`Open PawMail inbox, ${mail.filter(m => !m.read_at).length} unread`}
+                                        title="PawMail inbox"
+                                    >
+                                        <Mail size={21} strokeWidth={1.8} />
+                                        {mail.some(m => !m.read_at) && <span className="paw-inbox-alert" />}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="paw-requests-launch paw-friends-compose-action"
+                                        onClick={() => openPawComposer()}
+                                        aria-label="Write PawMail"
+                                        title="Write PawMail"
+                                    >
+                                        <MailPlus size={21} strokeWidth={1.8} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="paw-requests-launch"
+                                        onClick={() => setRequestsOpen(true)}
+                                        aria-label={`Add friends and view friend requests (${unseenIncomingRequests.length} new)`}
+                                        title="Add friends & requests"
+                                    >
+                                        <UserRoundPlus size={21} strokeWidth={1.8} aria-hidden="true" />
+                                        {unseenIncomingRequests.length > 0 && <span className="paw-requests-count">
+                                            {unseenIncomingRequests.length}
+                                        </span>}
+                                    </button>
+                                </div>
+                            </div>
+                            {requestsOpen && <div className="paw-modal-backdrop" onMouseDown={e => {
+                                if (e.target === e.currentTarget) {
+                                    setRequestsOpen(false)
+
+                                }
+                            }}>
+                                <section className="paw-modal paw-requests-modal" role="dialog" aria-modal="true" aria-labelledby="paw-requests-modal-title">
+                                    <div className="paw-modal-top">
+                                        <div>
+                                            <h2 id="paw-requests-modal-title">Add friends <span className="paw-requests-count">
+                                                {pending.length} pending</span>
+                                            </h2>
+                                            <p className="paw-modal-subtitle">Your little community</p>
+                                        </div>
+                                        <button className="paw-modal-close" aria-label="Close friend requests" onClick={() => setRequestsOpen(false)}>
+                                            <X size={19} strokeWidth={1.8} aria-hidden="true" />
+                                        </button>
+                                    </div>
+                                    <div className="paw-requests-add">
+                                        <h3>Add a friend</h3>
+                                        <div className="search-row">
+                                            <input
+                                                placeholder="Search exact username"
+                                                value={friendSearch}
+                                                onChange={e => {
+                                                    setFriendSearch(e.target.value);
+                                                    setFound(null)
+                                                }}
+                                            />
+                                            <button className="primary" onClick={async () => {
+                                                try {
+                                                    const r = await request("/users/search?username=" + encodeURIComponent(friendSearch));
+                                                    setFound(r.user);
+                                                    if (!r.user) {
+                                                        setNotice("No account with that username.")
+
+                                                    }
+                                                } catch (e: any) {
+                                                    setNotice(e.message)
+                                                }
+                                            }}>Search</button>
+                                        </div>
+                                        {found && <div className="friend-row">
+                                            <b>@{found.username}
+                                            </b>
+                                            <button disabled={busy} onClick={() => void execute("/friends/request", {
+                                                username: found.username
+                                            })}>Add friend ＋</button>
+                                        </div>}
+                                    </div>
+                                    <h3 className="paw-requests-subheading">Friend requests ({pending.length})</h3>
+                                    <div className="paw-requests-list">
+                                        {pending.length === 0 && <p>No pending requests.</p>}
+                                        {pending.map(f => <div className="friend-row" key={f.friend_id}>
+                                            <b>@{f.username}
+                                            </b>
+                                            <div className="paw-friend-actions">
+                                                {f.recipient_id === user.id ? <button onClick={() => void execute("/friends/" + f.friend_id + "/accept", {}, "POST")}>Accept ✓</button> : <small>Request sent</small>} <button className="secondary" onClick={() => setRemoveFriend(f)}>Remove</button>
+                                            </div>
+                                        </div>)} </div>
+                                </section>
+                            </div>}
+                            {accepted.length === 0 && <p>No friends yet. Tap the person-plus icon above to add a friend.</p>}
+                            {accepted.map(f => <div className="friend-row" key={f.friend_id}>
+                                <div className="paw-friend-identity">
+                                    <span className="paw-friend-avatar">
+                                        {roomPets.find(p => p.user_id === f.friend_id) ? <PetArt
+                                            species={roomPets.find(p => p.user_id === f.friend_id)!.species}
+                                            breed={roomPets.find(p => p.user_id === f.friend_id)!.breed}
+                                            cosmetic={roomPets.find(p => p.user_id === f.friend_id)!.equipped_cosmetic}
+                                            outfit={roomPets.find(p => p.user_id === f.friend_id)!.equipped_outfit}
+                                        /> : <span className="paw-avatar-placeholder">♡</span>}
+                                    </span>
+                                    <span className="paw-friend-name">@{f.username}
+                                        {roomPets.find(p => p.user_id === f.friend_id) && <small>
+                                            {roomPets.find(p => p.user_id === f.friend_id)!.name}
+                                        </small>}
+                                    </span>
+                                </div>
+                                <div className="paw-friend-actions paw-friend-icon-actions">
+                                    <button
+                                        type="button"
+                                        className="paw-friend-icon-button paw-friend-mail"
+                                        title="Send PawMail"
+                                        aria-label={`Send PawMail to @${f.username}`}
+                                        onClick={() => openPawComposer(f.friend_id)}
+                                    >
+                                        <MailPlus size={25} strokeWidth={1.9} aria-hidden="true" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="paw-friend-icon-button paw-friend-gift"
+                                        title="Gift 25 coins"
+                                        aria-label={`Gift 25 coins to @${f.username}`}
+                                        disabled={busy}
+                                        onClick={() => void execute("/gifts", {
+                                            friendId: f.friend_id
+                                        })}
+                                    >
+                                        <Gift size={25} strokeWidth={1.9} aria-hidden="true" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="paw-friend-icon-button paw-friend-unfriend"
+                                        title="Unfriend"
+                                        aria-label={`Unfriend @${f.username}`}
+                                        onClick={() => setRemoveFriend(f)}
+                                    >
+                                        <UserRoundMinus size={25} strokeWidth={1.9} aria-hidden="true" />
+                                    </button>
+                                </div>
+                            </div>)}
+                        </section> : tab === "wardrobe" ? <section className="panel">
+                            <div className="eyebrow">YOUR COZY CLOSET</div>
+                            <SectionHeading title="Wardrobe" Icon={Shirt} />
+                            <OutfitWardrobe pet={pet} execute={execute} busy={busy} />
+                            <h3>Breeds, wildlife & prehistoric relatives</h3>
+                            <div className="shop-grid">
+                                {[...extraBreedStore, ...addedBreedStore, ...wildSpeciesStore].filter(item => breedFor(pet.species, item[0])).sort((a, b) => (ITEM_LEVEL_REQUIREMENTS[a[0]] || 1) - (ITEM_LEVEL_REQUIREMENTS[b[0]] || 1) || a[3] - b[3]).map(([id, , , price]) => <div className={"product " + (!pet.owned_breeds.includes(id) && pet.level < (ITEM_LEVEL_REQUIREMENTS[id] || 0) ? "paw-level-locked" : "")} key={id}>
+                                    <span>
+                                        <PetArt species={pet.species} breed={id} cosmetic="none" />
+                                    </span>
+                                    <b>
+                                        {id.replaceAll("_", " ")}
+                                    </b>
+                                    {wildSpeciesStore.some(item => item[0] === id) && <small>
+                                        {["smilodon", "dire_wolf", "nuralagus", "short_faced_bear", "waitaha_penguin"].includes(id) ? "Extinct relative" : "Wild relative / species"}
+                                    </small>}
+                                    <small>
+                                        {pet.owned_breeds.includes(id) ? "Unlocked ✓" : pet.level < (ITEM_LEVEL_REQUIREMENTS[id] || 0) ? `Unlocks at Level ${ITEM_LEVEL_REQUIREMENTS[id]}` : `${price} coins`}
+                                    </small>
+                                    {!pet.owned_breeds.includes(id) && pet.level < (ITEM_LEVEL_REQUIREMENTS[id] || 0) && <div className="paw-level-overlay">
+                                        <LockKeyhole size={20} />
+                                        <b>Level {ITEM_LEVEL_REQUIREMENTS[id]}
+                                        </b>
+                                    </div>}
+                                    <button disabled={busy || (!pet.owned_breeds.includes(id) && pet.level < (ITEM_LEVEL_REQUIREMENTS[id] || 0))} onClick={() => void execute("/item", {
+                                        item: id,
+                                        mode: pet.owned_breeds.includes(id) ? (pet.breed === id ? "unequip" : "equip") : "buy"
+                                    })}>
+                                        {pet.breed === id ? "Use default" : pet.owned_breeds.includes(id) ? "Equip" : `Buy · ${price}  coins`}
+                                    </button>
+                                </div>)}
+                            </div>
+                        </section> : tab === "shop" ? <section className="panel">
+                            <div className="eyebrow">COLLECT & CUSTOMIZE</div>
+                            <SectionHeading title="Market" Icon={ShoppingBag} />
+                            <div className="paw-market-furniture">
+                                <h3>Furniture Shop</h3>
+                                <div className="paw-market-tabs-scroll" role="region" aria-label="Furniture rooms" tabIndex={0}>
+                                    <div className="paw-market-tabs">
+                                        {([["living", "Living Room"], ["bedroom", "Bedroom"], ["studio", "Creative Studio"], ["sports", "Sports Room"]] as const).map(([id, label]) => <button
+                                            key={id}
+                                            className={marketRoom === id ? "active" : ""}
+                                            onClick={e => {
+                                                setMarketRoom(id);
+                                                e.currentTarget.scrollIntoView({
+                                                    behavior: "smooth",
+                                                    block: "nearest",
+                                                    inline: "nearest"
+                                                })
+                                            }}
+                                        >
+                                            {label}
+                                        </button>)}
+                                    </div>
+                                </div>
+                                <div className="shop-grid">
+                                    {Object.entries(FURNITURE).filter(([id, f]) => f.room === marketRoom && f.price > 0).sort(([idA], [idB]) => (FURNITURE_UNLOCK_LEVELS[idA] || 1) - (FURNITURE_UNLOCK_LEVELS[idB] || 1) || FURNITURE[idA].price - FURNITURE[idB].price).map(([id, f]) => {
+                                        const owned = pet.owned_items.includes(id);
+                                        const placed = furnitureLayout(marketRoom, pet.room_layouts).some(p => p.id === id);
+                                        const unlocked = ["living", "bedroom"].includes(marketRoom) || (pet.unlocked_rooms || []).includes(marketRoom);
+                                        const requiredLevel = FURNITURE_UNLOCK_LEVELS[id] || 1;
+                                        const locked = !owned && pet.level < requiredLevel;
+                                        return <div className={"product " + (locked ? "paw-level-locked" : "")} key={id}>
+                                            <span className="paw-furniture-market-art">
+                                                <FurnitureArt kind={f.kind} itemId={id} />
+                                            </span>
+                                            <b>
+                                                {f.name}
+                                            </b>
+                                            <small>
+                                                {owned ? "Owned ✓" : locked ? `Unlocks at Level ${requiredLevel}` : f.price.toLocaleString() + " coins"}
+                                            </small>
+                                            {locked && <div className="paw-level-overlay">
+                                                <LockKeyhole size={17} />
+                                                <b>Level {requiredLevel}
+                                                </b>
+                                            </div>}
+                                            <button disabled={busy || locked || (!unlocked && owned)} onClick={() => void execute("/furniture", {
+                                                room: marketRoom,
+                                                action: owned ? (placed ? "store" : "place") : "buy",
+                                                item: id
+                                            })}>
+                                                {owned ? (placed ? "Store" : "Place in room") : locked ? "Locked" : "Buy · " + f.price.toLocaleString() + " coins"}
+                                            </button>
+                                        </div>
+                                    })}
+                                </div>
+                            </div>
+                        </section> : tab === "multiplayer" ? <Multiplayer
+                            api={API}
+                            token={token}
+                            userId={user.id}
+                            friends={friends}
+                            coins={pet.coins}
+                            petLevel={pet.level}
+                            refreshSignal={multiplayerSignal}
+                            onUpdate={refresh}
+                            onToast={setNotice}
+                        /> : tab === "games" ? <section className="panel">
+                            <div className="eyebrow">THE LITTLE ARCADE</div>
+                            <SectionHeading title="Mini-games" Icon={Gamepad2} />
+                            <div className="games-grid">
+                                {PAW_GAMES.map(([id, icon, label]) => <button key={id} onClick={() => {
+                                    void launchGame(id, pet.species)
+                                }}>
+                                    <span className={"paw-game-art paw-game-art-" + id}>
+                                        {id === "mole" ? <MoleGameIcon /> : id === "claw" ? <ClawMenuIcon /> : <PawIcon name={id} size={34} />}
+                                    </span>
+                                    <b>
+                                        {label}
+                                    </b>
+                                    <small>
+                                        {id === "claw" ? "Prize machine · 15s cooldown" : `Personal best: ${records.find(r => r.game === id)?.best || 0}`}
+                                    </small>
+                                    <strong>PLAY →</strong>
+                                </button>)}
+                            </div>
+                        </section> : tab === "garden" ? <GardenPanel garden={pet.garden} coins={pet.coins} busy={busy} nowTick={nowTick} onAction={body => execute("/garden", body)} /> : tab === "kitchen" ? <Kitchen token={token} api={API} onPetChange={refresh} onToast={setNotice} /> : tab === "missions" ? <MissionCenter token={token} api={API} onPetChange={refresh} onToast={setNotice} onReadyChange={setMissionReady} /> : <section className="panel">
+                            <div className="eyebrow">YOUR PAWPAL JOURNEY</div>
+                            <SectionHeading title="Missions" Icon={Trophy} />
+                            <div className="stats-grid">
+                                {[
+                                    ["Pet level", pet.level],
+                                    ["Coins", pet.coins],
+                                    ["Friends", accepted.length],
+                                    ["Flowers", pet.garden.flowers],
+                                    ["Toys", pet.toys],
+                                    ["Growth", pet.level < 5 ? "Baby" : pet.level < 30 ? "Teen" : "Adult"]
+                                ].map(([label, value]) => <div className="stat" key={String(label)}>
+                                    <b>
+                                        {label}
+                                    </b>
+                                    <h2>
+                                        {value}
+                                    </h2>
+                                </div>)}
+                            </div>
+                            <h3>Achievement badges</h3>
+                            {[
+                                ["first_friend", "friends", "Make a friend"],
+                                ["level_5", "level", "Reach level 5"],
+                                ["rich", "coins", "Save 500 coins"]
+                            ].sort((a, b) => {
+                                const status = (code: string) => achievements.includes(code) ? 2 : code === "level_5" && pet.level >= 5 || code === "rich" && pet.coins >= 500 || code === "first_friend" && accepted.length > 0 ? 0 : 1;
+                                return status(a[0]) - status(b[0])
+                            }).map(([code, icon, label]) => <div className="friend-row" key={code}>
+                                <b>
+                                    <PawIcon name={icon} /> {label}
+                                </b>
+                                <button disabled={achievements.includes(code)} onClick={() => void execute("/achievements/claim-all", {}).then(() => void refresh())}>
+                                    {achievements.includes(code) ? "Claimed ✓" : (code === "level_5" && pet.level >= 5 || code === "rich" && pet.coins >= 500 || code === "first_friend" && accepted.length > 0) ? "Claim all ready" : "In progress"}
+                                </button>
+                            </div>)}
+                            <h3>Daily quests</h3>
+                        </section>}
+                    </div>
+                </div>
+            </>}
+        </main>
+        {playPickerOpen && pet && <div className="paw-modal-backdrop" onMouseDown={e => {
+            if (e.target === e.currentTarget) {
+                setPlayPickerOpen(false)
+
+            }
+        }}>
+            <section className="paw-modal paw-play-picker" role="dialog" aria-modal="true" aria-label="Play with your pet">
+                <div className="paw-modal-top">
+                    <div>
+                        <h2>Choose a game</h2>
+                        <p className="paw-modal-subtitle">Playing uses energy and gets your paws a little dirty.</p>
+                    </div>
+                    <button className="paw-modal-close" aria-label="Close games" onClick={() => setPlayPickerOpen(false)}>
+                        <X size={19} />
+                    </button>
+                </div>
+                <div className="paw-play-options">
+                    {PAW_GAMES.map(([id, , label]) => <button key={id} onClick={() => {
+                        setPlayPickerOpen(false);
+                        void launchGame(id, pet.species)
+                    }}>
+                        <PawIcon name={id} size={24} />
+                        <span>
+                            {label}
+                        </span>
+                    </button>)}
+                </div>
+            </section>
+        </div>}
+        <footer>@ {new Date().getFullYear()} PawPal · Created by <b>HORHEEE</b> · All rights reserved.</footer>
+        {game && pet && (game === "claw" ? <PawClaw
+            pet={pet}
+            onQuit={() => setGame(null)}
+            onPlay={async () => {
+                const result = await execute("/claw/play", {});
+                if (result) {
+                    await refresh();
+
+                } return result
+            }}
+        /> : game === "mole" ? <WhackAMole onQuit={() => setGame(null)} onFinish={score => claimArcadeReward(game, score)} /> : <MiniGame key={game} kind={game} pet={pet} onQuit={() => setGame(null)} onFinish={score => claimArcadeReward(game, score)} />)}
+    </div>
 }
-async function execute(path:string,body?:unknown,method='POST'){setBusy(true);try{const data=await request(path,method,body);if(data.pet)setPet(data.pet);setNotice(data.message||'Saved!');if(path.includes('friend')||path.includes('gift')||path.includes('adopt')||path.includes('mail')||path.includes('furniture'))await refresh();return data}catch(e:any){setNotice(e.message)}finally{setBusy(false)}}
-useEffect(()=>{if(!bathMode||!pet)return;const timer=window.setInterval(async()=>{if(!bathScrubbing.current||Date.now()-bathLastMove.current>1150||bathRequest.current||pet.cleanliness>=100)return;bathRequest.current=true;try{const data=await request('/care','POST',{action:'scrub'});if(data.pet)setPet(data.pet)}catch(e:any){setNotice(e?.message||'Could not bathe pet')}finally{bathRequest.current=false}},1000);return()=>window.clearInterval(timer)},[bathMode,pet?.id,pet?.cleanliness]);
-useEffect(()=>{if(!cuddleMode||!pet)return;const timer=window.setInterval(async()=>{if(!cuddleActive.current||Date.now()-cuddleLastMove.current>1100||cuddleRequest.current||pet.affection>=100)return;cuddleRequest.current=true;try{const data=await request('/care','POST',{action:'pet_stroke'});if(data.pet){setPet(data.pet);cuddleSeconds.current++;}}catch(e:any){setNotice(e?.message||'Could not cuddle pet')}finally{cuddleRequest.current=false}},1000);return()=>window.clearInterval(timer)},[cuddleMode,pet?.id,pet?.affection]);
-useEffect(()=>{const stop=()=>{bathScrubbing.current=false;cuddleActive.current=false};window.addEventListener('pointerup',stop);window.addEventListener('pointercancel',stop);return()=>{window.removeEventListener('pointerup',stop);window.removeEventListener('pointercancel',stop)}},[]);
-async function launchGame(id:string,petSpecies:string){
-    if(pet?.garden?._sleeping){
-        setPet(current=>current?{...current,garden:{...current.garden,_sleeping:false}}:current);
-        try{await request('/care/wake','POST');await refresh()}
-        catch(error){setNotice(error instanceof Error?error.message:'Could not wake your pet');return}
-    }
-    localStorage.setItem('pawpal-arcade-species',petSpecies);
-    setGame(id);
-}
-async function togglePetSleep(){
- if(sleepRequestInFlight.current)return;
- sleepRequestInFlight.current=true;
- setSleepPending(true);
- try{
-  const data=await request('/care','POST',{action:'sleep_toggle'});
-  if(data.pet)setPet(data.pet);
-  setNotice(data.message||'Sleep updated');
- }catch(e:any){setNotice(e?.message||'Could not update sleep');}
- finally{sleepRequestInFlight.current=false;setSleepPending(false);}
-}
-async function authenticate(){setBusy(true);try{const data=await request('/auth/'+(authMode==='login'?'login':'register'),'POST',authMode==='login'?{identity:username,password}:{username,password});localStorage.setItem('pawpal-token',data.token);setToken(data.token);setNotice('Welcome to PawPal!')}catch(e:any){setNotice(e.message)}finally{setBusy(false)}}
-function logout(){localStorage.removeItem('pawpal-token');setToken('');setUser(null);setPet(null);setRoomPets([]);setFriends([]);setMail([])}
-useEffect(()=>{if(!friendToast)return;const t=setTimeout(()=>setFriendToast(null),9000);return()=>clearTimeout(t)},[friendToast]);const openPawComposer=(friendId='')=>{setMailTo(friendId);setSelectedLetter(null);setMailModal('compose')};
-const openPawInbox=()=>{setSelectedLetter(null);setMailFolder('received');setMailModal('inbox')};
-const showSentLetters=async()=>{setMailFolder('sent');setSelectedLetter(null);try{setSentMail(await request('/mail/sent'))}catch(error:any){setNotice(error.message)}};
-const openPawLetter=async(letter:PawMail)=>{setSelectedLetter(letter);if(mailFolder==='received'&&!letter.read_at){const result=await execute('/mail/'+letter.id+'/read',undefined,'PATCH');if(result){setMail(mails=>mails.map(m=>m.id===letter.id?{...m,read_at:new Date().toISOString()}:m))}}};
-const accepted=friends.filter(f=>f.status==='accepted');const pending=friends.filter(f=>f.status==='pending');const others=roomPets.filter(p=>p.user_id!==user?.id);const visible=roomPets.filter(p=>p.user_id===user?.id).concat(others.length<=8?others:Array.from({length:8},(_,i)=>others[(rotation*8+i)%others.length]));const roomColors=themes[pet?.room_theme||'blush']||themes.blush;const openedRoomNote=visible.find(p=>p.id===openRoomNoteId&&p.pet_note?.trim()&&p.note_expires_at&&new Date(p.note_expires_at).getTime()>Date.now());useEffect(()=>{setOpenRoomNoteId(null)},[tab,rotation]);useEffect(()=>{if(!openRoomNoteId)return;const closeOutside=(event:PointerEvent)=>{const target=event.target;if(target instanceof Element&&!target.closest('.paw-note-indicator, .paw-room-note-popover'))setOpenRoomNoteId(null)};const closeEscape=(event:KeyboardEvent)=>{if(event.key==='Escape')setOpenRoomNoteId(null)};document.addEventListener('pointerdown',closeOutside);document.addEventListener('keydown',closeEscape);return()=>{document.removeEventListener('pointerdown',closeOutside);document.removeEventListener('keydown',closeEscape)}},[openRoomNoteId]);return <div className={"app "+(dark?"paw-dark":"")}><header className="nav"><div className="logo paw-logo-home" role="button" tabIndex={0} title="Go to Living Room" onClick={()=>{setTab('home');setMenuOpen(false);setNotificationsOpen(false);window.scrollTo({top:0,behavior:'smooth'})}} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setTab('home');setMenuOpen(false);setNotificationsOpen(false)}}}><PawPrint size={25} aria-hidden="true"/><div className="paw-logo-copy"><b>PawPal</b><span>AY NAKATULOG?</span></div></div><div className="nav-right">{user&&<span className="paw-header-username">Hi, @{user.username}</span>}{user&&<div className="paw-notifications-wrap"><button className="secondary paw-notifications-trigger" aria-label="Notifications" aria-expanded={notificationsOpen} title="Notifications" onClick={()=>{setNotificationsOpen(v=>!v);void request('/notifications').then(setNotifications).catch(()=>{})}}><Bell size={20} strokeWidth={1.65} aria-hidden="true"/>{notifications.some(n=>n.unread)&&<span className="paw-notifications-dot"/>}</button>{notificationsOpen&&<div className="paw-notifications-panel" role="region" aria-label="Latest notifications"><div className="paw-notifications-heading"><b>Notifications</b><small>Latest 5</small><button className="paw-notifications-close" onClick={()=>setNotificationsOpen(false)} aria-label="Close notifications">×</button></div>{notifications.length===0?<p className="paw-notifications-empty">No notifications yet ♡</p>:notifications.map(n=><div key={n.kind+'-'+n.event_id} className={'paw-notification-item '+(n.unread?'is-unread':'')}><button className="paw-notification-link" onClick={()=>{setTab(n.kind.startsWith('multiplayer')?'multiplayer':'friends');setNotificationsOpen(false);setMenuOpen(false);if(n.kind==='mail')openPawInbox();else window.scrollTo({top:0,behavior:'smooth'})}}><span className="paw-notification-icon">{n.kind.startsWith('multiplayer')?<Swords size={16}/>:n.kind==='mail'?<Mail size={16}/>:<Heart size={16}/>}</span><span><b>@{n.actor}</b> {n.kind==='mail'?'sent you PawMail':n.kind==='friend_request'?'requested to be friends':n.kind==='multiplayer_challenge'?'challenged you to a game':n.kind==='multiplayer_result'?'finished a multiplayer match with you':'accepted your friend request'}<small>{new Date(n.created_at).toLocaleString()}</small></span></button>{n.kind.startsWith('multiplayer')&&<div className="paw-notification-game"><Swords size={14}/><b>{n.game_name||'Paw Brawl'}</b><span className="paw-notification-game-wager">· {Number(n.wager||0).toLocaleString()} Paw Coins each</span></div>}{n.kind==='multiplayer_challenge'&&<div className="paw-notification-actions"><button className="paw-notification-accept" disabled={busy} onClick={async()=>{const ok=await execute('/multiplayer/challenges/'+n.event_id+'/respond',{action:'accept'});if(ok){setNotificationsOpen(false);setTab('multiplayer');setMultiplayerSignal(v=>v+1);void refresh()}}}>Accept</button><button className="paw-notification-decline" disabled={busy} onClick={async()=>{const ok=await execute('/multiplayer/challenges/'+n.event_id+'/respond',{action:'decline'});if(ok){setMultiplayerSignal(v=>v+1);void refresh()}}}>Decline</button></div>}{n.kind==='friend_request'&&(notificationDecisions[n.event_id]?<div className={'paw-notification-result '+notificationDecisions[n.event_id]} role="status">You {notificationDecisions[n.event_id]} @{n.actor}'s friend request.</div>:<div className="paw-notification-actions"><button className="paw-notification-accept" disabled={busy} onClick={async()=>{const ok=await execute('/friends/'+n.event_id+'/accept',{},'POST');if(ok){setNotificationDecisions(prev=>({...prev,[n.event_id]:'accepted'}));void request('/notifications').then(setNotifications).catch(()=>{})}}}>Accept</button><button className="paw-notification-decline" disabled={busy} onClick={async()=>{const ok=await execute('/friends/'+n.event_id,undefined,'DELETE');if(ok){setNotificationDecisions(prev=>({...prev,[n.event_id]:'declined'}));void request('/notifications').then(setNotifications).catch(()=>{})}}}>Decline</button></div>)}</div>)}</div>}</div>}<button className="secondary theme-toggle" onClick={()=>setDark(x=>!x)} aria-label={dark?"Switch to light mode":"Switch to dark mode"} title={dark?"Light mode":"Dark mode"}>{dark?<Sun size={20} strokeWidth={1.65} aria-hidden="true"/>:<Moon size={20} strokeWidth={1.65} aria-hidden="true"/>}</button>{user&&<button className="paw-header-logout" onClick={logout} title="Log out of PawPal"><LogOut size={16} aria-hidden="true"/><span>Log out</span></button>}</div></header><main className="container">{user&&mailModal==='inbox'&&<div className="paw-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setMailModal(null)}}><section className="paw-modal pawmail-window pawmail-inbox-window" role="dialog" aria-modal="true" aria-labelledby="pawmail-inbox-heading"><div className="paw-modal-top"><div><div className="eyebrow">SPECIAL DELIVERY</div><h2 id="pawmail-inbox-heading">PawMail</h2></div><button type="button" className="paw-modal-close" aria-label="Close PawMail" onClick={()=>setMailModal(null)}><X size={19}/></button></div>{selectedLetter?<><div className="pawmail-detail-top"><button type="button" className="pawmail-back" onClick={()=>setSelectedLetter(null)}><ArrowLeft size={16}/> All letters</button><span className="pawmail-date">{new Date(selectedLetter.created_at).toLocaleString()}</span></div><p className="pawmail-from">{mailFolder==='received'?`From @${selectedLetter.sender_username}`:`To @${selectedLetter.recipient_username}`}</p><div className="pawmail-letter-detail"><PawPostcard design={selectedLetter.design} color={selectedLetter.color||'blush'} message={selectedLetter.message} senderPet={selectedLetter.sender_pet}/></div><div className="pawmail-detail-actions">{mailFolder==='received'&&accepted.some(f=>f.friend_id===selectedLetter.sender_id)&&<button type="button" className="primary" onClick={()=>openPawComposer(selectedLetter.sender_id)}><MailPlus size={16}/> Reply</button>}{mailFolder==='received'&&<button type="button" className="secondary" disabled={busy} onClick={async()=>{if(await execute('/mail/'+selectedLetter.id,undefined,'DELETE')){setSelectedLetter(null);void refresh()}}}>Delete letter</button>}</div></>:<><div className="pawmail-folder-tabs" role="tablist" aria-label="Mail folders"><button type="button" role="tab" aria-selected={mailFolder==='received'} className={mailFolder==='received'?'active':''} onClick={()=>{setMailFolder('received');setSelectedLetter(null)}}><Mail size={16}/> Inbox {mail.filter(m=>!m.read_at).length>0&&<span className="pawmail-unread-pill">{mail.filter(m=>!m.read_at).length}</span>}</button><button type="button" role="tab" aria-selected={mailFolder==='sent'} className={mailFolder==='sent'?'active':''} onClick={()=>void showSentLetters()}><Send size={16}/> Sent</button><button type="button" className="pawmail-folder-compose" onClick={()=>openPawComposer()}><MailPlus size={16}/> Write</button></div><div className="pawmail-letter-list">{(mailFolder==='received'?mail:sentMail).length===0?<div className="pawmail-empty"><Mail size={36}/><b>{mailFolder==='received'?'No letters yet':'No sent letters yet'}</b><span>{mailFolder==='received'?'Your first postcard will arrive here.':'Write a little letter to a friend.'}</span></div>:(mailFolder==='received'?mail:sentMail).map(m=><button key={m.id} type="button" className={'pawmail-list-letter '+(!m.read_at&&mailFolder==='received'?'unread':'')} onClick={()=>void openPawLetter(m)}><span className={'pawmail-list-icon paw-envelope-'+m.design}><EnvelopeArtwork design={m.design}/></span><span className="pawmail-list-copy"><b>{mailFolder==='received'?`@${m.sender_username}`:`To @${m.recipient_username}`}</b><span>{m.message}</span><small>{new Date(m.created_at).toLocaleString()}</small></span>{!m.read_at&&mailFolder==='received'?<span className="pawmail-new-dot" aria-label="Unread"/>:<ArrowRight size={16} className="pawmail-list-arrow"/>}</button>)}</div></>}</section></div>}
-{user&&mailModal==='compose'&&pet&&<div className="paw-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setMailModal(null)}}><section className="paw-modal pawmail-window pawmail-composer-window" role="dialog" aria-modal="true" aria-labelledby="pawmail-write-heading"><div className="paw-modal-top"><div><div className="eyebrow">A LITTLE LETTER</div><h2 id="pawmail-write-heading">Write PawMail</h2></div><button type="button" className="paw-modal-close" aria-label="Close letter" onClick={()=>setMailModal(null)}><X size={19}/></button></div><div className="pawmail-compose-layout"><div className="pawmail-write-side"><label htmlFor="pawmail-receiver">Send to</label><select id="pawmail-receiver" value={mailTo} onChange={e=>setMailTo(e.target.value)}><option value="">Choose a friend...</option>{accepted.map(f=><option key={f.friend_id} value={f.friend_id}>@{f.username}</option>)}</select><label htmlFor="pawmail-body">Your message <span>{mailMessage.length}/100</span></label><textarea id="pawmail-body" maxLength={100} rows={4} value={mailMessage} onChange={e=>setMailMessage(e.target.value.slice(0,100))} placeholder="Write something sweet for your friend..."/><label>Envelope color</label><div className="paw-envelope-colors pawmail-compose-colors">{ENVELOPE_COLORS.map(([id,name,hex])=><button type="button" key={id} title={name} aria-label={name} aria-pressed={mailColor===id} className={mailColor===id?'selected':''} style={{background:hex}} onClick={()=>setMailColor(id)}/>)}</div><div className="pawmail-design-summary"><span className={"pawmail-design-icon paw-envelope-"+mailDesign}><EnvelopeArtwork design={mailDesign}/></span><span><small>Your envelope</small><b>{mailCatalog.find(d=>d.id===mailDesign)?.title||'Classic Letter'}</b></span><button type="button" className="pawmail-collection-launch" onClick={()=>setMailModal('collection')}>Collection <ArrowRight size={15}/></button></div><button type="button" className="pawmail-send-button primary" disabled={busy||!mailTo||!mailMessage.trim()} onClick={async()=>{const result=await execute('/mail',{friendId:mailTo,design:mailDesign,color:mailColor,message:mailMessage.trim()});if(result){setMailMessage('');setMailModal(null);setNotice('Your PawMail was delivered!');void refresh()}}}><Send size={17}/> Send PawMail</button></div><div className="pawmail-live-side"><div className="pawmail-live-title">LIVE PREVIEW</div><PawPostcard design={mailDesign} color={mailColor} message={mailMessage} senderPet={pet}/></div></div></section></div>}
-{user&&mailModal==='collection'&&pet&&<div className="paw-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setMailModal('compose')}}><section className="paw-modal pawmail-window pawmail-collection-window" role="dialog" aria-modal="true" aria-labelledby="pawmail-collection-heading"><div className="paw-modal-top"><div><div className="eyebrow">UNLOCK LITTLE WONDERS</div><h2 id="pawmail-collection-heading">Envelope Collection</h2><p className="pawmail-collection-intro">Discover special letter art as your pet grows.</p></div><button type="button" className="paw-modal-close" aria-label="Back to writing" onClick={()=>setMailModal('compose')}><X size={19}/></button></div><div className="pawmail-collection-count"><span>{ownedEnvelopes.length} / {mailCatalog.length} collected</span><span>Your pet: Level {pet.level}</span></div><div className="pawmail-collection-grid">{mailCatalog.map(d=>{const owned=ownedEnvelopes.includes(d.id);const levelLocked=pet.level<d.level&&!owned;const selected=mailDesign===d.id;return <article key={d.id} className={'pawmail-collection-card '+(selected?'selected ':'')+(levelLocked?'level-locked':'')}><div className={'pawmail-collection-art paw-envelope-'+d.id}><EnvelopeArtwork design={d.id}/>{levelLocked&&<span className="pawmail-art-lock"><LockKeyhole size={17}/> Lv. {d.level}</span>}</div><div className="pawmail-collection-info"><b>{d.title}</b><small>{d.level>1?`Unlocks at Level ${d.level}`:d.id==='classic'?'Your first letter':'Available from Level 1'}</small></div>{owned?<button type="button" className={'pawmail-choose '+(selected?'chosen':'')} onClick={()=>{setMailDesign(d.id);setMailModal('compose')}}>{selected?'Selected':'Choose design'}</button>:<button type="button" className="pawmail-buy" disabled={busy||levelLocked||pet.coins<d.price} onClick={async()=>{const result=await execute('/mail/designs/buy',{design:d.id});if(result){setOwnedEnvelopes(v=>[...new Set([...v,d.id])]);setMailDesign(d.id)}}}>{levelLocked?<><LockKeyhole size={13}/> Level {d.level}</>:<><Coins size={13}/> {d.price.toLocaleString()}</>}</button>}</article>})}</div><div className="pawmail-collection-footer"><button className="primary" onClick={()=>setMailModal('compose')}>Back to letter</button></div></section></div>}
-{user&&editingNote&&<div className="paw-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setEditingNote(false)}}><section className="paw-modal paw-note-modal" role="dialog" aria-modal="true" aria-labelledby="paw-note-title"><div className="paw-modal-top"><div><div className="eyebrow">A LITTLE MESSAGE</div><h2 id="paw-note-title">Pet Note ♡</h2></div><button type="button" className="paw-modal-close" aria-label="Close Pet Note" onClick={()=>setEditingNote(false)}><X size={19} strokeWidth={1.8} aria-hidden="true"/></button></div><div className="paw-note-preview" aria-label="Preview of how your note appears"><div className="paw-note-preview-pet"><PetArt species={pet?.species||'cat'} color={pet?.color} breed={pet?.breed} cosmetic={pet?.equipped_cosmetic} outfit={pet?.equipped_outfit}/></div><div className="paw-note-preview-content"><span className="paw-note-preview-label"><Sparkles size={13} aria-hidden="true"/> {pet?.name||'Your pet'} says</span><span className="paw-note-preview-bubble">{noteDraft.trim()||'What is on your mind?'}</span></div></div><p className="paw-note-helper">Friends will spot a note icon beside your pet's name. Tapping it reveals your message.</p><form className="paw-note-form" onSubmit={async e=>{e.preventDefault();const result=await execute('/notes',{text:noteDraft});if(result){setEditingNote(false);await refresh()}}}><div className="paw-note-label-row"><label htmlFor="pawpal-note">Write your note</label><span className="paw-note-char-count" aria-live="polite">{noteDraft.length}/20</span></div><input id="pawpal-note" maxLength={20} value={noteDraft} onChange={e=>setNoteDraft(e.target.value)} placeholder="A little thought..." autoComplete="off"/><div className="paw-note-actions"><button type="button" className="paw-note-delete secondary" disabled={busy||!user.pet_note} onClick={async()=>{const result=await execute('/notes',undefined,'DELETE');if(result){setNoteDraft('');setEditingNote(false);await refresh()}}}>Remove note</button><button type="submit" className="paw-note-save primary" disabled={busy||!noteDraft.trim()}><Check size={17} aria-hidden="true"/> Save note</button></div></form></section></div>}{friendToast&&<div className="paw-friend-toast" role="alert"><div><b>New friend request ♡</b><p>@{friendToast.username} wants to be friends!</p></div><button onClick={()=>{setFriendDecision(friendToast);setFriendToast(null)}}>View request</button><button className="secondary" aria-label="Dismiss notification" onClick={()=>setFriendToast(null)}>×</button></div>}{friendDecision&&<div className="paw-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setFriendDecision(null)}}><section className="paw-modal" role="dialog" aria-modal="true" aria-labelledby="friend-decision-title"><div className="eyebrow">NEW FRIEND REQUEST ♡</div><h2 id="friend-decision-title">@{friendDecision.username} wants to be friends!</h2><p>Would you like to accept their friend request?</p><div className="paw-modal-actions"><button disabled={busy} className="primary" onClick={async()=>{const ok=await execute('/friends/'+friendDecision.friend_id+'/accept',{},'POST');if(ok)setFriendDecision(null)}}>Accept request ✓</button><button disabled={busy} className="secondary" onClick={async()=>{const ok=await execute('/friends/'+friendDecision.friend_id,undefined,'DELETE');if(ok)setFriendDecision(null)}}>Decline</button><button className="secondary" onClick={()=>setFriendDecision(null)}>Later</button></div></section></div>}{removeFriend&&<div className="paw-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setRemoveFriend(null)}}><section className="paw-modal" role="dialog" aria-modal="true" aria-labelledby="unfriend-title"><h2 id="unfriend-title">Remove friend?</h2><p>Remove @{removeFriend.username} from your PawPal friends? You can send another request later.</p><div className="paw-modal-actions"><button className="secondary" onClick={()=>setRemoveFriend(null)}>Cancel</button><button className="paw-unfriend-confirm" disabled={busy} onClick={async()=>{const ok=await execute('/friends/'+removeFriend.friend_id,undefined,'DELETE');if(ok)setRemoveFriend(null)}}>Remove friend</button></div></section></div>}{notice&&<div className="notice paw-toast" role="status"><Sparkles size={16} aria-hidden="true"/> {notice}<button onClick={()=>setNotice('')}>×</button></div>}{!token?<div className="auth-wrap"><div className="auth-art"><div className="hero-pets paw-auth-svg-pets" role="img" aria-label="A cat, bunny, and dog welcoming you to PawPal">
-    <div className="paw-auth-pet paw-auth-pet-cat"><PetArt species="cat" /></div>
-    <div className="paw-auth-pet paw-auth-pet-bunny"><PetArt species="bunny" /></div>
-    <div className="paw-auth-pet paw-auth-pet-dog"><PetArt species="dog" /></div>
-</div><h1>Little paws, big friendships.</h1><p>A cozy pink world to care, collect, decorate and play.</p></div><form className="auth-card" onSubmit={e=>{e.preventDefault();void authenticate()}}><div className="eyebrow">WELCOME TO PAWPAL</div><h2>{authMode==='login'?'Welcome back!':'Create your account'}</h2><label>Username</label><input required minLength={3} maxLength={24} pattern="[a-zA-Z0-9_]{3,24}" autoComplete="username" value={username} onChange={e=>setUsername(e.target.value)} placeholder="unique_username"/>{authMode==='register'&&<div className="username-warning" role="note"><strong><AlertTriangle size={16} aria-hidden="true"/> DON'T USE YOUR REAL NAME!</strong><span>Use a nickname. Your username appears above your pet and is how friends find you.</span></div>}<label>Password</label><input type="password" minLength={6} required value={password} onChange={e=>setPassword(e.target.value)} placeholder="At least 6 characters"/>{authMode==='register'&&<small className="password-safety-note">For your security, please use a unique password that you don't use for your email, social media, or other accounts.</small>}<button disabled={busy} className="primary">{authMode==='login'?'Log in':'Create account'}</button><button type="button" className="link-button" onClick={()=>setAuthMode(authMode==='login'?'register':'login')}>{authMode==='login'?'New here? Create an account':'Already registered? Log in'}</button></form></div>:!user?<p>Loading your playhouse…</p>:!pet?<div className="adopt-card"><div className="eyebrow">ONE FOREVER COMPANION</div><h1>Choose your best friend ♡</h1><p>Each account can adopt one pet. Friends' pets will join your living room automatically.</p>{oldPetId&&<button className="secondary" onClick={()=>void execute('/claim',{petId:oldPetId})}>Restore my pet from the old PawPal version</button>}<div className="species-grid">{species.map(s=><button key={s} className={choice===s?'chosen':''} onClick={()=>setChoice(s)}><span className="paw-adoption-pet-art"><PetArt species={s}/></span><b>{s}</b></button>)}</div><input value={petName} maxLength={24} onChange={e=>setPetName(e.target.value)} placeholder="Your pet's name"/><div className="adoption-warning"><strong>Permanent pet choice</strong><p>Your pet species cannot be changed after adoption. You can still customize its breed, color and accessories.</p><label className="adoption-check-row"><input type="checkbox" checked={adoptionAcknowledged} onChange={e=>setAdoptionAcknowledged(e.target.checked)}/><span>I understand that this species choice is permanent.</span></label></div><button disabled={busy||!petName.trim()||!adoptionAcknowledged} className="primary" onClick={()=>{if(window.confirm('Adopt this '+choice+' permanently?'))void execute('/adopt',{name:petName,species:choice})}}>Adopt <span className="paw-adopt-inline-pet"><PetArt species={choice}/></span> {choice} →</button></div>:<><div className="heading paw-dashboard-heading"><div className="paw-dashboard-greeting"><h1>Welcome home, <em>{pet.name}!</em></h1></div><div className="paw-account-summary" aria-label="Your account at a glance"><div className="paw-account-stat paw-account-coins"><span className="paw-account-icon"><Coins size={22}/></span><span className="paw-account-copy"><small>PAW COINS</small><strong>{pet.coins.toLocaleString()}</strong></span></div><div className="paw-account-stat paw-account-level"><span className="paw-account-icon"><Star size={22}/></span><span className="paw-account-copy"><small>PET LEVEL</small><strong>{pet.level}</strong><span className="paw-account-xp" title={`${pet.xp} / ${pet.level * 100} XP`}><span style={{width:`${Math.min(100, 100 * pet.xp / Math.max(1, pet.level * 100))}%`}}/></span></span></div><div className="paw-account-stat paw-account-friends"><span className="paw-account-icon"><Users size={22}/></span><span className="paw-account-copy"><small>FRIENDS</small><strong>{accepted.length}</strong></span></div><button className="mobile-menu-toggle" aria-label="Toggle navigation" title="Menu" aria-expanded={menuOpen} onClick={()=>setMenuOpen(x=>!x)}><span className="paw-menu-icon" aria-hidden="true">{menuOpen?<X size={20} strokeWidth={2.4}/>:<Menu size={20} strokeWidth={2.4}/>}</span></button></div></div><div className="layout"><aside className={"sidebar "+(menuOpen?"menu-open":"")}><div className="profile"><span className="profile-pet-portrait"><PetArt species={pet.species} color={pet.color} breed={pet.breed} cosmetic={pet.equipped_cosmetic} outfit={pet.equipped_outfit}/></span><div><b>{pet.name}</b><small>{pet.species} · {pet.level<5?'Baby':pet.level<30?'Teen':'Adult'}</small><small>@{user.username}</small></div></div><div className="xp"><div style={{width:`${pet.xp/(pet.level*100)*100}%`}}/></div><small>{pet.xp}/{pet.level*100} XP</small><nav>{[['home','home','Room'],['friends','friends','Friends'],['shop','shop','Market'],['wardrobe','wardrobe','Wardrobe'],['games','games','Mini-games'],['multiplayer','multiplayer','Multiplayer'],['garden','garden','Lucky Garden'],['kitchen','kitchen','Kitchen'],['missions','missions','Missions']].map(([id,icon,label])=><button key={id} className={tab===id?'active':''} onClick={()=>{setTab(id);setMenuOpen(false)}}><PawIcon name={id}/> {label} <span>›</span></button>)}</nav><div className="daily"><b><Gift size={17}/> Daily surprise</b><p>{pet.daily_claimed_at&&nowTick<(Math.floor((new Date(pet.daily_claimed_at).getTime()+28800000)/86400000)+1)*86400000-28800000?`Next gift in ${Math.floor(((Math.floor((new Date(pet.daily_claimed_at).getTime()+28800000)/86400000)+1)*86400000-28800000-nowTick)/3600000)}h ${Math.floor(((Math.floor((new Date(pet.daily_claimed_at).getTime()+28800000)/86400000)+1)*86400000-28800000-nowTick)%3600000/60000)}m ${Math.floor(((Math.floor((new Date(pet.daily_claimed_at).getTime()+28800000)/86400000)+1)*86400000-28800000-nowTick)%60000/1000)}s`:'Daily at 12 AM PH time: 120 coins, 2 meals and 5 Berry Parfaits!'}</p><button disabled={busy||Boolean(pet.daily_claimed_at&&Date.now()<(Math.floor((new Date(pet.daily_claimed_at).getTime()+28800000)/86400000)+1)*86400000-28800000)} onClick={()=>void execute('/daily/claim',{})}>{pet.daily_claimed_at&&Date.now()<(Math.floor((new Date(pet.daily_claimed_at).getTime()+28800000)/86400000)+1)*86400000-28800000?'Cooling down':'Claim reward'}</button></div></aside><div className="main-column">{tab==='home'?<><section className="paw-stats-hud" aria-label="Pet stats"><div className="paw-hud-title"><b>{pet.name}</b><small>Level {pet.level}</small></div><div className="paw-hud-grid">{([['Fullness',pet.hunger,'#eeb06d'],['Happiness',pet.happiness,'#ed91b3'],['Energy',pet.energy,'#9b9fe7'],['Cleanliness',pet.cleanliness,'#79c7d5'],['Affection',pet.affection,'#b69ce3']] as [string,number,string][]).map(([label,value,color])=><div className={'paw-hud-stat'+(value<25?' paw-hud-low':'')} key={label}><div className="paw-hud-label"><span>{label}</span><b>{value}%</b></div><div className="paw-hud-track"><div style={{width:`${Math.max(0,Math.min(100,value))}%`,background:color}}/></div></div>)}</div></section><section className="room-card"><div className="paw-room-toolbar"><div className="paw-room-dropdown"><button className="paw-room-dropdown-trigger" aria-expanded={roomMenuOpen} onClick={()=>setRoomMenuOpen(v=>!v)}>☰ {({living:'Room',bedroom:'Bedroom',studio:'Creative Studio',sports:'Sports Room'} as Record<string,string>)[pet.active_room||'living']} ▾</button>{roomMenuOpen&&<div className="paw-room-dropdown-list">{([['living','Room'],['bedroom','Bedroom'],['studio','Creative Studio'],['sports','Sports Room']] as const).map(([id,label])=>{const owned=id==='living'||id==='bedroom'||(pet.unlocked_rooms||[]).includes(id);return <button key={id} disabled={busy} className={(pet.active_room||'living')===id?'active':''} onClick={async()=>{const result=await execute('/rooms',{room:id,action:owned?'enter':'unlock'});if(result){setRoomMenuOpen(false);setSelectedFurniture(null);setEditFurniture(false);await refresh()}}}>{label}{!owned&&<small><LockKeyhole size={13} aria-hidden="true"/> {id==='studio'?'5,000':'8,000'} coins</small>}</button>})}</div>}</div><div className="paw-room-tools"><button type="button" className="paw-room-theme-trigger" onClick={()=>setThemeModal(true)} aria-label="Change room atmosphere" title="Room atmosphere"><svg className="paw-room-theme-svg" viewBox="0 0 76 42" preserveAspectRatio="none" aria-hidden="true"><rect width="76" height="42" fill={roomColors[0]}/><path d="M0 25H76V42H0Z" fill={roomColors[1]}/><circle cx="45" cy="17" r="10" fill={roomColors[2]} opacity=".72"/><path d="M14 11h11M19.5 5.5v11" stroke="white" strokeWidth="2.2" strokeLinecap="round"/></svg></button><button type="button" className="paw-room-note-trigger" onClick={()=>{setNoteDraft(user.pet_note||'');setEditingNote(true)}} aria-label="Edit Pet Note" title="Pet Note"><span className="paw-pet-note-icon" aria-hidden="true"><Mail size={21} strokeWidth={1.85}/><PawPrint size={12} strokeWidth={2.1}/></span></button></div></div>{themeModal&&<div className="paw-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setThemeModal(false)}}><section className="paw-modal paw-theme-modal" role="dialog" aria-modal="true" aria-labelledby="paw-theme-title"><div className="paw-modal-top"><div><div className="eyebrow">Make it yours</div><h2 id="paw-theme-title">Room atmosphere</h2></div><button className="paw-modal-close" aria-label="Close atmosphere selector" onClick={()=>setThemeModal(false)}><X size={19} strokeWidth={1.8} aria-hidden="true"/></button></div><div className="paw-theme-picker"><div className="paw-theme-options">{Object.entries(roomThemeNames).sort(([a],[b])=>(ITEM_LEVEL_REQUIREMENTS[a]||1)-(ITEM_LEVEL_REQUIREMENTS[b]||1)).map(([id,name])=>{
-    const colors=themes[id];const owned=id==='blush'||pet.owned_items.includes(id);
-    const active=(pet.room_theme||'blush')===id;
-    const required=ITEM_LEVEL_REQUIREMENTS[id]||1;
-    const unlocked=pet.level>=required;
-    const price=store.find(item=>item[0]===id)?.[3]||0;
-    return <button key={id} type="button" className={'paw-theme-option '+(active?'active ':owned?'owned ':'')+(!owned?'unowned ':'')+(!unlocked&&!owned?'level-locked':'')} disabled={busy||active||(!owned&&!unlocked)} title={active?'Currently applied':owned?'Apply this atmosphere':!unlocked?`Unlocks at Level ${required}`:`Buy for ${price.toLocaleString()} Paw Coins`} onClick={()=>void execute('/item',{item:id,mode:owned?'equip':'buy'})}>
-        {active&&<span className="paw-theme-current-tag"><Check size={12}/> In use</span>}
-        <span className="paw-theme-swatch" style={{background:`linear-gradient(155deg, ${colors[0]} 54%, ${colors[1]} 54%)`}}><i style={{background:colors[2]}}/></span>
-        <span className="paw-theme-name">{name}</span>
-        <span className={'paw-theme-action-label '+(active?'is-selected':owned?'can-apply':unlocked?'can-buy':'is-locked')}>{active?<><Check size={12} aria-hidden="true"/> Selected</>:owned?'Apply':unlocked?<><Coins size={13} aria-hidden="true"/> Buy · {price.toLocaleString()}</>:<><LockKeyhole size={12} aria-hidden="true"/> Level {required}</>}</span>
-    </button>
-})}</div></div></section></div>}<div className={"living-room paw-themed-room "+(pet.garden?._sleeping?"paw-room-sleeping ":"")+"paw-theme-"+(pet.room_theme||"blush")+" paw-room-"+(pet.active_room||"living")} style={{'--wall':roomColors[0],'--floor':roomColors[1],'--room-accent':roomColors[2]} as React.CSSProperties}>{pet.garden?._sleeping&&<div className="paw-room-night-overlay" aria-hidden="true"/>}<button type="button" className="paw-room-meals-trigger" aria-label="Feed pet" title="Feed pet" onClick={async()=>{setMealModal(true);setMealBusy(true);try{const response=await fetch(API+'/api/kitchen',{headers:{Authorization:'Bearer '+token}});const data=await response.json();if(!response.ok)throw Error(data.error||'Unable to load meals');setMealData({meals:data.kitchen?.meals||{},recipes:data.recipes||{}})}catch(e){setNotice(e instanceof Error?e.message:'Unable to load meals')}finally{setMealBusy(false)}}}><Utensils size={21} strokeWidth={2} aria-hidden="true"/></button><button type="button" className="paw-room-action paw-room-play" aria-label="Play games" title="Play games" onClick={()=>setPlayPickerOpen(true)}><Gamepad2 size={21}/></button><button type="button" className={"paw-room-action paw-room-nap "+(pet.garden?._sleeping?"active":"")} aria-label={pet.garden?._sleeping?"Wake pet":"Put pet to sleep"} title={pet.garden?._sleeping?"Wake pet":"Put pet to sleep"} aria-busy={sleepPending} onClick={()=>void togglePetSleep()}>{pet.garden?._sleeping?<Sun size={21}/>:<Moon size={21}/>}</button><button type="button" className={"paw-room-action paw-room-bathe "+(bathMode?"active":"")} aria-label={bathMode?"Finish bathing":"Bathe pet"} title={bathMode?"Finish bathing":"Bathe pet"} onClick={()=>{setBathMode(v=>!v);setCuddleMode(false);bathScrubbing.current=false;cuddleActive.current=false}}><Bath size={21}/></button><button type="button" className={"paw-room-action paw-room-cuddle "+(cuddleMode?"active":"")} aria-label={cuddleMode?"Finish cuddling":"Cuddle pet"} title={cuddleMode?"Finish cuddling":"Cuddle pet"} onClick={()=>{setCuddleMode(v=>!v);setBathMode(false);bathScrubbing.current=false;cuddleActive.current=false}}><HeartHandshake size={21}/></button>{cuddleMode&&<div className="paw-cuddle-hint" role="status"><Heart size={14}/> Gently stroke your pet · +4 affection/sec</div>}{bathMode&&<div className="paw-bath-hint" role="status"><Droplets size={14}/> Hold and scrub your pet · +5 cleanliness/sec</div>}{pet.garden?._sleeping&&<div className="paw-sleep-status" role="status"><Moon size={14}/> Sleeping · 25% slower stat decay</div>}<div className="wall-art">♡</div><RoomArchitecture room={pet.active_room||'living'}/><RoomFurniture room={pet.active_room||'living'} layout={furnitureLayout(pet.active_room||'living',pet.room_layouts)} editing={editFurniture} selected={selectedFurniture} onSelect={setSelectedFurniture} onMove={(id,x,y)=>void execute('/furniture',{room:pet.active_room||'living',action:'move',item:id,x,y})}/>{pet.active_room==='bedroom'&&<div className="paw-room-feature paw-bedroom-feature">☾ <span>Dream nook</span></div>}{pet.active_room==='studio'&&<div className="paw-room-feature paw-studio-feature">✎ <span>Art corner</span></div>}{pet.active_room==='sports'&&<div className="paw-room-feature paw-sports-feature">✦ <span>Play zone</span></div>}<div className="room-lights">✦ ✧ ✦ ✧ ✦</div><div className="rug">♡</div>{visible.map((p,i)=><Wanderer key={p.id} pet={p} own={p.user_id===user.id} index={i} sleeping={p.user_id===user.id?!!pet.garden?._sleeping:!!p.sleeping} bathing={bathMode&&p.user_id===user.id} cuddling={cuddleMode&&p.user_id===user.id} onPet={()=>{cuddleActive.current=true;cuddleLastMove.current=Date.now()}} onScrub={()=>{bathScrubbing.current=true;bathLastMove.current=Date.now()}} onToggleNote={petId=>setOpenRoomNoteId(current=>current===petId?null:petId)} noteOpen={openRoomNoteId===p.id}/>) }{openedRoomNote&&<aside id="paw-room-note-popover" className="paw-room-note-popover" role="region" aria-label={`${openedRoomNote.name}'s Pet Note`} onClick={event=>event.stopPropagation()}><div className="paw-room-note-popover-header"><span className="paw-room-note-popover-from"><Mail size={15} aria-hidden="true"/> {openedRoomNote.name}'s note</span><button type="button" className="paw-room-note-popover-close" aria-label="Close Pet Note" onClick={()=>setOpenRoomNoteId(null)}><X size={15} aria-hidden="true"/></button></div><p>{openedRoomNote.pet_note}</p><small>@{openedRoomNote.username}</small></aside>}</div><div className="paw-furniture-editor"><div className="paw-furniture-editor-top"><b>Room furniture</b><button className="secondary" onClick={()=>{setEditFurniture(v=>!v);setSelectedFurniture(null)}}>{editFurniture?'Done decorating':'Decorate'}</button></div>{editFurniture&&<><div className="paw-furniture-placed">{furnitureLayout(pet.active_room||'living',pet.room_layouts).map(f=><button className={selectedFurniture===f.id?'active':''} key={f.id} onClick={()=>setSelectedFurniture(f.id)}>{FURNITURE[f.id]?.name||f.id}</button>)}</div>{selectedFurniture&&<button className="secondary" onClick={async()=>{const r=await execute('/furniture',{room:pet.active_room||'living',action:'store',item:selectedFurniture});if(r)setSelectedFurniture(null)}}>Store selected furniture</button>}<h4>Available to place</h4><div className="paw-furniture-placed">{[...DEFAULTS[pet.active_room||'living'],...pet.owned_items.filter(id=>FURNITURE[id]?.room===(pet.active_room||'living'))].filter(id=>!furnitureLayout(pet.active_room||'living',pet.room_layouts).some(f=>f.id===id)).map(id=><button key={id} onClick={()=>void execute('/furniture',{room:pet.active_room||'living',action:'place',item:id})}>＋ {FURNITURE[id]?.name}</button>)}</div><button className="secondary" onClick={()=>void execute('/furniture',{room:pet.active_room||'living',action:'reset'})}>Restore default layout</button></>}</div></section>{mealModal&&<div className="paw-meals-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setMealModal(false)}}><section className="paw-meals-modal" role="dialog" aria-modal="true" aria-label="Feed your pet"><div className="paw-meals-header"><div><small>FROM YOUR KITCHEN</small><h3>Feed your pet</h3></div><button className="secondary" aria-label="Close meals" onClick={()=>setMealModal(false)}>×</button></div>{mealBusy?<p>Loading meals…</p>:!mealData||!Object.entries(mealData.meals).some(([id,n])=>n>0&&mealData.recipes[id])?<p className="paw-meals-empty">No cooked meals yet. Visit the Kitchen to cook something!</p>:<div className="paw-meals-list">{Object.entries(mealData.meals).filter(([id,n])=>n>0&&!!mealData.recipes[id]).map(([id,n])=>{const recipe=mealData.recipes[id];return <div className="paw-meal-row" key={id}><div className="paw-meal-art"><FoodArt id={id}/></div><div className="paw-meal-info"><b>{recipe.name}</b><small>{n} available</small><span>{[[recipe.hunger,'Hunger'],[recipe.happiness,'Happiness'],[recipe.energy,'Energy'],[recipe.xp,'XP']].filter(([v])=>Number(v)>0).map(([v,label])=>`+${v} ${label}`).join(' · ')}</span></div><button className="primary" disabled={mealBusy} onClick={async()=>{setMealBusy(true);try{const response=await fetch(API+'/api/kitchen',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({action:'serve',item:id})});const data=await response.json();if(!response.ok)throw Error(data.error||'Could not serve meal');setMealData(prev=>prev?{...prev,meals:data.kitchen?.meals||{}}:prev);setNotice(data.message||'Meal served!');await refresh()}catch(e){setNotice(e instanceof Error?e.message:'Unable to serve meal')}finally{setMealBusy(false)}}}>Serve</button></div>})}</div>}</section></div>}</>:tab==='friends'?<section className="panel paw-friends-panel"><div className="eyebrow">YOUR LITTLE COMMUNITY</div><div className="paw-friends-title-row"><SectionHeading title="Friends" Icon={Users}/><div className="paw-requests-launch-row"><button type="button" className={'paw-requests-launch paw-friends-mail-action '+(mail.some(m=>!m.read_at)?'has-unread':'')} onClick={openPawInbox} aria-label={`Open PawMail inbox, ${mail.filter(m=>!m.read_at).length} unread`} title="PawMail inbox"><Mail size={21} strokeWidth={1.8}/>{mail.some(m=>!m.read_at)&&<span className="paw-inbox-alert"/>}</button><button type="button" className="paw-requests-launch paw-friends-compose-action" onClick={()=>openPawComposer()} aria-label="Write PawMail" title="Write PawMail"><MailPlus size={21} strokeWidth={1.8}/></button><button type="button" className="paw-requests-launch" onClick={()=>setRequestsOpen(true)} aria-label={`Add friends and view friend requests (${pending.length})`} title="Add friends & requests"><UserRoundPlus size={21} strokeWidth={1.8} aria-hidden="true"/>{pending.length>0&&<span className="paw-requests-count">{pending.length}</span>}</button></div></div>{requestsOpen&&<div className="paw-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setRequestsOpen(false)}}><section className="paw-modal paw-requests-modal" role="dialog" aria-modal="true" aria-labelledby="paw-requests-modal-title"><div className="paw-modal-top"><div><div className="eyebrow">YOUR LITTLE COMMUNITY</div><h2 id="paw-requests-modal-title">Add friends <span className="paw-requests-count">{pending.length} pending</span></h2></div><button className="paw-modal-close" aria-label="Close friend requests" onClick={()=>setRequestsOpen(false)}><X size={19} strokeWidth={1.8} aria-hidden="true"/></button></div><div className="paw-requests-add"><h3>Add a friend</h3><div className="search-row"><input placeholder="Search exact username" value={friendSearch} onChange={e=>{setFriendSearch(e.target.value);setFound(null)}}/><button className="primary" onClick={async()=>{try{const r=await request('/users/search?username='+encodeURIComponent(friendSearch));setFound(r.user);if(!r.user)setNotice('No account with that username.')}catch(e:any){setNotice(e.message)}}}>Search</button></div>{found&&<div className="friend-row"><b>@{found.username}</b><button disabled={busy} onClick={()=>void execute('/friends/request',{username:found.username})}>Add friend ＋</button></div>}</div><h3 className="paw-requests-subheading">Friend requests ({pending.length})</h3><div className="paw-requests-list">{pending.length===0&&<p>No pending requests.</p>}{pending.map(f=><div className="friend-row" key={f.friend_id}><b>@{f.username}</b><div className="paw-friend-actions">{f.recipient_id===user.id?<button onClick={()=>void execute('/friends/'+f.friend_id+'/accept',{},'POST')}>Accept ✓</button>:<small>Request sent</small>} <button className="secondary" onClick={()=>setRemoveFriend(f)}>Remove</button></div></div>)} </div></section></div>}{accepted.length===0&&<p>No friends yet. Tap the person-plus icon above to add a friend.</p>}{accepted.map(f=><div className="friend-row" key={f.friend_id}><div className="paw-friend-identity"><span className="paw-friend-avatar">{roomPets.find(p=>p.user_id===f.friend_id)?<PetArt species={roomPets.find(p=>p.user_id===f.friend_id)!.species} breed={roomPets.find(p=>p.user_id===f.friend_id)!.breed} cosmetic={roomPets.find(p=>p.user_id===f.friend_id)!.equipped_cosmetic} outfit={roomPets.find(p=>p.user_id===f.friend_id)!.equipped_outfit}/>:<span className="paw-avatar-placeholder">♡</span>}</span><span className="paw-friend-name">@{f.username}{roomPets.find(p=>p.user_id===f.friend_id)&&<small>{roomPets.find(p=>p.user_id===f.friend_id)!.name}</small>}</span></div><div className="paw-friend-actions paw-friend-icon-actions"><button type="button" className="paw-friend-icon-button paw-friend-mail" title="Send PawMail" aria-label={`Send PawMail to @${f.username}`} onClick={()=>openPawComposer(f.friend_id)}><MailPlus size={19} strokeWidth={1.8} aria-hidden="true"/></button><button type="button" className="paw-friend-icon-button paw-friend-gift" title="Gift 25 coins" aria-label={`Gift 25 coins to @${f.username}`} disabled={busy} onClick={()=>void execute('/gifts',{friendId:f.friend_id})}><Gift size={19} strokeWidth={1.8} aria-hidden="true"/></button><button type="button" className="paw-friend-icon-button paw-friend-unfriend" title="Unfriend" aria-label={`Unfriend @${f.username}`} onClick={()=>setRemoveFriend(f)}><UserRoundMinus size={19} strokeWidth={1.8} aria-hidden="true"/></button></div></div>)}</section>:tab==='wardrobe'?<section className="panel"><div className="eyebrow">YOUR COZY CLOSET</div><SectionHeading title="Wardrobe" Icon={Shirt}/><OutfitWardrobe pet={pet} execute={execute} busy={busy}/><h3>Breeds, wildlife & prehistoric relatives</h3><div className="shop-grid">{[...extraBreedStore,...addedBreedStore,...wildSpeciesStore].filter(item=>breedFor(pet.species,item[0])).sort((a,b)=>(ITEM_LEVEL_REQUIREMENTS[a[0]]||1)-(ITEM_LEVEL_REQUIREMENTS[b[0]]||1)||a[3]-b[3]).map(([id,, ,price])=><div className={"product "+(!pet.owned_breeds.includes(id)&&pet.level<(ITEM_LEVEL_REQUIREMENTS[id]||0)?"paw-level-locked":"")} key={id}><span><PetArt species={pet.species} breed={id} cosmetic="none"/></span><b>{id.replaceAll('_',' ')}</b>{wildSpeciesStore.some(item=>item[0]===id)&&<small>{['smilodon','dire_wolf','nuralagus','short_faced_bear','waitaha_penguin'].includes(id)?'Extinct relative':'Wild relative / species'}</small>}<small>{pet.owned_breeds.includes(id)?'Unlocked ✓':pet.level<(ITEM_LEVEL_REQUIREMENTS[id]||0)?`Unlocks at Level ${ITEM_LEVEL_REQUIREMENTS[id]}`:`${price} coins`}</small>{!pet.owned_breeds.includes(id)&&pet.level<(ITEM_LEVEL_REQUIREMENTS[id]||0)&&<div className="paw-level-overlay"><LockKeyhole size={20}/><b>Level {ITEM_LEVEL_REQUIREMENTS[id]}</b></div>}<button disabled={busy||(!pet.owned_breeds.includes(id)&&pet.level<(ITEM_LEVEL_REQUIREMENTS[id]||0))} onClick={()=>void execute('/item',{item:id,mode:pet.owned_breeds.includes(id)?(pet.breed===id?'unequip':'equip'):'buy'})}>{pet.breed===id?'Use default':pet.owned_breeds.includes(id)?'Equip':`Buy · ${price}  coins`}</button></div>)}</div></section>:tab==='shop'?<section className="panel"><div className="eyebrow">COLLECT & CUSTOMIZE</div><SectionHeading title="Market" Icon={ShoppingBag}/><div className="paw-market-furniture"><h3>Furniture Shop</h3><div className="paw-market-tabs-scroll" role="region" aria-label="Furniture rooms" tabIndex={0}><div className="paw-market-tabs">{([['living','Living Room'],['bedroom','Bedroom'],['studio','Creative Studio'],['sports','Sports Room']] as const).map(([id,label])=><button key={id} className={marketRoom===id?'active':''} onClick={e=>{setMarketRoom(id);e.currentTarget.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'})}}>{label}</button>)}</div></div><div className="shop-grid">{Object.entries(FURNITURE).filter(([id,f])=>f.room===marketRoom&&f.price>0).sort(([idA],[idB])=>(FURNITURE_UNLOCK_LEVELS[idA]||1)-(FURNITURE_UNLOCK_LEVELS[idB]||1)||FURNITURE[idA].price-FURNITURE[idB].price).map(([id,f])=>{const owned=pet.owned_items.includes(id);const placed=furnitureLayout(marketRoom,pet.room_layouts).some(p=>p.id===id);const unlocked=['living','bedroom'].includes(marketRoom)||(pet.unlocked_rooms||[]).includes(marketRoom);const requiredLevel=FURNITURE_UNLOCK_LEVELS[id]||1;const locked=!owned&&pet.level<requiredLevel;return <div className={"product "+(locked?"paw-level-locked":"")} key={id}><span className="paw-furniture-market-art"><FurnitureArt kind={f.kind} itemId={id}/></span><b>{f.name}</b><small>{owned?'Owned ✓':locked?`Unlocks at Level ${requiredLevel}`:f.price.toLocaleString()+' coins'}</small>{locked&&<div className="paw-level-overlay"><LockKeyhole size={17}/><b>Level {requiredLevel}</b></div>}<button disabled={busy||locked||(!unlocked&&owned)} onClick={()=>void execute('/furniture',{room:marketRoom,action:owned?(placed?'store':'place'):'buy',item:id})}>{owned?(placed?'Store':'Place in room'):locked?'Locked':'Buy · '+f.price.toLocaleString()+' coins'}</button></div>})}</div></div></section>:tab==='multiplayer'?<Multiplayer api={API} token={token} userId={user.id} friends={friends} coins={pet.coins} refreshSignal={multiplayerSignal} onUpdate={refresh} onToast={setNotice}/>:tab==='games'?<section className="panel"><div className="eyebrow">THE LITTLE ARCADE</div><SectionHeading title="Mini-games" Icon={Gamepad2}/><div className="games-grid">{PAW_GAMES.map(([id,icon,label])=><button key={id} onClick={()=>{void launchGame(id,pet.species)}}><span className={"paw-game-art paw-game-art-"+id}>{id==='mole'?<MoleGameIcon/>:id==='claw'?<ClawMenuIcon/>:<PawIcon name={id} size={34}/>}</span><b>{label}</b><small>{id === 'claw' ? 'Prize machine · 15s cooldown' : `Personal best: ${records.find(r=>r.game===id)?.best||0}`}</small><strong>PLAY →</strong></button>)}</div></section>:tab==='garden'?<GardenPanel garden={pet.garden} coins={pet.coins} busy={busy} nowTick={nowTick} onAction={body=>execute('/garden',body)}/>:tab==='kitchen'?<Kitchen token={token} api={API} onPetChange={refresh} onToast={setNotice}/>:tab==='missions'?<MissionCenter token={token} api={API} onPetChange={refresh} onToast={setNotice}/>:<section className="panel"><div className="eyebrow">YOUR PAWPAL JOURNEY</div><SectionHeading title="Missions" Icon={Trophy}/><div className="stats-grid">{[['Pet level',pet.level],['Coins',pet.coins],['Friends',accepted.length],['Flowers',pet.garden.flowers],['Toys',pet.toys],['Growth',pet.level<5?'Baby':pet.level<30?'Teen':'Adult']].map(([label,value])=><div className="stat" key={String(label)}><b>{label}</b><h2>{value}</h2></div>)}</div><h3>Achievement badges</h3>{[['first_friend','friends','Make a friend'],['level_5','level','Reach level 5'],['rich','coins','Save 500 coins']].sort((a,b)=>{const status=(code:string)=>achievements.includes(code)?2:code==='level_5'&&pet.level>=5||code==='rich'&&pet.coins>=500||code==='first_friend'&&accepted.length>0?0:1;return status(a[0])-status(b[0])}).map(([code,icon,label])=><div className="friend-row" key={code}><b><PawIcon name={icon}/> {label}</b><button disabled={achievements.includes(code)} onClick={()=>void execute('/achievements/claim-all',{}).then(()=>void refresh())}>{achievements.includes(code)?'Claimed ✓':(code==='level_5'&&pet.level>=5||code==='rich'&&pet.coins>=500||code==='first_friend'&&accepted.length>0)?'Claim all ready':'In progress'}</button></div>)}<h3>Daily quests</h3></section>}</div></div></>}</main>{playPickerOpen&&pet&&<div className="paw-modal-backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)setPlayPickerOpen(false)}}><section className="paw-modal paw-play-picker" role="dialog" aria-modal="true" aria-label="Play with your pet"><div className="paw-modal-top"><div><div className="eyebrow">PLAY TOGETHER</div><h2>Choose a game</h2><small>Playing uses energy and gets your paws a little dirty.</small></div><button className="paw-modal-close" aria-label="Close games" onClick={()=>setPlayPickerOpen(false)}><X size={19}/></button></div><div className="paw-play-options">{PAW_GAMES.map(([id,,label])=><button key={id} onClick={()=>{setPlayPickerOpen(false);void launchGame(id,pet.species)}}><PawIcon name={id} size={24}/><span>{label}</span></button>)}</div></section></div>}<footer>@ {new Date().getFullYear()} PawPal · Created by <b>HORHEEE</b> · All rights reserved.</footer>{game&&pet&&(game==='claw'?<PawClaw pet={pet} onQuit={()=>setGame(null)} onPlay={async()=>{const result=await execute('/claw/play',{});if(result)await refresh();return result}}/>:game==='mole'?<WhackAMole onQuit={()=>setGame(null)} onFinish={score=>claimArcadeReward(game,score)}/>:<MiniGame key={game} kind={game} pet={pet} onQuit={()=>setGame(null)} onFinish={score=>claimArcadeReward(game,score)}/>)}</div>}

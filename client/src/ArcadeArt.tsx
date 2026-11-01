@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 /** Artwork shared by the arcade canvas and its on-screen jump instruction. */
 export const arcadeSpriteSrc = (document: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(document)}`;
@@ -13,12 +13,12 @@ const cactusStem = (fill: string, x: number, y: number, width: number, height: n
 
 const cactusSpikes = (points: Array<[number, number, number]>) => points.map(([x, y, direction]) => `
     <path d="M${x} ${y}l${direction * 8} -5l${-direction * 3} 10Z" fill="#f6e8bb" stroke="#548b70" stroke-width="1.3" stroke-linejoin="round" />
-`).join('');
+`).join("");
 
 export const CACTUS_ART = [
     svgDocument(`
         <ellipse cx="51" cy="110" rx="38" ry="6" fill="#9cbaa2" opacity=".45" />
-        ${cactusStem('#82c7a0', 39, 18, 24, 90)}
+        ${cactusStem("#82c7a0", 39, 18, 24, 90)}
         <path d="M42 77H30Q22 77 22 67V50" fill="none" stroke="#548b70" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" />
         <path d="M60 64H71Q79 64 79 55V39" fill="none" stroke="#548b70" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" />
         <path d="M42 77H30Q22 77 22 67V50M60 64H71Q79 64 79 55V39" fill="none" stroke="#8fd3a9" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
@@ -27,15 +27,15 @@ export const CACTUS_ART = [
     `),
     svgDocument(`
         <ellipse cx="50" cy="110" rx="43" ry="6" fill="#9cbaa2" opacity=".45" />
-        ${cactusStem('#87caaa', 20, 41, 23, 68)}
-        ${cactusStem('#75bea0', 57, 11, 24, 98)}
+        ${cactusStem("#87caaa", 20, 41, 23, 68)}
+        ${cactusStem("#75bea0", 57, 11, 24, 98)}
         <path d="M22 72H14Q10 72 10 62V52M79 68H87Q91 68 91 57V47" fill="none" stroke="#548b70" stroke-width="13" stroke-linecap="round" />
         <path d="M22 72H14Q10 72 10 62V52M79 68H87Q91 68 91 57V47" fill="none" stroke="#9ed6b6" stroke-width="8" stroke-linecap="round" />
         ${cactusSpikes([[20, 53, -1], [43, 63, 1], [57, 31, -1], [81, 38, 1], [57, 80, -1], [81, 91, 1]])}
     `),
     svgDocument(`
         <ellipse cx="51" cy="111" rx="40" ry="6" fill="#9cbaa2" opacity=".45" />
-        ${cactusStem('#86c5a0', 32, 34, 36, 76)}
+        ${cactusStem("#86c5a0", 32, 34, 36, 76)}
         <path d="M35 82H23Q16 82 16 72V58M66 68H78Q85 68 85 58V50" fill="none" stroke="#548b70" stroke-width="14" stroke-linecap="round" />
         <path d="M35 82H23Q16 82 16 72V58M66 68H78Q85 68 85 58V50" fill="none" stroke="#9dd9b0" stroke-width="9" stroke-linecap="round" />
         ${cactusSpikes([[32, 52, -1], [68, 46, 1], [32, 75, -1], [68, 92, 1], [16, 63, -1], [85, 56, 1]])}
@@ -108,8 +108,20 @@ export function JumpGuide(): ReactNode {
         <svg viewBox="0 0 176 70" className="paw-jump-guide-svg" role="img" aria-label="Jump over the spiky cactus">
             <path d="M10 55H169" stroke="#b4cba9" strokeWidth="3" strokeLinecap="round" />
             <g transform="translate(112 21) scale(.42)">
-                <path d="M44 98V16Q44 7 54 7Q64 7 64 16V98M44 74H24Q14 74 14 64V48M64 61H79Q87 61 87 50V38" fill="none" stroke="#60967c" strokeWidth="17" strokeLinecap="round" />
-                <path d="M44 98V16Q44 7 54 7Q64 7 64 16V98M44 74H24Q14 74 14 64V48M64 61H79Q87 61 87 50V38" fill="none" stroke="#9bd6ac" strokeWidth="10" strokeLinecap="round" />
+                <path
+                    d="M44 98V16Q44 7 54 7Q64 7 64 16V98M44 74H24Q14 74 14 64V48M64 61H79Q87 61 87 50V38"
+                    fill="none"
+                    stroke="#60967c"
+                    strokeWidth="17"
+                    strokeLinecap="round"
+                />
+                <path
+                    d="M44 98V16Q44 7 54 7Q64 7 64 16V98M44 74H24Q14 74 14 64V48M64 61H79Q87 61 87 50V38"
+                    fill="none"
+                    stroke="#9bd6ac"
+                    strokeWidth="10"
+                    strokeLinecap="round"
+                />
                 <path d="M43 28l-8 -5M64 34l8 -5M44 56l-7 -5M64 72l8 -5" stroke="#f6e1ad" strokeWidth="4" strokeLinecap="round" />
             </g>
             <path d="M19 43Q59 -14 108 25" fill="none" stroke="#c080a6" strokeWidth="3.5" strokeLinecap="round" strokeDasharray="6 6" />
@@ -179,20 +191,47 @@ export const BUILDING_ART = [
 /** Real Memory Tiles artwork used on the game buttons and in the developer gallery. */
 /** Complete selection used by the client Heart Color Match game. */
 export const PAW_COLOR_PALETTE = [
-    '#f18eae', '#b99be8', '#f6c467', '#91cdb3',
-    '#8ac6ec', '#e99f7c', '#a2b77b', '#df8dd5',
-    '#e77f95', '#78b6c5', '#c3a15e', '#8b9ed9',
-    '#ce8dba', '#83b78b', '#db997a', '#a3a0ca'
+    "#f18eae",
+    "#b99be8",
+    "#f6c467",
+    "#91cdb3",
+    "#8ac6ec",
+    "#e99f7c",
+    "#a2b77b",
+    "#df8dd5",
+    "#e77f95",
+    "#78b6c5",
+    "#c3a15e",
+    "#8b9ed9",
+    "#ce8dba",
+    "#83b78b",
+    "#db997a",
+    "#a3a0ca"
 ] as const;
 
 export const MEMORY_HEARTS = [
-    { label: 'Pink', color: '#ed91b7' },
-    { label: 'Lavender', color: '#b29ade' },
-    { label: 'Honey', color: '#efc86e' },
-    { label: 'Mint', color: '#90cbaa' }
+    {
+        label: "Pink",
+        color: "#ed91b7"
+    },
+    {
+        label: "Lavender",
+        color: "#b29ade"
+    },
+    {
+        label: "Honey",
+        color: "#efc86e"
+    },
+    {
+        label: "Mint",
+        color: "#90cbaa"
+    }
 ] as const;
 
-export function MemoryHeart({ index, size = 38 }: { index: number; size?: number }) {
+export function MemoryHeart({ index, size = 38 }: {
+    index: number;
+    size?: number
+}) {
     const entry = MEMORY_HEARTS[index] || MEMORY_HEARTS[0];
     return (
         <svg viewBox="0 0 48 48" width={size} height={size} aria-label={`${entry.label} heart`} role="img">
@@ -202,10 +241,18 @@ export function MemoryHeart({ index, size = 38 }: { index: number; size?: number
 }
 
 /** The same illustrated paint palette shown for each Heart Color Match answer. */
-export function PaintPalette({ color, size = 65 }: { color: string; size?: number }) {
+export function PaintPalette({ color, size = 65 }: {
+    color: string;
+    size?: number
+}) {
     return (
         <svg viewBox="0 0 94 90" width={size} height={size} aria-label={`Paint palette ${color}`} role="img">
-            <path d="M47 7C22 7 8 25 8 48C8 69 26 83 47 83C58 83 65 77 65 69C65 62 55 60 55 51C55 44 64 41 71 42C83 43 87 35 82 24C76 13 61 7 47 7Z" fill="#fff5e8" stroke="#ad879c" strokeWidth="3" />
+            <path
+                d="M47 7C22 7 8 25 8 48C8 69 26 83 47 83C58 83 65 77 65 69C65 62 55 60 55 51C55 44 64 41 71 42C83 43 87 35 82 24C76 13 61 7 47 7Z"
+                fill="#fff5e8"
+                stroke="#ad879c"
+                strokeWidth="3"
+            />
             <circle cx="27" cy="33" r="7" fill="#f1c2d5" />
             <circle cx="45" cy="23" r="7" fill="#c7b7e7" />
             <circle cx="65" cy="30" r="7" fill="#f7dca6" />
@@ -216,7 +263,9 @@ export function PaintPalette({ color, size = 65 }: { color: string; size?: numbe
     );
 }
 
-export function TargetHeart({ color }: { color: string }) {
+export function TargetHeart({ color }: {
+    color: string
+}) {
     return (
         <svg viewBox="0 0 100 92" width="116" height="108" aria-label="Target heart" role="img">
             <path d="M50 84 C30 65 3 47 6 26 C9 3 37 0 50 19 C63 0 91 3 94 26 C97 47 70 65 50 84" fill={color} stroke="#fff" strokeWidth="3" />
@@ -231,18 +280,55 @@ export function ClawGrabberArt() {
         <svg className="paw-claw-grabber" role="img" aria-label="Mechanical claw" viewBox="0 0 90 95">
             <rect x="31" y="2" width="28" height="27" rx="9" fill="#d9a0bd" stroke="#866b88" strokeWidth="4" />
             <circle cx="45" cy="15" r="6" fill="#fff3f8" />
-            <path d="M34 27 C18 30 10 45 12 61 L24 78 L33 68 L26 57 Q25 48 38 41 M56 27 C72 30 80 45 78 61 L66 78 L57 68 L64 57 Q65 48 52 41" fill="#e9c5d6" stroke="#866b88" strokeWidth="5" strokeLinejoin="round" />
+            <path
+                d="M34 27 C18 30 10 45 12 61 L24 78 L33 68 L26 57 Q25 48 38 41 M56 27 C72 30 80 45 78 61 L66 78 L57 68 L64 57 Q65 48 52 41"
+                fill="#e9c5d6"
+                stroke="#866b88"
+                strokeWidth="5"
+                strokeLinejoin="round"
+            />
             <path d="M34 30L40 45 M56 30L50 45" stroke="#866b88" strokeWidth="4" />
         </svg>
     );
 }
 
-export function MoleGameIcon(){return <svg viewBox="0 0 36 36" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 28c1-5 5-7 12-7s11 2 12 7"/><path d="M8 28h20"/><path d="M11 21v-4c0-6 3-9 7-9s7 3 7 9v4"/><path d="M11 11 8 7c-2-3 3-6 6-3l3 5M25 11l3-4c2-3-3-6-6-3l-3 5"/><circle cx="14.5" cy="15" r=".9" fill="currentColor" stroke="none"/><circle cx="21.5" cy="15" r=".9" fill="currentColor" stroke="none"/><path d="m16 19 2 1 2-1"/><path d="M4 21 2 19M32 21l2-2"/></svg>}
+export function MoleGameIcon() {
+    return <svg
+        viewBox="0 0 36 36"
+        width="34"
+        height="34"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+    >
+        <path d="M6 28c1-5 5-7 12-7s11 2 12 7" />
+        <path d="M8 28h20" />
+        <path d="M11 21v-4c0-6 3-9 7-9s7 3 7 9v4" />
+        <path d="M11 11 8 7c-2-3 3-6 6-3l3 5M25 11l3-4c2-3-3-6-6-3l-3 5" />
+        <circle cx="14.5" cy="15" r=".9" fill="currentColor" stroke="none" />
+        <circle cx="21.5" cy="15" r=".9" fill="currentColor" stroke="none" />
+        <path d="m16 19 2 1 2-1" />
+        <path d="M4 21 2 19M32 21l2-2" />
+    </svg>
+}
 
 /** Same Paw Claw SVG used on the player game-selection card. */
 export function ClawMenuIcon() {
-    return <svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" role="img" aria-label="Paw Claw menu icon">
-        <path d="M4 4h26M17 4v11m-7 0 3 9 4-4 4 4 3-9"/>
-        <path d="M7 29h20M9 25v4m16-4v4"/>
+    return <svg
+        width="34"
+        height="34"
+        viewBox="0 0 34 34"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.1"
+        strokeLinecap="round"
+        role="img"
+        aria-label="Paw Claw menu icon"
+    >
+        <path d="M4 4h26M17 4v11m-7 0 3 9 4-4 4 4 3-9" />
+        <path d="M7 29h20M9 25v4m16-4v4" />
     </svg>;
 }

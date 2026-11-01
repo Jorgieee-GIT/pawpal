@@ -1,0 +1,538 @@
+.paw-settings-backdrop {
+    z-index: 5200;
+}
+
+.paw-settings-modal {
+    width: min(100%, 700px);
+    max-height: min(90dvh, 850px);
+    padding: 26px;
+    color: #70475f;
+}
+
+.paw-settings-header {
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.paw-settings-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.paw-settings-heading-icon {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    border-radius: 15px;
+    color: #a35b85;
+    background: #ffe7f1;
+    border: 1px solid #f3c9dc;
+}
+
+.paw-settings-heading h2 {
+    margin: 0;
+    font-size: 25px;
+}
+
+.paw-settings-heading p {
+    margin: 5px 0 0;
+    color: #9a7387;
+    font-size: 13px;
+}
+
+.paw-settings-section {
+    padding: 17px;
+    margin-top: 13px;
+    background: #fff;
+    border: 1px solid #f0d6e3;
+    border-radius: 20px;
+}
+
+.paw-settings-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: #9c6f92;
+}
+
+.paw-settings-section-heading h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #744b66;
+}
+
+.paw-settings-section-heading span {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #a68b99;
+}
+
+.paw-settings-appearance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.paw-settings-appearance {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    min-width: 0;
+    padding: 8px !important;
+    border: 2px solid #efd9e6 !important;
+    background: #fffafc !important;
+    border-radius: 15px !important;
+    color: #7b536b !important;
+    text-align: left;
+    box-shadow: none !important;
+    transition: border-color 0.16s ease, transform 0.16s ease, background 0.16s ease;
+}
+
+.paw-settings-appearance:hover {
+    transform: translateY(-2px);
+    border-color: #c991b4 !important;
+}
+
+.paw-settings-appearance.is-selected {
+    border-color: #cc7ead !important;
+    background: #fff0f7 !important;
+}
+
+.paw-settings-appearance-art {
+    display: block;
+    overflow: hidden;
+    width: 100%;
+    border-radius: 10px;
+    aspect-ratio: 184 / 112;
+}
+
+.paw-settings-appearance-art svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.paw-settings-appearance-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin: 9px 3px 0;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.paw-settings-appearance-caption {
+    display: block;
+    margin: 3px 3px 4px;
+    font-size: 11px;
+    color: #a17f90;
+}
+
+.paw-settings-hint {
+    margin: 12px 2px 0;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #96758b;
+}
+
+.paw-settings-switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 12px 0;
+    cursor: pointer;
+}
+
+.paw-settings-setting-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.paw-settings-setting-label span:last-child {
+    min-width: 0;
+}
+
+.paw-settings-setting-label strong,
+.paw-settings-now-playing strong {
+    display: block;
+    color: #6e4962;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.paw-settings-setting-label small,
+.paw-settings-now-playing small {
+    display: block;
+    margin-top: 4px;
+    color: #9e8190;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.paw-settings-round-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border: 1px solid #edd0e1;
+    border-radius: 13px;
+    color: #b36f9b;
+    background: #fcecf4;
+}
+
+.paw-settings-switch {
+    position: relative;
+    width: 43px;
+    height: 24px;
+    flex: 0 0 43px;
+    margin: 0;
+    border-radius: 99px;
+    background: #e4d7df;
+    appearance: none;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.paw-settings-switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px #0002;
+    transition: transform 0.2s ease;
+}
+
+.paw-settings-switch:checked {
+    background: #c785ad;
+}
+
+.paw-settings-switch:checked::after {
+    transform: translateX(19px);
+}
+
+.paw-settings-switch:focus-visible,
+.paw-settings-appearance:focus-visible {
+    outline: 3px solid #9164ae;
+    outline-offset: 2px;
+}
+
+.paw-settings-volume {
+    padding: 13px 0 8px;
+    border-block: 1px solid #f6e5ed;
+}
+
+.paw-settings-volume-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 11px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.paw-settings-volume-top label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.paw-settings-volume-top output {
+    font-variant-numeric: tabular-nums;
+}
+
+/* The native range input remains keyboard- and touch-accessible. Its thumb
+   uses the very same SVG shown in Develop -> Settings art. */
+.paw-settings-volume .paw-settings-paw-slider {
+    display: block;
+    width: 100%;
+    height: 42px;
+    margin: 0;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background: transparent;
+    cursor: pointer;
+    touch-action: pan-x;
+}
+
+.paw-settings-paw-slider::-webkit-slider-runnable-track {
+    height: 9px;
+    border: 1px solid #e7bdcf;
+    border-radius: 999px;
+    background: linear-gradient(
+        to right,
+        #d688b4 0%,
+        #d688b4 var(--paw-volume-progress),
+        #f4e4ed var(--paw-volume-progress),
+        #f4e4ed 100%
+    );
+}
+
+.paw-settings-paw-slider::-moz-range-track {
+    height: 9px;
+    border: 1px solid #e7bdcf;
+    border-radius: 999px;
+    background: linear-gradient(
+        to right,
+        #d688b4 0%,
+        #d688b4 var(--paw-volume-progress),
+        #f4e4ed var(--paw-volume-progress),
+        #f4e4ed 100%
+    );
+}
+
+.paw-settings-paw-slider::-webkit-slider-thumb {
+    width: 36px;
+    height: 36px;
+    margin-top: -14px;
+    border: 0;
+    border-radius: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background: url("/paw-volume-thumb.svg") center / contain no-repeat;
+    filter: drop-shadow(0 2px 2px rgb(117 59 100 / 28%));
+}
+
+.paw-settings-paw-slider::-moz-range-thumb {
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 0;
+    background: url("/paw-volume-thumb.svg") center / contain no-repeat;
+    filter: drop-shadow(0 2px 2px rgb(117 59 100 / 28%));
+}
+
+.paw-settings-paw-slider:focus-visible {
+    outline: 2px solid #8c579c;
+    outline-offset: 2px;
+    border-radius: 12px;
+}
+
+.paw-dark .paw-settings-paw-slider::-webkit-slider-runnable-track {
+    border-color: #785d79;
+}
+
+.paw-dark .paw-settings-paw-slider::-moz-range-track {
+    border-color: #785d79;
+}
+
+.paw-settings-secondary-switch {
+    margin-block: 14px;
+}
+
+.paw-settings-now-playing {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px;
+    border: 1px dashed #e9cadd;
+    border-radius: 14px;
+    background: #fff8fb;
+}
+
+.paw-settings-now-playing > span:nth-child(2) {
+    flex: 1;
+    min-width: 0;
+}
+
+.paw-settings-track-status {
+    flex: 0 0 auto;
+    color: #936b86;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.paw-settings-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 2px 0;
+}
+
+.paw-settings-footer > span {
+    color: #9c8190;
+    font-size: 12px;
+}
+
+.paw-settings-done {
+    padding: 11px 24px !important;
+    border-radius: 12px !important;
+    background: #c878a5 !important;
+    color: #fff !important;
+    font-weight: 800 !important;
+}
+
+.paw-dark .paw-settings-modal {
+    background: #352c3d;
+    color: #f9e9f3;
+    border-color: #77607c;
+}
+
+.paw-dark .paw-settings-section,
+.paw-dark .paw-settings-now-playing {
+    background: #403347;
+    border-color: #755c77;
+}
+
+.paw-dark .paw-settings-appearance,
+.paw-dark .paw-settings-appearance.is-selected {
+    background: #4a3953 !important;
+    color: #f8e9f5 !important;
+    border-color: #806886 !important;
+}
+
+.paw-dark .paw-settings-appearance.is-selected {
+    border-color: #e0a9cd !important;
+}
+
+.paw-dark .paw-settings-heading h2,
+.paw-dark .paw-settings-section-heading h3,
+.paw-dark .paw-settings-setting-label strong,
+.paw-dark .paw-settings-now-playing strong,
+.paw-dark .paw-settings-volume-top {
+    color: #f9e8f5;
+}
+
+.paw-dark .paw-settings-hint,
+.paw-dark .paw-settings-heading p,
+.paw-dark .paw-settings-section-heading span,
+.paw-dark .paw-settings-setting-label small,
+.paw-dark .paw-settings-now-playing small,
+.paw-dark .paw-settings-appearance-caption,
+.paw-dark .paw-settings-footer > span {
+    color: #d6bfd0;
+}
+
+@media (max-width: 540px) {
+    .paw-settings-backdrop {
+        padding: 9px;
+    }
+
+    .paw-settings-modal {
+        padding: 15px;
+        max-height: 94dvh;
+        border-radius: 19px;
+    }
+
+    .paw-settings-heading h2 {
+        font-size: 21px;
+    }
+
+    .paw-settings-heading p {
+        font-size: 11px;
+    }
+
+    .paw-settings-heading-icon {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+    }
+
+    .paw-settings-section {
+        padding: 12px;
+        border-radius: 15px;
+    }
+
+    .paw-settings-appearance-grid {
+        gap: 6px;
+    }
+
+    .paw-settings-appearance {
+        padding: 4px !important;
+        border-radius: 11px !important;
+    }
+
+    .paw-settings-appearance-art {
+        border-radius: 7px;
+    }
+
+    .paw-settings-appearance-label {
+        margin-top: 7px;
+        font-size: 12px;
+    }
+
+    .paw-settings-appearance-caption {
+        font-size: 9px;
+    }
+
+    .paw-settings-footer {
+        align-items: stretch;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .paw-settings-appearance,
+    .paw-settings-switch,
+    .paw-settings-switch::after {
+        transition: none;
+    }
+}
+
+/* Clean volume control: the complete draggable track sits inside an inset well. */
+.paw-settings-volume {
+    margin-top: 12px;
+    padding: 15px 17px 17px;
+    border: 1px solid #f1dce7;
+    border-radius: 15px;
+    background: #fff8fb;
+}
+
+.paw-settings-volume .paw-settings-paw-slider {
+    width: calc(100% - 32px);
+    max-width: calc(100% - 32px);
+    margin: 0 16px;
+    box-sizing: border-box;
+    border: 0;
+    outline-offset: 6px;
+}
+
+.paw-settings-done {
+    min-height: 41px;
+    min-width: 95px;
+    padding: 10px 20px !important;
+    border: 0 !important;
+    border-radius: 11px !important;
+    box-shadow: none !important;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.paw-settings-done:hover {
+    background: #b76b96 !important;
+    transform: none !important;
+}
+
+.paw-settings-done:focus-visible {
+    outline: 2px solid #9164ae;
+    outline-offset: 3px;
+}
+
+.paw-dark .paw-settings-volume {
+    background: #4d3d52;
+    border-color: #795d78;
+}
+
+@media (max-width: 540px) {
+    .paw-settings-volume {
+        padding: 13px 10px 14px;
+    }
+}

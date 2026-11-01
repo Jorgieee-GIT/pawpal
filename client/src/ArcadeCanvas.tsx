@@ -1,10 +1,21 @@
-import { useEffect, useRef } from 'react';
-import PetArt from './PetArt';
-import { BUILDING_ART, CACTUS_ART, VEHICLE_ART, JumpGuide, arcadeSpriteSrc } from './ArcadeArt';
-import { ROAD_BOTTOM, ROAD_CENTER, ROAD_HORIZON, PLAYER_ROAD_Y, PLAYER_PASS_DEPTH, laneX, roadHalfWidth, trafficProjection, trafficIsVisible, trafficRowLanes } from './PawRunTraffic';
+import { useEffect, useRef } from "react";
+import PetArt from "./PetArt";
+import { BUILDING_ART, CACTUS_ART, VEHICLE_ART, JumpGuide, arcadeSpriteSrc } from "./ArcadeArt";
+import {
+    ROAD_BOTTOM,
+    ROAD_CENTER,
+    ROAD_HORIZON,
+    PLAYER_ROAD_Y,
+    PLAYER_PASS_DEPTH,
+    laneX,
+    roadHalfWidth,
+    trafficProjection,
+    trafficIsVisible,
+    trafficRowLanes
+} from "./PawRunTraffic";
 
 type ArcadeProps = {
-    kind: 'dino' | 'runner';
+    kind: "dino" | "runner";
     species?: string;
     color?: string;
     breed?: string;
@@ -22,22 +33,30 @@ type Obstacle = {
 
 export default function ArcadeCanvas({
     kind,
-    species = 'cat',
-    color = 'classic',
-    breed = 'classic',
-    cosmetic = 'none',
+    species = "cat",
+    color = "classic",
+    breed = "classic",
+    cosmetic = "none",
     onScore,
     onGameOver
 }: ArcadeProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const avatarRef = useRef<HTMLDivElement>(null);
-    const callbacks = useRef({ onScore, onGameOver });
-    callbacks.current = { onScore, onGameOver };
+    const callbacks = useRef({
+        onScore,
+        onGameOver
+    });
+    callbacks.current = {
+        onScore,
+        onGameOver
+    };
 
     useEffect(() => {
         const canvas = canvasRef.current;
-        const context = canvas?.getContext('2d');
-        if (!canvas || !context) return;
+        const context = canvas?.getContext("2d");
+        if (!canvas || !context) {
+            return;
+        }
 
         const ctx = context;
         const avatar = avatarRef.current;
@@ -72,26 +91,34 @@ export default function ArcadeCanvas({
         let obstacles: Obstacle[] = [];
 
         const jump = () => {
-            if (kind === 'dino' && !ended && jumpHeight <= 0.1) {
+            if (kind === "dino" && !ended && jumpHeight <= 0.1) {
                 jumpVelocity = 690;
                 jumpHeight = 1;
                 landing = 0;
             }
         };
         const move = (direction: number) => {
-            if (kind === 'runner' && !ended) {
+            if (kind === "runner" && !ended) {
                 targetLane = Math.max(0, Math.min(2, targetLane + direction));
             }
         };
 
         const onKeyDown = (event: KeyboardEvent) => {
-            if (['Space', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(event.code)) {
+            if (["Space", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(event.code)) {
                 event.preventDefault();
             }
-            if (event.repeat) return;
-            if (event.code === 'Space' || event.code === 'ArrowUp') jump();
-            if (event.code === 'ArrowLeft') move(-1);
-            if (event.code === 'ArrowRight') move(1);
+            if (event.repeat) {
+                return;
+            }
+            if (event.code === "Space" || event.code === "ArrowUp") {
+                jump();
+            }
+            if (event.code === "ArrowLeft") {
+                move(-1);
+            }
+            if (event.code === "ArrowRight") {
+                move(1);
+            }
         };
 
         let touchStartX = 0;
@@ -99,13 +126,21 @@ export default function ArcadeCanvas({
             touchStartX = event.touches[0]?.clientX ?? 0;
         };
         const onTouchEnd = (event: TouchEvent) => {
-            if (kind !== 'runner') return;
+            if (kind !== "runner") {
+                return;
+            }
             const dx = (event.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
-            if (Math.abs(dx) > 20) move(dx > 0 ? 1 : -1);
+            if (Math.abs(dx) > 20) {
+                move(dx > 0 ? 1 : -1);
+            }
         };
         const onPointerDown = (event: PointerEvent) => {
-            if (kind === 'dino' && event.pointerType !== 'mouse' && event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
-            if (kind === 'dino') jump();
+            if (kind === "dino" && event.pointerType !== "mouse" && event.pointerType !== "touch" && event.pointerType !== "pen") {
+                return;
+            }
+            if (kind === "dino") {
+                jump();
+            }
         };
 
         // The space outside the modal also accepts mobile gestures.
@@ -113,43 +148,69 @@ export default function ArcadeCanvas({
         let outsideStartX = 0;
         let outsideStartY = 0;
         const outsideStart = (event: TouchEvent) => {
-            if (ended || !(event.target instanceof Element) || !event.target.classList.contains('overlay')) return;
+            if (ended || !(event.target instanceof Element) || !event.target.classList.contains("overlay")) {
+                return;
+            }
             const finger = event.changedTouches[0];
-            if (!finger) return;
+            if (!finger) {
+                return;
+            }
             outsideTouchId = finger.identifier;
             outsideStartX = finger.clientX;
             outsideStartY = finger.clientY;
         };
         const outsideMove = (event: TouchEvent) => {
-            if (outsideTouchId === null || kind !== 'runner') return;
+            if (outsideTouchId === null || kind !== "runner") {
+                return;
+            }
             const finger = Array.from(event.changedTouches).find(touch => touch.identifier === outsideTouchId);
-            if (finger && Math.abs(finger.clientX - outsideStartX) > 12) event.preventDefault();
+            if (finger && Math.abs(finger.clientX - outsideStartX) > 12) {
+                event.preventDefault();
+            }
         };
         const outsideEnd = (event: TouchEvent) => {
-            if (outsideTouchId === null || ended) return;
+            if (outsideTouchId === null || ended) {
+                return;
+            }
             const finger = Array.from(event.changedTouches).find(touch => touch.identifier === outsideTouchId);
-            if (!finger) return;
+            if (!finger) {
+                return;
+            }
             outsideTouchId = null;
-            if (kind === 'dino') {
+            if (kind === "dino") {
                 jump();
                 return;
             }
             const dx = finger.clientX - outsideStartX;
             const dy = finger.clientY - outsideStartY;
-            if (Math.abs(dx) > 24 && Math.abs(dx) > Math.abs(dy) * 1.15) move(dx > 0 ? 1 : -1);
+            if (Math.abs(dx) > 24 && Math.abs(dx) > Math.abs(dy) * 1.15) {
+                move(dx > 0 ? 1 : -1);
+            }
         };
         const outsideCancel = () => {
             outsideTouchId = null;
         };
 
-        window.addEventListener('keydown', onKeyDown);
-        window.addEventListener('touchstart', outsideStart, { passive: true });
-        window.addEventListener('touchmove', outsideMove, { passive: false });
-        window.addEventListener('touchend', outsideEnd, { passive: true });
-        window.addEventListener('touchcancel', outsideCancel, { passive: true });
-        canvas.addEventListener('touchstart', onTouchStart, { passive: true });
-        canvas.addEventListener('touchend', onTouchEnd, { passive: true });
-        canvas.addEventListener('pointerdown', onPointerDown);
+        window.addEventListener("keydown", onKeyDown);
+        window.addEventListener("touchstart", outsideStart, {
+            passive: true
+        });
+        window.addEventListener("touchmove", outsideMove, {
+            passive: false
+        });
+        window.addEventListener("touchend", outsideEnd, {
+            passive: true
+        });
+        window.addEventListener("touchcancel", outsideCancel, {
+            passive: true
+        });
+        canvas.addEventListener("touchstart", onTouchStart, {
+            passive: true
+        });
+        canvas.addEventListener("touchend", onTouchEnd, {
+            passive: true
+        });
+        canvas.addEventListener("pointerdown", onPointerDown);
 
         const rounded = (x: number, y: number, w: number, h: number, radius: number, color: string) => {
             ctx.fillStyle = color;
@@ -158,7 +219,7 @@ export default function ArcadeCanvas({
             ctx.fill();
         };
         const drawCloud = (x: number, y: number, scale: number) => {
-            ctx.fillStyle = '#fffafc';
+            ctx.fillStyle = "#fffafc";
             ctx.beginPath();
             ctx.ellipse(x, y, 40 * scale, 16 * scale, 0, 0, Math.PI * 2);
             ctx.ellipse(x - 20 * scale, y - 9 * scale, 20 * scale, 18 * scale, 0, 0, Math.PI * 2);
@@ -174,15 +235,17 @@ export default function ArcadeCanvas({
         };
 
         const render = (time: number) => {
-            if (ended) return;
+            if (ended) {
+                return;
+            }
             const dt = Math.min(0.034, (time - last) / 1000 || 0);
             last = time;
             elapsed += dt;
-            const speed = kind === 'dino' ? 178 + Math.min(302, elapsed * 5.3) : 0.39 + Math.min(0.55, elapsed * 0.012);
+            const speed = kind === "dino" ? 178 + Math.min(302, elapsed * 5.3) : 0.39 + Math.min(0.55, elapsed * 0.012);
 
             const sky = ctx.createLinearGradient(0, 0, 0, heightPx);
-            sky.addColorStop(0, kind === 'dino' ? '#bce7ef' : '#dcecf5');
-            sky.addColorStop(1, kind === 'dino' ? '#ffe6d1' : '#fff2f4');
+            sky.addColorStop(0, kind === "dino" ? "#bce7ef" : "#dcecf5");
+            sky.addColorStop(1, kind === "dino" ? "#ffe6d1" : "#fff2f4");
             ctx.fillStyle = sky;
             ctx.fillRect(0, 0, width, heightPx);
             for (let index = 0; index < 4; index++) {
@@ -190,19 +253,19 @@ export default function ArcadeCanvas({
                 drawCloud(x, 55 + (index % 2) * 32, 0.7 + (index % 2) * 0.25);
             }
 
-            if (kind === 'dino') {
+            if (kind === "dino") {
                 // Sunny pastel desert with layered mesas, distant dunes and a grounded running path.
-                ctx.fillStyle = '#ffeab5';
+                ctx.fillStyle = "#ffeab5";
                 ctx.beginPath();
                 ctx.arc(535, 78, 35, 0, Math.PI * 2);
                 ctx.fill();
-                ctx.fillStyle = '#e4bbab';
+                ctx.fillStyle = "#e4bbab";
                 for (const [x, y, w, h] of [[20, 178, 114, 59], [390, 173, 139, 61], [558, 192, 75, 45]]) {
-                    rounded(x, y, w, h, 21, '#e4bbab');
-                    rounded(x + w * 0.18, y - 22, w * 0.6, 34, 13, '#e4bbab');
-                    rounded(x + w * 0.22, y - 23, w * 0.53, 8, 3, '#f2d5b6');
+                    rounded(x, y, w, h, 21, "#e4bbab");
+                    rounded(x + w * 0.18, y - 22, w * 0.6, 34, 13, "#e4bbab");
+                    rounded(x + w * 0.22, y - 23, w * 0.53, 8, 3, "#f2d5b6");
                 }
-                ctx.fillStyle = '#f6d2b6';
+                ctx.fillStyle = "#f6d2b6";
                 ctx.beginPath();
                 ctx.moveTo(0, 253);
                 ctx.quadraticCurveTo(115, 214, 264, 253);
@@ -210,7 +273,7 @@ export default function ArcadeCanvas({
                 ctx.lineTo(640, 340);
                 ctx.lineTo(0, 340);
                 ctx.fill();
-                ctx.fillStyle = '#e6c6b3';
+                ctx.fillStyle = "#e6c6b3";
                 ctx.beginPath();
                 ctx.moveTo(0, 268);
                 ctx.quadraticCurveTo(175, 252, 305, 270);
@@ -218,21 +281,21 @@ export default function ArcadeCanvas({
                 ctx.lineTo(640, 340);
                 ctx.lineTo(0, 340);
                 ctx.fill();
-                rounded(0, 276, width, 64, 0, '#f4dfc6');
-                rounded(0, 275, width, 4, 0, '#c7b59c');
+                rounded(0, 276, width, 64, 0, "#f4dfc6");
+                rounded(0, 275, width, 4, 0, "#c7b59c");
                 for (let index = 0; index < 15; index++) {
                     const x = ((index * 67 - elapsed * speed * 0.6) % 750 + 750) % 750;
-                    rounded(x, 316 + (index % 3) * 5, 24, 3, 2, '#dfb99d');
+                    rounded(x, 316 + (index % 3) * 5, 24, 3, 2, "#dfb99d");
                 }
             } else {
-                ctx.fillStyle = '#a7d2b4';
+                ctx.fillStyle = "#a7d2b4";
                 ctx.beginPath();
                 ctx.ellipse(100, 290, 210, 110, 0, 0, Math.PI * 2);
                 ctx.ellipse(530, 290, 250, 115, 0, 0, Math.PI * 2);
                 ctx.fill();
             }
 
-            if (kind === 'dino') {
+            if (kind === "dino") {
                 if (jumpHeight > 0) {
                     jumpHeight = Math.max(0, jumpHeight + jumpVelocity * dt);
                     jumpVelocity -= 1800 * dt;
@@ -258,7 +321,7 @@ export default function ArcadeCanvas({
                 for (const obstacle of obstacles) {
                     obstacle.distance -= speed * dt;
                     renderSprite(cactusSprites[obstacle.variant], obstacle.distance - 8, 218, 46, 62, () => {
-                        rounded(obstacle.distance, 224, 24, 52, 9, '#86bba4');
+                        rounded(obstacle.distance, 224, 24, 52, 9, "#86bba4");
                     });
                     if (obstacle.distance < 105 && obstacle.distance > 72 && jumpHeight < 42) {
                         ended = true;
@@ -287,7 +350,7 @@ export default function ArcadeCanvas({
 
                 // Pastel neighborhood: buildings stay beyond the edge of the road.
                 // The foreground is drawn before the roadway and never overlaps traffic.
-                ctx.fillStyle = '#c8e0c8';
+                ctx.fillStyle = "#c8e0c8";
                 ctx.fillRect(0, horizon, width, bottom - horizon);
                 const blockShift = (elapsed * speed * 0.27) % 1;
                 for (let index = 0; index < 7; index++) {
@@ -302,13 +365,13 @@ export default function ArcadeCanvas({
                         const x = side < 0 ? edge - setback - buildingWidth : edge + setback;
                         const artIndex = (index + (side === -1 ? 0 : 2)) % buildingSprites.length;
                         renderSprite(buildingSprites[artIndex], x, anchorY - buildingHeight, buildingWidth, buildingHeight, () => {
-                            rounded(x, anchorY - buildingHeight, buildingWidth, buildingHeight, 6, '#f5d5df');
+                            rounded(x, anchorY - buildingHeight, buildingWidth, buildingHeight, 6, "#f5d5df");
                         });
                     }
                 }
 
                 // Pavement, pale edging and a straight three-lane highway.
-                ctx.fillStyle = '#c3acb8';
+                ctx.fillStyle = "#c3acb8";
                 ctx.beginPath();
                 ctx.moveTo(center - 53, horizon);
                 ctx.lineTo(center + 53, horizon);
@@ -316,7 +379,7 @@ export default function ArcadeCanvas({
                 ctx.lineTo(17, bottom);
                 ctx.closePath();
                 ctx.fill();
-                ctx.fillStyle = '#9d8999';
+                ctx.fillStyle = "#9d8999";
                 ctx.beginPath();
                 ctx.moveTo(center - 44, horizon);
                 ctx.lineTo(center + 44, horizon);
@@ -325,7 +388,7 @@ export default function ArcadeCanvas({
                 ctx.closePath();
                 ctx.fill();
 
-                ctx.strokeStyle = '#fff7ec';
+                ctx.strokeStyle = "#fff7ec";
                 ctx.lineWidth = 3;
                 for (const side of [-1, 1]) {
                     ctx.beginPath();
@@ -334,8 +397,8 @@ export default function ArcadeCanvas({
                     ctx.stroke();
                 }
                 // Dash segments grow naturally with perspective and stay in their lanes.
-                ctx.lineCap = 'round';
-                ctx.strokeStyle = '#fff4e9';
+                ctx.lineCap = "round";
+                ctx.strokeStyle = "#fff4e9";
                 for (const divider of [1, 2]) {
                     for (let index = 0; index < 11; index++) {
                         const position = (index / 11 + elapsed * speed * 0.22) % 1;
@@ -391,7 +454,7 @@ export default function ArcadeCanvas({
                         -vehicle.height,
                         vehicle.width,
                         vehicle.height,
-                        () => rounded(-vehicle.width / 2, -vehicle.height, vehicle.width, vehicle.height, 8, '#b6a4e4')
+                        () => rounded(-vehicle.width / 2, -vehicle.height, vehicle.width, vehicle.height, 8, "#b6a4e4")
                     );
                     ctx.restore();
 
@@ -412,7 +475,7 @@ export default function ArcadeCanvas({
                 }
                 obstacles = obstacles.filter(obstacle => trafficIsVisible(obstacle.lane, obstacle.distance));
                 const petX = laneX(playerLane, PLAYER_ROAD_Y);
-                ctx.fillStyle = '#7c6377';
+                ctx.fillStyle = "#7c6377";
                 ctx.beginPath();
                 ctx.ellipse(petX, 307, 29, 9, 0, 0, Math.PI * 2);
                 ctx.fill();
@@ -420,41 +483,45 @@ export default function ArcadeCanvas({
                     avatar.style.left = `${petX / 640 * 100}%`;
                     avatar.style.top = `${(301 - 101 + Math.sin(elapsed * 15) * 3) / 340 * 100}%`;
                     avatar.style.width = `${112 / 640 * 100}%`;
-                    avatar.style.transform = 'translateX(-50%)';
+                    avatar.style.transform = "translateX(-50%)";
                 }
             }
 
-            if (!ended) requestId = requestAnimationFrame(render);
+            if (!ended) {
+                requestId = requestAnimationFrame(render);
+            }
         };
 
         requestId = requestAnimationFrame(render);
         return () => {
             ended = true;
             cancelAnimationFrame(requestId);
-            window.removeEventListener('keydown', onKeyDown);
-            window.removeEventListener('touchstart', outsideStart);
-            window.removeEventListener('touchmove', outsideMove);
-            window.removeEventListener('touchend', outsideEnd);
-            window.removeEventListener('touchcancel', outsideCancel);
-            canvas.removeEventListener('touchstart', onTouchStart);
-            canvas.removeEventListener('touchend', onTouchEnd);
-            canvas.removeEventListener('pointerdown', onPointerDown);
+            window.removeEventListener("keydown", onKeyDown);
+            window.removeEventListener("touchstart", outsideStart);
+            window.removeEventListener("touchmove", outsideMove);
+            window.removeEventListener("touchend", outsideEnd);
+            window.removeEventListener("touchcancel", outsideCancel);
+            canvas.removeEventListener("touchstart", onTouchStart);
+            canvas.removeEventListener("touchend", onTouchEnd);
+            canvas.removeEventListener("pointerdown", onPointerDown);
         };
     }, [kind]);
 
     return (
         <div className="polished-arcade">
             <div className="arcade-stage">
-                <canvas ref={canvasRef} aria-label={kind === 'dino' ? 'Jump over spiky cacti' : 'Dodge colorful cars on the three-lane road'} />
+                <canvas ref={canvasRef} aria-label={kind === "dino" ? "Jump over spiky cacti" : "Dodge colorful cars on the three-lane road"} />
                 <div className="arcade-pet-avatar" ref={avatarRef}>
                     <PetArt species={species} color={color} breed={breed} cosmetic={cosmetic} />
                 </div>
-                {kind === 'dino' && <div className="paw-jump-guide"><JumpGuide /></div>}
+                {kind === "dino" && <div className="paw-jump-guide">
+                    <JumpGuide />
+                </div>}
             </div>
             <p className="paw-arcade-gesture-hint">
-                {kind === 'dino'
-                    ? 'Tap the game or press Space to jump.'
-                    : 'Swipe left or right, or use the arrow keys to dodge.'}
+                {kind === "dino"
+                    ? "Tap the game or press Space to jump."
+                    : "Swipe left or right, or use the arrow keys to dodge."}
             </p>
         </div>
     );

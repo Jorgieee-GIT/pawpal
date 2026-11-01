@@ -1,52 +1,305 @@
-.develop-page { min-height: 100vh; background: #fff7fa; color: #67465a; font-family: inherit; }
-.develop-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px max(20px, calc((100vw - 1200px) / 2)); background: #fff; border-bottom: 1px solid #f4dce8; flex-wrap: wrap; }
-.develop-brand, .develop-header-actions, .develop-intro { display: flex; align-items: center; gap: 12px; }
-.develop-brand span { display: grid; gap: 3px; }
-.develop-brand small, .develop-tile small, .develop-hint { color: #99798b; }
-.develop-header-actions { flex-wrap: wrap; }
-.develop-header-actions a, .develop-header-actions button { display: inline-flex; align-items: center; gap: 7px; color: #845772; background: #fff0f6; border: 1px solid #f1cfdf; border-radius: 12px; padding: 10px 14px; text-decoration: none; cursor: pointer; }
-.develop-content { max-width: 1200px; margin: auto; padding: 30px 20px 70px; }
-.develop-intro { align-items: flex-start; margin-bottom: 22px; }
-.develop-intro h1, .develop-login h1 { margin: 0 0 8px; }
-.develop-intro p { margin: 0; line-height: 1.5; }
-.develop-tabs { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-.develop-tabs button, .develop-login form button { border: 1px solid #e8bdd2; background: white; color: #80536b; border-radius: 12px; padding: 12px 18px; cursor: pointer; font-weight: 700; }
-.develop-tabs button.active, .develop-login form button { background: #ed91b7; border-color: #ed91b7; color: #fff; }
-.develop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 16px; margin-top: 18px; }
-.develop-tile { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px 12px; background: white; border: 1px solid #f0dbe5; border-radius: 18px; min-width: 0; gap: 5px; }
-.develop-tile small { overflow-wrap: anywhere; font-size: 12px; }
-.develop-pet-art { width: 140px; height: 145px; display: flex; justify-content: center; align-items: center; }
-.develop-pet-art svg { max-width: 100%; max-height: 100%; }
-.develop-furniture-art { width: 145px; height: 125px; display: flex; justify-content: center; align-items: center; }
-.develop-furniture-art svg { max-width: 100%; max-height: 100%; }
-.develop-filters { display: flex; gap: 15px; flex-wrap: wrap; }
-.develop-filters label, .develop-login label { display: grid; gap: 7px; font-weight: 600; }
-.develop-filters input, .develop-filters select, .develop-login input { min-width: 190px; padding: 11px; border: 1px solid #e8c9d8; border-radius: 10px; background: white; color: #67465a; }
-.develop-login, .develop-message { max-width: 440px; margin: 60px auto; padding: 30px; background: white; border: 1px solid #f0dbe5; border-radius: 20px; text-align: center; }
-.develop-login p { line-height: 1.5; }
-.develop-login form { display: grid; gap: 16px; text-align: left; margin-top: 22px; }
-.develop-login form input { width: 100%; box-sizing: border-box; }
-.develop-error { color: #b32751; }
-@media (max-width: 520px) { .develop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .develop-tile { padding: 12px 6px; } .develop-pet-art { width: 100%; } .develop-furniture-art { width: 100%; } .develop-header { padding: 15px; } .develop-login { margin: 20px 12px; } }
-
+.develop-page {
+    min-height: 100vh;
+    background: #fff7fa;
+    color: #67465a;
+    font-family: inherit;
+}
+.develop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px max(20px, calc((100vw - 1200px) / 2));
+    background: #fff;
+    border-bottom: 1px solid #f4dce8;
+    flex-wrap: wrap;
+}
+.develop-brand, .develop-header-actions, .develop-intro {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.develop-brand span {
+    display: grid;
+    gap: 3px;
+}
+.develop-brand small, .develop-tile small, .develop-hint {
+    color: #99798b;
+}
+.develop-header-actions {
+    flex-wrap: wrap;
+}
+.develop-header-actions a, .develop-header-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #845772;
+    background: #fff0f6;
+    border: 1px solid #f1cfdf;
+    border-radius: 12px;
+    padding: 10px 14px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.develop-content {
+    max-width: 1200px;
+    margin: auto;
+    padding: 30px 20px 70px;
+}
+.develop-intro {
+    align-items: flex-start;
+    margin-bottom: 22px;
+}
+.develop-intro h1, .develop-login h1 {
+    margin: 0 0 8px;
+}
+.develop-intro p {
+    margin: 0;
+    line-height: 1.5;
+}
+.develop-tabs {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+.develop-tabs button, .develop-login form button {
+    border: 1px solid #e8bdd2;
+    background: white;
+    color: #80536b;
+    border-radius: 12px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-weight: 700;
+}
+.develop-tabs button.active, .develop-login form button {
+    background: #ed91b7;
+    border-color: #ed91b7;
+    color: #fff;
+}
+.develop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+    gap: 16px;
+    margin-top: 18px;
+}
+.develop-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 16px 12px;
+    background: white;
+    border: 1px solid #f0dbe5;
+    border-radius: 18px;
+    min-width: 0;
+    gap: 5px;
+}
+.develop-tile small {
+    overflow-wrap: anywhere;
+    font-size: 12px;
+}
+.develop-pet-art {
+    width: 140px;
+    height: 145px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.develop-pet-art svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+.develop-furniture-art {
+    width: 145px;
+    height: 125px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.develop-furniture-art svg {
+    max-width: 100%;
+    max-height: 100%;
+}
+.develop-filters {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.develop-filters label, .develop-login label {
+    display: grid;
+    gap: 7px;
+    font-weight: 600;
+}
+.develop-filters input, .develop-filters select, .develop-login input {
+    min-width: 190px;
+    padding: 11px;
+    border: 1px solid #e8c9d8;
+    border-radius: 10px;
+    background: white;
+    color: #67465a;
+}
+.develop-login, .develop-message {
+    max-width: 440px;
+    margin: 60px auto;
+    padding: 30px;
+    background: white;
+    border: 1px solid #f0dbe5;
+    border-radius: 20px;
+    text-align: center;
+}
+.develop-login p {
+    line-height: 1.5;
+}
+.develop-login form {
+    display: grid;
+    gap: 16px;
+    text-align: left;
+    margin-top: 22px;
+}
+.develop-login form input {
+    width: 100%;
+    box-sizing: border-box;
+}
+.develop-error {
+    color: #b32751;
+}
+@media (max-width: 520px) {
+    .develop-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+    .develop-tile {
+        padding: 12px 6px;
+    }
+    .develop-pet-art {
+        width: 100%;
+    }
+    .develop-furniture-art {
+        width: 100%;
+    }
+    .develop-header {
+        padding: 15px;
+    }
+    .develop-login {
+        margin: 20px 12px;
+    }
+}
 /* Admin-only atmosphere previews: isolated from player room state. */
-.develop-atmosphere { display: grid; gap: 16px; }
-.develop-room-scene { position: relative; width: 100%; aspect-ratio: 1.8; min-height: 280px; max-height: 580px; overflow: hidden; border: 3px solid var(--room-accent); border-radius: 22px; background: linear-gradient(to bottom, #fcecf6 0%, var(--wall) 53%, #e8c5c8 53%, var(--floor) 100%); isolation: isolate; }
-.develop-room-scene::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 20%, #ffffff55, transparent 60%); pointer-events: none; }
-.develop-room-seam { position: absolute; left: 0; right: 0; top: 53%; height: 5px; background: #ffffff77; }
-.develop-room-window { position: absolute; top: 12%; left: 8%; width: 21%; height: 31%; border-radius: 60px 60px 12px 12px; background: linear-gradient(145deg, #bce9fb, #fef2e2); box-shadow: inset 0 0 0 5px #f9dae8, 0 5px 18px #ae7b9930; }
-.develop-room-window::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 5px solid #fff9fa; }
-.develop-room-furniture { position: absolute; width: clamp(75px, 16%, 180px); height: 27%; transform: translate(-50%, -50%); display: grid; place-items: center; filter: drop-shadow(0 7px 5px #6e426a35); }
-.develop-room-furniture svg { width: 100%; height: 100%; max-height: 100%; }
-.develop-atmosphere-name { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.develop-atmosphere-name span { color: #99798b; }
-.develop-theme-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
-.develop-theme-list button { display: grid; gap: 7px; padding: 9px; border: 2px solid #f0dbe5; border-radius: 12px; background: white; color: #67465a; cursor: pointer; font-weight: 700; }
-.develop-theme-list button.selected { border-color: #c977a3; background: #fff0f6; }
-.develop-theme-colors { display: block; height: 48px; border: 1px solid; border-radius: 8px; }
-@media (max-width: 600px) { .develop-room-scene { min-height: 250px; aspect-ratio: 1.2; } .develop-room-furniture { width: 23%; height: 23%; } .develop-theme-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } .develop-theme-list button { font-size: 11px; } }
-
-
+.develop-atmosphere {
+    display: grid;
+    gap: 16px;
+}
+.develop-room-scene {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1.8;
+    min-height: 280px;
+    max-height: 580px;
+    overflow: hidden;
+    border: 3px solid var(--room-accent);
+    border-radius: 22px;
+    background: linear-gradient(to bottom, #fcecf6 0%, var(--wall) 53%, #e8c5c8 53%, var(--floor) 100%);
+    isolation: isolate;
+}
+.develop-room-scene::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 70% 20%, #ffffff55, transparent 60%);
+    pointer-events: none;
+}
+.develop-room-seam {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 53%;
+    height: 5px;
+    background: #ffffff77;
+}
+.develop-room-window {
+    position: absolute;
+    top: 12%;
+    left: 8%;
+    width: 21%;
+    height: 31%;
+    border-radius: 60px 60px 12px 12px;
+    background: linear-gradient(145deg, #bce9fb, #fef2e2);
+    box-shadow: inset 0 0 0 5px #f9dae8, 0 5px 18px #ae7b9930;
+}
+.develop-room-window::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    border-left: 5px solid #fff9fa;
+}
+.develop-room-furniture {
+    position: absolute;
+    width: clamp(75px, 16%, 180px);
+    height: 27%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    filter: drop-shadow(0 7px 5px #6e426a35);
+}
+.develop-room-furniture svg {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+}
+.develop-atmosphere-name {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.develop-atmosphere-name span {
+    color: #99798b;
+}
+.develop-theme-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+}
+.develop-theme-list button {
+    display: grid;
+    gap: 7px;
+    padding: 9px;
+    border: 2px solid #f0dbe5;
+    border-radius: 12px;
+    background: white;
+    color: #67465a;
+    cursor: pointer;
+    font-weight: 700;
+}
+.develop-theme-list button.selected {
+    border-color: #c977a3;
+    background: #fff0f6;
+}
+.develop-theme-colors {
+    display: block;
+    height: 48px;
+    border: 1px solid;
+    border-radius: 8px;
+}
+@media (max-width: 600px) {
+    .develop-room-scene {
+        min-height: 250px;
+        aspect-ratio: 1.2;
+    }
+    .develop-room-furniture {
+        width: 23%;
+        height: 23%;
+    }
+    .develop-theme-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .develop-theme-list button {
+        font-size: 11px;
+    }
+}
 /* Keep the wall/floor boundary visible in the admin atmosphere preview. */
 .develop-room-scene .develop-room-seam {
     z-index: 1;
@@ -60,13 +313,11 @@
 .develop-room-scene .develop-room-window {
     z-index: 2;
 }
-
 /* Match the seam to each room's actual wall/floor transition.
    Living Room uses 53%; the other three rooms use 66%. */
 .develop-room-scene:is(.paw-room-bedroom, .paw-room-studio, .paw-room-sports) .develop-room-seam {
     top: 65.6%;
 }
-
 /* Match the administrator portal's shell, header and action styles. */
 .develop-page {
     background: #fff8f9;
@@ -112,8 +363,6 @@
     background: #d8759b;
     border-color: #d8759b;
 }
-
-
 /* Preview uses the actual gameplay room DOM classes, furniture placement,
    wall/floor split and divider rather than a separately drawn mockup. */
 .develop-room-scene.living-room {
@@ -138,32 +387,210 @@
         min-height: 250px;
     }
 }
-
 /* Read-only Paw Brawl abilities gallery */
-.develop-combat {display:grid;gap:15px;min-width:0}.develop-combat h2{margin:12px 0 0;font-size:1.3rem}.develop-combat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:14px}.develop-combat-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:15px;border:1px solid #efd5e2;border-radius:18px;background:#fff;min-width:0}.develop-combat-card h3{margin:0}.develop-combat-art{height:115px;width:130px;max-width:100%;display:grid;place-items:center}.develop-combat-art>*{max-height:110px;width:100%}.develop-combat-stats{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}.develop-combat-stats span{background:#fceaf2;color:#814e70;padding:4px 7px;border-radius:9px;font-size:12px;font-weight:700}.develop-combat-card p{margin:0;width:100%;display:flex;flex-direction:column;gap:3px}.develop-combat-card small{color:#826b78;line-height:1.4}.develop-combat-moves{padding:16px;border:1px solid #efd5e2;border-radius:16px;background:#fff}.develop-combat-moves p{margin:0 0 10px;line-height:1.5}.develop-combat-moves p:last-child{margin-bottom:0}@media(max-width:520px){.develop-combat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.develop-combat-card{padding:10px 7px}.develop-combat-art{width:100%;height:90px}.develop-combat-art>*{max-height:85px}}
-
-
+.develop-combat {
+    display: grid;
+    gap: 15px;
+    min-width: 0;
+}
+.develop-combat h2 {
+    margin: 12px 0 0;
+    font-size: 1.3rem;
+}
+.develop-combat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(205px,1fr));
+    gap: 14px;
+}
+.develop-combat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 15px;
+    border: 1px solid #efd5e2;
+    border-radius: 18px;
+    background: #fff;
+    min-width: 0;
+}
+.develop-combat-card h3 {
+    margin: 0;
+}
+.develop-combat-art {
+    height: 115px;
+    width: 130px;
+    max-width: 100%;
+    display: grid;
+    place-items: center;
+}
+.develop-combat-art>* {
+    max-height: 110px;
+    width: 100%;
+}
+.develop-combat-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+}
+.develop-combat-stats span {
+    background: #fceaf2;
+    color: #814e70;
+    padding: 4px 7px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.develop-combat-card p {
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.develop-combat-card small {
+    color: #826b78;
+    line-height: 1.4;
+}
+.develop-combat-moves {
+    padding: 16px;
+    border: 1px solid #efd5e2;
+    border-radius: 16px;
+    background: #fff;
+}
+.develop-combat-moves p {
+    margin: 0 0 10px;
+    line-height: 1.5;
+}
+.develop-combat-moves p:last-child {
+    margin-bottom: 0;
+}
+@media(max-width:520px) {
+    .develop-combat-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 8px;
+    }
+    .develop-combat-card {
+        padding: 10px 7px;
+    }
+    .develop-combat-art {
+        width: 100%;
+        height: 90px;
+    }
+    .develop-combat-art>* {
+        max-height: 85px;
+    }
+}
 /* Garden developer gallery: shared SVGs from actual gameplay. */
-.develop-garden {display:grid;gap:15px;min-width:0}
-.develop-garden h2 {margin:12px 0 0;font-size:1.3rem}
-.develop-garden-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px}
-.develop-garden-card {display:flex;flex-direction:column;align-items:center;text-align:center;gap:7px;min-width:0;padding:16px 12px;background:#fff;border:1px solid #efd5e2;border-radius:18px}
-.develop-garden-card h3 {margin:0;font-size:16px;color:#7c526b}
-.develop-garden-card small {font-size:12px;color:#866c7a;line-height:1.45}
-.develop-garden-art {height:135px;width:135px;max-width:100%;display:grid;place-items:center;background:#fff9f2;border-radius:16px}
-.develop-garden-art svg {width:105px;height:115px;max-width:100%;max-height:100%}
-.develop-garden-rarity {font-weight:800;font-size:12px;padding:5px 11px;border-radius:99px;background:#fce8f1;color:#99516f}
-.develop-garden-legendary .develop-garden-rarity {background:#fff0bd;color:#9d6919}
-.develop-garden-rare .develop-garden-rarity {background:#def3ff;color:#307c9b}
-.develop-garden-uncommon .develop-garden-rarity {background:#ebe2ff;color:#7e5cad}
-.develop-garden-wilted .develop-garden-rarity {background:#eee4e1;color:#836a71}
-.develop-garden-meta {display:flex;flex-direction:column;gap:3px}
-.develop-garden-meta b {font-size:13px;color:#9b6681}
-.develop-garden-utilities .develop-garden-art {height:110px}
-.develop-garden-utilities .develop-garden-art svg {height:90px;width:90px}
-@media(max-width:540px){.develop-garden-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.develop-garden-card{padding:10px 7px}.develop-garden-art{height:105px;width:100%}.develop-garden-art svg{height:92px;width:92px}}
-
-
+.develop-garden {
+    display: grid;
+    gap: 15px;
+    min-width: 0;
+}
+.develop-garden h2 {
+    margin: 12px 0 0;
+    font-size: 1.3rem;
+}
+.develop-garden-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(175px,1fr));
+    gap: 14px;
+}
+.develop-garden-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 7px;
+    min-width: 0;
+    padding: 16px 12px;
+    background: #fff;
+    border: 1px solid #efd5e2;
+    border-radius: 18px;
+}
+.develop-garden-card h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #7c526b;
+}
+.develop-garden-card small {
+    font-size: 12px;
+    color: #866c7a;
+    line-height: 1.45;
+}
+.develop-garden-art {
+    height: 135px;
+    width: 135px;
+    max-width: 100%;
+    display: grid;
+    place-items: center;
+    background: #fff9f2;
+    border-radius: 16px;
+}
+.develop-garden-art svg {
+    width: 105px;
+    height: 115px;
+    max-width: 100%;
+    max-height: 100%;
+}
+.develop-garden-rarity {
+    font-weight: 800;
+    font-size: 12px;
+    padding: 5px 11px;
+    border-radius: 99px;
+    background: #fce8f1;
+    color: #99516f;
+}
+.develop-garden-legendary .develop-garden-rarity {
+    background: #fff0bd;
+    color: #9d6919;
+}
+.develop-garden-rare .develop-garden-rarity {
+    background: #def3ff;
+    color: #307c9b;
+}
+.develop-garden-uncommon .develop-garden-rarity {
+    background: #ebe2ff;
+    color: #7e5cad;
+}
+.develop-garden-wilted .develop-garden-rarity {
+    background: #eee4e1;
+    color: #836a71;
+}
+.develop-garden-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.develop-garden-meta b {
+    font-size: 13px;
+    color: #9b6681;
+}
+.develop-garden-utilities .develop-garden-art {
+    height: 110px;
+}
+.develop-garden-utilities .develop-garden-art svg {
+    height: 90px;
+    width: 90px;
+}
+@media(max-width:540px) {
+    .develop-garden-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 8px;
+    }
+    .develop-garden-card {
+        padding: 10px 7px;
+    }
+    .develop-garden-art {
+        height: 105px;
+        width: 100%;
+    }
+    .develop-garden-art svg {
+        height: 92px;
+        width: 92px;
+    }
+}
 /* Developer SVG sanity checks: invalid thumbnails are clearly marked. */
 .develop-svg-health {
     display: flex;
@@ -176,9 +603,18 @@
     background: #f0faf2;
     border-radius: 14px;
 }
-.develop-svg-health > div { display: grid; gap: 3px; }
-.develop-svg-health b { color: #3c7755; font-size: 14px; }
-.develop-svg-health span { color: #5d806c; font-size: 12px; }
+.develop-svg-health > div {
+    display: grid;
+    gap: 3px;
+}
+.develop-svg-health b {
+    color: #3c7755;
+    font-size: 14px;
+}
+.develop-svg-health span {
+    color: #5d806c;
+    font-size: 12px;
+}
 .develop-svg-health button {
     display: inline-flex;
     align-items: center;
@@ -191,8 +627,13 @@
     font-weight: 700;
     cursor: pointer;
 }
-.develop-svg-health.has-issues { background: #fff0f0; border-color: #e4aaaa; }
-.develop-svg-health.has-issues b, .develop-svg-health.has-issues span { color: #9f3c50; }
+.develop-svg-health.has-issues {
+    background: #fff0f0;
+    border-color: #e4aaaa;
+}
+.develop-svg-health.has-issues b, .develop-svg-health.has-issues span {
+    color: #9f3c50;
+}
 .develop-svg-issue {
     outline: 3px solid #df5169;
     outline-offset: 1px;
@@ -211,30 +652,219 @@
     font-weight: 900;
     z-index: 5;
 }
-
-
 /* PawMail gallery: reuse the in-game envelope collection colors and SVGs. */
-.develop-mail {display:grid;gap:15px;min-width:0}
-.develop-mail-heading {display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
-.develop-mail-heading h2 {margin:4px 0 5px;color:#754c65;font-size:clamp(18px,2.3vw,24px)}
-.develop-mail-heading p {max-width:670px;margin:0;line-height:1.5}
-.develop-mail-total {padding:8px 13px;border-radius:99px;background:#ffe8f2;color:#965779;font-size:12px;font-weight:800;white-space:nowrap}
-.develop-mail-filters {display:flex;gap:12px;flex-wrap:wrap}
-.develop-mail-filters label {display:grid;gap:6px;min-width:0;flex:1 1 210px;font-size:12px;font-weight:800;color:#885c77}
-.develop-mail-filters input,.develop-mail-filters select {width:100%;min-width:0;box-sizing:border-box;padding:11px 13px;border-radius:12px;border:1px solid #e8bfd2;background:#fff;color:#744660;font:inherit;font-size:13px}
-.develop-mail-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;min-width:0}
-.develop-mail-card {display:flex;flex-direction:column;min-width:0;gap:10px;padding:10px;background:#fff;border:1px solid #efd4e2;border-radius:18px;box-shadow:0 3px 13px #bd779412}
-.develop-mail-card .develop-mail-art {width:100%;height:125px;border:1px solid #f6d4e5;border-radius:13px;background-color:#ffe6ef;overflow:hidden;display:grid;place-items:center}
-.develop-mail-card .develop-mail-art svg {width:min(92%,180px);height:min(92%,115px);max-width:100%;max-height:100%;color:inherit;filter:drop-shadow(0 3px 2px #623e6325)}
-.develop-mail-card-details {display:grid;gap:5px;min-width:0}
-.develop-mail-card-details b {color:#7c4e6a;font-size:14px;overflow-wrap:anywhere}
-.develop-mail-card-details>small {color:#a07b90;font-size:11px;overflow-wrap:anywhere}
-.develop-mail-meta {display:flex;gap:5px;flex-wrap:wrap}
-.develop-mail-meta span {background:#fff0f6;color:#945b7e;border-radius:9px;padding:5px 7px;font-weight:800;font-size:11px}
-.develop-mail-empty {padding:20px;border:1px dashed #dfb8cd;border-radius:15px;text-align:center;color:#936b82}
-.develop-mail-card.develop-svg-issue .develop-mail-art {outline:2px solid #d35669}
-@media(max-width:900px){.develop-mail-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:620px){.develop-mail-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.develop-mail-card{padding:7px;gap:7px;border-radius:14px}.develop-mail-card .develop-mail-art{height:105px}.develop-mail-card-details b{font-size:12px}.develop-mail-card-details>small{font-size:10px}.develop-mail-meta span{font-size:10px;padding:5px}.develop-mail-filters{gap:9px}.develop-mail-filters label{flex:1 1 130px}}
-@media(max-width:360px){.develop-mail-card .develop-mail-art{height:92px}.develop-mail-meta{flex-direction:column;align-items:flex-start}.develop-mail-meta span{max-width:100%}}
+.develop-mail {
+    display: grid;
+    gap: 15px;
+    min-width: 0;
+}
+.develop-mail-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+.develop-mail-heading h2 {
+    margin: 4px 0 5px;
+    color: #754c65;
+    font-size: clamp(18px,2.3vw,24px);
+}
+.develop-mail-heading p {
+    max-width: 670px;
+    margin: 0;
+    line-height: 1.5;
+}
+.develop-mail-total {
+    padding: 8px 13px;
+    border-radius: 99px;
+    background: #ffe8f2;
+    color: #965779;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+.develop-mail-filters {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.develop-mail-filters label {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    flex: 1 1 210px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #885c77;
+}
+.develop-mail-filters input,.develop-mail-filters select {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border-radius: 12px;
+    border: 1px solid #e8bfd2;
+    background: #fff;
+    color: #744660;
+    font: inherit;
+    font-size: 13px;
+}
+.develop-mail-grid {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 13px;
+    min-width: 0;
+}
+.develop-mail-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 10px;
+    padding: 10px;
+    background: #fff;
+    border: 1px solid #efd4e2;
+    border-radius: 18px;
+    box-shadow: 0 3px 13px #bd779412;
+}
+.develop-mail-card .develop-mail-art {
+    width: 100%;
+    height: 125px;
+    border: 1px solid #f6d4e5;
+    border-radius: 13px;
+    background-color: #ffe6ef;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+}
+.develop-mail-card .develop-mail-art svg {
+    width: min(92%,180px);
+    height: min(92%,115px);
+    max-width: 100%;
+    max-height: 100%;
+    color: inherit;
+    filter: drop-shadow(0 3px 2px #623e6325);
+}
+.develop-mail-card-details {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+}
+.develop-mail-card-details b {
+    color: #7c4e6a;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+.develop-mail-card-details>small {
+    color: #a07b90;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+.develop-mail-meta {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+.develop-mail-meta span {
+    background: #fff0f6;
+    color: #945b7e;
+    border-radius: 9px;
+    padding: 5px 7px;
+    font-weight: 800;
+    font-size: 11px;
+}
+.develop-mail-empty {
+    padding: 20px;
+    border: 1px dashed #dfb8cd;
+    border-radius: 15px;
+    text-align: center;
+    color: #936b82;
+}
+.develop-mail-card.develop-svg-issue .develop-mail-art {
+    outline: 2px solid #d35669;
+}
+@media(max-width:900px) {
+    .develop-mail-grid {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+    }
+}
+@media(max-width:620px) {
+    .develop-mail-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 9px;
+    }
+    .develop-mail-card {
+        padding: 7px;
+        gap: 7px;
+        border-radius: 14px;
+    }
+    .develop-mail-card .develop-mail-art {
+        height: 105px;
+    }
+    .develop-mail-card-details b {
+        font-size: 12px;
+    }
+    .develop-mail-card-details>small {
+        font-size: 10px;
+    }
+    .develop-mail-meta span {
+        font-size: 10px;
+        padding: 5px;
+    }
+    .develop-mail-filters {
+        gap: 9px;
+    }
+    .develop-mail-filters label {
+        flex: 1 1 130px;
+    }
+}
+@media(max-width:360px) {
+    .develop-mail-card .develop-mail-art {
+        height: 92px;
+    }
+    .develop-mail-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .develop-mail-meta span {
+        max-width: 100%;
+    }
+}
 /* The player garden SVGs are wider than the individual flower illustrations. */
-.develop-garden-card:has(.paw-garden-bed-svg) .develop-garden-art svg { width:100%; max-width:240px; height:auto; max-height:170px; }
+.develop-garden-card:has(.paw-garden-bed-svg) .develop-garden-art svg {
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    max-height: 170px;
+}
+/* Inspect the exact shared arrow SVG used by both Kitchen swipe games. */
+.develop-kitchen-arrows .develop-furniture-art svg {
+    width: 66px;
+    height: 66px;
+    stroke-width: 2.7;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.develop-settings-art {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 184 / 112;
+    max-height: 145px;
+}
+
+.develop-settings-art svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Full-resolution preview of the exact SVG used by the Settings range thumb. */
+.develop-paw-slider-art img {
+    display: block;
+    width: 110px;
+    height: 110px;
+    max-width: 90%;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 5px rgb(117 59 100 / 22%));
+}

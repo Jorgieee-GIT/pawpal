@@ -1,18 +1,18 @@
 CREATE TABLE IF NOT EXISTS pets (
- id UUID PRIMARY KEY,
- name VARCHAR(32) NOT NULL,
- species VARCHAR(8) NOT NULL CHECK(species IN ('cat','dog')),
- hunger INTEGER NOT NULL DEFAULT 80 CHECK(hunger BETWEEN 0 AND 100),
- happiness INTEGER NOT NULL DEFAULT 80 CHECK(happiness BETWEEN 0 AND 100),
- energy INTEGER NOT NULL DEFAULT 80 CHECK(energy BETWEEN 0 AND 100),
- cleanliness INTEGER NOT NULL DEFAULT 80 CHECK(cleanliness BETWEEN 0 AND 100),
- coins INTEGER NOT NULL DEFAULT 100 CHECK(coins >= 0),
- xp INTEGER NOT NULL DEFAULT 0 CHECK(xp >= 0),
- level INTEGER NOT NULL DEFAULT 1 CHECK(level >= 1),
- food INTEGER NOT NULL DEFAULT 3 CHECK(food >= 0),
- toys INTEGER NOT NULL DEFAULT 1 CHECK(toys >= 0),
- created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
- updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    id UUID PRIMARY KEY,
+    name VARCHAR(32) NOT NULL,
+    species VARCHAR(8) NOT NULL CHECK(species IN ('cat','dog')),
+    hunger INTEGER NOT NULL DEFAULT 80 CHECK(hunger BETWEEN 0 AND 100),
+    happiness INTEGER NOT NULL DEFAULT 80 CHECK(happiness BETWEEN 0 AND 100),
+    energy INTEGER NOT NULL DEFAULT 80 CHECK(energy BETWEEN 0 AND 100),
+    cleanliness INTEGER NOT NULL DEFAULT 80 CHECK(cleanliness BETWEEN 0 AND 100),
+    coins INTEGER NOT NULL DEFAULT 100 CHECK(coins >= 0),
+    xp INTEGER NOT NULL DEFAULT 0 CHECK(xp >= 0),
+    level INTEGER NOT NULL DEFAULT 1 CHECK(level >= 1),
+    food INTEGER NOT NULL DEFAULT 3 CHECK(food >= 0),
+    toys INTEGER NOT NULL DEFAULT 1 CHECK(toys >= 0),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS owned_cosmetics JSONB NOT NULL DEFAULT '["none"]'::jsonb;
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS equipped_cosmetic TEXT NOT NULL DEFAULT 'none';
@@ -48,11 +48,11 @@ UPDATE pets SET daily_claimed_at = (last_daily::timestamp AT TIME ZONE 'UTC') + 
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS equipped_outfit JSONB NOT NULL DEFAULT '{"head":null,"eyes":null,"neck":null,"clothes":null}'::jsonb;
 -- Migrate only old single-slot equipped items into an empty outfit. Safe to rerun.
 UPDATE pets SET equipped_outfit=jsonb_set(equipped_outfit, ARRAY[CASE
- WHEN equipped_cosmetic IN ('bow','cap','crown','flower','halo','party','star_clip','moon_crown','fish_clip','yarn_hat','carrot_clip','clover_crown','forest_crown','cheek_bow','bamboo_clip','bamboo_hat','sailor_hat','bubble_crown','coral_clip') THEN 'head'
- WHEN equipped_cosmetic IN ('glasses','heart_shades') THEN 'eyes'
- WHEN equipped_cosmetic IN ('scarf','pearl_necklace','rainbow_scarf','bone_tag','puppy_bandana','seed_pouch','ice_scarf') THEN 'neck'
- WHEN equipped_cosmetic IN ('leaf_cape') THEN 'clothes'
- ELSE 'head' END],to_jsonb(equipped_cosmetic),true) WHERE equipped_cosmetic <> 'none' AND equipped_cosmetic IS NOT NULL AND equipped_outfit = '{"head":null,"eyes":null,"neck":null,"clothes":null}'::jsonb;
+    WHEN equipped_cosmetic IN ('bow','cap','crown','flower','halo','party','star_clip','moon_crown','fish_clip','yarn_hat','carrot_clip','clover_crown','forest_crown','cheek_bow','bamboo_clip','bamboo_hat','sailor_hat','bubble_crown','coral_clip') THEN 'head'
+    WHEN equipped_cosmetic IN ('glasses','heart_shades') THEN 'eyes'
+    WHEN equipped_cosmetic IN ('scarf','pearl_necklace','rainbow_scarf','bone_tag','puppy_bandana','seed_pouch','ice_scarf') THEN 'neck'
+    WHEN equipped_cosmetic IN ('leaf_cape') THEN 'clothes'
+    ELSE 'head' END],to_jsonb(equipped_cosmetic),true) WHERE equipped_cosmetic <> 'none' AND equipped_cosmetic IS NOT NULL AND equipped_outfit = '{"head":null,"eyes":null,"neck":null,"clothes":null}'::jsonb;
 
 -- Batch 6: Pet Notes
 ALTER TABLE users ADD COLUMN IF NOT EXISTS pet_note VARCHAR(20);
@@ -60,14 +60,14 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS note_expires_at TIMESTAMPTZ;
 
 -- Batch 7: PawMail. Run once against the SAME database used by the API.
 CREATE TABLE IF NOT EXISTS paw_mail (
- id UUID PRIMARY KEY,
- sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
- recipient_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
- design TEXT NOT NULL CHECK (design IN ('strawberry','lavender','sunshine','moonlight')),
- message TEXT NOT NULL,
- created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
- expires_at TIMESTAMPTZ NOT NULL,
- read_at TIMESTAMPTZ
+    id UUID PRIMARY KEY,
+    sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    design TEXT NOT NULL CHECK (design IN ('strawberry','lavender','sunshine','moonlight')),
+    message TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL,
+    read_at TIMESTAMPTZ
 );
 CREATE INDEX IF NOT EXISTS paw_mail_recipient_expiry_idx ON paw_mail(recipient_id,expires_at DESC);
 
@@ -91,7 +91,8 @@ CREATE TABLE IF NOT EXISTS multiplayer_challenges (
     game_id TEXT NOT NULL,
     challenger_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     challenged_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    wager INTEGER NOT NULL CHECK (wager > 0 AND wager <= 1000000),
+    wager INTEGER NOT NULL CHECK (wager >= 0 AND wager <= 1000000),
+    arena_fee_percent SMALLINT NOT NULL DEFAULT 5 CHECK (arena_fee_percent BETWEEN 0 AND 5),
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'active', 'finished', 'declined', 'cancelled', 'expired')),
     battle JSONB,
     winner_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -107,13 +108,67 @@ CREATE INDEX IF NOT EXISTS multiplayer_challenges_expiring_idx ON multiplayer_ch
 -- Kitchen discovery, recipe mastery and visual-only cooking quality.
 -- Run migration 010 before this if upgrading from the oldest version.
 CREATE TABLE IF NOT EXISTS pet_kitchens (
- user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
- ingredients JSONB NOT NULL DEFAULT '{}'::jsonb,
- meals JSONB NOT NULL DEFAULT '{}'::jsonb,
- active_recipe TEXT,
- recipe_step INTEGER NOT NULL DEFAULT 0,
- cooking_started_at TIMESTAMPTZ
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    ingredients JSONB NOT NULL DEFAULT '{}'::jsonb,
+    meals JSONB NOT NULL DEFAULT '{}'::jsonb,
+    active_recipe TEXT,
+    recipe_step INTEGER NOT NULL DEFAULT 0,
+    cooking_started_at TIMESTAMPTZ
 );
 ALTER TABLE pet_kitchens ADD COLUMN IF NOT EXISTS discovered_recipes JSONB NOT NULL DEFAULT '[]'::jsonb;
 ALTER TABLE pet_kitchens ADD COLUMN IF NOT EXISTS recipe_records JSONB NOT NULL DEFAULT '{}'::jsonb;
 ALTER TABLE pet_kitchens ADD COLUMN IF NOT EXISTS step_scores JSONB NOT NULL DEFAULT '[]'::jsonb;
+
+-- Paw Brawl Duo Clash: additive, rerunnable migration. Existing 1v1 untouched.
+CREATE TABLE IF NOT EXISTS duo_rooms (
+    id UUID PRIMARY KEY,
+    code TEXT NOT NULL UNIQUE,
+    host_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    wager INTEGER NOT NULL DEFAULT 0 CHECK (wager BETWEEN 0 AND 100),
+    arena_fee_percent SMALLINT NOT NULL DEFAULT 5 CHECK (arena_fee_percent BETWEEN 0 AND 5),
+    participants JSONB NOT NULL DEFAULT '[]'::jsonb,
+    status TEXT NOT NULL DEFAULT 'lobby' CHECK (status IN ('lobby','active','finished','void')),
+    battle JSONB,
+    winner_team SMALLINT CHECK (winner_team IS NULL OR winner_team IN (0,1)),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS duo_rooms_participants_idx ON duo_rooms USING GIN (participants jsonb_path_ops);
+CREATE INDEX IF NOT EXISTS duo_rooms_status_idx ON duo_rooms(status,updated_at);
+CREATE TABLE IF NOT EXISTS duo_records (
+    room_id UUID NOT NULL REFERENCES duo_rooms(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    team SMALLINT NOT NULL CHECK (team IN (0,1)),
+    outcome TEXT NOT NULL CHECK (outcome IN ('win','loss','draw')),
+    wager INTEGER NOT NULL CHECK (wager BETWEEN 0 AND 100),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY(room_id,user_id)
+);
+CREATE INDEX IF NOT EXISTS duo_records_user_idx ON duo_records(user_id,created_at DESC);
+CREATE TABLE IF NOT EXISTS duo_invites (
+    id UUID PRIMARY KEY,
+    room_id UUID NOT NULL REFERENCES duo_rooms(id) ON DELETE CASCADE,
+    inviter_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    recipient_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() + INTERVAL '20 minutes'),
+    UNIQUE(room_id,recipient_id)
+);
+CREATE INDEX IF NOT EXISTS duo_invites_recipient_idx ON duo_invites(recipient_id,expires_at);
+ALTER TABLE duo_records ADD COLUMN IF NOT EXISTS cover_damage INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE duo_records ADD COLUMN IF NOT EXISTS rescues INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE duo_records ADD COLUMN IF NOT EXISTS damage_dealt INTEGER NOT NULL DEFAULT 0;
+
+-- Paw Brawl 3.3: Arena Fee is a coin sink, not a player/server wallet.
+CREATE TABLE IF NOT EXISTS arena_fee_ledger (
+    mode TEXT NOT NULL CHECK (mode IN ('classic_1v1','duo_2v2')),
+    match_id UUID NOT NULL,
+    gross_pool INTEGER NOT NULL CHECK (gross_pool >= 0),
+    fee_amount INTEGER NOT NULL CHECK (fee_amount >= 0 AND fee_amount <= gross_pool),
+    winning_players SMALLINT NOT NULL CHECK (winning_players IN (1,2)),
+    payout_per_winner INTEGER NOT NULL CHECK (payout_per_winner >= 0),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (mode, match_id),
+    CHECK (gross_pool = fee_amount + winning_players * payout_per_winner)
+);
+CREATE INDEX IF NOT EXISTS arena_fee_ledger_created_idx ON arena_fee_ledger(created_at DESC);

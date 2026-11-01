@@ -55,8 +55,8 @@ export function trafficProjection(lane: number, depth: number) {
         // Positive is clockwise in canvas coordinates.
         angle: (
             lane === 0 ? -2 :
-            lane === 1 ? 0 :
-            2
+                lane === 1 ? 0 :
+                    2
         ) * (Math.PI / 180)
     };
 }
@@ -78,7 +78,9 @@ export function trafficRowLanes(random: () => number = Math.random): number[] {
     const firstLane = Math.min(2, Math.floor(random() * 3));
     const isDoubleRow = random() < 0.5;
 
-    if (!isDoubleRow) return [firstLane];
+    if (!isDoubleRow) {
+        return [firstLane];
+    }
 
     // The initially selected lane is left open. Both other lanes get cars.
     return [0, 1, 2].filter(lane => lane !== firstLane);
