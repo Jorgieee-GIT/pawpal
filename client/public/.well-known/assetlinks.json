@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.horheee.pawpal",
+        "sha256_cert_fingerprints": ["3F:D0:C7:91:F4:66:25:BB:08:FB:76:06:EF:84:51:78:2E:19:A2:22:58:22:2B:E0:79:6F:57:2F:F1:91:79:40"]
+      }
+    }]
