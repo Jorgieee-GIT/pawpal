@@ -34,6 +34,7 @@ import { z } from "zod";
 import { pool } from "./db.js";
 import { registerMultiplayer } from "./multiplayer.js";
 import { registerDuoClash } from "./duoClash.js";
+import { registerPasswordRecovery } from "./passwordRecovery.js";
 import { pawMailCatalog, pawMailDesigns } from "./mailCatalog.js";
 
 const app = express();
@@ -1239,24 +1240,32 @@ for (const [id, level] of Object.entries({
 
 const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
 
-const token = (id: string) => jwt.sign({
-    sub: id
+const token = (id: string, version = 0) => jwt.sign({
+    sub: id,
+    ver: version
 }, secret, {
     expiresIn: "14d"
 });
 
-function auth(req: any, res: any, next: any) {
+// Check the session version so password resets invalidate all old logins.
+async function auth(req: any, res: any, next: any) {
     try {
-        const t = (req.headers.authorization || "").replace(/^Bearer /, "");
-        const d = jwt.verify(t, secret) as {
-            sub: string
+        const raw = String(req.headers.authorization || "").replace(/^Bearer /, "");
+        const data = jwt.verify(raw, secret, { algorithms: ["HS256"] }) as {
+            sub: string;
+            ver?: number;
         };
-        req.userId = d.sub;
-        next()
+        if (!z.string().uuid().safeParse(data.sub).success) {
+            throw Error("Invalid account");
+        }
+        const account = await pool.query("SELECT auth_version FROM users WHERE id=$1", [data.sub]);
+        if (!account.rowCount || Number(account.rows[0].auth_version) !== (data.ver ?? 0)) {
+            throw Error("Session revoked");
+        }
+        req.userId = data.sub;
+        next();
     } catch {
-        res.status(401).json({
-            error: "Please sign in again."
-        })
+        res.status(401).json({ error: "Please sign in again." });
     }
 }
 
@@ -1387,18 +1396,38 @@ app.post("/api/admin/users/:id/reset-password", adminAuth, handle(async (req, re
         return
     }
     const hash = await bcrypt.hash(password, 12);
-    const q = await pool.query("UPDATE users SET password_hash=$1 WHERE id=$2 RETURNING id,username", [hash, req.params.id]);
-    if (!q.rowCount) {
-        res.status(404).json({
-            error: "User not found."
-        });
-        return
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+        const q = await client.query(
+            "UPDATE users SET password_hash=$1,auth_version=auth_version+1 WHERE id=$2 RETURNING id,username",
+            [hash, req.params.id]
+        );
+        if (!q.rowCount) {
+            await client.query("ROLLBACK");
+            res.status(404).json({ error: "User not found." });
+            return;
+        }
+        await client.query(
+            "UPDATE password_reset_tokens SET consumed_at=NOW() WHERE user_id=$1 AND consumed_at IS NULL",
+            [req.params.id]
+        );
+        await client.query(
+            "UPDATE password_reset_requests SET status='completed',decided_at=NOW() WHERE user_id=$1 AND status IN ('pending','approved')",
+            [req.params.id]
+        );
+        await client.query("COMMIT");
+        console.info("[ADMIN] Password reset for user", q.rows[0].id);
+        res.json({ message: "Password reset successfully. Share the new password securely with the account owner. Existing sessions were signed out." });
+    } catch (error) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw error;
+    } finally {
+        client.release();
     }
-    console.info("[ADMIN] Password reset for user", q.rows[0].id);
-    res.json({
-        message: "Password reset successfully. Share the new password securely with the account owner."
-    });
 }));
+
+registerPasswordRecovery(app, adminAuth);
 
 app.get("/api/health", (_q, r) => r.json({
     ok: true
@@ -1462,7 +1491,7 @@ app.post("/api/auth/register", handle(async (req, res) => {
     try {
         const q = await pool.query("INSERT INTO users(id,username,password_hash) VALUES($1,$2,$3) RETURNING id,username", [randomUUID(), username.toLowerCase(), hash]);
         res.status(201).json({
-            token: token(q.rows[0].id),
+            token: token(q.rows[0].id, Number(q.rows[0].auth_version || 0)),
             user: q.rows[0]
         })
     } catch (e: any) {
@@ -1484,7 +1513,7 @@ app.post("/api/auth/login", handle(async (req, res) => {
         });
 
     } res.json({
-        token: token(q.rows[0].id),
+        token: token(q.rows[0].id, Number(q.rows[0].auth_version || 0)),
         user: {
             id: q.rows[0].id,
             username: q.rows[0].username

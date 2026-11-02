@@ -4,13 +4,26 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>PawPal</title>
-        <meta name="theme-color" content="#f8f4ed" />
+        <meta name="theme-color" content="#fff1f6" />
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png?v=2" />
         <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <meta name="application-name" content="PawPal" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     </head>
     <body>
         <div id="root"></div>
         <script type="module" src="/src/main.tsx"></script>
+        <script>
+            if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+                window.addEventListener("load", function () {
+                    navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(function (error) {
+                        console.warn("PawPal offline fallback unavailable:", error);
+                    });
+                });
+            }
+        </script>
     </body>
 </html>

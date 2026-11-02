@@ -70,6 +70,7 @@ import Multiplayer from "./Multiplayer";
 import Kitchen, { FoodArt } from "./Kitchen";
 import { useEffect, useRef, useState } from "react";
 import "./style.css";
+import "./PasswordRecovery.css";
 import ArcadeCanvas from "./ArcadeCanvas";
 import WhackAMole from "./WhackAMole";
 import PawClaw from "./PawClaw";
@@ -1263,7 +1264,16 @@ function PawPostcard({ design, message, color = "blush", senderPet }: {
     </div>
 }
 export default function App() {
-    const [token, setToken] = useState(localStorage.getItem("pawpal-token") || "");
+    const [token, setToken] = useState(() => {
+        // Reset links invalidate existing sessions. An explicit login redirect must
+        // never reuse an old token and jump straight into an expired playhouse.
+        if (new URLSearchParams(window.location.search).get("login") === "1") {
+            localStorage.removeItem("pawpal-token");
+            sessionStorage.removeItem("pawpal-forgot-ticket");
+            return "";
+        }
+        return localStorage.getItem("pawpal-token") || "";
+    });
     const [user, setUser] = useState<{
         id: string;
         username: string;
@@ -1313,7 +1323,19 @@ export default function App() {
     const [ownedEnvelopes, setOwnedEnvelopes] = useState<string[]>(["classic"]);
     const [mailTo, setMailTo] = useState("");
     const [tab, setTab] = useState("home");
-    const [notice, setNotice] = useState("");
+    const [notice, setNotice] = useState(() =>
+        new URLSearchParams(window.location.search).get("passwordReset") === "success"
+            ? "Password updated. Log in with your new password."
+            : ""
+    );
+    useEffect(() => {
+        const url = new URL(window.location.href);
+        if (url.searchParams.has("login") || url.searchParams.has("passwordReset")) {
+            url.searchParams.delete("login");
+            url.searchParams.delete("passwordReset");
+            window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+        }
+    }, []);
     const [menuOpen, setMenuOpen] = useState(false);
     const [roomMenuOpen, setRoomMenuOpen] = useState(false);
     const [marketRoom, setMarketRoom] = useState("living");
@@ -1373,7 +1395,18 @@ export default function App() {
     const bathScrubbing = useRef(false);
     const bathLastMove = useRef(0);
     const bathRequest = useRef(false);
-    const [authMode, setAuthMode] = useState("login");
+    const [authMode, setAuthMode] = useState(() => sessionStorage.getItem("pawpal-forgot-ticket") ? "forgot" : "login");
+    const [forgotTicket, setForgotTicket] = useState<{ requestId: string; requestKey: string } | null>(() => {
+        try {
+            const saved = sessionStorage.getItem("pawpal-forgot-ticket");
+            return saved ? JSON.parse(saved) : null;
+        } catch {
+            return null;
+        }
+    });
+    const [forgotStatus, setForgotStatus] = useState("pending");
+    const [forgotBusy, setForgotBusy] = useState(false);
+    const [forgotError, setForgotError] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [petName, setPetName] = useState("");
@@ -1427,7 +1460,18 @@ export default function App() {
             });
             const data = await response.json();
             if (!response.ok) {
-                throw Error(data.error || "Request failed");
+                const failure = Object.assign(new Error(data.error || "Request failed"), { status: response.status });
+                if (response.status === 401 && token && localStorage.getItem("pawpal-token") === token) {
+                    // Password changes revoke all previous JWTs on the server.
+                    // Clear the stale browser session instead of showing an endless error.
+                    localStorage.removeItem("pawpal-token");
+                    setToken("");
+                    setUser(null);
+                    setPet(null);
+                    setAuthMode("login");
+                    setNotice("Your session expired. Please log in again.");
+                }
+                throw failure;
             }
             return data;
         };
@@ -1515,7 +1559,10 @@ export default function App() {
             }
             setNotifications(notificationsData);
         } catch (error: any) {
-            setNotice(error.message);
+            // The shared request handler already returned to login for a revoked session.
+            if (error?.status !== 401) {
+                setNotice(error.message);
+            }
         }
     }
     useEffect(() => {
@@ -1901,6 +1948,55 @@ export default function App() {
         } finally {
             setBusy(false)
         }
+    }
+    async function requestForgotPassword() {
+        setForgotBusy(true);
+        setForgotError("");
+        try {
+            const result = await request("/auth/password-reset/request", "POST", { username: username.trim() });
+            const ticket = { requestId: result.requestId, requestKey: result.requestKey };
+            sessionStorage.setItem("pawpal-forgot-ticket", JSON.stringify(ticket));
+            setForgotTicket(ticket);
+            setForgotStatus("pending");
+        } catch (e) {
+            setForgotError((e as Error).message);
+        } finally {
+            setForgotBusy(false);
+        }
+    }
+    useEffect(() => {
+        if (authMode !== "forgot" || !forgotTicket) {
+            return;
+        }
+        let mounted = true;
+        async function checkStatus() {
+            if (document.visibilityState === "hidden") {
+                return;
+            }
+            try {
+                const response = await fetch(API + "/api/auth/password-reset/request-status", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(forgotTicket),
+                    cache: "no-store"
+                });
+                const result = await response.json();
+                if (mounted && response.ok) {
+                    setForgotStatus(result.status || "pending");
+                }
+            } catch {
+                // Network interruptions don't cancel the admin request.
+            }
+        }
+        void checkStatus();
+        const interval = window.setInterval(() => void checkStatus(), 8000);
+        return () => { mounted = false; window.clearInterval(interval); };
+    }, [authMode, forgotTicket]);
+    function clearForgotRequest() {
+        sessionStorage.removeItem("pawpal-forgot-ticket");
+        setForgotTicket(null);
+        setForgotStatus("pending");
+        setForgotError("");
     }
     function logout() {
         localStorage.removeItem("pawpal-token");
@@ -2697,37 +2793,54 @@ export default function App() {
                 </div>
                 <form className="auth-card" onSubmit={e => {
                     e.preventDefault();
-                    void authenticate()
+                    if (authMode === "forgot") {
+                        if (!forgotTicket) {
+                            void requestForgotPassword();
+                        }
+                    } else {
+                        void authenticate();
+                    }
                 }}>
                     <div className="eyebrow">WELCOME TO PAWPAL</div>
-                    <h2>
-                        {authMode === "login" ? "Welcome back!" : "Create your account"}
-                    </h2>
-                    <label>Username</label>
-                    <input
-                        required
-                        minLength={3}
-                        maxLength={24}
-                        pattern="[a-zA-Z0-9_]{3,24}"
-                        autoComplete="username"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        placeholder="unique_username"
-                    />
-                    {authMode === "register" && <div className="username-warning" role="note">
-                        <strong>
-                            <AlertTriangle size={16} aria-hidden="true" /> DON'T USE YOUR REAL NAME!</strong>
-                        <span>Use a nickname. Your username appears above your pet and is how friends find you.</span>
-                    </div>}
-                    <label>Password</label>
-                    <input type="password" minLength={6} required value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" />
-                    {authMode === "register" && <small className="password-safety-note">For your security, please use a unique password that you don't use for your email, social media, or other accounts.</small>}
-                    <button disabled={busy} className="primary">
-                        {authMode === "login" ? "Log in" : "Create account"}
-                    </button>
-                    <button type="button" className="link-button" onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}>
-                        {authMode === "login" ? "New here? Create an account" : "Already registered? Log in"}
-                    </button>
+                    <h2>{authMode === "login" ? "Welcome back!" : authMode === "register" ? "Create your account" : "Forgot password?"}</h2>
+                    {authMode === "forgot" && forgotTicket ? <div className="paw-forgot-waiting" role="status" aria-live="polite">
+                        <LockKeyhole size={30} />
+                        <span className="paw-forgot-status">{forgotStatus}</span>
+                        <p>{forgotStatus === "approved" ? "Admin approved the request. Ask the admin to send your private, five-minute reset link." : forgotStatus === "rejected" ? "The request was rejected. Contact an admin if you need help." : forgotStatus === "completed" ? "Your password has been updated. You can log in now." : forgotStatus === "expired" ? "This request expired. You can send another one." : "Please wait for the admin's decision. You can leave this tab open; status checks automatically."}</p>
+                        <p className="password-safety-note">For security, reset links are shared privately by the admin, not displayed automatically to anyone who knows a username.</p>
+                        {forgotStatus !== "pending" && <button type="button" className="secondary" onClick={clearForgotRequest}>Start a new request</button>}
+                        <button type="button" className="link-button" onClick={() => setAuthMode("login")}>Back to login</button>
+                    </div> : <>
+                        {authMode === "forgot" && <p>Enter your username and the admin will review your request. You will receive a reset link privately once verified.</p>}
+                        <label>Username</label>
+                        <input
+                            required
+                            minLength={3}
+                            maxLength={24}
+                            pattern="[a-zA-Z0-9_]{3,24}"
+                            autoComplete="username"
+                            value={username}
+                            onChange={e => setUsername(e.target.value)}
+                            placeholder="unique_username"
+                        />
+                        {authMode === "register" && <div className="username-warning" role="note">
+                            <strong><AlertTriangle size={16} aria-hidden="true" /> DON'T USE YOUR REAL NAME!</strong>
+                            <span>Use a nickname. Your username appears above your pet and is how friends find you.</span>
+                        </div>}
+                        {authMode !== "forgot" && <>
+                            <label>Password</label>
+                            <input type="password" minLength={6} required value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" />
+                        </>}
+                        {authMode === "register" && <small className="password-safety-note">For your security, please use a unique password that you don't use for your email, social media, or other accounts.</small>}
+                        {authMode === "login" && <button type="button" className="paw-forgot-link" onClick={() => { setAuthMode("forgot"); setForgotError(""); }}>Forgot password?</button>}
+                        {forgotError && <p className="paw-recovery-error" role="alert">{forgotError}</p>}
+                        <button disabled={busy || forgotBusy} className="primary">
+                            {authMode === "forgot" ? forgotBusy ? "Submitting..." : "Request password reset" : authMode === "login" ? "Log in" : "Create account"}
+                        </button>
+                        <button type="button" className="link-button" onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}>
+                            {authMode === "login" ? "New here? Create an account" : authMode === "register" ? "Already registered? Log in" : "Back to login"}
+                        </button>
+                    </>}
                 </form>
             </div> : !user ? <p>Loading your playhouse…</p> : !pet ? <div className="adopt-card">
                 <div className="eyebrow">ONE FOREVER COMPANION</div>

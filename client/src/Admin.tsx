@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
-import { ShieldCheck, Users, PawPrint, Search, LogOut, KeyRound, ArrowLeft, ArrowRight, Images, X } from "lucide-react";
+import { ShieldCheck, Users, PawPrint, Search, LogOut, KeyRound, ArrowLeft, ArrowRight, Images, X, Link2, ClipboardCopy, Inbox, CheckCircle2, XCircle, Clock3 } from "lucide-react";
 import "./Admin.css";
 import "./AdminShared.css";
 const API = import.meta.env.VITE_API_URL || "";
+type ResetRequest = {
+    id: string;
+    username: string;
+    status: "pending" | "approved" | "rejected" | "expired" | "completed";
+    created_at: string;
+    decided_at: string | null;
+    link_expires_at: string | null;
+};
+type ResetLink = { username: string; localUrl: string; productionUrl: string; expiresAt: string };
 type AdminUser = {
     id: string;
     username: string;
@@ -40,6 +49,9 @@ export default function Admin() {
         pets: number
     } | null>(null);
     const [search, setSearch] = useState(""), [page, setPage] = useState(1);
+    const [resetRequests, setResetRequests] = useState<ResetRequest[]>([]);
+    const [requestFilter, setRequestFilter] = useState("");
+    const [shareLink, setShareLink] = useState<ResetLink | null>(null);
     const [resetId, setResetId] = useState<string | null>(null), [newPassword, setNewPassword] = useState("");
     const [busy, setBusy] = useState(false), [message, setMessage] = useState(""), [error, setError] = useState("");
     const logout = () => {
@@ -47,7 +59,9 @@ export default function Admin() {
         setToken("");
         setUsers([]);
         setOverview(null);
-        setResetId(null)
+        setResetId(null);
+        setShareLink(null);
+        setResetRequests([])
     };
     async function load(t = token, q = search, p = page) {
         try {
@@ -62,12 +76,32 @@ export default function Admin() {
             } setError((e as Error).message)
         }
     }
+    async function loadResetRequests(t = token) {
+        try {
+            const result = await adminRequest("/password-reset/requests", t);
+            setResetRequests(result.requests || []);
+        } catch (e) {
+            setError((e as Error).message);
+        }
+    }
     useEffect(() => {
         if (token) {
-            void load(token, search, page)
-
+            void load(token, search, page);
         }
     }, [token, search, page]);
+    useEffect(() => {
+        if (!token) {
+            return;
+        }
+        void loadResetRequests(token);
+        const refresh = window.setInterval(() => {
+            if (document.visibilityState === "visible") {
+                void loadResetRequests(token);
+            }
+        }, 15000);
+        return () => window.clearInterval(refresh);
+    }, [token]);
+
     async function login(e: React.FormEvent) {
         e.preventDefault();
         setBusy(true);
@@ -107,6 +141,60 @@ export default function Admin() {
             setBusy(false)
         }
     }
+    async function createLink(account: AdminUser) {
+        setBusy(true);
+        setError("");
+        try {
+            const link = await adminRequest("/users/" + account.id + "/reset-link", token, "POST");
+            setShareLink({ username: account.username, localUrl: link.localUrl || "", productionUrl: link.productionUrl || link.url, expiresAt: link.expiresAt });
+            void loadResetRequests();
+        } catch (e) {
+            setError((e as Error).message);
+        } finally {
+            setBusy(false);
+        }
+    }
+    async function decideRequest(id: string, decision: "approve" | "reject") {
+        setBusy(true);
+        setError("");
+        try {
+            const data = await adminRequest("/password-reset/requests/" + id + "/decision", token, "POST", { decision });
+            if (data.url) {
+                const account = resetRequests.find(item => item.id === id);
+                setShareLink({ username: account?.username || "player", localUrl: data.localUrl || "", productionUrl: data.productionUrl || data.url, expiresAt: data.expiresAt });
+            }
+            setMessage(data.message);
+            void loadResetRequests();
+        } catch (e) {
+            setError((e as Error).message);
+        } finally {
+            setBusy(false);
+        }
+    }
+    async function copyLink(destination: "local" | "production") {
+        if (!shareLink) {
+            return;
+        }
+        const selectedLink = destination === "local" ? shareLink.localUrl : shareLink.productionUrl;
+        if (!selectedLink) {
+            setError("This link is unavailable. Redeploy the updated backend first.");
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(selectedLink);
+            setMessage(destination === "local"
+                ? "Local link copied. Use it while the Vite and API development servers are running."
+                : "Vercel link copied. Share it privately after confirming the reset page is deployed.");
+        } catch {
+            setError("Copy was blocked. Select the link below and copy it manually.");
+        }
+    }
+    function viewRequests(username = "") {
+        setRequestFilter(username);
+        document.getElementById("admin-reset-inbox")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    const pendingRequests = resetRequests.filter(item => item.status === "pending");
+    const visibleRequests = resetRequests.filter(item => !requestFilter || item.username === requestFilter);
     return <div className="admin-page">
         <div className="admin-shell">
             <header className="admin-header paw-admin-header">
@@ -148,7 +236,7 @@ export default function Admin() {
                         <div>
                             <span>ACCOUNT MANAGEMENT</span>
                             <h1>Dashboard</h1>
-                            <p>Search player accounts and assist with password resets.</p>
+                            <p>Search players, create private reset links, and review password requests.</p>
                         </div>
                     </div>
                     <div className="admin-stats">
@@ -218,12 +306,21 @@ export default function Admin() {
                                             {new Date(u.created_at).toLocaleDateString()}
                                         </td>
                                         <td>
-                                            <button className="admin-reset" onClick={() => {
-                                                setResetId(u.id);
-                                                setNewPassword("");
-                                                setMessage("")
-                                            }}>
-                                                <KeyRound size={15} /> Reset password</button>
+                                            <div className="admin-account-actions">
+                                                <button type="button" className="admin-reset" disabled={busy} onClick={() => {
+                                                    setResetId(u.id);
+                                                    setNewPassword("");
+                                                    setMessage("");
+                                                }}>
+                                                    <KeyRound size={15} /> Reset password
+                                                </button>
+                                                <button type="button" className="admin-reset" disabled={busy} onClick={() => void createLink(u)}>
+                                                    <Link2 size={15} /> Create link
+                                                </button>
+                                                <button type="button" className="admin-reset" onClick={() => viewRequests(u.username)}>
+                                                    <Inbox size={15} /> Requests{pendingRequests.filter(r => r.username === u.username).length > 0 ? " (" + pendingRequests.filter(r => r.username === u.username).length + ")" : ""}
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>)}
                                 </tbody>
@@ -239,6 +336,33 @@ export default function Admin() {
                             </button>
                         </div>
                     </section>
+                    <section className="admin-panel admin-request-panel" id="admin-reset-inbox">
+                        <div className="admin-panel-head">
+                            <div>
+                                <h2><Inbox size={19} /> Forgot password requests {pendingRequests.length > 0 ? "(" + pendingRequests.length + " pending)" : ""}</h2>
+                                <p>Check account ownership before approving. Links are shown only to you, not automatically to requesters.</p>
+                            </div>
+                            <div className="admin-request-tools">
+                                {requestFilter && <button type="button" onClick={() => setRequestFilter("")}>Show all</button>}
+                                <button type="button" onClick={() => void loadResetRequests()}><Clock3 size={15} /> Refresh</button>
+                            </div>
+                        </div>
+                        <div className="admin-request-list">
+                            {visibleRequests.length === 0 && <p className="admin-empty">No requests to review.</p>}
+                            {visibleRequests.map(item => <article key={item.id} className="admin-request-row">
+                                <div className="admin-request-info">
+                                    <strong>@{item.username}</strong>
+                                    <span>{new Date(item.created_at).toLocaleString()}</span>
+                                    <span className={"admin-request-status " + item.status}>{item.status}</span>
+                                </div>
+                                {item.status === "pending" && <div className="admin-request-buttons">
+                                    <button type="button" className="admin-primary" disabled={busy} onClick={() => void decideRequest(item.id, "approve")}><CheckCircle2 size={15} /> Accept and create link</button>
+                                    <button type="button" disabled={busy} onClick={() => void decideRequest(item.id, "reject")}><XCircle size={15} /> Reject</button>
+                                </div>}
+                                {item.status === "approved" && <span className="admin-request-hint">Link issued. Generate a new link if the original has expired or was lost.</span>}
+                            </article>)}
+                        </div>
+                    </section>
                 </main>}
             {error && <div className="admin-toast error" role="alert">
                 {error}
@@ -247,6 +371,45 @@ export default function Admin() {
             {message && <div className="admin-toast" role="status">
                 {message}
                 <button onClick={() => setMessage("")}>×</button>
+            </div>}
+            {shareLink && <div className="admin-backdrop" onMouseDown={e => {
+                if (e.target === e.currentTarget) {
+                    setShareLink(null);
+                }
+            }}>
+                <section className="admin-dialog admin-share-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-share-title">
+                    <div className="paw-modal-top admin-reset-header">
+                        <div>
+                            <h2 id="admin-share-title">One-time reset link</h2>
+                            <p className="paw-modal-subtitle">For @{shareLink.username}</p>
+                        </div>
+                        <button type="button" className="paw-modal-close" aria-label="Close reset link" onClick={() => setShareLink(null)}><X size={19} /></button>
+                    </div>
+                    <p>The owner chooses their own new password. This link expires in five minutes or immediately after use.</p>
+                    <div className="admin-reset-link-options">
+                        <div className="admin-reset-link-option">
+                            <div className="admin-reset-link-heading">
+                                <strong>Local testing</strong>
+                                <span>Vite development server</span>
+                            </div>
+                            <textarea readOnly rows={2} aria-label="Local reset link" value={shareLink.localUrl || "Redeploy Render to enable a local reset link."} onFocus={e => e.currentTarget.select()} />
+                            <button type="button" disabled={!shareLink.localUrl} onClick={() => void copyLink("local")}><ClipboardCopy size={15} /> Copy local link</button>
+                        </div>
+                        <div className="admin-reset-link-option">
+                            <div className="admin-reset-link-heading">
+                                <strong>Vercel / Live website</strong>
+                                <span>Share after deploying the reset page</span>
+                            </div>
+                            <textarea readOnly rows={2} aria-label="Vercel reset link" value={shareLink.productionUrl} onFocus={e => e.currentTarget.select()} />
+                            <button type="button" className="admin-primary" onClick={() => void copyLink("production")}><ClipboardCopy size={15} /> Copy Vercel link</button>
+                        </div>
+                    </div>
+                    <p className="admin-link-expiry">Expires: {new Date(shareLink.expiresAt).toLocaleTimeString()}</p>
+                    <p>Both links share the same one-time token. Using either invalidates both. Localhost only works on the computer running your development server. Verify the owner before sending a link.</p>
+                    <div className="admin-dialog-actions">
+                        <button type="button" onClick={() => setShareLink(null)}>Close</button>
+                    </div>
+                </section>
             </div>}
             {resetId && <div className="admin-backdrop" onMouseDown={e => {
                 if (e.target === e.currentTarget) {
