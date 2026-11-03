@@ -1,9 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import type { ReactNode } from "react";
 import { Check, CircleHelp, Clock3, Coins, Copy, HeartPulse, Moon, Shield, Sparkles, Star, Swords, Trophy, Users, X, Zap } from "lucide-react";
 import { arenaPayout } from "./arenaFee";
 import PetArt from "./PetArt";
 import BrawlStatusBadges from "./BrawlStatusBadges";
+import BrawlStatGuide from "./BrawlStatGuide";
+import BrawlSkillGuide from "./BrawlSkillGuide";
+import BrawlGuideModal from "./BrawlGuideModal";
 import MatchExitConfirmation from "./MatchExitConfirmation";
 import "./DuoClash.css";
 
@@ -14,12 +18,14 @@ type DuoPlayer = {
     coverCooldown?: number; stunnedRounds?: number; stunEffectiveRound?: number; downedRound?: number | null;
     poisonRounds?: number; poisonDamage?: number; counterDamage?: number; evadeCharges?: number;
     specials?: { name: string; description: string; cost: number; cooldown: number; kind: string }[];
+    passive?: { name?: string; description?: string; kind?: string };
 };
 type Participant = { userId: string; username?: string; team: 0 | 1; ready: boolean; lastSeen: string };
 type DuoMove = { action: string; targetId?: string };
 type DuoBattle = {
     players: DuoPlayer[]; round: number; deadline: string; serverNow?: string; paused: boolean; log: string[];
-    effects: { actorId: string; targetId: string; action: string; description: string; changes: { targetId: string; kind: string; amount: number }[] }[];
+    effects: { actorId: string; targetId: string; action: string; description: string; changes: { targetId: string; kind: string; amount: number }[]; playersAfter?: DuoPlayer[] }[];
+    roundStartPlayers?: DuoPlayer[];
     rescueUsed: [boolean, boolean]; myMove?: DuoMove | null; readyCount?: number; winnerTeam: 0 | 1 | null;
     teamReady?: string[]; teamSignals?: Record<string,{ targetId:string; round:number }>;
     totals?: Record<string,{damageDealt:number;coverDamage:number;rescues:number;healing?:number;shieldsGranted?:number}>;
@@ -39,6 +45,19 @@ const supportsAlly = new Set(["mend", "cleanse", "aegis", "bulwark", "fortress",
 
 export default function DuoClash({ api, token, userId, friends, onUpdate, onToast, petLevel, lobbyOpen, onCloseLobby }: Props) {
     const [room, setRoom] = useState<Room | null>(null);
+    const roomSnapshotRef = useRef<Room | null>(null);
+    const [finishingPlayback, setFinishingPlayback] = useState(false);
+    const receiveRoom = useCallback((next: Room | null) => {
+        const previous = roomSnapshotRef.current;
+        if (previous?.status === "active" && next?.status === "finished"
+            && next.battle?.effects?.length
+            && JSON.stringify(previous.battle?.effects || []) !== JSON.stringify(next.battle.effects)) {
+            // A real last round has just resolved: finish its animations before results.
+            setFinishingPlayback(true);
+        }
+        roomSnapshotRef.current = next;
+        setRoom(next);
+    }, []);
     const [autoShowResult, setAutoShowResult] = useState(false);
     const previousRoomStatus = useRef<string | null>(null);
     const dialogCloseRef = useRef<HTMLButtonElement | null>(null);
@@ -60,10 +79,15 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
     const mutationGeneration = useRef(0);
     const [skillHelp, setSkillHelp] = useState<number | null>(null);
     const [battleHistory, setBattleHistory] = useState(false);
+    const [statsInfoOpen, setStatsInfoOpen] = useState(false);
+    const [skillsInfoOpen, setSkillsInfoOpen] = useState(false);
     const [stats, setStats] = useState({ wins: 0, losses: 0, draws: 0, covered: 0, rescues: 0, damage: 0 });
     const [dismissedId, setDismissedId] = useState<string | null>(null);
     const [floating, setFloating] = useState<{ round: number; byPet: Record<string, {kind:string; amount:number}[]> } | null>(null);
+    const [displayState, setDisplayState] = useState<{round: number; players: DuoPlayer[]} | null>(null);
     const [effectStep, setEffectStep] = useState<{ round: number; index: number } | null>(null);
+    const [impactStep, setImpactStep] = useState<{ round: number; index: number } | null>(null);
+    const [duoMotion, setDuoMotion] = useState<{ key: string; x: number; y: number } | null>(null);
     const refreshInFlight = useRef(false);
 
     const request = useCallback(async (path: string, method = "GET", body?: object) => {
@@ -89,7 +113,7 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
             if (generation === mutationGeneration.current) {
                 const serverNow = result.room?.battle?.serverNow;
                 if (serverNow) { setClockOffset(Date.now() - Date.parse(serverNow)); }
-                setRoom(result.room || null);
+                receiveRoom(result.room || null);
                 setInvitations(invites);
             }
         } catch (error) {
@@ -98,7 +122,7 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
                 onToast(error instanceof Error ? error.message : "Couldn't refresh Duo Clash.");
             }
         } finally { refreshInFlight.current = false; }
-    }, [request, onToast]);
+    }, [request, onToast, receiveRoom]);
     useEffect(() => {
         void refresh();
         void request("/stats").then(setStats).catch(() => {});
@@ -118,7 +142,7 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
         setBusy(true);
         try {
             const data = await request(path, "POST", body);
-            if (data.room) { setRoom(data.room); }
+            if (data.room) { receiveRoom(data.room); }
             if (data.message) { onToast(data.message); }
             if (path.endsWith("/forfeit")) { setForfeitError(""); }
             // The POST is authoritative. Noncritical refresh errors must not turn a
@@ -155,6 +179,9 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
     const me = battle?.players.find(p => p.userId === userId);
     const teamPlayers = battle?.players.filter(p => p.team === me?.team) || [];
     const enemyPlayers = battle?.players.filter(p => p.team !== me?.team) || [];
+    const displayPlayers = displayState && battle && displayState.round === battle.round ? displayState.players : battle?.players || [];
+    const displayedTeam = displayPlayers.filter(p => p.team === me?.team);
+    const displayedEnemies = displayPlayers.filter(p => p.team !== me?.team);
     const ally = teamPlayers.find(p => p.userId !== userId);
     const spec = action === "special" ? me?.specials?.[0] : action === "special2" ? me?.specials?.[1] : undefined;
     const isSupport = !!spec && supportsAlly.has(spec.kind);
@@ -174,7 +201,33 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
         && (!!selectedTarget || ["focus", "guard"].includes(action));
     const order = [...(battle?.players || [])].filter(p => p.hp > 0).sort((a, b) => b.speed - a.speed || a.userId.localeCompare(b.userId));
     const activeEffect = effectStep && battle && effectStep.round === battle.round ? battle.effects[effectStep.index] : undefined;
-    const activeTargets = new Set(activeEffect?.changes?.map(c => c.targetId) || []);
+    const impactVisible = !!effectStep && !!impactStep && effectStep.round === impactStep.round && effectStep.index === impactStep.index;
+    const activeTargets = new Set(impactVisible ? activeEffect?.changes?.map(c => c.targetId) || [] : []);
+    const duelActor = battle?.players.find(p => p.userId === activeEffect?.actorId);
+    const duelTarget = battle?.players.find(p => p.userId === activeEffect?.targetId);
+    const isDuoAttack = !!activeEffect && !!duelActor && !!duelTarget && duelActor.team !== duelTarget.team
+        && (activeEffect.action === "strike" || (["special", "special2"].includes(activeEffect.action)
+            && activeEffect.changes.some(c => ["damage", "poison", "counter", "recoil"].includes(c.kind))));
+    const duoMotionKey = isDuoAttack && effectStep ? `${room?.id}:${effectStep.round}:${effectStep.index}` : null;
+    useLayoutEffect(() => {
+        if (!duoMotionKey || !activeEffect) { return; }
+        const fighters = Array.from(document.querySelectorAll<HTMLElement>(".paw-duo-arena .paw-duo-fighter"));
+        const from = fighters.find(element => element.dataset.duoPet === activeEffect.actorId)?.querySelector(".paw-duo-pet-art");
+        const to = fighters.find(element => element.dataset.duoPet === activeEffect.targetId)?.querySelector(".paw-duo-pet-art");
+        if (!from || !to) { return; }
+        const source = from.getBoundingClientRect();
+        const target = to.getBoundingClientRect();
+        if (!source.width || !target.width) { return; }
+        const dx = target.left + target.width / 2 - source.left - source.width / 2;
+        const dy = target.top + target.height / 2 - source.top - source.height / 2;
+        // Stop short of the opposing platform; never snap a pet to another slot.
+        setDuoMotion({ key: duoMotionKey, x: Math.round(dx * .70), y: Math.round(dy * .70) });
+    }, [duoMotionKey, activeEffect?.actorId, activeEffect?.targetId]);
+    const motionReady = !!duoMotionKey && duoMotion?.key === duoMotionKey;
+    const motionStyle = (petId: string): CSSProperties | undefined => motionReady && activeEffect?.actorId === petId ? {
+        "--duo-lunge-x": `${duoMotion.x}px`,
+        "--duo-lunge-y": `${duoMotion.y}px`
+    } as CSSProperties : undefined;
     const suggested = Object.values(battle?.teamSignals || {}).filter(s => s.round === battle?.round).map(s => s.targetId);
     const ownSignal = !!battle && battle.teamSignals?.[userId]?.round === battle.round;
     const teamLocked = battle?.teamReady || [];
@@ -184,35 +237,59 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
         const highest = Math.max(0, ...players.map(p => matchTotals[p.userId]?.[field] || 0));
         return highest > 0 ? players.find(p => (matchTotals[p.userId]?.[field] || 0) === highest) : undefined;
     };
-    useEffect(() => {
-        if (!battle || !room || room.status !== "active" || battle.round <= 1 || !battle.effects?.length) { return; }
-        const byPet: Record<string, {kind:string; amount:number}[]> = {};
-        for (const effect of battle.effects) {
-            for (const value of effect.changes) {
-                if (!value.amount) { continue; }
-                (byPet[value.targetId] ??= []).push({ kind: value.kind, amount: value.amount });
+    useLayoutEffect(() => {
+        if (!battle || !room || (room.status !== "active" && !(room.status === "finished" && finishingPlayback)) || !battle.effects?.length) { return; }
+        const playingRound = battle.round;
+        const effects = battle.effects;
+        const actionDuration = 1160;
+        const timeouts: number[] = [];
+        setFloating(null);
+        setImpactStep(null);
+        setDisplayState({ round: playingRound, players: battle.roundStartPlayers || battle.players });
+        setEffectStep({ round: playingRound, index: 0 });
+        effects.forEach((effect, index) => {
+            const start = index * actionDuration;
+            timeouts.push(window.setTimeout(() => {
+                setImpactStep(null);
+                setEffectStep({ round: playingRound, index });
+            }, start));
+            timeouts.push(window.setTimeout(() => {
+                const byPet: Record<string, { kind: string; amount: number }[]> = {};
+                for (const value of effect.changes) {
+                    if (!value.amount) { continue; }
+                    (byPet[value.targetId] ??= []).push({ kind: value.kind, amount: value.amount });
+                }
+                setImpactStep({ round: playingRound, index });
+                setDisplayState({ round: playingRound, players: effect.playersAfter || battle.players });
+                setFloating({ round: playingRound - 1, byPet });
+            }, start + 500));
+            if (index > 0) {
+                timeouts.push(window.setTimeout(() => setFloating(null), start + 105));
             }
-        }
-        setFloating({ round: battle.round - 1, byPet });
-        setEffectStep({ round: battle.round, index: 0 });
-        const timeouts = battle.effects.map((_, index) => window.setTimeout(() => {
-            setEffectStep({ round: battle.round, index });
-        }, index * 360));
-        const end = window.setTimeout(() => { setFloating(null); setEffectStep(null); }, Math.max(1700, battle.effects.length * 360 + 250));
-        return () => { timeouts.forEach(window.clearTimeout); window.clearTimeout(end); };
-    }, [room?.id, room?.status, battle?.round]);
+        });
+        timeouts.push(window.setTimeout(() => {
+            setFloating(null);
+            setEffectStep(null);
+            setImpactStep(null);
+            setDisplayState({ round: playingRound, players: battle.players });
+            if (room.status === "finished") { setFinishingPlayback(false); }
+        }, effects.length * actionDuration + 80));
+        return () => { timeouts.forEach(window.clearTimeout); };
+    }, [room?.id, room?.status, battle?.round, finishingPlayback]);
     useEffect(() => {
         if (!room || room.status !== "active") { return; }
         const onEscape = (event: KeyboardEvent) => {
             if (event.key !== "Escape") { return; }
             if (skillHelp !== null) { setSkillHelp(null); }
+            else if (skillsInfoOpen) { setSkillsInfoOpen(false); }
+            else if (statsInfoOpen) { setStatsInfoOpen(false); }
             else if (battleHistory) { setBattleHistory(false); }
             else if (confirmQuit) { if (!busy) { setConfirmQuit(false); } }
             else { setConfirmQuit(true); }
         };
         window.addEventListener("keydown", onEscape);
         return () => window.removeEventListener("keydown", onEscape);
-    }, [room?.status, skillHelp, battleHistory, confirmQuit, busy]);
+    }, [room?.status, skillHelp, statsInfoOpen, skillsInfoOpen, battleHistory, confirmQuit, busy]);
     useEffect(() => {
         if (!(lobbyOpen || autoShowResult) || room?.status === "active") { return; }
         dialogCloseRef.current?.focus();
@@ -266,20 +343,20 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
     };
 
     return <section className="paw-duo-root" aria-label="Paw Brawl Duo Clash">
-        {room?.status === "active" && battle && me ? <div className="paw-duo-backdrop">
+        {(room?.status === "active" || (room?.status === "finished" && finishingPlayback)) && battle && me ? <div className="paw-duo-backdrop">
             <section className="paw-duo-battle" role="dialog" aria-modal="true" aria-label="Duo Clash battle">
-                <header className="paw-duo-battle-head paw-multi-dialog-header"><div><h2><Swords size={20}/> Paw Brawl · Duo Clash</h2><small>Round {battle.round} · {TEAM_NAMES[me.team]} vs {TEAM_NAMES[me.team === 0 ? 1 : 0]} · {roomPrize?.grossPool} Paw Coins pool · {roomPrize?.fee} Arena Fee</small></div><button className="paw-duo-close paw-multi-dialog-close" aria-label="Quit Duo Clash" onClick={() => setConfirmQuit(true)}><X size={20}/></button></header>
+                <header className="paw-duo-battle-head paw-multi-dialog-header"><div><h2><Swords size={20}/> Paw Brawl · Duo Clash</h2><small>Round {battle.round} · {TEAM_NAMES[me.team]} vs {TEAM_NAMES[me.team === 0 ? 1 : 0]} · {roomPrize?.grossPool} Paw Coins pool · {roomPrize?.fee} Arena Fee</small></div><div className="paw-duo-header-actions"><button type="button" className="paw-duo-stats-help" title="Explain Poison, Counter and other status effects" aria-label="Explain combat effects" onClick={() => { setSkillsInfoOpen(false); setStatsInfoOpen(true); }}><CircleHelp size={16}/> Effects</button><button type="button" className="paw-duo-stats-help" title="Explain breed skills and passives" aria-label="Explain breed skills" onClick={() => { setStatsInfoOpen(false); setSkillsInfoOpen(true); }}><Swords size={16}/> Skills</button><button className="paw-duo-close paw-multi-dialog-close" aria-label={room.status === "finished" ? "View match results" : "Quit Duo Clash"} onClick={() => room.status === "finished" ? setFinishingPlayback(false) : setConfirmQuit(true)}><X size={20}/></button></div></header>
                 <div className="paw-duo-score-row"><span><b>{battle.round >= 11 ? "OVERTIME" : `ROUND ${battle.round}`}</b></span><span><Clock3 size={14}/> {battle.paused ? "PAUSED · RECONNECTING" : timeLeft <= 0 ? "SYNCING ROUND" : `${timeLeft}s`}</span><span>{battle.readyCount || 0}/{totalReady} ready</span></div>
                 <div className="paw-duo-arena">
                     <div className="paw-duo-order" aria-label="Action resolution order"><span>ACTION ORDER</span><div>{order.map((p, i) => <div key={p.userId} className={`paw-duo-order-pet ${p.team === me.team ? "ally" : "enemy"} ${activeEffect?.actorId === p.userId ? "is-acting" : ""}`} title={`${i + 1}. ${p.petName} · Speed ${p.speed}`}><PetArt species={p.species} breed={p.breed} color={p.color} cosmetic="none"/><small>{p.speed}</small></div>)}</div></div>
                     <div className="paw-duo-arena-lines" aria-hidden="true"/>
-                    <div className="paw-duo-arena-side is-enemy">{enemyPlayers.map(p => <DuoFighter key={p.userId} pet={p} mine={false} round={Math.max(0,battle.round-1)} changes={floating?.round === battle.round - 1 ? floating.byPet[p.userId] : undefined} selectable={targetOptions.some(t => t.userId === p.userId) && !battle.myMove} selected={selectedTarget?.userId === p.userId} onChoose={() => setTargetId(p.userId)} acting={activeEffect?.actorId === p.userId} impacted={activeTargets.has(p.userId)} suggested={suggested.includes(p.userId)}/>)}</div>
+                    <div className="paw-duo-arena-side is-enemy">{displayedEnemies.map(p => <DuoFighter key={p.userId} pet={p} mine={false} round={Math.max(0,battle.round-1)} changes={floating?.round === battle.round - 1 ? floating.byPet[p.userId] : undefined} selectable={targetOptions.some(t => t.userId === p.userId) && !battle.myMove} selected={selectedTarget?.userId === p.userId} onChoose={() => setTargetId(p.userId)} onInfo={() => setStatsInfoOpen(true)} acting={activeEffect?.actorId === p.userId} attacking={motionReady && activeEffect?.actorId === p.userId} motionStyle={motionStyle(p.userId)} motionKey={duoMotionKey || "idle"} impacted={activeTargets.has(p.userId)} suggested={suggested.includes(p.userId)}/>)}</div>
                     <div className="paw-duo-center-vs" aria-hidden="true">VS</div>
-                    <div className="paw-duo-arena-side is-ally">{teamPlayers.map(p => <DuoFighter key={p.userId} pet={p} mine={p.userId === userId} round={Math.max(0,battle.round-1)} changes={floating?.round === battle.round - 1 ? floating.byPet[p.userId] : undefined} selectable={targetOptions.some(t => t.userId === p.userId) && !battle.myMove} selected={selectedTarget?.userId === p.userId} onChoose={() => setTargetId(p.userId)} acting={activeEffect?.actorId === p.userId} impacted={activeTargets.has(p.userId)} ready={teamLocked.includes(p.userId)}/>)}</div>
+                    <div className="paw-duo-arena-side is-ally">{displayedTeam.map(p => <DuoFighter key={p.userId} pet={p} mine={p.userId === userId} round={Math.max(0,battle.round-1)} changes={floating?.round === battle.round - 1 ? floating.byPet[p.userId] : undefined} selectable={targetOptions.some(t => t.userId === p.userId) && !battle.myMove} selected={selectedTarget?.userId === p.userId} onChoose={() => setTargetId(p.userId)} onInfo={() => setStatsInfoOpen(true)} acting={activeEffect?.actorId === p.userId} attacking={motionReady && activeEffect?.actorId === p.userId} motionStyle={motionStyle(p.userId)} motionKey={duoMotionKey || "idle"} impacted={activeTargets.has(p.userId)} ready={teamLocked.includes(p.userId)}/>)}</div>
                 </div>
                 <div className="paw-duo-actions">
                     {!battle.paused && timeLeft <= 0 && !battle.myMove && <button type="button" className="paw-duo-refresh-turn" onClick={() => void refresh()}>Refresh battle round</button>}
-                    {battle.myMove || locallyLocked ? <div className="paw-duo-locked"><Check size={18}/> Your move is locked. Waiting for teammates and opponents.</div> : <>
+                    {room.status === "finished" ? <div className="paw-duo-locked">Final round resolving. Results will appear shortly.</div> : battle.myMove || locallyLocked ? <div className="paw-duo-locked"><Check size={18}/> Your move is locked. Waiting for teammates and opponents.</div> : <>
                         <div className="paw-duo-move-list">{actions.map(item => {
                             const index = item.value === "special" ? 0 : 1;
                             const skill = item.value === "special" || item.value === "special2" ? me.specials?.[index] : null;
@@ -309,11 +386,25 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
                         }</small>}
                         <button className="paw-duo-lock" disabled={!canAct} onClick={move}>Lock in {spec ? spec.name : actions.find(a => a.value === action)?.label}{selectedTarget ? ` → ${selectedTarget.petName}` : ""}</button>
                     </>}
-                    <div className="paw-duo-foot"><button onClick={() => setBattleHistory(true)}>Battle history</button><span>{battle.paused ? "Reconnect grace: 45 seconds" : "All four moves resolve together; faster pets act first."}</span><button onClick={() => setConfirmQuit(true)}>Forfeit</button></div>
+                    <div className="paw-duo-foot"><button onClick={() => setBattleHistory(true)}>Battle history</button><span>{battle.paused ? "Reconnect grace: 45 seconds" : "All four moves resolve together; faster pets act first."}</span><button onClick={() => room.status === "finished" ? setFinishingPlayback(false) : setConfirmQuit(true)}>{room.status === "finished" ? "View results" : "Forfeit"}</button></div>
                 </div>
-                {battleHistory && <div className="paw-duo-overlay" onClick={e => { if (e.target === e.currentTarget) { setBattleHistory(false); } }}><section className="paw-duo-overlay-panel" role="dialog" aria-label="Battle history"><div className="paw-duo-overlay-head paw-multi-dialog-header"><h3>Round history</h3><button className="paw-multi-dialog-close" onClick={() => setBattleHistory(false)} aria-label="Close"><X size={18}/></button></div><div className="paw-duo-log">{battle.log.slice().reverse().map((line, i) => <p key={i}>{line}</p>)}</div></section></div>}
-                {skillHelp !== null && <div className="paw-duo-overlay" onClick={e => { if (e.target === e.currentTarget) { setSkillHelp(null); } }}><section className="paw-duo-overlay-panel" role="dialog" aria-label="Special skill details"><div className="paw-duo-overlay-head paw-multi-dialog-header"><h3>{me.specials?.[skillHelp]?.name}</h3><button className="paw-multi-dialog-close" onClick={() => setSkillHelp(null)} aria-label="Close"><X size={18}/></button></div><p>{me.specials?.[skillHelp]?.description}</p><small>{me.specials?.[skillHelp]?.cost} Focus, {me.specials?.[skillHelp]?.cooldown} rounds</small></section></div>}
-                {confirmQuit && <MatchExitConfirmation gameName="Duo Clash" error={forfeitError} description={`Quitting forfeits the whole match for your team. Each opponent receives ${roomPrize?.payoutPerWinner} Paw Coins after a ${roomPrize?.fee}-coin Arena Fee. Continue?`} busy={busy} onCancel={() => { setConfirmQuit(false); setForfeitError(""); }} onForfeit={() => { void (async () => { setForfeitError(""); const success = await submit(`/${room.id}/forfeit`, {}); if (success) { setConfirmQuit(false); setForfeitError(""); } })(); }}/>}</section>
+                {statsInfoOpen && <BrawlGuideModal
+                    title="Combat Effects"
+                    subtitle="Poison, Counter, Dodge, Stun, Shield and other statuses"
+                    onClose={() => setStatsInfoOpen(false)}
+                >
+                    <BrawlStatGuide />
+                </BrawlGuideModal>}
+                {skillsInfoOpen && <BrawlGuideModal
+                    title="Breed Skills & Passives"
+                    subtitle="Each teammate's and opponent's skills"
+                    onClose={() => setSkillsInfoOpen(false)}
+                >
+                    <BrawlSkillGuide pets={battle.players} />
+                </BrawlGuideModal>}
+                {battleHistory && <div className="paw-duo-overlay" onClick={e => { if (e.target === e.currentTarget) { setBattleHistory(false); } }}><section className="paw-duo-overlay-panel paw-duo-details-dialog" role="dialog" aria-label="Battle history"><div className="paw-duo-overlay-head paw-multi-dialog-header"><h3>Round history</h3><button className="paw-multi-dialog-close" onClick={() => setBattleHistory(false)} aria-label="Close"><X size={18}/></button></div><div className="paw-duo-log paw-duo-overlay-body">{battle.log.slice().reverse().map((line, i) => <p key={i}>{line}</p>)}</div></section></div>}
+                {skillHelp !== null && <div className="paw-duo-overlay" onClick={e => { if (e.target === e.currentTarget) { setSkillHelp(null); } }}><section className="paw-duo-overlay-panel paw-duo-details-dialog" role="dialog" aria-label="Special skill details"><div className="paw-duo-overlay-head paw-multi-dialog-header"><h3>{me.specials?.[skillHelp]?.name}</h3><button className="paw-multi-dialog-close" onClick={() => setSkillHelp(null)} aria-label="Close"><X size={18}/></button></div><div className="paw-duo-overlay-body"><p>{me.specials?.[skillHelp]?.description}</p><small>{me.specials?.[skillHelp]?.cost} Focus, {me.specials?.[skillHelp]?.cooldown} rounds</small></div></section></div>}
+                {confirmQuit && room.status === "active" && <MatchExitConfirmation gameName="Duo Clash" error={forfeitError} description={`Quitting forfeits the whole match for your team. Each opponent receives ${roomPrize?.payoutPerWinner} Paw Coins after a ${roomPrize?.fee}-coin Arena Fee. Continue?`} busy={busy} onCancel={() => { setConfirmQuit(false); setForfeitError(""); }} onForfeit={() => { void (async () => { setForfeitError(""); const success = await submit(`/${room.id}/forfeit`, {}); if (success) { setConfirmQuit(false); setForfeitError(""); } })(); }}/>}</section>
         </div> : lobbyOpen || autoShowResult ? (
             !room || dismissedId === room.id && ["finished", "void"].includes(room.status)
                 ? renderLobbyDialog("Duo Clash · 2v2", "Four real players, one permanent pet each.", <div className="paw-duo-entry">
@@ -387,13 +478,14 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
     </section>;
 }
 
-function DuoFighter({ pet, mine, round, changes, selectable = false, selected = false, onChoose, acting = false, impacted = false, suggested = false, ready = false }: {
+function DuoFighter({ pet, mine, round, changes, selectable = false, selected = false, onChoose, onInfo, acting = false, attacking = false, motionStyle, motionKey = "idle", impacted = false, suggested = false, ready = false }: {
     pet: DuoPlayer; mine: boolean; round: number; changes?: {kind:string; amount:number}[];
     selectable?: boolean; selected?: boolean; onChoose?: () => void;
-    acting?: boolean; impacted?: boolean; suggested?: boolean; ready?: boolean;
+    acting?: boolean; attacking?: boolean; motionStyle?: CSSProperties; motionKey?: string; impacted?: boolean; suggested?: boolean; ready?: boolean; onInfo?: () => void;
 }) {
     return <div
-        className={`paw-duo-fighter ${mine ? "is-mine" : ""} ${pet.hp <= 0 ? "is-downed" : ""} ${selectable ? "is-targetable" : ""} ${selected ? "is-selected-target" : ""} ${acting ? "is-acting" : ""} ${impacted ? "is-impacted" : ""}`}
+        data-duo-pet={pet.userId}
+        className={`paw-duo-fighter ${attacking ? "is-lunging" : ""} ${mine ? "is-mine" : ""} ${pet.hp <= 0 ? "is-downed" : ""} ${selectable ? "is-targetable" : ""} ${selected ? "is-selected-target" : ""} ${acting ? "is-acting" : ""} ${impacted ? "is-impacted" : ""}`}
         role={selectable ? "button" : undefined}
         tabIndex={selectable ? 0 : undefined}
         aria-label={selectable ? `Target ${pet.petName}, ${pet.hp} HP` : undefined}
@@ -401,8 +493,8 @@ function DuoFighter({ pet, mine, round, changes, selectable = false, selected = 
         onClick={selectable ? onChoose : undefined}
         onKeyDown={selectable ? event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onChoose?.(); } } : undefined}
     >
-        <div className="paw-duo-fighter-hud"><div><b>{pet.petName}</b><small>@{pet.username}{mine ? " · YOU" : ""}</small></div><small>HP {pet.hp}/{pet.maxHp}</small><div className="paw-duo-health"><i style={{ width: `${Math.max(0, 100 * pet.hp / pet.maxHp)}%` }}/></div><div className="paw-duo-ministats">{pet.shield} Shield · {pet.focus}/8 Focus · SPD {pet.speed}</div><BrawlStatusBadges player={pet} round={round} compact/></div>
-        <div className="paw-duo-pet-art"><PetArt species={pet.species} breed={pet.breed} color={pet.color} cosmetic="none"/></div><div className="paw-duo-platform" aria-hidden="true"/>
+        <div className="paw-duo-fighter-hud"><div><b>{pet.petName}</b><small>@{pet.username}{mine ? " · YOU" : ""}</small></div><small>HP {pet.hp}/{pet.maxHp}</small><div className="paw-duo-health"><i style={{ width: `${Math.max(0, 100 * pet.hp / pet.maxHp)}%` }}/></div><div className="paw-duo-ministats">{pet.shield} Shield · {pet.focus}/8 Focus · SPD {pet.speed}</div><div className="paw-duo-status-with-help"><BrawlStatusBadges player={pet} round={round} compact/><button type="button" className="paw-duo-hud-help" title="Explain Poison, Counter and other effects" aria-label={`Explain ${pet.petName}'s combat effects`} onClick={event => { event.stopPropagation(); onInfo?.(); }} onKeyDown={event => event.stopPropagation()}><CircleHelp size={12}/></button></div></div>
+        <div key={motionKey} className="paw-duo-pet-art" style={motionStyle}><PetArt species={pet.species} breed={pet.breed} color={pet.color} cosmetic="none"/></div><div className="paw-duo-platform" aria-hidden="true"/>
         {selected && <span className="paw-duo-fighter-marker">TARGET</span>}
         {suggested && <span className="paw-duo-fighter-suggested">TEAM TARGET</span>}
         {ready && <span className="paw-duo-fighter-ready"><Check size={11}/> Locked</span>}

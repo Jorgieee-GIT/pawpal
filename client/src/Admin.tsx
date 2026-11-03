@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ShieldCheck, Users, PawPrint, Search, LogOut, KeyRound, ArrowLeft, ArrowRight, Images, X, Link2, ClipboardCopy, Inbox, CheckCircle2, XCircle, Clock3 } from "lucide-react";
 import "./Admin.css";
 import "./AdminShared.css";
+import AdminConsole, { ADMIN_SECTIONS, type AdminSection } from "./AdminConsole";
 const API = import.meta.env.VITE_API_URL || "";
 type ResetRequest = {
     id: string;
@@ -43,6 +44,8 @@ async function adminRequest(path: string, token: string, method = "GET", body?: 
 }
 export default function Admin() {
     const [token, setToken] = useState(() => sessionStorage.getItem("pawpal-admin-token") || "");
+    const [section, setSection] = useState<AdminSection>("overview");
+    const [profileId, setProfileId] = useState<string | null>(null);
     const [username, setUsername] = useState(""), [password, setPassword] = useState("");
     const [users, setUsers] = useState<AdminUser[]>([]), [overview, setOverview] = useState<{
         users: number;
@@ -190,6 +193,7 @@ export default function Admin() {
         }
     }
     function viewRequests(username = "") {
+        setSection("players");
         setRequestFilter(username);
         document.getElementById("admin-reset-inbox")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -232,11 +236,21 @@ export default function Admin() {
                 </form>
             </main> :
                 <main className="admin-main">
+                    <nav className="admin-section-nav" aria-label="Admin sections">
+                        {ADMIN_SECTIONS.map(item => {
+                            const Icon = item.icon;
+                            return <button key={item.key} type="button" className={section === item.key ? "is-active" : ""}
+                                aria-current={section === item.key ? "page" : undefined} onClick={() => setSection(item.key)}>
+                                <Icon size={16} />{item.label}{item.key === "players" && pendingRequests.length > 0 ? " (" + pendingRequests.length + ")" : ""}
+                            </button>;
+                        })}
+                    </nav>
+                    {section === "players" && <div className="admin-legacy-players">
                     <div className="admin-heading paw-admin-intro">
                         <div>
                             <span>ACCOUNT MANAGEMENT</span>
-                            <h1>Dashboard</h1>
-                            <p>Search players, create private reset links, and review password requests.</p>
+                            <h1>Player management</h1>
+                            <p>Inspect accounts, manage passwords and review recovery requests.</p>
                         </div>
                     </div>
                     <div className="admin-stats">
@@ -307,6 +321,9 @@ export default function Admin() {
                                         </td>
                                         <td>
                                             <div className="admin-account-actions">
+                                                <button type="button" className="admin-reset" onClick={() => setProfileId(u.id)}>
+                                                    <Users size={15} /> Inspect profile
+                                                </button>
                                                 <button type="button" className="admin-reset" disabled={busy} onClick={() => {
                                                     setResetId(u.id);
                                                     setNewPassword("");
@@ -363,6 +380,9 @@ export default function Admin() {
                             </article>)}
                         </div>
                     </section>
+                    </div>}
+                    <AdminConsole token={token} section={section} profileId={profileId}
+                        onCloseProfile={() => setProfileId(null)} showMessage={setMessage} showError={setError} />
                 </main>}
             {error && <div className="admin-toast error" role="alert">
                 {error}

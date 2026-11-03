@@ -341,3 +341,184 @@
 .paw-duo-action-reason { display: block; color: #985373; background: #fff0f6; border: 1px solid #e8c7d8; padding: 6px 9px; border-radius: 9px; font-size: 11px; line-height: 1.35; }
 .paw-duo-refresh-turn { align-self: stretch; border: 1px solid #cfa7c2; border-radius: 9px; background: #fcecf5; color: #9d6381; padding: 7px; font-size: 11px; font-weight: 700; cursor: pointer; }
 .paw-dark .paw-duo-action-reason, .paw-dark .paw-duo-refresh-turn { background: #463448; color: #f5d5e7; border-color: #876682; }
+
+/* PawPal 4.2: paced, platform-safe Duo Clash motions and a uniform stats modal. */
+.paw-duo-header-actions { display:flex; align-items:center; gap:7px; flex:0 0 auto; }
+.paw-duo-stats-help { display:inline-flex; align-items:center; justify-content:center; gap:5px; border:1px solid #d8b6cf; border-radius:9px; background:#fff9fc; color:#915a7c; padding:7px 10px; font-size:11px; font-weight:800; cursor:pointer; }
+.paw-duo-stats-help:focus-visible { outline:2px solid #b17aab; outline-offset:2px; }
+.paw-duo-stat-modal { padding:0; width:min(580px,100%); max-height:min(75dvh,620px); display:flex; flex-direction:column; }
+.paw-duo-stat-modal .paw-duo-overlay-head { flex:0 0 auto; padding:12px 15px; }
+.paw-duo-stat-modal-body { padding:13px; overflow:auto; }
+.paw-duo-fighter.is-lunging { z-index:9; }
+.paw-duo-fighter.is-lunging .paw-duo-pet-art { animation:paw-duo-refined-lunge 1.06s cubic-bezier(.3,.07,.3,.97) both!important; will-change:transform; }
+.paw-duo-fighter.is-acting:not(.is-lunging) .paw-duo-pet-art { animation:paw-duo-support-cast .95s ease-out both!important; }
+.paw-duo-fighter.is-impacted .paw-duo-pet-art { animation:paw-duo-hit-flinch .55s ease-out both!important; }
+@keyframes paw-duo-refined-lunge {
+  0%,100% { transform:translate3d(0,0,0) scale(1); }
+  14% { transform:translate3d(0,-6px,0) scale(1.05); }
+  48%,57% { transform:translate3d(var(--duo-lunge-x,0px),var(--duo-lunge-y,0px),0) scale(.98); }
+  78% { transform:translate3d(0,-5px,0) scale(1.02); }
+}
+@keyframes paw-duo-support-cast { 0%,100% { transform:translateY(0) scale(1); } 48% { transform:translateY(-9px) scale(1.09); } }
+.paw-duo-floating { animation:paw-duo-impact-float .72s ease-out both; }
+@keyframes paw-duo-impact-float { 0% { opacity:0; transform:translateY(8px) scale(.9); } 22%,78% { opacity:1; } 100% { opacity:0; transform:translateY(-20px); } }
+.paw-dark .paw-duo-stats-help { background:#4c3850; color:#f4d7e8; border-color:#866184; }
+.paw-dark .paw-duo-stat-modal { background:#3d3044; }
+@media(max-width:420px) { .paw-duo-stats-help { font-size:0; padding:7px; } .paw-duo-stats-help svg { width:17px; height:17px; } }
+@media(prefers-reduced-motion:reduce) { .paw-duo-fighter.is-lunging .paw-duo-pet-art,.paw-duo-fighter.is-acting .paw-duo-pet-art,.paw-duo-fighter.is-impacted .paw-duo-pet-art { animation:none!important; } }
+
+.paw-duo-ministats { display:flex; justify-content:space-between; align-items:center; gap:3px; }
+.paw-duo-ministats .paw-duo-hud-help { flex:0 0 auto; display:inline-grid; place-items:center; min-height:16px; min-width:16px; padding:0; border:0; background:transparent; color:#a16d97; cursor:help; }
+.paw-duo-ministats .paw-duo-hud-help:focus-visible { outline:2px solid #a773a5; outline-offset:1px; }
+
+/* 4.3: inline help belongs beside effect badges, not the basic stat values. */
+.paw-duo-status-with-help { display:flex; align-items:center; gap:3px; min-width:0; }
+.paw-duo-status-with-help .paw-brawl-status-list { min-width:0; flex:1 1 auto; }
+.paw-duo-status-with-help .paw-duo-hud-help { display:inline-grid; place-items:center; flex:0 0 auto; width:18px; height:18px; padding:0; border:0; background:transparent; color:#a16d97; cursor:pointer; }
+.paw-duo-status-with-help .paw-duo-hud-help:focus-visible { outline:2px solid #a773a5; outline-offset:1px; }
+.paw-dark .paw-duo-status-with-help .paw-duo-hud-help { color:#f1cae4; }
+
+
+/* PawPal 4.4: Duo Clash uses the same square-X multiplayer modal header as Classic. */
+.paw-duo-battle > .paw-duo-battle-head.paw-multi-dialog-header {
+    display: flex;
+    flex: 0 0 auto;
+    min-width: 0;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border-bottom: 1px solid #e9cbdc;
+}
+.paw-duo-battle-head > div:first-child { flex:1 1 auto; min-width:0; }
+.paw-duo-battle-head h2 { min-width:0; overflow-wrap:anywhere; }
+.paw-duo-battle-head small { overflow-wrap:anywhere; }
+.paw-duo-header-actions { flex:0 0 auto; gap:5px; min-width:0; }
+.paw-duo-battle-head .paw-duo-close.paw-multi-dialog-close {
+    flex:0 0 36px;
+    width:36px !important;
+    height:36px !important;
+    min-height:36px !important;
+}
+/* Details panels keep the title/close control visible while their bodies scroll. */
+.paw-duo-overlay-panel.paw-duo-details-dialog {
+    display: flex;
+    flex-direction: column;
+    width: min(500px, 100%);
+    max-width: 100%;
+    max-height: min(550px, calc(100dvh - 36px));
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+    border: 1px solid #e8cadc;
+    border-radius: 16px;
+}
+.paw-duo-details-dialog > .paw-duo-overlay-head.paw-multi-dialog-header {
+    display:flex;
+    flex:0 0 auto;
+    align-items:center;
+    gap:10px;
+    padding:12px 15px;
+    background:#fff1f9;
+    border-bottom:1px solid #ead1e1;
+}
+.paw-duo-details-dialog > .paw-duo-overlay-head h3 { min-width:0; overflow-wrap:anywhere; }
+.paw-duo-details-dialog > .paw-duo-overlay-head .paw-multi-dialog-close {
+    display:inline-grid;
+    place-items:center;
+    flex:0 0 36px;
+    width:36px !important;
+    height:36px !important;
+}
+.paw-duo-overlay-body {
+    flex:1 1 auto;
+    min-height:0;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:12px 15px 17px;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+}
+.paw-duo-details-dialog .paw-duo-log { max-height:none; }
+.paw-dark .paw-duo-details-dialog > .paw-duo-overlay-head.paw-multi-dialog-header { background:#523e54; border-color:#745773; }
+.paw-duo-modal-dialog .paw-duo-dialog-content { min-height:0; overscroll-behavior:contain; }
+.paw-duo-dialog-content .paw-duo-room-code { min-width:0; flex-wrap:wrap; }
+.paw-duo-dialog-content .paw-duo-room-code strong { overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
+.paw-duo-dialog-content .paw-duo-lobby-slot { min-width:0; }
+.paw-duo-dialog-content .paw-duo-lobby-slot span { overflow-wrap:anywhere; }
+.paw-duo-dialog-content .paw-duo-entry-block input { max-width:100%; }
+
+@media (max-width: 620px) {
+    .paw-duo-backdrop, .paw-duo-modal-backdrop {
+        padding:max(5px,env(safe-area-inset-top)) 6px max(5px,env(safe-area-inset-bottom));
+    }
+    .paw-duo-battle {
+        width:100%;
+        height:calc(100dvh - 10px);
+        max-height:calc(100dvh - 10px);
+        min-height:0;
+        border-radius:13px;
+    }
+    .paw-duo-battle > .paw-duo-battle-head.paw-multi-dialog-header {
+        display:grid;
+        grid-template-columns:minmax(0,1fr) auto;
+        align-items:center;
+        min-height:46px;
+        padding:6px 9px;
+        gap:5px;
+    }
+    .paw-duo-battle-head h2 { font-size:clamp(12px,3.8vw,15px); line-height:1.2; }
+    .paw-duo-battle-head small { max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:9px; }
+    .paw-duo-header-actions .paw-duo-stats-help {
+        width:30px;
+        min-width:30px;
+        height:32px;
+        padding:0;
+        font-size:0;
+        gap:0;
+        flex:0 0 30px;
+    }
+    .paw-duo-header-actions .paw-duo-stats-help svg { width:16px; height:16px; }
+    .paw-duo-battle-head .paw-duo-close.paw-multi-dialog-close {
+        width:34px !important;
+        height:34px !important;
+        min-height:34px !important;
+        flex-basis:34px;
+    }
+    .paw-duo-modal-dialog.paw-multi-dialog {
+        width:100%;
+        max-width:100%;
+        max-height:calc(100dvh - 12px);
+        border-radius:14px;
+    }
+    .paw-duo-modal-dialog > .paw-multi-dialog-header { flex:0 0 auto; padding:10px 12px; }
+    .paw-duo-modal-dialog > .paw-multi-dialog-header h3 { font-size:16px; line-height:1.25; }
+    .paw-duo-modal-dialog > .paw-multi-dialog-header .paw-modal-subtitle { margin:4px 0 0; line-height:1.35; }
+    .paw-duo-modal-dialog .paw-duo-dialog-content { padding:10px 12px 14px; overflow-y:auto; }
+    .paw-duo-dialog-content .paw-duo-entry-block,
+    .paw-duo-dialog-content .paw-duo-team-panel { padding:12px; }
+    .paw-duo-dialog-content .paw-duo-lobby-actions { flex-wrap:wrap; }
+    .paw-duo-dialog-content .paw-duo-lobby-actions > button { flex:1 1 135px; }
+    .paw-duo-overlay { padding:max(7px,env(safe-area-inset-top)) 7px max(7px,env(safe-area-inset-bottom)); }
+    .paw-duo-overlay-panel.paw-duo-details-dialog { width:100%; max-height:100%; border-radius:13px; }
+    .paw-duo-details-dialog > .paw-duo-overlay-head.paw-multi-dialog-header { padding:9px 11px; }
+    .paw-duo-overlay-body { padding:10px 11px 13px; }
+    .paw-duo-arena { padding-left:6%; padding-right:6%; min-height:96px; }
+    .paw-duo-arena-side.is-enemy { padding-left:1%; padding-right:1%; }
+    .paw-duo-fighter-hud { width:min(100%,170px); }
+    .paw-duo-actions { flex:0 1 auto; min-height:0; max-height:min(44dvh,320px); overflow-y:auto; overscroll-behavior:contain; }
+    .paw-duo-target-row { flex:0 0 auto; overflow-x:auto; }
+    .paw-duo-move-item > button:first-child > span { overflow-wrap:anywhere; }
+    .paw-duo-move-item > button:first-child { min-width:0; }
+    .paw-duo-score-row { min-width:0; }
+    .paw-duo-score-row > span { min-width:0; }
+}
+@media (max-width: 360px), (max-height: 530px) {
+    .paw-duo-battle > .paw-duo-battle-head.paw-multi-dialog-header { padding:5px 7px; min-height:41px; }
+    .paw-duo-battle-head small { font-size:8px; }
+    .paw-duo-header-actions .paw-duo-stats-help { width:28px; min-width:28px; flex-basis:28px; height:30px; }
+    .paw-duo-battle-head .paw-duo-close.paw-multi-dialog-close {
+        width:32px !important; height:32px !important; min-height:32px !important; flex-basis:32px;
+    }
+    .paw-duo-actions { max-height:min(48dvh,240px); }
+    .paw-duo-arena { min-height:70px; }
+}

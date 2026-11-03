@@ -460,6 +460,11 @@ export default function Develop() {
                         ["combat", "Battle abilities"]
                     ] as const).map(([id, label]) => (
                         <button key={id} type="button" className={section === id ? "active" : ""} onClick={() => setSection(id)}>
+                            {id === "species" || id === "breeds" ? <Rabbit size={16} /> :
+                                id === "garden" ? <Sprout size={16} /> :
+                                id === "arcade" || id === "combat" ? <BrainCircuit size={16} /> :
+                                id === "atmosphere" || id === "furniture" ? <Eye size={16} /> :
+                                id === "settings" ? <ShieldCheck size={16} /> : <Heart size={16} />}
                             {label}
                         </button>
                     ))}

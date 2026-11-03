@@ -19,6 +19,8 @@ import {
     AlertTriangle,
     House,
     Users,
+    Eye,
+    EyeOff,
     UserRoundPlus,
     UserRoundMinus,
     ShoppingBag,
@@ -137,7 +139,9 @@ type PawNotification = {
     created_at: string;
     unread: boolean;
     game_name?: string | null;
-    wager?: number | null
+    wager?: number | null;
+    title?: string;
+    body?: string;
 };
 type PawMail = {
     id: string;
@@ -1298,6 +1302,18 @@ export default function App() {
     } | null>(null);
     const [mealBusy, setMealBusy] = useState(false);
     const [roomPets, setRoomPets] = useState<RoomPet[]>([]);
+    const [hideVisitingPets, setHideVisitingPets] = useState(false);
+    useEffect(() => {
+        if (!user?.id) { setHideVisitingPets(false); return; }
+        setHideVisitingPets(localStorage.getItem(`pawpal-hide-visitors:${user.id}`) === "true");
+    }, [user?.id]);
+    const toggleVisitingPets = () => {
+        setHideVisitingPets(current => {
+            const next = !current;
+            if (user?.id) { localStorage.setItem(`pawpal-hide-visitors:${user.id}`, String(next)); }
+            return next;
+        });
+    };
     const [friends, setFriends] = useState<Friend[]>([]);
     const [requestsOpen, setRequestsOpen] = useState(false);
     // Per-account viewed incoming requests. Outgoing requests must never light the badge.
@@ -1314,8 +1330,11 @@ export default function App() {
     const [sentMail, setSentMail] = useState<PawMail[]>([]);
     const [mailCatalog, setMailCatalog] = useState(ENVELOPE_DESIGNS);
     const [notifications, setNotifications] = useState<PawNotification[]>([]);
+    const pendingSeenNotifications = useRef(new Set<string>());
     const [multiplayerSignal, setMultiplayerSignal] = useState(0);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [announcementOpen, setAnnouncementOpen] = useState<PawNotification | null>(null);
+    const [maintenanceNotice, setMaintenanceNotice] = useState(false);
     const [notificationDecisions, setNotificationDecisions] = useState<Record<string, "accepted" | "declined">>({});
     const [mailDesign, setMailDesign] = useState("classic");
     const [mailColor, setMailColor] = useState("blush");
@@ -1493,6 +1512,74 @@ export default function App() {
             }
         }
     }
+    const notificationId = (item: PawNotification) => `${item.kind}:${item.event_id}:${new Date(item.created_at).getTime()}`;
+    function updateNotificationsFromServer(items: PawNotification[]) {
+        // A polling response may arrive just before the seen acknowledgement.
+        // Do not restore a red dot while a mark-seen request is in flight.
+        for (const item of items) {
+            if (!item.unread) {
+                pendingSeenNotifications.current.delete(notificationId(item));
+            }
+        }
+        setNotifications(items.map(item => pendingSeenNotifications.current.has(notificationId(item))
+            ? { ...item, unread: false }
+            : item));
+    }
+    async function markNotificationsSeen(items: PawNotification[]) {
+        const unseen = items.filter(item => item.unread && !pendingSeenNotifications.current.has(notificationId(item)));
+        if (!unseen.length) {
+            return;
+        }
+        for (const item of unseen) {
+            pendingSeenNotifications.current.add(notificationId(item));
+        }
+        setNotifications(current => current.map(item => pendingSeenNotifications.current.has(notificationId(item))
+            ? { ...item, unread: false }
+            : item));
+        try {
+            await request("/notifications/seen", "POST", {
+                items: unseen.map(item => ({ kind: item.kind, event_id: item.event_id, created_at: item.created_at }))
+            });
+            void request("/notifications").then(updateNotificationsFromServer).catch(() => {});
+        } catch {
+            // A failed write should never pretend to have marked anything as seen.
+            for (const item of unseen) {
+                pendingSeenNotifications.current.delete(notificationId(item));
+            }
+            void request("/notifications").then(updateNotificationsFromServer).catch(() => {});
+        }
+    }
+    useEffect(() => {
+        // Opening the notification bell means the visible entries were viewed.
+        // The invitation or friend request itself stays pending until acted on.
+        if (notificationsOpen && notifications.some(item => item.unread)) {
+            void markNotificationsSeen(notifications);
+        }
+    }, [notificationsOpen, notifications]);
+    useEffect(() => {
+        if (!token) {
+            pendingSeenNotifications.current.clear();
+            setNotifications([]);
+        }
+    }, [token]);
+    useEffect(() => {
+        let mounted = true;
+        async function checkMaintenance() {
+            try {
+                const response = await fetch(API + "/api/system/status", { cache: "no-store" });
+                if (response.ok) {
+                    const data = await response.json();
+                    if (mounted) setMaintenanceNotice(data.maintenance === true);
+                }
+            } catch {
+                // Preserve the last known banner during a transient network interruption.
+            }
+        }
+        void checkMaintenance();
+        const interval = window.setInterval(() => void checkMaintenance(), 60000);
+        window.addEventListener("focus", checkMaintenance);
+        return () => { mounted = false; window.clearInterval(interval); window.removeEventListener("focus", checkMaintenance); };
+    }, []);
     // Mission status remains current even while the Missions panel is closed.
     useEffect(() => {
         if (!token) {
@@ -1557,7 +1644,7 @@ export default function App() {
             if (Array.isArray(envelopes.catalog)) {
                 setMailCatalog(envelopes.catalog);
             }
-            setNotifications(notificationsData);
+            updateNotificationsFromServer(notificationsData);
         } catch (error: any) {
             // The shared request handler already returned to login for a revoked session.
             if (error?.status !== 401) {
@@ -1578,6 +1665,25 @@ export default function App() {
         let controller: AbortController | undefined;
         let retryDelay = 1500;
         const pending = new Set<string>();
+        let lastStreamActivity = Date.now();
+        let notificationsInitialized = false;
+        const knownNotificationIds = new Set<string>();
+        const syncNotifications = (items: PawNotification[]) => {
+            if (!active) { return; }
+            const current = new Set(items.map(item => `${item.kind}:${item.event_id}`));
+            if (notificationsInitialized) {
+                const freshBattle = items.some(item => item.unread
+                    && (item.kind === "multiplayer_challenge" || item.kind === "duo_invite")
+                    && !knownNotificationIds.has(`${item.kind}:${item.event_id}`));
+                if (freshBattle) { setNotice("New Paw Brawl invitation received."); }
+            }
+            notificationsInitialized = true;
+            knownNotificationIds.clear();
+            current.forEach(id => knownNotificationIds.add(id));
+            updateNotificationsFromServer(items);
+        };
+        // Seed the fallback's seen set without treating old invitations as new.
+        void request("/notifications").then(syncNotifications).catch(() => {});
 
         const refreshEvents = async () => {
             if (!active || document.visibilityState === "hidden") {
@@ -1621,7 +1727,7 @@ export default function App() {
                 load<RoomPet[]>("/room", setRoomPets);
             }
             if (social || mail || gift || multiplayer) {
-                load<any>("/notifications", setNotifications);
+                load<PawNotification[]>("/notifications", syncNotifications);
             }
             if (multiplayer) {
                 setMultiplayerSignal(value => value + 1);
@@ -1637,12 +1743,18 @@ export default function App() {
                 }, 180);
             }
         };
-        const onVisible = () => {
-            if (document.visibilityState === "visible" && pending.size) {
-                void refreshEvents();
+        const syncOnReturn = () => {
+            if (document.visibilityState !== "visible") { return; }
+            if (pending.size) { void refreshEvents(); }
+            void request("/notifications").then(syncNotifications).catch(() => {});
+            // A browser may silently suspend the response stream in background.
+            if (Date.now() - lastStreamActivity > 45000) {
+                controller?.abort();
             }
         };
-        document.addEventListener("visibilitychange", onVisible);
+        document.addEventListener("visibilitychange", syncOnReturn);
+        window.addEventListener("focus", syncOnReturn);
+        window.addEventListener("online", syncOnReturn);
 
         async function connect() {
             controller = new AbortController();
@@ -1659,6 +1771,7 @@ export default function App() {
                     throw Error("Live updates unavailable");
                 }
                 retryDelay = 1500;
+                lastStreamActivity = Date.now();
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = "";
@@ -1667,6 +1780,7 @@ export default function App() {
                     if (done) {
                         break;
                     }
+                    lastStreamActivity = Date.now();
                     buffer += decoder.decode(value, {
                         stream: true
                     }).replace(/\r/g, "");
@@ -1713,15 +1827,21 @@ export default function App() {
             }
         }
         void connect();
-        const fallback = setInterval(() => {
+        // Notifications must not wait 60 seconds when Render or SSE reconnects.
+        const notificationFallback = window.setInterval(() => {
+            if (document.visibilityState === "visible") {
+                void request("/notifications").then(syncNotifications).catch(() => {});
+            }
+            if (Date.now() - lastStreamActivity > 45000) {
+                controller?.abort();
+            }
+        }, 12000);
+        const profileFallback = window.setInterval(() => {
             if (document.visibilityState === "visible") {
                 void request("/me").then(data => {
                     setUser(data.user);
                     setPet(data.pet);
-                }).catch(() => {
-                });
-                void request("/notifications").then(setNotifications).catch(() => {
-                });
+                }).catch(() => {});
             }
         }, 60000);
         return () => {
@@ -1733,8 +1853,11 @@ export default function App() {
             if (eventTimer) {
                 clearTimeout(eventTimer);
             }
-            clearInterval(fallback);
-            document.removeEventListener("visibilitychange", onVisible);
+            clearInterval(notificationFallback);
+            clearInterval(profileFallback);
+            document.removeEventListener("visibilitychange", syncOnReturn);
+            window.removeEventListener("focus", syncOnReturn);
+            window.removeEventListener("online", syncOnReturn);
         };
     }, [token]);
     // Keep the other players' pet states fresh even when live events are delayed or
@@ -2102,7 +2225,7 @@ export default function App() {
         setSeenFriendRequestIds(updated.slice(-300));
     }, [requestsOpen, friends, user?.id]);
     const others = roomPets.filter(p => p.user_id !== user?.id);
-    const visible = roomPets.filter(p => p.user_id === user?.id).concat(others.length <= 8 ? others : Array.from({
+    const visible = roomPets.filter(p => p.user_id === user?.id).concat(hideVisitingPets ? [] : others.length <= 8 ? others : Array.from({
         length: 8
     }, (_, i) => others[(rotation * 8 + i) % others.length]));
     const roomColors = themes[pet?.room_theme || "blush"] || themes.blush;
@@ -2184,7 +2307,7 @@ export default function App() {
                         title="Notifications"
                         onClick={() => {
                             setNotificationsOpen(v => !v);
-                            void request("/notifications").then(setNotifications).catch(() => {
+                            void request("/notifications").then(updateNotificationsFromServer).catch(() => {
                             })
                         }}
                     >
@@ -2199,6 +2322,12 @@ export default function App() {
                         </div>
                         {notifications.length === 0 ? <p className="paw-notifications-empty">No notifications yet ♡</p> : notifications.map(n => <div key={n.kind + "-" + n.event_id} className={"paw-notification-item " + (n.unread && (n.kind !== "friend_request" || friendRequestIsUnread(n.event_id)) ? "is-unread" : "")}>
                             <button className="paw-notification-link" onClick={() => {
+                                if (n.kind === "announcement") {
+                                    setAnnouncementOpen(n);
+                                    setNotificationsOpen(false);
+                                    void markNotificationsSeen([n]);
+                                    return;
+                                }
                                 if (n.kind === "duo_invite") {
                                     window.sessionStorage.setItem("pawpal_open_duo", "1");
                                     setMultiplayerSignal(v => v + 1);
@@ -2220,8 +2349,8 @@ export default function App() {
                                     {n.kind.startsWith("multiplayer") || n.kind === "duo_invite" ? <Swords size={16} /> : n.kind === "mail" ? <Mail size={16} /> : <Heart size={16} />}
                                 </span>
                                 <span>
-                                    <b>@{n.actor}
-                                    </b> {n.kind === "mail" ? "sent you PawMail" : n.kind === "friend_request" ? "requested to be friends" : n.kind === "multiplayer_challenge" ? "challenged you to a game" : n.kind === "multiplayer_result" ? "finished a multiplayer match with you" : n.kind === "duo_invite" ? "invited you to Duo Clash 2v2" : "accepted your friend request"}
+                                    <b>{n.kind === "announcement" ? n.actor : "@" + n.actor}
+                                    </b> {n.kind === "mail" ? "sent you PawMail" : n.kind === "friend_request" ? "requested to be friends" : n.kind === "multiplayer_challenge" ? "challenged you to a game" : n.kind === "multiplayer_result" ? "finished a multiplayer match with you" : n.kind === "duo_invite" ? "invited you to Duo Clash 2v2" : n.kind === "announcement" ? "published: " + (n.title || "a notice") : "accepted your friend request"}
                                     <small>
                                         {new Date(n.created_at).toLocaleString()}
                                     </small>
@@ -2275,7 +2404,7 @@ export default function App() {
                                                 ...prev,
                                                 [n.event_id]: "accepted"
                                             }));
-                                            void request("/notifications").then(setNotifications).catch(() => {
+                                            void request("/notifications").then(updateNotificationsFromServer).catch(() => {
                                             })
                                         }
                                     }}
@@ -2290,7 +2419,7 @@ export default function App() {
                                                 ...prev,
                                                 [n.event_id]: "declined"
                                             }));
-                                            void request("/notifications").then(setNotifications).catch(() => {
+                                            void request("/notifications").then(updateNotificationsFromServer).catch(() => {
                                             })
                                         }
                                     }}
@@ -2319,6 +2448,18 @@ export default function App() {
                 </button>}
             </div>
         </header>
+        {announcementOpen && <div className="paw-modal-backdrop" onMouseDown={event => {
+            if (event.target === event.currentTarget) setAnnouncementOpen(null);
+        }}>
+            <section className="paw-modal paw-admin-announcement-modal" role="dialog" aria-modal="true" aria-labelledby="paw-admin-announcement-title">
+                <div className="paw-modal-top">
+                    <div><h2 id="paw-admin-announcement-title">{announcementOpen.title || "PawPal announcement"}</h2>
+                        <p className="paw-modal-subtitle">Posted {new Date(announcementOpen.created_at).toLocaleString()}</p></div>
+                    <button type="button" className="paw-modal-close" onClick={() => setAnnouncementOpen(null)} aria-label="Close announcement"><X size={19}/></button>
+                </div>
+                <div className="paw-admin-announcement-body">{announcementOpen.body}</div>
+            </section>
+        </div>}
         <SettingsModal
             open={settingsOpen}
             onClose={() => setSettingsOpen(false)}
@@ -2327,7 +2468,14 @@ export default function App() {
             audio={audioPreferences}
             onAudioChange={setAudioPreferences}
             zone={musicZone}
+            canReport={Boolean(user)}
+            onSendReport={async (category, description) => {
+                await request("/support/report", "POST", { category, description });
+            }}
         />
+        {maintenanceNotice && <div className="paw-maintenance-banner" role="status">
+            PawPal is temporarily in maintenance mode. Some game actions are paused until the administrator reopens them.
+        </div>}
         <main className="container">
             {user && mailModal === "inbox" && <div className="paw-modal-backdrop" onMouseDown={e => {
                 if (e.target === e.currentTarget) {
@@ -3080,6 +3228,16 @@ export default function App() {
                                                 <circle cx="45" cy="17" r="10" fill={roomColors[2]} opacity=".72" />
                                                 <path d="M14 11h11M19.5 5.5v11" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
                                             </svg>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className={`paw-room-visitor-toggle ${hideVisitingPets ? "is-hidden" : ""}`}
+                                            onClick={toggleVisitingPets}
+                                            aria-pressed={hideVisitingPets}
+                                            aria-label={hideVisitingPets ? "Show friends' visiting pets" : "Hide friends' visiting pets"}
+                                            title={hideVisitingPets ? "Show visiting pets" : "Hide visiting pets"}
+                                        >
+                                            {hideVisitingPets ? <EyeOff size={21} aria-hidden="true"/> : <Eye size={21} aria-hidden="true"/>}
                                         </button>
                                         <button
                                             type="button"

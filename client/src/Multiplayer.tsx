@@ -22,6 +22,9 @@ import SectionHeading from "./SectionHeading";
 import BrawlCatalogModal from "./BrawlCatalogModal";
 import MatchExitConfirmation from "./MatchExitConfirmation";
 import BrawlStatusBadges from "./BrawlStatusBadges";
+import BrawlStatGuide from "./BrawlStatGuide";
+import BrawlSkillGuide from "./BrawlSkillGuide";
+import BrawlGuideModal from "./BrawlGuideModal";
 import DuoClash from "./DuoClash";
 
 type Friend = {
@@ -197,6 +200,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
     const [busy, setBusy] = useState(false);
     const [hiddenBattleId, setHiddenBattleId] = useState<string | null>(null);
     const [showBattleInfo, setShowBattleInfo] = useState(false);
+    const [showSkillsInfo, setShowSkillsInfo] = useState(false);
     const [showGameCatalog, setShowGameCatalog] = useState(false);
     const [challengeModalOpen, setChallengeModalOpen] = useState(false);
     const [showBattleLog, setShowBattleLog] = useState(false);
@@ -488,6 +492,8 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                 closeBattleLog();
             } else if (showForfeitConfirm) {
                 if (!busy) { setShowForfeitConfirm(false); }
+            } else if (showSkillsInfo) {
+                setShowSkillsInfo(false);
             } else if (showBattleInfo) {
                 setShowBattleInfo(false);
             } else if (battle) {
@@ -500,7 +506,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         };
         window.addEventListener("keydown", handleEscape);
         return () => window.removeEventListener("keydown", handleEscape);
-    }, [battleModalOpen, battle?.id, matchFinished, showSpecialHelp, showForfeitConfirm, showBattleInfo, showBattleLog, busy]);
+    }, [battleModalOpen, battle?.id, matchFinished, showSpecialHelp, showForfeitConfirm, showBattleInfo, showSkillsInfo, showBattleLog, busy]);
 
     // The backend resolves the round and pays out atomically. The browser delays only
     // the *presentation* of each resulting stat change until its animation lands.
@@ -527,8 +533,11 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         setVisualPopups(null);
         setVisualPlayers(battle.battle.roundStartPlayers || battle.battle.players);
         const timers: number[] = [];
+        // Every resolved action gets a full, readable animation before the next
+        // action begins. Previously 540ms cut off the 1050ms lunge mid-flight.
+        const actionDuration = 1180;
         effects.forEach((effect, index) => {
-            const start = index * 540;
+            const start = index * actionDuration;
             timers.push(window.setTimeout(() => setVisualEffect({
                 ...effect,
                 index
@@ -539,7 +548,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                     setVisualPlayers(effect.playersAfter);
                 }
                 setVisualPopups({ index, changes: effect.visualChanges || [] });
-            }, start + (["strike", "special", "special2"].includes(effect.action) ? 315 : 205)));
+            }, start + (["strike", "special", "special2"].includes(effect.action) ? 510 : 350)));
         });
         timers.push(window.setTimeout(() => {
             setVisualPlayers(battle.battle!.players);
@@ -547,7 +556,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
             setVisualPopups(null);
             setAnimatingRound(false);
             setFinishedResultReady(battle.status === "finished");
-        }, effects.length * 540 + 160));
+        }, effects.length * actionDuration + 80));
         return () => timers.forEach(window.clearTimeout);
     }, [battleModalOpen, battle?.id, battle?.battle?.roundSerial]);
 
@@ -567,7 +576,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
     const effectMotionKey = visualEffect && battle?.battle
         ? `${battle.id}:${battle.battle.roundSerial ?? 0}:${visualEffect.index}:${visualEffect.actorId}`
         : null;
-    const attackEffectActive = !!visualEffect && ["strike", "special", "special2"].includes(visualEffect.action);
+    const attackEffectActive = !!visualEffect && visualEffect.actorId !== visualEffect.targetId && ["strike", "special", "special2"].includes(visualEffect.action);
     const attackMotionReady = attackEffectActive && !!effectMotionKey && lungeOffset?.key === effectMotionKey;
 
     useLayoutEffect(() => {
@@ -611,7 +620,11 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         }
         return {
             "--paw-lunge-x": `${lungeOffset.x}px`,
-            "--paw-lunge-y": `${lungeOffset.y}px`
+            "--paw-lunge-y": `${lungeOffset.y}px`,
+            "--paw-lunge-x-contact": `${Math.round(lungeOffset.x * .88)}px`,
+            "--paw-lunge-y-contact": `${Math.round(lungeOffset.y * .88)}px`,
+            "--paw-lunge-x-return": `${Math.round(lungeOffset.x * .22)}px`,
+            "--paw-lunge-y-return": `${Math.round(lungeOffset.y * .22 - 5)}px`
         } as CSSProperties;
     };
     // Force separate DOM instances for each resolved effect so a consecutive
@@ -1009,7 +1022,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
             <button type="button" onClick={() => setHiddenBattleId(null)}>Return to battle</button>
         </div>}
         {battleModalOpen && battle && battle.battle && myPet && otherPet && <div className="paw-brawl-modal-backdrop" onMouseDown={event => {
-            if (event.target === event.currentTarget && !showForfeitConfirm && !showSpecialHelp && !showBattleLog && !showBattleInfo) {
+            if (event.target === event.currentTarget && !showForfeitConfirm && !showSpecialHelp && !showBattleLog && !showBattleInfo && !showSkillsInfo) {
                 if (matchFinished) {
                     setDismissedFinishId(battle.id);
                 } else {
@@ -1018,7 +1031,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
             }
         }}>
             <section className="paw-brawl-modal" role="dialog" aria-modal="true" aria-labelledby="paw-brawl-modal-title">
-                <div className="paw-brawl-modal-header">
+                <div className="paw-brawl-modal-header paw-multi-dialog-header">
                     <div>
                         <h2 id="paw-brawl-modal-title">
                             <Swords size={22} /> Paw Brawl
@@ -1026,11 +1039,13 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                         <span className="paw-brawl-modal-kicker">Live multiplayer · Round {roundNumber} · {format(arenaPayout(battle.wager, 2, battle.arena_fee_percent).payoutPerWinner)} Paw Coins prize (after fee)</span>
                     </div>
                     <div className="paw-brawl-modal-header-right">
-                        <button type="button" className="paw-brawl-info-toggle" aria-expanded={showBattleInfo} onClick={() => setShowBattleInfo(value => !value)}>
-                            <CircleHelp size={17} /> Battle Info</button>
+                        <button type="button" className="paw-brawl-info-toggle" aria-expanded={showBattleInfo} onClick={() => { setShowSkillsInfo(false); setShowBattleInfo(true); }}>
+                            <CircleHelp size={17} /> Effects</button>
+                        <button type="button" className="paw-brawl-info-toggle" aria-expanded={showSkillsInfo} onClick={() => { setShowBattleInfo(false); setShowSkillsInfo(true); }}>
+                            <Swords size={16} /> Skills</button>
                         <button
                             type="button"
-                            className="paw-brawl-modal-close"
+                            className="paw-brawl-modal-close paw-multi-dialog-close"
                             aria-label={matchFinished ? "Close battle" : "Quit battle (forfeit)"}
                             title={matchFinished ? "Close battle" : "Quit battle (forfeit)"}
                             onClick={() => {
@@ -1045,65 +1060,20 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                         </button>
                     </div>
                 </div>
-                {showBattleInfo && <div className="paw-brawl-info-panel" role="dialog" aria-modal="true" aria-label="Battle information">
-                    <div className="paw-brawl-info-panel-heading">
-                        <b>Battle Info · Breed Grades & Moves</b>
-                        <button type="button" onClick={() => setShowBattleInfo(false)} aria-label="Close battle information">
-                            <X size={18} />
-                        </button>
-                    </div>
-                    {[myPet, otherPet].map((pet, index) => <div key={pet.userId} className="paw-brawl-info-pet">
-                        <h3>
-                            {index === 0 ? "Your pet" : "Opponent"}: {pet.petName}
-                        </h3>
-                        <p>
-                            <b>
-                                {pet.species}
-                            </b> · {pet.breed.replaceAll("_", " ")} · @{pet.username}
-                        </p>
-                        {pet.progression && <p className="paw-brawl-breed-progression">
-                            <b>Breed Grade: {breedGrade(pet)}
-                            </b> · {pet.progression.tier} category · {pet.progression.rank === 0 ? "Classic breed" : `Unlocked at player level ${pet.progression.unlockLevel}`} · Bonus: +{pet.progression.bonus.hp} HP, +{pet.progression.bonus.attack} ATK, +{pet.progression.bonus.defense} DEF, +{pet.progression.bonus.speed} SPD</p>}
-                        <div className="paw-brawl-info-stats">
-                            <span>HP <b>
-                                {pet.hp}/{pet.maxHp}
-                            </b>
-                            </span>
-                            <span>ATK <b>
-                                {pet.attack}
-                            </b>
-                            </span>
-                            <span>DEF <b>
-                                {pet.defense}
-                            </b>
-                            </span>
-                            <span>SPD <b>
-                                {pet.speed}
-                            </b>
-                            </span>
-                        </div>
-                        <p>
-                            <b>Special 1 ({pet.specials?.[0]?.name || pet.special?.name || "Breed special"}):</b> {pet.specials?.[0]?.description || pet.special?.description || "Special information will load with your match."}
-                        </p>
-                        <p>
-                            <b>Special 2 ({pet.specials?.[1]?.name || "Second breed skill"}):</b> {pet.specials?.[1]?.description || "Two Focus-costing specials are available in new matches."}
-                        </p>
-                        <p>
-                            <b>Passive ({pet.passive?.name || "Breed passive"}):</b> {pet.passive?.description || "Passive information will load with your match."}
-                        </p>
-                        <p>
-                            <b>Dodge:</b> {Math.round(Math.min(0.15, Math.max(0.03, pet.speed * 0.006)) * 100)}% base per incoming attack (passives and dodge buffs may add more). Higher Speed acts first.</p>
-                    </div>)}
-                    <div className="paw-brawl-info-moves">
-                        <p>
-                            <b>Breed grades:</b> Origin → Rookie → Rising → Adept → Veteran → Prime → Prestige → Elite → Mythic → Celestial → Apex. These describe breed unlock stages, not player levels. Later breeds earn progressively higher HP, attack, defense, and special/passive strength. Their greater power is deliberately capped so starter and early breeds can still win through counters, timing, and clever Focus use. Every breed shares the same {focusCap}-Focus cap.</p>
-                        <h3>What the numbers and effects mean</h3>
-                        <p><b>HP</b> is your pet's health. At 0 HP, your pet loses. <b>Shield</b> blocks some attack damage, but attacks can still take away HP through Shield. <b>Focus</b> is the energy you save up to pay for specials. <b>Counter 5</b> means the pet will hit back for 5 damage when attacked. <b>Poison −5 HP/round · 2 left</b> means it loses 5 HP at the end of each of the next 2 rounds, even with Shield. <b>Next attack +5</b> means 5 bonus damage on the next damaging move. <b>Dodge +20%</b> is a better chance to avoid the next incoming attack, not guaranteed immunity. The badges appear above BOTH pets so you can plan around them.</p>
-                        <h3>Moves & Focus ({myPet.focus}/{focusCap})</h3>
-                        <p>
-                            <b>Paw Strike:</b> basic damage, +{battleRules?.strikeFocus ?? 1} Focus (+1 extra with Stride) and {battleRules?.basicShieldPiercePercent ?? 40}% of damage bypasses Shield. <b>Guard:</b> first consecutive Guard grants up to {battleRules?.guardShield ?? 16} Shield and +1 Focus, second grants {battleRules?.repeatedGuardShield ?? 8} Shield and no Focus, third or later grants neither. No Focus if Shield is already full. Shield caps at {battleRules?.shieldCap ?? 34} and expires after {battleRules?.shieldDurationRounds ?? 3} rounds (including the round it was raised), even if not broken. <b>Focus:</b> +{battleRules?.focusGain ?? 3} Focus. <b>Special 1 & 2:</b> two unique skills per breed, BOTH costing 3–6 Focus. Different specials may be chained when both are ready and you have enough Focus; each has its own cooldown. Stuns skip the next round only, and give immunity afterwards; poisoned pets suffer HP damage at round-end. From round {battleRules?.pressureStartsRound ?? 11} onward, growing overtime damage bypasses Shield. Both players choose moves secretly; faster pets act first but cannot cancel a locked move. Unselected moves skip, and the {18}-round limit still applies.</p>
-                    </div>
-                </div>}
+                {showBattleInfo && <BrawlGuideModal
+                    title="Combat Effects"
+                    subtitle="Poison, Counter, Dodge, Stun, Shield and other statuses"
+                    onClose={() => setShowBattleInfo(false)}
+                >
+                    <BrawlStatGuide />
+                </BrawlGuideModal>}
+                {showSkillsInfo && <BrawlGuideModal
+                    title="Breed Skills & Passives"
+                    subtitle="Special abilities, Focus costs and passive traits"
+                    onClose={() => setShowSkillsInfo(false)}
+                >
+                    <BrawlSkillGuide pets={[myPet, otherPet]} />
+                </BrawlGuideModal>}
                 <div className="paw-brawl-scoreboard" aria-label="Current battle statistics">
                         <div className="paw-brawl-battle-hud paw-brawl-hud-player">
                             <div className="paw-brawl-hud-top">
@@ -1123,7 +1093,10 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                             <div className="paw-brawl-mini-stats" aria-label="Your attack, defense and speed">
                                 <span>ATK {myPet.attack}</span><span>DEF {myPet.defense}</span><span>SPD {myPet.speed}</span>
                             </div>
-                            <BrawlStatusBadges player={myPet} round={battle.battle.roundSerial || 0} compact />
+                            <div className="paw-brawl-status-with-help">
+                                <BrawlStatusBadges player={myPet} round={battle.battle.roundSerial || 0} compact />
+                                <button type="button" className="paw-brawl-hud-stats-help" onClick={() => setShowBattleInfo(true)} title="Explain Poison, Counter and other status effects" aria-label="Explain combat status effects"><CircleHelp size={13}/></button>
+                            </div>
                             <div className="paw-brawl-focus-pips" aria-label={`${myPet.focus} of ${focusCap} Focus`}>
                                 {Array.from({
                                     length: focusCap
@@ -1149,7 +1122,10 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                             <div className="paw-brawl-mini-stats" aria-label="Enemy attack, defense and speed">
                                 <span>ATK {otherPet.attack}</span><span>DEF {otherPet.defense}</span><span>SPD {otherPet.speed}</span>
                             </div>
-                            <BrawlStatusBadges player={otherPet} round={battle.battle.roundSerial || 0} compact />
+                            <div className="paw-brawl-status-with-help">
+                                <BrawlStatusBadges player={otherPet} round={battle.battle.roundSerial || 0} compact />
+                                <button type="button" className="paw-brawl-hud-stats-help" onClick={() => setShowBattleInfo(true)} title="Explain Poison, Counter and other status effects" aria-label="Explain combat status effects"><CircleHelp size={13}/></button>
+                            </div>
                         </div>
                 </div>
                 <div className="paw-brawl-battlefield">
@@ -1224,14 +1200,14 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                     }
                 }}>
                     <section className="paw-brawl-special-help-dialog" role="dialog" aria-modal="true" aria-labelledby="paw-brawl-special-help-title">
-                        <div className="paw-modal-top paw-brawl-special-help-header">
+                        <div className="paw-modal-top paw-brawl-special-help-header paw-multi-dialog-header">
                             <div>
                                 <h3 id="paw-brawl-special-help-title">
                                     <Sparkles size={20} /> Special {selectedSpecialIndex + 1} details
                                 </h3>
                                 <p className="paw-modal-subtitle">{myPet.breed.replaceAll("_", " ")} · {breedGrade(myPet)}</p>
                             </div>
-                            <button ref={specialHelpCloseRef} type="button" className="paw-brawl-special-help-close paw-modal-close" aria-label="Close skill details" onClick={closeSpecialHelp}>
+                            <button ref={specialHelpCloseRef} type="button" className="paw-brawl-special-help-close paw-modal-close paw-multi-dialog-close" aria-label="Close skill details" onClick={closeSpecialHelp}>
                                 <X size={18} />
                             </button>
                         </div>
@@ -1259,13 +1235,13 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                     }
                 }}>
                     <section className="paw-brawl-log-modal" role="dialog" aria-modal="true" aria-labelledby="paw-brawl-log-modal-title">
-                        <div className="paw-brawl-log-modal-heading">
+                        <div className="paw-brawl-log-modal-heading paw-multi-dialog-header">
                             <div>
                                 <h3 id="paw-brawl-log-modal-title">
                                     <Clock3 size={19} /> Battle Log</h3>
                                 <p className="paw-modal-subtitle">Live round {roundNumber} · Recent actions</p>
                             </div>
-                            <button ref={battleLogCloseRef} type="button" aria-label="Close battle log" onClick={closeBattleLog}>
+                            <button ref={battleLogCloseRef} type="button" className="paw-multi-dialog-close" aria-label="Close battle log" onClick={closeBattleLog}>
                                 <X size={19} />
                             </button>
                         </div>

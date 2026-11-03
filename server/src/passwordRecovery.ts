@@ -253,6 +253,8 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
                 "UPDATE password_reset_requests SET status=$1,decided_at=NOW() WHERE id=$2",
                 [approved ? "approved" : "rejected", id.data]
             );
+            await client.query("INSERT INTO admin_audit_logs(action,target,details) VALUES($1,$2,$3::jsonb)",
+                ["password_request_decision", String(row.user_id), JSON.stringify({ decision: decision.data })]);
             await client.query("COMMIT");
             res.setHeader("Cache-Control", "no-store");
             res.json({
@@ -288,6 +290,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
                 "UPDATE password_reset_requests SET status='approved',decided_at=NOW() WHERE user_id=$1 AND status='pending'",
                 [id.data]
             );
+            await client.query("INSERT INTO admin_audit_logs(action,target,details) VALUES('password_link_created',$1,'{}'::jsonb)", [id.data]);
             await client.query("COMMIT");
             res.setHeader("Cache-Control", "no-store");
             res.json({ username: user.rows[0].username, ...link });

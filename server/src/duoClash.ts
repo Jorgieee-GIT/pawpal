@@ -21,7 +21,7 @@ export type DuoParticipant = {
 };
 export type DuoAction = "strike" | "guard" | "focus" | "special" | "special2" | "cover" | "rescue";
 export type DuoMove = { action: DuoAction; targetId?: string };
-export type DuoEffect = { actorId: string; targetId: string; action: string; description: string; changes: BattleVisualChange[] };
+export type DuoEffect = { actorId: string; targetId: string; action: string; description: string; changes: BattleVisualChange[]; playersAfter?: DuoPlayer[] };
 export type DuoBattle = {
     players: DuoPlayer[];
     round: number;
@@ -30,6 +30,7 @@ export type DuoBattle = {
     rescueUsed: [boolean, boolean];
     paused: boolean;
     effects: DuoEffect[];
+    roundStartPlayers?: DuoPlayer[];
     log: string[];
     winnerTeam: 0 | 1 | null;
     totals?: Record<string,{ damageDealt:number; coverDamage:number; rescues:number; healing:number; shieldsGranted:number }>;
@@ -137,6 +138,11 @@ export function resolveDuoRound(battle: DuoBattle): { finished: boolean; winnerT
     const timedOut: string[] = [];
     const currentlyAble = start.filter(p => p.hp > 0);
     battle.effects = [];
+    const recordEffect = (effect: DuoEffect) => {
+        // Snapshot actual server-resolved stats, never guessed client-side values.
+        effect.playersAfter = structuredClone(battle.players);
+        battle.effects.push(effect);
+    };
     for (const p of currentlyAble) {
         if (!moves[p.userId] && !p.stunnedRounds) {
             moves[p.userId] = { action: "focus" };
@@ -171,6 +177,7 @@ export function resolveDuoRound(battle: DuoBattle): { finished: boolean; winnerT
             appendLog(battle, `${actor.petName} spent 6 Focus preparing Second Chance for ${target.petName}.`);
         }
     }
+    battle.roundStartPlayers = structuredClone(battle.players);
     const order = currentlyAble.sort((a, b) => b.speed - a.speed || a.userId.localeCompare(b.userId));
     for (const saved of order) {
         const actor = find(battle, saved.userId)!;
@@ -212,25 +219,26 @@ export function resolveDuoRound(battle: DuoBattle): { finished: boolean; winnerT
                 appendLog(battle, `${redirected.petName} covered ${target.petName} and absorbed ${split} damage.`);
             }
         }
-        battle.effects.push(effect);
+        recordEffect(effect);
     }
     for (const p of battle.players) {
         if (p.shield > 0 && (p.shieldExpiresRound || 0) <= battle.round) {
-            battle.effects.push({ actorId: "round", targetId: p.userId, action: "shield_expire", description: `${p.petName}'s Shield expired.`, changes: [simpleChange(p.userId, "shield", -p.shield, "EXPIRED")] });
+            const expiredShield = p.shield;
             p.shield = 0;
             p.shieldBreakRefund = 0;
             p.shieldExpiresRound = 0;
+            recordEffect({ actorId: "round", targetId: p.userId, action: "shield_expire", description: `${p.petName}'s Shield expired.`, changes: [simpleChange(p.userId, "shield", -expiredShield, "EXPIRED")] });
         }
         if (p.poisonRounds && p.hp > 0) {
             const damage = Math.min(p.hp, p.poisonDamage || 5);
             p.hp -= damage;
             p.poisonRounds--;
-            battle.effects.push({ actorId: "round", targetId: p.userId, action: "poison", description: `${p.petName} took ${damage} poison damage.`, changes: [simpleChange(p.userId, "poison", damage)] });
+            recordEffect({ actorId: "round", targetId: p.userId, action: "poison", description: `${p.petName} took ${damage} poison damage.`, changes: [simpleChange(p.userId, "poison", damage)] });
         }
         if (battle.round >= BRAWL_RULES.pressureStartsRound && p.hp > 0) {
             const pressure = BRAWL_RULES.pressureFirstDamage + (battle.round - BRAWL_RULES.pressureStartsRound) * BRAWL_RULES.pressureGrowth;
             p.hp = Math.max(0, p.hp - pressure);
-            battle.effects.push({ actorId: "round", targetId: p.userId, action: "pressure", description: `${p.petName} lost ${pressure} HP to overtime.`, changes: [simpleChange(p.userId, "pressure", pressure)] });
+            recordEffect({ actorId: "round", targetId: p.userId, action: "pressure", description: `${p.petName} lost ${pressure} HP to overtime.`, changes: [simpleChange(p.userId, "pressure", pressure)] });
         }
     }
     // Rescue completes only if the rescuer survived the round.
@@ -241,7 +249,7 @@ export function resolveDuoRound(battle: DuoBattle): { finished: boolean; winnerT
             target.shield = 0;
             target.shieldExpiresRound = 0;
             target.downedRound = null;
-            battle.effects.push({ actorId: actor.userId, targetId: target.userId, action: "rescue", description: `${target.petName} was rescued!`, changes: [simpleChange(target.userId, "heal", target.hp, "REVIVED")] });
+            recordEffect({ actorId: actor.userId, targetId: target.userId, action: "rescue", description: `${target.petName} was rescued!`, changes: [simpleChange(target.userId, "heal", target.hp, "REVIVED")] });
             appendLog(battle, `${actor.petName} revived ${target.petName} with 20% HP!`);
         }
     }

@@ -1,4 +1,4 @@
-import { useEffect, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import {
     Check,
     Moon,
@@ -21,6 +21,8 @@ type SettingsModalProps = {
     audio: AudioPreferences;
     onAudioChange: (value: AudioPreferences) => void;
     zone: MusicZone;
+    canReport: boolean;
+    onSendReport: (category: "bug" | "player" | "feedback" | "other", description: string) => Promise<void>;
 };
 
 const APPEARANCE_OPTIONS: Array<{
@@ -52,8 +54,28 @@ export default function SettingsModal({
     onAppearanceChange,
     audio,
     onAudioChange,
-    zone
+    zone,
+    onSendReport,
+    canReport
 }: SettingsModalProps) {
+    const [reportCategory, setReportCategory] = useState<"bug" | "player" | "feedback" | "other">("bug");
+    const [reportDescription, setReportDescription] = useState("");
+    const [reportBusy, setReportBusy] = useState(false);
+    const [reportMessage, setReportMessage] = useState("");
+    async function submitReport(event: React.FormEvent) {
+        event.preventDefault();
+        setReportBusy(true);
+        setReportMessage("");
+        try {
+            await onSendReport(reportCategory, reportDescription.trim());
+            setReportDescription("");
+            setReportMessage("Your report was sent to the PawPal administrator.");
+        } catch (error) {
+            setReportMessage((error as Error).message);
+        } finally {
+            setReportBusy(false);
+        }
+    }
     useEffect(() => {
         if (!open) {
             return;
@@ -180,6 +202,32 @@ export default function SettingsModal({
                     </div>
                     <p className="paw-settings-hint">Music pauses automatically when you leave this browser tab. All five tracks share one volume setting.</p>
                 </section>
+                {canReport && <section className="paw-settings-section" aria-labelledby="paw-settings-report-heading">
+                    <div className="paw-settings-section-heading">
+                        <div>
+                            <h3 id="paw-settings-report-heading">Report an issue</h3>
+                            <span>Send bugs, player concerns or suggestions to the admin.</span>
+                        </div>
+                    </div>
+                    <form className="paw-settings-report" onSubmit={submitReport}>
+                        <label>Category
+                            <select value={reportCategory} onChange={e => setReportCategory(e.target.value as typeof reportCategory)}>
+                                <option value="bug">Bug or technical issue</option>
+                                <option value="player">Player concern</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </label>
+                        <label>Describe what happened
+                            <textarea minLength={15} maxLength={1000} required rows={3} value={reportDescription}
+                                onChange={e => setReportDescription(e.target.value)} placeholder="Include the game, steps, and what went wrong." />
+                        </label>
+                        {reportMessage && <p role="status" className="paw-settings-report-message">{reportMessage}</p>}
+                        <button type="submit" disabled={reportBusy || reportDescription.trim().length < 15}>
+                            {reportBusy ? "Sending..." : "Send report"}
+                        </button>
+                    </form>
+                </section>}
                 <div className="paw-settings-footer">
                     <span>Preferences are saved on this device.</span>
                     <button type="button" className="paw-settings-done" onClick={onClose}>Done</button>

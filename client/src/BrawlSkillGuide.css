@@ -1,0 +1,19 @@
+.paw-brawl-skill-guide { display:grid; gap:10px; color:#855d78; }
+.paw-brawl-skill-intro { margin:0; font-size:12px; line-height:1.45; color:#8c627d; }
+.paw-brawl-skill-guide-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+.paw-brawl-skill-guide-pet { display:grid; align-content:start; gap:7px; padding:11px; border:1px solid #efd9e7; border-radius:12px; background:#fff7fb; min-width:0; }
+.paw-brawl-skill-guide-pet > header { display:grid; gap:2px; padding-bottom:7px; border-bottom:1px solid #efd9e7; }
+.paw-brawl-skill-guide-pet > header b { font-size:13px; color:#855273; }
+.paw-brawl-skill-guide-pet > header small { font-size:10px; color:#94768a; }
+.paw-brawl-skill-guide-move { display:grid; gap:4px; }
+.paw-brawl-skill-guide-name { display:flex; align-items:center; gap:5px; color:#8b5477; font-size:12px; }
+.paw-brawl-skill-guide-name svg { flex:0 0 auto; }
+.paw-brawl-skill-guide-move p,.paw-brawl-skill-guide-empty { margin:0; color:#92768b; font-size:11px; line-height:1.5; }
+.paw-brawl-skill-guide-move > small { display:flex; align-items:center; gap:4px; font-size:10px; color:#a06f90; font-weight:700; }
+.paw-dark .paw-brawl-skill-guide { color:#f1d2e4; }
+.paw-dark .paw-brawl-skill-intro,.paw-dark .paw-brawl-skill-guide-move p,.paw-dark .paw-brawl-skill-guide-empty { color:#dac0d5; }
+.paw-dark .paw-brawl-skill-guide-pet { background:#4c394e; border-color:#765977; }
+.paw-dark .paw-brawl-skill-guide-pet > header { border-color:#765977; }
+.paw-dark .paw-brawl-skill-guide-pet > header b,.paw-dark .paw-brawl-skill-guide-name { color:#ffe3f3; }
+.paw-dark .paw-brawl-skill-guide-pet > header small,.paw-dark .paw-brawl-skill-guide-move > small { color:#d5b3ce; }
+@media(max-width:540px) { .paw-brawl-skill-guide-grid { grid-template-columns:1fr; } }

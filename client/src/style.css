@@ -15600,3 +15600,18 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex] {
     background: transparent;
     color: inherit;
 }
+
+/* PawPal 4.2: hide visiting pets without removing them from Friends or the server. */
+.paw-room-tools .paw-room-visitor-toggle { display:grid!important; place-items:center!important; width:42px!important; min-width:42px!important; height:42px!important; padding:0!important; flex:0 0 auto; color:#a16b91!important; }
+.paw-room-tools .paw-room-visitor-toggle.is-hidden { color:#7b698f!important; background:#eee4f3!important; border-color:#d7c2e0!important; }
+.paw-room-tools .paw-room-visitor-toggle:focus-visible { outline:2px solid #a974a8; outline-offset:2px; }
+.paw-dark .paw-room-tools .paw-room-visitor-toggle { color:#f1c7e1!important; background:#4d3952!important; border-color:#805d7c!important; }
+.paw-dark .paw-room-tools .paw-room-visitor-toggle.is-hidden { background:#665174!important; }
+@media(max-width:500px) { .paw-room-tools .paw-room-visitor-toggle { width:37px!important; min-width:37px!important; height:37px!important; } }
+
+/* Admin announcements open using the universal PawPal modal header. */
+.paw-admin-announcement-modal { width:min(480px,calc(100vw - 24px)); max-height:min(85dvh,700px); overflow:hidden; display:flex; flex-direction:column; }
+.paw-admin-announcement-modal .paw-modal-top { flex:0 0 auto; }
+.paw-admin-announcement-body { overflow-y:auto; padding:20px; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.65; }
+
+.paw-maintenance-banner { max-width:1160px; width:calc(100% - 32px); margin:14px auto 0; box-sizing:border-box; padding:12px 16px; border-radius:12px; border:1px solid #ebc6d3; background:#fff2f7; color:#80506d; font-size:13px; line-height:1.5; text-align:center; }

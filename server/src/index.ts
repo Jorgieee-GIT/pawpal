@@ -35,6 +35,7 @@ import { pool } from "./db.js";
 import { registerMultiplayer } from "./multiplayer.js";
 import { registerDuoClash } from "./duoClash.js";
 import { registerPasswordRecovery } from "./passwordRecovery.js";
+import { registerAdminConsole, enforceAdminGameSettings, gameSettings, updatePresence, logServerFailure, writeAdminAudit } from "./adminConsole.js";
 import { pawMailCatalog, pawMailDesigns } from "./mailCatalog.js";
 
 const app = express();
@@ -66,18 +67,35 @@ app.use(cors({
 }));
 
 
+app.use("/api", enforceAdminGameSettings);
+
 // Live updates use authenticated Server-Sent Events and PostgreSQL LISTEN/NOTIFY.
 // This works across multiple Node processes connected to the same PostgreSQL database.
 const liveClients = new Map<string, Set<any>>();
+const liveInstanceId = randomUUID();
+function writeLive(userId: string, type: string) {
+    for (const res of liveClients.get(userId) || []) {
+        if (!res.writableEnded && !res.destroyed) {
+            try {
+                res.write(`event: update\ndata: ${JSON.stringify({ type })}\n\n`);
+            } catch (error) {
+                console.warn("Live stream was already disconnected", error);
+            }
+        }
+    }
+}
 function publishLive(userIds: string[], type: string) {
     const unique = [...new Set(userIds.filter(Boolean))];
     for (const id of unique) {
+        // Deliver immediately to users connected to this process. Postgres is
+        // still used to reach clients attached to another Render instance.
+        writeLive(id, type);
         const payload = JSON.stringify({
             userId: id,
             type,
-            at: Date.now()
+            at: Date.now(),
+            origin: liveInstanceId
         });
-        // pg_notify is delivered to all running API instances, including this one.
         void pool.query("SELECT pg_notify($1,$2)", ["pawpal_live", payload]).catch(e => console.error("Live notification failed", e));
     }
 }
@@ -103,11 +121,9 @@ async function subscribeLive() {
         }
         try {
             const event = JSON.parse(message.payload);
-            for (const res of liveClients.get(event.userId) || []) {
-                res.write(`event: update\ndata: ${JSON.stringify({
-                    type: event.type
-                })}\n\n`)
-
+            // The sending instance already delivered its local event directly.
+            if (event.origin !== liveInstanceId && typeof event.userId === "string" && typeof event.type === "string") {
+                writeLive(event.userId, event.type);
             }
 } catch (e) {
             console.error("Live event parse error", e)
@@ -120,7 +136,10 @@ async function subscribeLive() {
     });
     await client.query("LISTEN pawpal_live");
 }
-void subscribeLive().catch(e => console.error("Live listener unavailable", e));
+void subscribeLive().catch(e => {
+    console.error("Live listener unavailable", e);
+    setTimeout(() => void subscribeLive().catch(console.error), 3000);
+});
 
 const secret = process.env.JWT_SECRET || "LOCAL_DEVELOPMENT_ONLY_CHANGE_THIS_SECRET";
 
@@ -1258,11 +1277,30 @@ async function auth(req: any, res: any, next: any) {
         if (!z.string().uuid().safeParse(data.sub).success) {
             throw Error("Invalid account");
         }
-        const account = await pool.query("SELECT auth_version FROM users WHERE id=$1", [data.sub]);
+        const account = await pool.query(`SELECT u.auth_version,COALESCE(a.suspended,false) AS suspended,
+            COALESCE(a.disabled_features,'[]'::jsonb) AS disabled_features
+            FROM users u LEFT JOIN admin_user_access a ON a.user_id=u.id WHERE u.id=$1`, [data.sub]);
         if (!account.rowCount || Number(account.rows[0].auth_version) !== (data.ver ?? 0)) {
             throw Error("Session revoked");
         }
+        if (account.rows[0].suspended) {
+            res.status(403).json({ error: "This PawPal account is temporarily suspended. Contact the administrator." });
+            return;
+        }
+        const action = String(req.path);
+        const feature = action.startsWith("/api/multiplayer") || action.startsWith("/api/duo") ? "multiplayer"
+            : action.startsWith("/api/garden") ? "garden"
+            : action.startsWith("/api/kitchen") ? "kitchen"
+            : action.startsWith("/api/claw") ? "pawclaw"
+            : action === "/api/game" ? "arcade"
+            : action.startsWith("/api/missions") || action.startsWith("/api/achievement") ? "missions"
+            : action.startsWith("/api/furniture") || action === "/api/item" ? "shop" : "";
+        if (feature && Array.isArray(account.rows[0].disabled_features) && account.rows[0].disabled_features.includes(feature)) {
+            res.status(403).json({ error: "Your administrator has restricted access to this PawPal feature." });
+            return;
+        }
         req.userId = data.sub;
+        updatePresence(String(data.sub));
         next();
     } catch {
         res.status(401).json({ error: "Please sign in again." });
@@ -1271,6 +1309,7 @@ async function auth(req: any, res: any, next: any) {
 
 const handle = (fn: (req: any, res: any) => Promise<void>) => (req: any, res: any) => Promise.resolve(fn(req, res)).catch((e: any) => {
     console.error(e);
+    logServerFailure(String(req.path || "unknown"), e?.code);
     if (!res.headersSent) {
         res.status(500).json({
             error: "Server error. Check the backend terminal."
@@ -1418,6 +1457,7 @@ app.post("/api/admin/users/:id/reset-password", adminAuth, handle(async (req, re
         );
         await client.query("COMMIT");
         console.info("[ADMIN] Password reset for user", q.rows[0].id);
+        void writeAdminAudit("password_reset", String(q.rows[0].id)).catch(console.error);
         res.json({ message: "Password reset successfully. Share the new password securely with the account owner. Existing sessions were signed out." });
     } catch (error) {
         await client.query("ROLLBACK").catch(() => {});
@@ -1428,6 +1468,7 @@ app.post("/api/admin/users/:id/reset-password", adminAuth, handle(async (req, re
 }));
 
 registerPasswordRecovery(app, adminAuth);
+registerAdminConsole(app, adminAuth, auth, publishLive);
 
 app.get("/api/health", (_q, r) => r.json({
     ok: true
@@ -1512,7 +1553,12 @@ app.post("/api/auth/login", handle(async (req, res) => {
             error: "Incorrect username or password."
         });
 
-    } res.json({
+    }
+    const access = await pool.query("SELECT suspended FROM admin_user_access WHERE user_id=$1", [q.rows[0].id]);
+    if (access.rows[0]?.suspended) {
+        return void res.status(403).json({ error: "This PawPal account is temporarily suspended. Contact the administrator." });
+    }
+    res.json({
         token: token(q.rows[0].id, Number(q.rows[0].auth_version || 0)),
         user: {
             id: q.rows[0].id,
@@ -1719,6 +1765,7 @@ async function mutate(req: any, res: any, fn: (p: any) => string | Promise<strin
             })
         }
         const p = q.rows[0];
+        const previousCoinBalance = Number(p.coins);
         const wasSleepingAtRequest = applyPetDecay(p);
         p._wasSleepingAtRequest = wasSleepingAtRequest;
         const message = await fn(p);
@@ -1780,6 +1827,10 @@ async function mutate(req: any, res: any, fn: (p: any) => string | Promise<strin
                 clothes: null
             })
         ]);
+        if (Number(p.coins) !== previousCoinBalance) {
+            await c.query("INSERT INTO admin_coin_events(user_id,change_amount,source) VALUES($1,$2,$3)",
+                [req.userId, Number(p.coins) - previousCoinBalance, req.path + ":" + action]);
+        }
         await c.query("COMMIT");
         if (req.path === "/api/care" && action === "sleep_toggle") {
             const friends = await pool.query("SELECT CASE WHEN requester_id=$1 THEN recipient_id ELSE requester_id END AS friend_id FROM friendships WHERE status='accepted' AND (requester_id=$1 OR recipient_id=$1)", [req.userId]);
@@ -2339,13 +2390,16 @@ app.get("/api/live", auth, (req: any, res: any) => {
     });
     res.flushHeaders();
     res.write("event: ready\ndata: {}\n\n");
+    updatePresence(userId);
     let sockets = liveClients.get(userId);
     if (!sockets) {
         sockets = new Set();
         liveClients.set(userId, sockets)
     }
     sockets.add(res);
-    const keepAlive = setInterval(() => res.write(": heartbeat\n\n"), 20000);
+    const keepAlive = setInterval(() => {
+        if (!res.writableEnded && !res.destroyed) { res.write(": heartbeat\n\n"); updatePresence(userId); }
+    }, 15000);
     req.on("close", () => {
         clearInterval(keepAlive);
         sockets!.delete(res);
@@ -2356,9 +2410,10 @@ app.get("/api/live", auth, (req: any, res: any) => {
 });
 });
 // Batch 39: bounded notification feed. Derive from existing tables, no unbounded notification storage.
-app.get("/api/notifications", auth, handle(async (req, res) => {
+async function getNotificationFeed(userId: string) {
     const result = await pool.query(`
-  SELECT kind, actor, event_id, created_at, unread, game_name, wager FROM (
+  SELECT feed.kind, feed.actor, feed.event_id, feed.created_at,
+         (feed.unread AND seen.user_id IS NULL) AS unread, feed.game_name, feed.wager FROM (
    SELECT 'friend_request' AS kind, u.username AS actor, f.requester_id::text AS event_id,
           f.created_at, true AS unread, NULL::text AS game_name, NULL::integer AS wager
    FROM friendships f JOIN users u ON u.id=f.requester_id
@@ -2384,8 +2439,67 @@ app.get("/api/notifications", auth, handle(async (req, res) => {
    FROM duo_invites i JOIN users u ON u.id=i.inviter_id JOIN duo_rooms r ON r.id=i.room_id
    WHERE i.recipient_id=$1 AND i.expires_at>NOW() AND r.status='lobby'
      AND NOT (r.participants @> jsonb_build_array(jsonb_build_object('userId', $1::text)))
-  ) feed ORDER BY created_at DESC LIMIT 5`, [req.userId]);
-    res.json(result.rows);
+  ) feed LEFT JOIN player_notification_seen seen
+      ON seen.user_id=$1 AND seen.kind=feed.kind AND seen.event_id=feed.event_id
+      AND seen.event_created_at=feed.created_at
+  ORDER BY feed.created_at DESC LIMIT 5`, [userId]);
+    const adminNotices = await pool.query(`SELECT a.id::text AS event_id, 'announcement' AS kind,
+        'PawPal Admin' AS actor,a.created_at, (rr.user_id IS NULL AND seen.user_id IS NULL) AS unread,
+        NULL::text AS game_name,NULL::integer AS wager,a.title,a.body
+        FROM admin_announcements a
+        LEFT JOIN admin_announcement_reads rr ON rr.announcement_id=a.id AND rr.user_id=$1
+        LEFT JOIN player_notification_seen seen ON seen.user_id=$1 AND seen.kind='announcement' AND seen.event_id=a.id::text
+            AND seen.event_created_at=a.created_at
+        WHERE a.status='active' AND a.publish_at<=NOW() AND a.expires_at>NOW()
+        AND (a.audience='all' OR a.recipients @> to_jsonb(ARRAY[$1::text]))
+        ORDER BY a.created_at DESC LIMIT 5`, [userId]);
+    const feed = [...result.rows, ...adminNotices.rows].sort((a: any, b: any) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
+    return feed;
+}
+
+app.get("/api/notifications", auth, handle(async (req, res) => {
+    res.json(await getNotificationFeed(req.userId));
+}));
+
+// Notification viewing is separate from accepting an invitation or reading PawMail.
+// Only items visible in this user's own feed may be marked as seen.
+app.post("/api/notifications/seen", auth, handle(async (req, res) => {
+    const input = z.object({
+        items: z.array(z.object({
+            kind: z.string().min(1).max(50),
+            event_id: z.string().min(1).max(100),
+            created_at: z.string().min(1).max(50)
+        })).max(10)
+    }).safeParse(req.body);
+    if (!input.success) {
+        res.status(400).json({ error: "Invalid notifications." });
+        return;
+    }
+    const feed = await getNotificationFeed(req.userId);
+    const seen = feed.filter(item => input.data.items.some(viewed =>
+        viewed.kind === item.kind && viewed.event_id === item.event_id &&
+        Date.parse(viewed.created_at) === new Date(item.created_at).getTime()
+    )).map(item => ({
+        kind: item.kind,
+        event_id: item.event_id,
+        event_created_at: new Date(item.created_at).toISOString()
+    }));
+    if (seen.length) {
+        await pool.query(`INSERT INTO player_notification_seen(user_id,kind,event_id,event_created_at)
+            SELECT $1, incoming.kind, incoming.event_id, incoming.event_created_at
+            FROM jsonb_to_recordset($2::jsonb) AS incoming(kind text,event_id text,event_created_at timestamptz)
+            ON CONFLICT DO NOTHING`, [req.userId, JSON.stringify(seen)]);
+        const announcementIds = seen.filter(item => item.kind === "announcement")
+            .map(item => item.event_id);
+        if (announcementIds.length) {
+            // Keep the older announcement-only read endpoint consistent too.
+            await pool.query(`INSERT INTO admin_announcement_reads(announcement_id,user_id)
+                SELECT id,$1 FROM admin_announcements WHERE id=ANY($2::uuid[])
+                ON CONFLICT DO NOTHING`, [req.userId, announcementIds]);
+        }
+    }
+    res.json({ success: true, seen: seen.length });
 }));
 app.get("/api/friends", auth, handle(async (req, res) => {
     const q = await pool.query(`SELECT f.requester_id,f.recipient_id,f.status,f.created_at,u.username,u.id AS friend_id FROM friendships f JOIN users u ON u.id=CASE WHEN f.requester_id=$1 THEN f.recipient_id ELSE f.requester_id END WHERE f.requester_id=$1 OR f.recipient_id=$1 ORDER BY f.created_at DESC`, [req.userId]);
@@ -2740,7 +2854,9 @@ function gardenState(raw: any) {
     return g;
 }
 
-app.post("/api/garden", auth, handle(async (req, res) => mutate(req, res, p => {
+app.post("/api/garden", auth, handle(async (req, res) => {
+    (req as any).gardenRewardMultiplier = (await gameSettings()).garden_reward_percent;
+    await mutate(req, res, p => {
     const g = gardenState(p.garden);
     const action = String(req.body?.action || "");
     const qty = Number(req.body?.quantity ?? 1);
@@ -2794,7 +2910,11 @@ app.post("/api/garden", auth, handle(async (req, res) => mutate(req, res, p => {
             return "Buy more seeds.";
 
         } g.seeds--;
-        g.plots[idx] = createGardenFlower();
+        const flower = createGardenFlower();
+        // Fix the payout at planting time. Later admin changes cannot alter growing flowers.
+        const multiplier = Number((req as any).gardenRewardMultiplier ?? 100) / 100;
+        flower.reward = Math.max(0, Math.floor(Number(flower.reward) * multiplier));
+        g.plots[idx] = flower;
         p.garden = g;
         p.energy = clamp(p.energy - 2);
         p.cleanliness = clamp(p.cleanliness - 3);
@@ -2829,7 +2949,7 @@ app.post("/api/garden", auth, handle(async (req, res) => mutate(req, res, p => {
 
         } const rarity = String(plot.rarity || "Common");
         const flower = FLOWER_RULES.find(item => item.rarity === rarity) || FLOWER_RULES[1];
-        const reward = Number(plot.reward) || 50;
+        const reward = Number.isFinite(Number(plot.reward)) ? Number(plot.reward) : 50;
         const newlyDiscovered = recordFlowerDiscovery(g, flower.rarity, reward);
         req.gardenReveal = {
             rarity: flower.rarity,
@@ -2850,10 +2970,12 @@ app.post("/api/garden", auth, handle(async (req, res) => mutate(req, res, p => {
     }
 
     return "Unknown garden action."
-})));
+    });
+}));
 
 // Paw Claw: prize selection is always server-side, never trusted from the browser.
 app.post("/api/claw/play", auth, handle(async (req, res) => {
+    const clawCooldownMs = Number((await gameSettings()).claw_cooldown_seconds) * 1000;
     const result: any = {};
     await mutate(req, {
         json: (x: any) => Object.assign(result, x),
@@ -2862,8 +2984,8 @@ app.post("/api/claw/play", auth, handle(async (req, res) => {
             }
         })
     }, p => {
-        if (p.last_game_at && Date.now() - new Date(p.last_game_at).getTime() < 15000) {
-            return `Wait ${Math.ceil((15000 - (Date.now() - new Date(p.last_game_at).getTime())) / 1000)} seconds before playing Paw Claw again.`;
+        if (p.last_game_at && Date.now() - new Date(p.last_game_at).getTime() < clawCooldownMs) {
+            return `Wait ${Math.ceil((clawCooldownMs - (Date.now() - new Date(p.last_game_at).getTime())) / 1000)} seconds before playing Paw Claw again.`;
         }
         p.last_game_at = new Date().toISOString();
         p.energy = clamp(p.energy - 5);
@@ -2926,7 +3048,10 @@ app.post("/api/game", auth, handle(async (req, res) => {
             error: "Invalid score."
         });
 
-    } const result: any = {};
+    } const arcadeSettings = await gameSettings();
+    const arcadeRewardMultiplier = Number(arcadeSettings.arcade_reward_percent) / 100;
+    const arcadeCooldownMs = Number(arcadeSettings.arcade_cooldown_seconds) * 1000;
+    const result: any = {};
     await mutate(req, {
         json: (x: any) => Object.assign(result, x),
         status: () => ({
@@ -2934,11 +3059,11 @@ app.post("/api/game", auth, handle(async (req, res) => {
             }
         })
     }, p => {
-        if (p.last_game_at && Date.now() - new Date(p.last_game_at).getTime() < 8000) {
-            return "Wait 8 seconds between rewards.";
+        if (p.last_game_at && Date.now() - new Date(p.last_game_at).getTime() < arcadeCooldownMs) {
+            return `Wait ${Math.ceil((arcadeCooldownMs - (Date.now() - new Date(p.last_game_at).getTime())) / 1000)} seconds between rewards.`;
 
         } p.last_game_at = new Date().toISOString();
-        const reward = Math.min(75, 10 + Math.floor(v.data.score / 3));
+        const reward = Math.max(0, Math.floor(Math.min(75, 10 + Math.floor(v.data.score / 3)) * arcadeRewardMultiplier));
         p.coins += reward;
         p.xp += Math.min(40, 5 + Math.floor(v.data.score / 8));
         p.happiness = clamp(p.happiness + 8);
@@ -3679,6 +3804,16 @@ app.post("/api/gifts", auth, handle(async (req, res) => {
 
 registerMultiplayer(app, auth, publishLive);
 registerDuoClash(app, auth, publishLive);
+
+// Centralized error capture for new admin console endpoints. Store only the route
+// and database error code, never player content, secrets, or request bodies.
+app.use((error: any, req: any, res: any, _next: any) => {
+    console.error("API request failed", req.path, error);
+    logServerFailure(String(req.path || "unknown"), error?.code);
+    if (!res.headersSent) {
+        res.status(500).json({ error: "The server could not complete this request." });
+    }
+});
 
 const PORT = Number(process.env.PORT || 4000);
 

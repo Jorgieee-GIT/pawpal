@@ -208,3 +208,62 @@
         justify-content: center;
     }
 }
+
+/* Uniform Admin / Develop navigation controls: same responsive visual language. */
+.admin-page .admin-section-nav,
+.develop-page .develop-tabs {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:20px 0 24px;
+    padding:8px;
+    border-radius:17px;
+    border:1px solid #f0dce4;
+    background:#fff;
+    overflow-x:auto;
+    overscroll-behavior-inline:contain;
+    scrollbar-width:thin;
+    -webkit-overflow-scrolling:touch;
+}
+.admin-page .admin-section-nav button,
+.develop-page .develop-content .develop-tabs button {
+    min-height:43px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    flex:0 0 auto;
+    border:1px solid transparent;
+    padding:11px 14px;
+    background:transparent;
+    color:#855e75;
+    border-radius:11px;
+    box-shadow:none;
+    font-size:12px;
+    font-weight:750;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:background .16s,border-color .16s,color .16s;
+}
+.admin-page .admin-section-nav button:hover,
+.develop-page .develop-content .develop-tabs button:hover { background:#fff0f6; border-color:#f0d2e0; }
+.admin-page .admin-section-nav button.is-active,
+.develop-page .develop-content .develop-tabs button.active {
+    background:#d8759b;
+    color:#fff;
+    border-color:#d8759b;
+    box-shadow:0 4px 11px #b9658d2a;
+}
+.admin-page .admin-section-nav button:focus-visible,
+.develop-page .develop-tabs button:focus-visible { outline:3px solid #a96eaa; outline-offset:2px; }
+.admin-page .admin-section-nav button:active,
+.develop-page .develop-tabs button:active { transform:translateY(1px); }
+.admin-page .admin-section-nav button > svg { flex-shrink:0; }
+@media(max-width:650px) {
+    .admin-page .admin-section-nav,
+    .develop-page .develop-tabs { margin:14px 0 20px; padding:6px; border-radius:13px; }
+    .admin-page .admin-section-nav button,
+    .develop-page .develop-content .develop-tabs button { padding:10px 12px; min-height:40px; }
+}
+
+.admin-page .admin-section-nav, .develop-page .develop-tabs { flex-wrap:nowrap; }

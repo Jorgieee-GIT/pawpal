@@ -4997,7 +4997,7 @@ button.paw-multi-game-tile:focus-visible {
     overflow-wrap: normal;
     text-shadow: 0 1px 0 #fff, 0 1px 5px #ffffffbf;
     box-shadow: 0 2px 5px #34213921;
-    animation: paw-brawl-float-hit 1.05s ease-out both;
+    animation: paw-brawl-float-hit 1.16s ease-out both;
     animation-delay: calc(var(--float-order) * 35ms);
 }
 .paw-brawl-combatant .paw-brawl-float:nth-child(n + 3) {
@@ -5147,3 +5147,163 @@ button.paw-multi-game-tile:focus-visible {
 .paw-brawl-confirm-error { margin: 10px 0; padding: 10px; border: 1px solid #d78b9f; border-radius: 10px; background: #fff0f2; color: #a03356; font-size: 12px; font-weight: 650; line-height: 1.4; overflow-wrap: anywhere; }
 .paw-dark .paw-brawl-confirm-error { background: #4b303a; color: #ffe0e8; }
 .paw-brawl-sync-round { width: 100%; padding: 8px; border: 1px solid #d7aac5; border-radius: 9px; background: #fbebf4; color: #855073; font-size: 12px; font-weight: 700; cursor: pointer; }
+
+/* Paw Brawl 4.2: one complete motion per resolved action; never cut off mid-air. */
+.paw-brawl-sprite-player.is-attacking { animation: paw-brawl-refined-player-lunge 1.08s cubic-bezier(.3,.04,.3,.98) both !important; }
+.paw-brawl-sprite-enemy.is-attacking { animation: paw-brawl-refined-enemy-lunge 1.08s cubic-bezier(.3,.04,.3,.98) both !important; }
+@keyframes paw-brawl-refined-player-lunge {
+    0%, 100% { transform:translate3d(0,0,0) scaleX(-1) rotate(-5deg) scale(1); }
+    12% { transform:translate3d(0,-7px,0) scaleX(-1) rotate(-8deg) scale(1.04); }
+    48%, 57% { transform:translate3d(var(--paw-lunge-x-contact,0px),var(--paw-lunge-y-contact,0px),0) scaleX(-1) rotate(-5deg) scale(.86); }
+    78% { transform:translate3d(var(--paw-lunge-x-return,0px),var(--paw-lunge-y-return,0px),0) scaleX(-1) rotate(-7deg) scale(.97); }
+}
+@keyframes paw-brawl-refined-enemy-lunge {
+    0%, 100% { transform:translate3d(0,0,0) rotate(4deg) scale(1); }
+    12% { transform:translate3d(0,-7px,0) rotate(7deg) scale(1.05); }
+    48%, 57% { transform:translate3d(var(--paw-lunge-x-contact,0px),var(--paw-lunge-y-contact,0px),0) rotate(4deg) scale(1.09); }
+    78% { transform:translate3d(var(--paw-lunge-x-return,0px),var(--paw-lunge-y-return,0px),0) rotate(6deg) scale(1.02); }
+}
+@media(prefers-reduced-motion:reduce) { .paw-brawl-sprite-player.is-attacking,.paw-brawl-sprite-enemy.is-attacking { animation:none!important; } }
+
+.paw-brawl-mini-stats .paw-brawl-hud-stats-help { flex:0 0 auto; display:inline-grid; place-items:center; padding:0 2px; min-width:16px; min-height:16px; border:0; background:transparent; color:#a2668f; cursor:help; }
+.paw-brawl-mini-stats .paw-brawl-hud-stats-help:focus-visible { outline:2px solid #a773a5; outline-offset:1px; }
+
+/* 4.3: independent help dialogs; effect guide is no longer mixed with skills. */
+.paw-brawl-info-panel > .paw-brawl-stat-guide,
+.paw-brawl-info-panel > .paw-brawl-skill-guide { grid-column:1 / -1; width:100%; }
+.paw-brawl-status-with-help { display:flex; align-items:center; gap:4px; min-width:0; }
+.paw-brawl-status-with-help .paw-brawl-status-list { flex:1 1 auto; min-width:0; }
+.paw-brawl-status-with-help .paw-brawl-hud-stats-help { flex:0 0 auto; align-self:center; }
+@media (max-width:460px) {
+    .paw-brawl-modal-header-right .paw-brawl-info-toggle { font-size:0; padding:6px; }
+    .paw-brawl-modal-header-right .paw-brawl-info-toggle svg { width:17px; height:17px; }
+}
+
+
+/* PawPal 4.4: Paw Brawl modal consistency and phone-size corrections.
+   Battle stays fixed-height; only guide content and short-screen action areas scroll. */
+.paw-brawl-modal-header.paw-multi-dialog-header {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: 0;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ebd2de;
+}
+.paw-brawl-modal-header.paw-multi-dialog-header > div:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.paw-brawl-modal-header.paw-multi-dialog-header .paw-brawl-modal-header-right {
+    flex: 0 0 auto;
+    min-width: 0;
+    flex-wrap: nowrap;
+}
+.paw-brawl-modal-header.paw-multi-dialog-header .paw-brawl-modal-close.paw-multi-dialog-close {
+    flex: 0 0 36px;
+    width: 36px !important;
+    height: 36px !important;
+}
+.paw-brawl-log-modal .paw-brawl-log-modal-heading.paw-multi-dialog-header,
+.paw-brawl-special-help-dialog .paw-brawl-special-help-header.paw-multi-dialog-header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #ebd4e0;
+    background: transparent;
+}
+.paw-brawl-log-modal-heading.paw-multi-dialog-header > div:first-child,
+.paw-brawl-special-help-header.paw-multi-dialog-header > div:first-child { flex:1 1 auto; min-width:0; }
+.paw-brawl-log-modal-heading.paw-multi-dialog-header button,
+.paw-brawl-special-help-header.paw-multi-dialog-header .paw-multi-dialog-close { flex: 0 0 36px; }
+.paw-brawl-special-help-dialog { display:flex; flex-direction:column; min-height:0; max-width:100%; overflow-y:auto; }
+.paw-brawl-special-help-dialog h3 { margin: 0; min-width: 0; overflow-wrap:anywhere; }
+.paw-brawl-modal-header .paw-brawl-modal-kicker { overflow-wrap:anywhere; }
+.paw-brawl-modal .paw-brawl-action-grid > *,
+.paw-brawl-modal .paw-brawl-action-grid .paw-brawl-special-action { min-width: 0; }
+.paw-brawl-modal .paw-brawl-action-grid button b,
+.paw-brawl-modal .paw-brawl-action-grid button small { overflow-wrap:anywhere; }
+.paw-dark .paw-brawl-log-modal-heading.paw-multi-dialog-header,
+.paw-dark .paw-brawl-special-help-header.paw-multi-dialog-header { border-color:#785d72; }
+
+@media (max-width: 620px) {
+    .paw-brawl-modal-backdrop {
+        padding: max(4px, env(safe-area-inset-top)) 5px max(4px, env(safe-area-inset-bottom));
+    }
+    .paw-brawl-modal {
+        width: 100%;
+        max-width: 100%;
+        height: calc(100dvh - 8px);
+        max-height: calc(100dvh - 8px);
+        border-radius: 14px;
+        border-width: 2px;
+    }
+    .paw-brawl-modal-header.paw-multi-dialog-header {
+        display: grid;
+        grid-template-columns: minmax(0,1fr) auto;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 5px;
+        min-height: 48px;
+        padding: 7px 9px;
+    }
+    .paw-brawl-modal-header.paw-multi-dialog-header h2 {
+        margin: 0;
+        font-size: clamp(13px,4vw,16px);
+        line-height: 1.2;
+    }
+    .paw-brawl-modal-header.paw-multi-dialog-header .paw-brawl-modal-kicker {
+        display: block;
+        max-width: 100%;
+        margin-top: 2px;
+        font-size: 9px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .paw-brawl-modal-header.paw-multi-dialog-header .paw-brawl-modal-header-right { gap: 4px; }
+    .paw-brawl-modal-header-right .paw-brawl-info-toggle {
+        width: 31px;
+        height: 32px;
+        min-width: 31px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        padding: 0;
+        font-size: 0;
+        flex: 0 0 31px;
+    }
+    .paw-brawl-modal-header-right .paw-brawl-info-toggle svg { width: 17px; height: 17px; }
+    .paw-brawl-modal-header.paw-multi-dialog-header .paw-brawl-modal-close.paw-multi-dialog-close {
+        flex: 0 0 34px;
+        width: 34px !important;
+        height: 34px !important;
+    }
+    .paw-brawl-special-help-backdrop, .paw-brawl-log-modal-backdrop {
+        padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom));
+    }
+    .paw-brawl-special-help-dialog, .paw-brawl-log-modal {
+        width: 100%;
+        max-height: 100%;
+        min-height: 0;
+        padding: 12px;
+        border-radius: 14px;
+    }
+    .paw-brawl-scoreboard .paw-brawl-battle-hud { min-width:0; }
+}
+@media (max-width: 360px), (max-height: 530px) {
+    .paw-brawl-modal-header.paw-multi-dialog-header { padding: 5px 7px; min-height: 42px; }
+    .paw-brawl-modal-header.paw-multi-dialog-header .paw-brawl-modal-kicker { font-size:8px; }
+    .paw-brawl-modal-header-right .paw-brawl-info-toggle { width:29px; min-width:29px; height:30px; flex-basis:29px; }
+    .paw-brawl-modal-header.paw-multi-dialog-header .paw-brawl-modal-close.paw-multi-dialog-close {
+        width:32px !important; height:32px !important; flex-basis:32px;
+    }
+}
+@media (max-height: 530px) {
+    .paw-brawl-modal-controls { flex:0 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain; }
+    .paw-brawl-modal .paw-brawl-battlefield { min-height: 65px; }
+}

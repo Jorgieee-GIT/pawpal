@@ -1,32 +1,40 @@
-# PawPal 4.1 - Login after Password Reset
+# PawPal 4.6 — Notification Seen State & Slider Styling
 
-## What's changed
+**Patch-only update.** Apply this over PawPal **4.5** (`PawPal_4_5_Admin_Panel_2_0_PATCH_ONLY.zip` already applied). All file paths inside this ZIP match the existing project layout.
 
-- `client/src/ResetPassword.tsx`
-  - On successful password reset, clears the old PawPal login token and the pending forgot-password ticket from this browser.
-  - Shows the success message briefly (1.2 seconds), then redirects to the login screen.
-  - All "Go to login", "Return to login", and reset-page close links explicitly open the login screen rather than the main game.
-- `client/src/App.tsx`
-  - Handles `/?login=1` as an explicit sign-in destination and removes stale local credentials.
-  - Shows a clear "Password updated" message on successful reset.
-  - When the backend returns HTTP 401 for an expired or revoked session, clears the invalid saved token and returns to the login form instead of staying on an unresponsive page.
-  - Removes the temporary login query parameters from the address bar after loading.
+## Exactly what changed
 
-## How to apply
+- `client/src/App.tsx`: Opening the notification bell now marks the five displayed items as seen (without accepting or declining friend requests or multiplayer challenges). The red dot clears immediately. Background polling, refreshing, and other tabs respect a pending seen confirmation; if saving fails, the correct unread state is reloaded. The bell also records announcements as seen.
+- `server/src/index.ts`: Persistent per-user seen flags now affect the `/api/notifications` feed across announcement, friend-request, PawMail, Classic challenge, and Duo invite types. Added authenticated `POST /api/notifications/seen`. A notification is validated against the logged-in user's actual feed before storing seen state, so one player cannot mark another's notifications. Existing announcement read records remain synchronized.
+- `database/migrations/018_notification_seen.sql`: New `player_notification_seen` table. Repeated requests from the same account are distinct by event creation time, so new invitations still trigger a dot. Run this **before** deploying the new backend.
+- `client/src/SettingsModal.css`: Paw-shaped volume slider keeps its original thumb and pink filled portion; the unfilled portion is now light gray rather than black/dark, including in dark mode.
+- `client/src/AdminConsole.tsx`: Displays the real progress percentage on admin reward and cooldown sliders.
+- `client/src/AdminConsole.css`: Custom cross-browser slider track: pink fill, light-gray remainder, and matching thumb/focus styling. Mobile-friendly and retains keyboard/touch use.
+- `README.md`: This file (the only Markdown file in the patch).
 
-1. Apply this **after PawPal 4.0** (which follows 3.9).
-2. Close running dev servers if desired. Extract the ZIP in the parent directory of `Website 5 (Pawpal)`, maintaining folder paths and replacing matching files.
-3. In `client`, run `npm run dev`. Keep your existing backend running for local tests.
-4. Visit `http://localhost:5173/?login=1` if you want to force the login screen immediately.
-5. Reset a password using a valid single-use link. After success you should return to the login form automatically and be able to sign in with the new password.
-6. For production, deploy the changed **Vercel frontend**. No Render change or Neon migration is needed.
+## Install and deploy
 
-## Why you saw "Please sign in again"
+1. Back up your existing PawPal 4.5 project.
+2. Extract this ZIP into your existing project directory, overwriting matching files while preserving the `Website 5 (Pawpal)/` folder structure.
+3. **Neon first:** Run `database/migrations/018_notification_seen.sql` after migration 017.
+4. **Render second:** Deploy the updated backend. The notifications endpoint requires the new table.
+5. **Vercel third:** Deploy the updated frontend. Ordinary Vercel updates will appear inside your installed PWABuilder Android app; do not rebuild the APK for this change.
+6. Hard-refresh PawPal if an old tab cached a previous frontend.
 
-PawPal invalidates previous login tokens when a password is reset. The old frontend kept an invalid token in browser localStorage and showed the backend's 401 message. This patch clears that expired session and displays the login form. This is intentional account security behavior, not a new password failure.
+## Verify with two real accounts
 
-## Verification
+- Admin publishes an announcement. Player sees a red dot. Opening the notification bell clears it; closing/reopening the bell does not bring it back. Opening the announcement shows its content without restoring a dot.
+- Player receives a friend request. Opening the bell clears its red dot; request remains pending until accepted or declined. When a new request is sent later, the new item is unread.
+- Player receives a Classic or Duo invitation. Viewing the bell clears the dot but does not accept or forfeit the invitation.
+- Have a player receive PawMail. Viewing the bell clears its notification dot, but the letter itself stays unread in PawMail until opened.
+- Refresh the page or log in on a different device to verify that seen state persists. New notifications still produce new red dots.
+- Check the volume slider in PawPal Settings and the reward/cooldown sliders in Admin (also dark mode/mobile).
 
-- PawPal frontend TypeScript project: `node node_modules/typescript/bin/tsc -b --pretty false` passed against the overlaid 3.6-4.0 project source.
-- No new database tables, backend changes, audio, images, or additional Markdown files.
-- Actual running-browser and live deployment behavior still needs confirmation in your local project and Vercel.
+## Validation and limits
+
+- Client and server TypeScript checks passed.
+- Modified CSS files parsed with PostCSS.
+- The ZIP was verified and contains no audio files, artwork replacements, `.env` files, `node_modules`, or extra Markdown documents.
+- Live Neon migration, full Vite bundle, and live two-account interaction remain untested here. TypeScript-based HTTP smoke tests could not run because the source dependencies contain Windows-native esbuild binaries.
+
+No password rules, multiplayer match state, wagers, or notification action outcomes were changed.
