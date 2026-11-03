@@ -24,23 +24,40 @@ type AdminUser = {
     coins: number | null
 };
 async function adminRequest(path: string, token: string, method = "GET", body?: object) {
-    const r = await fetch(API + "/api/admin" + path, {
-        method,
-        headers: {
-            "Content-Type": "application/json",
-            ...(token ? {
-                Authorization: "Bearer " + token
-            } : {})
-        },
-        body: body ? JSON.stringify(body) : undefined
-    });
-    const d = await r.json().catch(() => ({
-        error: "Server returned an invalid response."
-    }));
-    if (!r.ok) {
-        throw Error(d.error || "Request failed");
+    if (import.meta.env.PROD && !API) {
+        throw Error("The API URL is missing. Set VITE_API_URL to your Render backend URL in Vercel, then redeploy the frontend.");
     }
-    return d;
+    let response: Response;
+    try {
+        response = await fetch(API.replace(/\/+$/, "") + "/api/admin" + path, {
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: "Bearer " + token } : {})
+            },
+            body: body ? JSON.stringify(body) : undefined,
+            cache: "no-store"
+        });
+    } catch {
+        throw Error("Cannot reach the PawPal backend. Check Render, VITE_API_URL, and your network connection.");
+    }
+    const responseText = await response.text();
+    let data: any;
+    try {
+        data = JSON.parse(responseText);
+    } catch {
+        // HTML from a missing API route should not be displayed as an unexplained JSON error.
+    }
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+        if (response.status === 404) {
+            throw Error("Admin API endpoint not found (HTTP 404). Check that Render is running the latest PawPal backend.");
+        }
+        throw Error("The Admin API returned a non-JSON response (HTTP " + response.status + "). Check the backend URL and deployment.");
+    }
+    if (!response.ok) {
+        throw Error(typeof data.error === "string" ? data.error : "Admin request failed (HTTP " + response.status + ").");
+    }
+    return data;
 }
 export default function Admin() {
     const [token, setToken] = useState(() => sessionStorage.getItem("pawpal-admin-token") || "");

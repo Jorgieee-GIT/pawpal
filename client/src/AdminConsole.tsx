@@ -54,14 +54,36 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
     const [reportTab, setReportTab] = useState<"reports" | "audit" | "errors">("reports");
 
     async function request(path: string, method = "GET", body?: object) {
-        const response = await fetch(API + "/api/admin/" + path, {
-            method,
-            headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
-            body: body ? JSON.stringify(body) : undefined
-        });
-        const result = await response.json().catch(() => ({ error: "Invalid server response." }));
+        if (import.meta.env.PROD && !API) {
+            throw Error("The API URL is missing. Set VITE_API_URL to your Render backend URL in Vercel, then redeploy the frontend.");
+        }
+        const url = API.replace(/\/+$/, "") + "/api/admin/" + path;
+        let response: Response;
+        try {
+            response = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+                body: body ? JSON.stringify(body) : undefined,
+                cache: "no-store"
+            });
+        } catch {
+            throw Error("Cannot reach the PawPal backend. Check your Render deployment, VITE_API_URL, and network connection.");
+        }
+        const bodyText = await response.text();
+        let result: Json | null = null;
+        try {
+            result = JSON.parse(bodyText);
+        } catch {
+            // HTML error pages are returned by old API deployments and incorrect Vercel rewrites.
+        }
+        if (!result || typeof result !== "object" || Array.isArray(result)) {
+            if (response.status === 404) {
+                throw Error("Admin API endpoint not found (HTTP 404). Redeploy the PawPal 4.5+ backend on Render and check VITE_API_URL in Vercel.");
+            }
+            throw Error("The Admin API returned a non-JSON response (HTTP " + response.status + "). Check the Render service URL, deployment logs, and Vercel API configuration.");
+        }
         if (!response.ok) {
-            throw Error(result.error || "Admin request failed.");
+            throw Error(typeof result.error === "string" ? result.error : "Admin request failed (HTTP " + response.status + ").");
         }
         return result;
     }

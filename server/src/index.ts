@@ -3805,13 +3805,22 @@ app.post("/api/gifts", auth, handle(async (req, res) => {
 registerMultiplayer(app, auth, publishLive);
 registerDuoClash(app, auth, publishLive);
 
-// Centralized error capture for new admin console endpoints. Store only the route
-// and database error code, never player content, secrets, or request bodies.
+// Unknown API paths must return JSON so the frontend can distinguish a missing
+// backend deployment from an HTML page served by the hosting provider.
+app.use("/api", (req: any, res: any) => {
+    res.status(404).json({ error: "API endpoint not found. Check that Render is running the latest PawPal backend." });
+});
+
+// Centralized error capture. Log error codes only, never private request data.
 app.use((error: any, req: any, res: any, _next: any) => {
     console.error("API request failed", req.path, error);
     logServerFailure(String(req.path || "unknown"), error?.code);
     if (!res.headersSent) {
-        res.status(500).json({ error: "The server could not complete this request." });
+        if (error?.code === "42P01" || error?.code === "42703") {
+            res.status(503).json({ error: "The PawPal database schema is not up to date. Apply the required Neon migrations, including 017 and 018." });
+        } else {
+            res.status(500).json({ error: "The server could not complete this request. Check the Render logs." });
+        }
     }
 });
 
