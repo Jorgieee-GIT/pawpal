@@ -54,3 +54,8 @@ In Chrome DevTools → Network, select a failed request such as `dashboard` and 
 - No database schema changes, new dependencies, or Android APK rebuild are needed for this patch.
 - This cannot verify your actual Render/Neon deployment: confirm the live HTTP responses using the checks above.
 - Your PWABuilder APK uses the deployed Vercel website and should receive this frontend change without installing a new APK.
+
+## Source organization
+
+See [the architecture guide](docs/architecture.md) for the frontend panels, backend feature routes,
+K&R formatting convention, and build/regression-test commands.

@@ -1,0 +1,3 @@
+# Keep the manually formatted inline route declarations and middleware registrations.
+server/src/routes/
+server/src/app.ts

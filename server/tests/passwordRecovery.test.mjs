@@ -18,6 +18,9 @@ function isValidToken(t) { return !t.consumed_at && new Date(t.expires_at).getTi
 async function query(sql, args = []) {
     const statement = sql.replace(/\s+/g, " ").trim().toLowerCase();
     if (statement === "begin" || statement === "commit" || statement === "rollback") return response();
+    if (statement.startsWith("insert into admin_audit_logs")) {
+        return response();
+    }
     if (statement.includes("select id from users where username=$1")) return response([...users.values()].filter(u => u.username === args[0]).map(u => ({ id: u.id })));
     if (statement.includes("from password_reset_requests where user_id=$1") && statement.includes("interval '2 minutes'")) return response([...requests.values()].filter(r => r.user_id === args[0] && Date.now() - new Date(r.created_at).getTime() < 120000).map(r => ({ id: r.id })));
     if (statement.startsWith("update password_reset_requests set status='expired'")) { for (const r of requests.values()) if (r.user_id === args[0] && r.status === "pending") r.status = "expired"; return response(); }
