@@ -11,15 +11,6 @@ import ArcadeCanvas from "./ArcadeCanvas";
 import { PawIcon } from "./PawIcons";
 import type { Pet } from "./types";
 
-export const PAW_GAMES: Array<[string, string, string]> = [
-    ["memory", "memory", "Memory Tiles"],
-    ["dino", "cactus", "Cactus Jump"],
-    ["runner", "runner", "Paw Run"],
-    ["pattern", "heart", "Heart Color Match"],
-    ["mole", "mole", "Whack-a-Mole"],
-    ["claw", "plush", "Paw Claw"]
-];
-
 function ArcadeLives({ lives, maxLives }: { lives: number; maxLives: number }) {
     return (
         <span className="paw-arcade-hearts" aria-label={`${lives} of ${maxLives} lives remaining`}>

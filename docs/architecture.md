@@ -10,9 +10,15 @@ Feature views receive typed props so changing tabs keeps the existing state life
 - `FriendsPanel.tsx`, `PawPostcard.tsx`: friends and postcard presentation.
 - `MarketPanel.tsx`, `WardrobePanel.tsx`, `OutfitWardrobe.tsx`: shopping and customization.
 - `ArcadePanel.tsx`, `MiniGame.tsx`: arcade selection and shared mini-game UI.
-- `shopCatalog.ts`, `PawIcons.tsx`, `types.ts`: shared catalog, icons, and data contracts.
+- `shopCatalog.ts`, `gameCatalog.ts`, `PawIcons.tsx`, `types.ts`: shared catalogs, icons, and data contracts.
 - `api.ts`, `hooks/useApiRequest.ts`: API base URL, authenticated requests, in-flight GET deduplication, and session expiry.
 - Existing garden, kitchen, missions, and multiplayer components remain the feature entry points.
+
+Feature panels and game screens use `React.lazy` with a `Suspense` placeholder so the login
+screen only downloads the core app. `main.tsx` also splits the admin, develop, and
+reset-password entry points. React is emitted as a separate long-lived vendor chunk.
+Keep new tab panels lazy, and import shared artwork (for example `FoodArt` from
+`KitchenArt.tsx`) directly so one panel does not pull in another feature's bundle.
 
 Add feature-specific UI to its panel. Keep cross-feature player updates in `App.tsx` and use
 the shared request/action callbacks for mutations.

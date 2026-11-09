@@ -1,6 +1,6 @@
 import { Gamepad2 } from "lucide-react";
 import { ClawMenuIcon, MoleGameIcon } from "./ArcadeArt";
-import { PAW_GAMES } from "./MiniGame";
+import { PAW_GAMES } from "./gameCatalog";
 import { PawIcon } from "./PawIcons";
 import SectionHeading from "./SectionHeading";
 import type { Pet } from "./types";

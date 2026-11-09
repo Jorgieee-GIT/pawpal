@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import { API } from "./api";
-import { FoodArt } from "./Kitchen";
+import { FoodArt } from "./KitchenArt";
 import RoomArchitecture from "./RoomArchitecture";
 import { DEFAULTS, FURNITURE, RoomFurniture, furnitureLayout } from "./RoomFurniture";
 import { Wanderer } from "./RoomPets";

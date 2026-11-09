@@ -21,37 +21,50 @@ import {
     Users,
     X
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 // Preserve stylesheet evaluation order when importing extracted feature views.
 import SettingsModal from "./SettingsModal";
-import Multiplayer from "./Multiplayer";
 import "./style.css";
 import "./PasswordRecovery.css";
-import WhackAMole from "./WhackAMole";
-import PawClaw from "./PawClaw";
 import AdoptionScreen from "./AdoptionScreen";
-import ArcadePanel from "./ArcadePanel";
 import AuthScreen from "./AuthScreen";
 import BackgroundMusic from "./BackgroundMusic";
-import FriendsPanel from "./FriendsPanel";
-import GardenPanel from "./GardenPanel";
-import Kitchen from "./Kitchen";
-import MarketPanel from "./MarketPanel";
-import { MiniGame, PAW_GAMES } from "./MiniGame";
-import MissionCenter from "./MissionCenter";
+import { PAW_GAMES } from "./gameCatalog";
 import { PawIcon } from "./PawIcons";
 import { ENVELOPE_DESIGNS, EnvelopeArtwork } from "./PawMailArt";
 import { ENVELOPE_COLORS, PawPostcard } from "./PawPostcard";
 import PetArt from "./PetArt";
-import RoomPanel from "./RoomPanel";
 import SectionHeading from "./SectionHeading";
 import type { AppearanceChoice } from "./SettingsArt";
-import WardrobePanel from "./WardrobePanel";
 import { API } from "./api";
 import { useApiRequest } from "./hooks/useApiRequest";
 import { musicZoneForTab, readAudioPreferences } from "./musicTracks";
 import { themes } from "./shopCatalog";
 import type { Friend, MealData, PawMail, PawNotification, Pet, RoomPet, User } from "./types";
+
+// Feature panels and game screens load on demand so the login screen does not
+// download the entire playhouse.
+const RoomPanel = lazy(() => import("./RoomPanel"));
+const FriendsPanel = lazy(() => import("./FriendsPanel"));
+const WardrobePanel = lazy(() => import("./WardrobePanel"));
+const MarketPanel = lazy(() => import("./MarketPanel"));
+const Multiplayer = lazy(() => import("./Multiplayer"));
+const ArcadePanel = lazy(() => import("./ArcadePanel"));
+const GardenPanel = lazy(() => import("./GardenPanel"));
+const Kitchen = lazy(() => import("./Kitchen"));
+const MissionCenter = lazy(() => import("./MissionCenter"));
+const MiniGame = lazy(() => import("./MiniGame").then((module) => ({ default: module.MiniGame })));
+const PawClaw = lazy(() => import("./PawClaw"));
+const WhackAMole = lazy(() => import("./WhackAMole"));
+
+function PanelLoader() {
+    return (
+        <section className="panel paw-panel-loading" role="status" aria-live="polite">
+            <PawPrint size={26} aria-hidden="true" />
+            <span>Loading…</span>
+        </section>
+    );
+}
 
 export default function App() {
     const [token, setToken] = useState(() => {
@@ -2499,197 +2512,201 @@ export default function App() {
                                 </div>
                             </aside>
                             <div className="main-column">
-                                {tab === "home" ? (
-                                    <RoomPanel
-                                        pet={pet}
-                                        roomMenuOpen={roomMenuOpen}
-                                        setRoomMenuOpen={setRoomMenuOpen}
-                                        busy={busy}
-                                        execute={execute}
-                                        setSelectedFurniture={setSelectedFurniture}
-                                        setEditFurniture={setEditFurniture}
-                                        refresh={refresh}
-                                        setThemeModal={setThemeModal}
-                                        roomColors={roomColors}
-                                        hideVisitingPets={hideVisitingPets}
-                                        toggleVisitingPets={toggleVisitingPets}
-                                        setNoteDraft={setNoteDraft}
-                                        user={user}
-                                        setEditingNote={setEditingNote}
-                                        themeModal={themeModal}
-                                        setMealModal={setMealModal}
-                                        setMealBusy={setMealBusy}
-                                        token={token}
-                                        setMealData={setMealData}
-                                        setNotice={setNotice}
-                                        setPlayPickerOpen={setPlayPickerOpen}
-                                        sleepPending={sleepPending}
-                                        togglePetSleep={togglePetSleep}
-                                        bathMode={bathMode}
-                                        setBathMode={setBathMode}
-                                        setCuddleMode={setCuddleMode}
-                                        bathScrubbing={bathScrubbing}
-                                        cuddleActive={cuddleActive}
-                                        cuddleMode={cuddleMode}
-                                        editFurniture={editFurniture}
-                                        selectedFurniture={selectedFurniture}
-                                        visible={visible}
-                                        cuddleLastMove={cuddleLastMove}
-                                        bathLastMove={bathLastMove}
-                                        setOpenRoomNoteId={setOpenRoomNoteId}
-                                        openRoomNoteId={openRoomNoteId}
-                                        openedRoomNote={openedRoomNote}
-                                        mealModal={mealModal}
-                                        mealBusy={mealBusy}
-                                        mealData={mealData}
-                                    />
-                                ) : tab === "friends" ? (
-                                    <FriendsPanel
-                                        mail={mail}
-                                        openPawInbox={openPawInbox}
-                                        openPawComposer={openPawComposer}
-                                        setRequestsOpen={setRequestsOpen}
-                                        unseenIncomingRequests={unseenIncomingRequests}
-                                        requestsOpen={requestsOpen}
-                                        pending={pending}
-                                        friendSearch={friendSearch}
-                                        setFriendSearch={setFriendSearch}
-                                        setFound={setFound}
-                                        request={request}
-                                        setNotice={setNotice}
-                                        found={found}
-                                        busy={busy}
-                                        execute={execute}
-                                        user={user}
-                                        setRemoveFriend={setRemoveFriend}
-                                        accepted={accepted}
-                                        roomPets={roomPets}
-                                    />
-                                ) : tab === "wardrobe" ? (
-                                    <WardrobePanel pet={pet} execute={execute} busy={busy} />
-                                ) : tab === "shop" ? (
-                                    <MarketPanel
-                                        marketRoom={marketRoom}
-                                        setMarketRoom={setMarketRoom}
-                                        pet={pet}
-                                        busy={busy}
-                                        execute={execute}
-                                    />
-                                ) : tab === "multiplayer" ? (
-                                    <Multiplayer
-                                        api={API}
-                                        token={token}
-                                        userId={user.id}
-                                        friends={friends}
-                                        coins={pet.coins}
-                                        petLevel={pet.level}
-                                        refreshSignal={multiplayerSignal}
-                                        onUpdate={refresh}
-                                        onToast={setNotice}
-                                    />
-                                ) : tab === "games" ? (
-                                    <ArcadePanel
-                                        launchGame={launchGame}
-                                        pet={pet}
-                                        records={records}
-                                    />
-                                ) : tab === "garden" ? (
-                                    <GardenPanel
-                                        garden={pet.garden}
-                                        coins={pet.coins}
-                                        busy={busy}
-                                        nowTick={nowTick}
-                                        onAction={(body) => execute("/garden", body)}
-                                    />
-                                ) : tab === "kitchen" ? (
-                                    <Kitchen
-                                        token={token}
-                                        api={API}
-                                        onPetChange={refresh}
-                                        onToast={setNotice}
-                                    />
-                                ) : tab === "missions" ? (
-                                    <MissionCenter
-                                        token={token}
-                                        api={API}
-                                        onPetChange={refresh}
-                                        onToast={setNotice}
-                                        onReadyChange={setMissionReady}
-                                    />
-                                ) : (
-                                    <section className="panel">
-                                        <div className="eyebrow">YOUR PAWPAL JOURNEY</div>
-                                        <SectionHeading title="Missions" Icon={Trophy} />
-                                        <div className="stats-grid">
+                                <Suspense fallback={<PanelLoader />}>
+                                    {tab === "home" ? (
+                                        <RoomPanel
+                                            pet={pet}
+                                            roomMenuOpen={roomMenuOpen}
+                                            setRoomMenuOpen={setRoomMenuOpen}
+                                            busy={busy}
+                                            execute={execute}
+                                            setSelectedFurniture={setSelectedFurniture}
+                                            setEditFurniture={setEditFurniture}
+                                            refresh={refresh}
+                                            setThemeModal={setThemeModal}
+                                            roomColors={roomColors}
+                                            hideVisitingPets={hideVisitingPets}
+                                            toggleVisitingPets={toggleVisitingPets}
+                                            setNoteDraft={setNoteDraft}
+                                            user={user}
+                                            setEditingNote={setEditingNote}
+                                            themeModal={themeModal}
+                                            setMealModal={setMealModal}
+                                            setMealBusy={setMealBusy}
+                                            token={token}
+                                            setMealData={setMealData}
+                                            setNotice={setNotice}
+                                            setPlayPickerOpen={setPlayPickerOpen}
+                                            sleepPending={sleepPending}
+                                            togglePetSleep={togglePetSleep}
+                                            bathMode={bathMode}
+                                            setBathMode={setBathMode}
+                                            setCuddleMode={setCuddleMode}
+                                            bathScrubbing={bathScrubbing}
+                                            cuddleActive={cuddleActive}
+                                            cuddleMode={cuddleMode}
+                                            editFurniture={editFurniture}
+                                            selectedFurniture={selectedFurniture}
+                                            visible={visible}
+                                            cuddleLastMove={cuddleLastMove}
+                                            bathLastMove={bathLastMove}
+                                            setOpenRoomNoteId={setOpenRoomNoteId}
+                                            openRoomNoteId={openRoomNoteId}
+                                            openedRoomNote={openedRoomNote}
+                                            mealModal={mealModal}
+                                            mealBusy={mealBusy}
+                                            mealData={mealData}
+                                        />
+                                    ) : tab === "friends" ? (
+                                        <FriendsPanel
+                                            mail={mail}
+                                            openPawInbox={openPawInbox}
+                                            openPawComposer={openPawComposer}
+                                            setRequestsOpen={setRequestsOpen}
+                                            unseenIncomingRequests={unseenIncomingRequests}
+                                            requestsOpen={requestsOpen}
+                                            pending={pending}
+                                            friendSearch={friendSearch}
+                                            setFriendSearch={setFriendSearch}
+                                            setFound={setFound}
+                                            request={request}
+                                            setNotice={setNotice}
+                                            found={found}
+                                            busy={busy}
+                                            execute={execute}
+                                            user={user}
+                                            setRemoveFriend={setRemoveFriend}
+                                            accepted={accepted}
+                                            roomPets={roomPets}
+                                        />
+                                    ) : tab === "wardrobe" ? (
+                                        <WardrobePanel pet={pet} execute={execute} busy={busy} />
+                                    ) : tab === "shop" ? (
+                                        <MarketPanel
+                                            marketRoom={marketRoom}
+                                            setMarketRoom={setMarketRoom}
+                                            pet={pet}
+                                            busy={busy}
+                                            execute={execute}
+                                        />
+                                    ) : tab === "multiplayer" ? (
+                                        <Multiplayer
+                                            api={API}
+                                            token={token}
+                                            userId={user.id}
+                                            friends={friends}
+                                            coins={pet.coins}
+                                            petLevel={pet.level}
+                                            refreshSignal={multiplayerSignal}
+                                            onUpdate={refresh}
+                                            onToast={setNotice}
+                                        />
+                                    ) : tab === "games" ? (
+                                        <ArcadePanel
+                                            launchGame={launchGame}
+                                            pet={pet}
+                                            records={records}
+                                        />
+                                    ) : tab === "garden" ? (
+                                        <GardenPanel
+                                            garden={pet.garden}
+                                            coins={pet.coins}
+                                            busy={busy}
+                                            nowTick={nowTick}
+                                            onAction={(body) => execute("/garden", body)}
+                                        />
+                                    ) : tab === "kitchen" ? (
+                                        <Kitchen
+                                            token={token}
+                                            api={API}
+                                            onPetChange={refresh}
+                                            onToast={setNotice}
+                                        />
+                                    ) : tab === "missions" ? (
+                                        <MissionCenter
+                                            token={token}
+                                            api={API}
+                                            onPetChange={refresh}
+                                            onToast={setNotice}
+                                            onReadyChange={setMissionReady}
+                                        />
+                                    ) : (
+                                        <section className="panel">
+                                            <div className="eyebrow">YOUR PAWPAL JOURNEY</div>
+                                            <SectionHeading title="Missions" Icon={Trophy} />
+                                            <div className="stats-grid">
+                                                {[
+                                                    ["Pet level", pet.level],
+                                                    ["Coins", pet.coins],
+                                                    ["Friends", accepted.length],
+                                                    ["Flowers", pet.garden.flowers],
+                                                    ["Toys", pet.toys],
+                                                    [
+                                                        "Growth",
+                                                        pet.level < 5
+                                                            ? "Baby"
+                                                            : pet.level < 30
+                                                              ? "Teen"
+                                                              : "Adult"
+                                                    ]
+                                                ].map(([label, value]) => (
+                                                    <div className="stat" key={String(label)}>
+                                                        <b>{label}</b>
+                                                        <h2>{value}</h2>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <h3>Achievement badges</h3>
                                             {[
-                                                ["Pet level", pet.level],
-                                                ["Coins", pet.coins],
-                                                ["Friends", accepted.length],
-                                                ["Flowers", pet.garden.flowers],
-                                                ["Toys", pet.toys],
-                                                [
-                                                    "Growth",
-                                                    pet.level < 5
-                                                        ? "Baby"
-                                                        : pet.level < 30
-                                                          ? "Teen"
-                                                          : "Adult"
-                                                ]
-                                            ].map(([label, value]) => (
-                                                <div className="stat" key={String(label)}>
-                                                    <b>{label}</b>
-                                                    <h2>{value}</h2>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <h3>Achievement badges</h3>
-                                        {[
-                                            ["first_friend", "friends", "Make a friend"],
-                                            ["level_5", "level", "Reach level 5"],
-                                            ["rich", "coins", "Save 500 coins"]
-                                        ]
-                                            .sort((a, b) => {
-                                                const status = (code: string) =>
-                                                    achievements.includes(code)
-                                                        ? 2
-                                                        : (code === "level_5" && pet.level >= 5) ||
-                                                            (code === "rich" && pet.coins >= 500) ||
-                                                            (code === "first_friend" &&
-                                                                accepted.length > 0)
-                                                          ? 0
-                                                          : 1;
-                                                return status(a[0]) - status(b[0]);
-                                            })
-                                            .map(([code, icon, label]) => (
-                                                <div className="friend-row" key={code}>
-                                                    <b>
-                                                        <PawIcon name={icon} /> {label}
-                                                    </b>
-                                                    <button
-                                                        disabled={achievements.includes(code)}
-                                                        onClick={() =>
-                                                            void execute(
-                                                                "/achievements/claim-all",
-                                                                {}
-                                                            ).then(() => void refresh())
-                                                        }
-                                                    >
-                                                        {achievements.includes(code)
-                                                            ? "Claimed ✓"
+                                                ["first_friend", "friends", "Make a friend"],
+                                                ["level_5", "level", "Reach level 5"],
+                                                ["rich", "coins", "Save 500 coins"]
+                                            ]
+                                                .sort((a, b) => {
+                                                    const status = (code: string) =>
+                                                        achievements.includes(code)
+                                                            ? 2
                                                             : (code === "level_5" &&
                                                                     pet.level >= 5) ||
                                                                 (code === "rich" &&
                                                                     pet.coins >= 500) ||
                                                                 (code === "first_friend" &&
                                                                     accepted.length > 0)
-                                                              ? "Claim all ready"
-                                                              : "In progress"}
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        <h3>Daily quests</h3>
-                                    </section>
-                                )}
+                                                              ? 0
+                                                              : 1;
+                                                    return status(a[0]) - status(b[0]);
+                                                })
+                                                .map(([code, icon, label]) => (
+                                                    <div className="friend-row" key={code}>
+                                                        <b>
+                                                            <PawIcon name={icon} /> {label}
+                                                        </b>
+                                                        <button
+                                                            disabled={achievements.includes(code)}
+                                                            onClick={() =>
+                                                                void execute(
+                                                                    "/achievements/claim-all",
+                                                                    {}
+                                                                ).then(() => void refresh())
+                                                            }
+                                                        >
+                                                            {achievements.includes(code)
+                                                                ? "Claimed ✓"
+                                                                : (code === "level_5" &&
+                                                                        pet.level >= 5) ||
+                                                                    (code === "rich" &&
+                                                                        pet.coins >= 500) ||
+                                                                    (code === "first_friend" &&
+                                                                        accepted.length > 0)
+                                                                  ? "Claim all ready"
+                                                                  : "In progress"}
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            <h3>Daily quests</h3>
+                                        </section>
+                                    )}
+                                </Suspense>
                             </div>
                         </div>
                     </>
@@ -2746,34 +2763,36 @@ export default function App() {
                 @ {new Date().getFullYear()} PawPal · Created by <b>HORHEEE</b> · All rights
                 reserved.
             </footer>
-            {game &&
-                pet &&
-                (game === "claw" ? (
-                    <PawClaw
-                        pet={pet}
-                        onQuit={() => setGame(null)}
-                        onPlay={async () => {
-                            const result = await execute("/claw/play", {});
-                            if (result) {
-                                await refresh();
-                            }
-                            return result;
-                        }}
-                    />
-                ) : game === "mole" ? (
-                    <WhackAMole
-                        onQuit={() => setGame(null)}
-                        onFinish={(score) => claimArcadeReward(game, score)}
-                    />
-                ) : (
-                    <MiniGame
-                        key={game}
-                        kind={game}
-                        pet={pet}
-                        onQuit={() => setGame(null)}
-                        onFinish={(score) => claimArcadeReward(game, score)}
-                    />
-                ))}
+            <Suspense fallback={null}>
+                {game &&
+                    pet &&
+                    (game === "claw" ? (
+                        <PawClaw
+                            pet={pet}
+                            onQuit={() => setGame(null)}
+                            onPlay={async () => {
+                                const result = await execute("/claw/play", {});
+                                if (result) {
+                                    await refresh();
+                                }
+                                return result;
+                            }}
+                        />
+                    ) : game === "mole" ? (
+                        <WhackAMole
+                            onQuit={() => setGame(null)}
+                            onFinish={(score) => claimArcadeReward(game, score)}
+                        />
+                    ) : (
+                        <MiniGame
+                            key={game}
+                            kind={game}
+                            pet={pet}
+                            onQuit={() => setGame(null)}
+                            onFinish={(score) => claimArcadeReward(game, score)}
+                        />
+                    ))}
+            </Suspense>
         </div>
     );
 }
