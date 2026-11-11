@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { pool } from "./db.js";
+import { logSafeError } from "./security.js";
 
 // Live updates use authenticated Server-Sent Events and PostgreSQL LISTEN/NOTIFY.
 // This works across multiple Node processes connected to the same PostgreSQL database.
@@ -13,7 +14,7 @@ function writeLive(userId: string, type: string) {
             try {
                 res.write(`event: update\ndata: ${JSON.stringify({ type })}\n\n`);
             } catch (error) {
-                console.warn("Live stream was already disconnected", error);
+                logSafeError("Live stream write failed", error);
             }
         }
     }
@@ -33,7 +34,7 @@ export function publishLive(userIds: string[], type: string) {
         });
         void pool
             .query("SELECT pg_notify($1,$2)", ["pawpal_live", payload])
-            .catch((e) => console.error("Live notification failed", e));
+            .catch((e) => logSafeError("Live notification failed", e));
     }
 }
 
@@ -73,20 +74,20 @@ export async function subscribeLive() {
                 writeLive(event.userId, event.type);
             }
         } catch (e) {
-            console.error("Live event parse error", e);
+            logSafeError("Live event parse failed", e);
         }
     });
-    client.on("error", (e) => console.error("Live database listener error", e));
+    client.on("error", (e) => logSafeError("Live database listener error", e));
     client.on("end", () => {
         console.warn("Live database listener disconnected");
-        setTimeout(() => void subscribeLive().catch(console.error), 2000);
+        setTimeout(() => void subscribeLive().catch((error) => logSafeError("Live listener retry failed", error)), 2000);
     });
     await client.query("LISTEN pawpal_live");
 }
 
 export function startLiveUpdates() {
     void subscribeLive().catch((e) => {
-        console.error("Live listener unavailable", e);
-        setTimeout(() => void subscribeLive().catch(console.error), 3000);
+        logSafeError("Live listener unavailable", e);
+        setTimeout(() => void subscribeLive().catch((error) => logSafeError("Live listener retry failed", error)), 3000);
     });
 }

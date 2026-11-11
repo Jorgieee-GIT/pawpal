@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { pool } from "../db.js";
+import { logSafeError } from "../security.js";
 
 export function registerHealthRoutes(app: Express) {
     app.get("/api/health", (_q, r) =>
@@ -20,7 +21,7 @@ export function registerHealthRoutes(app: Express) {
                 usersTableExists: result.rows[0].users_table !== null
             });
         } catch (error) {
-            console.error("Database health check failed:", error);
+            logSafeError("Database health check failed", error);
 
             res.status(500).json({
                 databaseConnected: false,

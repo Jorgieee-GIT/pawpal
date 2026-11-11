@@ -2,17 +2,18 @@
 
 ## Frontend
 
-`client/src/App.tsx` coordinates the session, shared player state, navigation, and overlays.
+`client/src/App.tsx` coordinates the session, shared player state, navigation, and overlays. Feature screens and local assets are grouped under `client/src/features/` by domain.
 Feature views receive typed props so changing tabs keeps the existing state lifecycle.
 
-- `AuthScreen.tsx`, `AdoptionScreen.tsx`: sign-in, recovery, and adoption screens.
-- `RoomPanel.tsx`, `RoomPets.tsx`: room controls, pet care, and visiting pet artwork.
-- `FriendsPanel.tsx`, `PawPostcard.tsx`: friends and postcard presentation.
-- `MarketPanel.tsx`, `WardrobePanel.tsx`, `OutfitWardrobe.tsx`: shopping and customization.
-- `ArcadePanel.tsx`, `MiniGame.tsx`: arcade selection and shared mini-game UI.
+- `features/auth/`: sign-in, recovery, and adoption screens.
+- `features/rooms/`: room controls, pet care, furniture, and visiting pet artwork.
+- `features/social/`: friends and postcard presentation.
+- `features/shop/`: shopping and customization.
+- `features/arcade/`: arcade selection, mini-games, and Paw Brawl views.
+- `features/garden/`, `features/kitchen/`, `features/missions/`, `features/multiplayer/`, `features/admin/`: their respective feature screens and local assets.
 - `shopCatalog.ts`, `gameCatalog.ts`, `PawIcons.tsx`, `types.ts`: shared catalogs, icons, and data contracts.
 - `api.ts`, `hooks/useApiRequest.ts`: API base URL, authenticated requests, in-flight GET deduplication, and session expiry.
-- Existing garden, kitchen, missions, and multiplayer components remain the feature entry points.
+- Garden, kitchen, missions, and multiplayer screens live in their corresponding feature folders.
 
 Feature panels and game screens use `React.lazy` with a `Suspense` placeholder so the login
 screen only downloads the core app. `main.tsx` also splits the admin, develop, and
@@ -45,10 +46,8 @@ tracking, and economy logs use those paths.
 
 ## Formatting and checks
 
-Use **K&R braces**, four-space indentation, double quotes, and semicolons.
-Keep route declarations inline; `server/src/routes/` is excluded from Prettier to preserve this style:
-
-<!-- prettier-ignore -->
+Use **K&R braces**, four-space indentation, double quotes, and semicolons. No automatic formatter is configured.
+Keep route declarations inline:
 ```ts
 if (ready) {
     start();

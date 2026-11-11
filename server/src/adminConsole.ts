@@ -2,6 +2,7 @@ import type { Express, RequestHandler } from "express";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { pool } from "./db.js";
+import { logSafeError } from "./security.js";
 
 const DEFAULT_SETTINGS: Record<string, boolean | number> = {
     maintenance_mode: false,
@@ -66,7 +67,7 @@ export const enforceAdminGameSettings: RequestHandler = async (req, res, next) =
         }
         next();
     } catch (error) {
-        console.error("Admin settings unavailable", error);
+        logSafeError("Admin settings unavailable", error);
         res.status(503).json({ error: "Game settings are unavailable. Check the Admin Panel migration." });
     }
 };

@@ -92,14 +92,6 @@ export const register = z.object({
 // Set ADMIN_USERNAME and ADMIN_PASSWORD_HASH in the server environment.
 export const adminSecret = secret + ":pawpal-admin-v1";
 
-export const adminAttempts = new Map<
-    string,
-    {
-        count: number;
-        until: number;
-    }
->();
-
 export function adminAuth(req: any, res: any, next: any) {
     try {
         const raw = String(req.headers.authorization || "").replace(/^Bearer /, "");

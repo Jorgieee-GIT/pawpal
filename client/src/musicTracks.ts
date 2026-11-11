@@ -7,37 +7,37 @@ export type MusicTrack = {
     loudnessTrim: number;
 };
 
-// Each MP3 is normalized to approximately -18 LUFS during asset preparation.
-// Keep a single shared music volume for all five game areas.
+// Each track is normalized to approximately -18 LUFS and encoded as 64 kbps AAC
+// during asset preparation. Keep a single shared music volume for all five game areas.
 export const MUSIC_TRACKS: Record<MusicZone, MusicTrack> = {
     main: {
         title: "PawPal Theme",
-        filename: "bgm_main.mp3",
-        source: "/audio/bgm_main.mp3",
+        filename: "bgm_main.m4a",
+        source: "/audio/bgm_main.m4a",
         loudnessTrim: 1
     },
     garden: {
         title: "Blooming Days",
-        filename: "bgm_garden.mp3",
-        source: "/audio/bgm_garden.mp3",
+        filename: "bgm_garden.m4a",
+        source: "/audio/bgm_garden.m4a",
         loudnessTrim: 1
     },
     kitchen: {
         title: "Little Chef",
-        filename: "bgm_kitchen.mp3",
-        source: "/audio/bgm_kitchen.mp3",
+        filename: "bgm_kitchen.m4a",
+        source: "/audio/bgm_kitchen.m4a",
         loudnessTrim: 1
     },
     arcade: {
         title: "Playtime!",
-        filename: "bgm_arcade.mp3",
-        source: "/audio/bgm_arcade.mp3",
+        filename: "bgm_arcade.m4a",
+        source: "/audio/bgm_arcade.m4a",
         loudnessTrim: 1
     },
     multiplayer: {
         title: "Tiny Champions",
-        filename: "bgm_multiplayer.mp3",
-        source: "/audio/bgm_multiplayer.mp3",
+        filename: "bgm_multiplayer.m4a",
+        source: "/audio/bgm_multiplayer.m4a",
         loudnessTrim: 1
     }
 };
@@ -59,9 +59,10 @@ export function readAudioPreferences(): AudioPreferences {
         }
 
         // Preserve the old music toggle: users who had music off stay muted.
-        const savedVolume = typeof saved.musicVolume === "number" && Number.isFinite(saved.musicVolume)
-            ? Math.max(0, Math.min(100, saved.musicVolume))
-            : DEFAULT_AUDIO_PREFERENCES.musicVolume;
+        const savedVolume =
+            typeof saved.musicVolume === "number" && Number.isFinite(saved.musicVolume)
+                ? Math.max(0, Math.min(100, saved.musicVolume))
+                : DEFAULT_AUDIO_PREFERENCES.musicVolume;
 
         return {
             musicVolume: saved.musicEnabled === false ? 0 : savedVolume

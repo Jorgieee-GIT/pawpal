@@ -5,9 +5,11 @@
  */
 import assert from "node:assert/strict";
 import express from "express";
-import { pool } from "../src/db.js";
-import { registerDuoClash, createDuoBattle } from "../src/duoClash.js";
-import { registerMultiplayer } from "../src/multiplayer.js";
+
+process.env.DATABASE_URL ??= "postgres://placeholder:placeholder@localhost:5432/pawpal_test";
+const { pool } = await import("../src/db.js");
+const { registerDuoClash, createDuoBattle } = await import("../src/duoClash.js");
+const { registerMultiplayer } = await import("../src/multiplayer.js");
 
 const ids = [
     "11111111-1111-4111-8111-111111111111",
@@ -15,6 +17,7 @@ const ids = [
     "33333333-3333-4333-8333-333333333333",
     "44444444-4444-4444-8444-444444444444"
 ];
+const outsiderId = "55555555-5555-4555-8555-555555555555";
 const roomId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const challengeId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 let room: any;
@@ -86,6 +89,13 @@ try {
     room.status = "active";
     room.participants = ids.map((userId, i) => ({ userId, team: i < 2 ? 0 : 1, ready: true, lastSeen: new Date().toISOString() }));
     room.battle = createDuoBattle(ids.map((userId, i) => ({ userId, team: i < 2 ? 0 : 1, username: `test${i}`, pet: { name: "Cat", species: "cat", breed: "classic", color: "classic" } })));
+    const outsiderDuoMove = await post(`/api/multiplayer/duo/${roomId}/move`, outsiderId, { action: "strike", targetId: ids[2] });
+    assert.equal(outsiderDuoMove.status, 400);
+    assert.match(outsiderDuoMove.json.error, /participant/i);
+    assert.equal(room.battle.pendingMoves[outsiderId], undefined, "an outsider cannot submit a Duo Clash move");
+    const outsiderDuoForfeit = await post(`/api/multiplayer/duo/${roomId}/forfeit`, outsiderId, {});
+    assert.equal(outsiderDuoForfeit.status, 400);
+    assert.match(outsiderDuoForfeit.json.error, /not in this match/i);
     const duoMove = await post(`/api/multiplayer/duo/${roomId}/move`, ids[0], { action: "strike", targetId: ids[2] });
     assert.equal(duoMove.status, 200, JSON.stringify(duoMove.json));
     assert.equal(room.battle.pendingMoves[ids[0]].action, "strike");
@@ -107,6 +117,13 @@ try {
             { ...room.battle.players[2], userId: ids[1] }
         ], turn: ids[0], turns: 0, pendingMoves: {}, turnExpiresAt: new Date(Date.now() + 30000).toISOString(), log: [] }
     };
+    const outsiderClassicMove = await post(`/api/multiplayer/challenges/${challengeId}/move`, outsiderId, { action: "guard" });
+    assert.equal(outsiderClassicMove.status, 404);
+    assert.match(outsiderClassicMove.json.error, /Battle not found/i);
+    assert.deepEqual(classic.battle.pendingMoves, {}, "an outsider cannot submit a Classic move");
+    const outsiderClassicForfeit = await post(`/api/multiplayer/challenges/${challengeId}/forfeit`, outsiderId, {});
+    assert.equal(outsiderClassicForfeit.status, 409);
+    assert.match(outsiderClassicForfeit.json.error, /aren't a participant/i);
     const classicMove = await post(`/api/multiplayer/challenges/${challengeId}/move`, ids[0], { action: "guard" });
     assert.equal(classicMove.status, 200, JSON.stringify(classicMove.json));
     assert.equal(classic.battle.pendingMoves[ids[0]], "guard");

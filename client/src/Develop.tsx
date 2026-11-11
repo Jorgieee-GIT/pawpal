@@ -1,6 +1,6 @@
-import { GardenBedArt, type GardenGrowthStage } from "./GardenBedArt";
-import { GardenIcon, GARDEN_FLOWER_CATALOG } from "./GardenArt";
-import RoomArchitecture from "./RoomArchitecture";
+import { GardenBedArt, type GardenGrowthStage } from "./features/garden/GardenBedArt";
+import { GardenIcon, GARDEN_FLOWER_CATALOG } from "./features/garden/GardenArt";
+import RoomArchitecture from "./features/rooms/RoomArchitecture";
 import { SettingsArtwork, type AppearanceChoice } from "./SettingsArt";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -16,7 +16,7 @@ import {
     RefreshCw
 } from "lucide-react";
 import PetArt from "./PetArt";
-import { DEFAULTS, FURNITURE, FurnitureArt, RoomFurniture, furnitureLayout } from "./RoomFurniture";
+import { DEFAULTS, FURNITURE, FurnitureArt, RoomFurniture, furnitureLayout } from "./features/rooms/RoomFurniture";
 import {
     FoodArt,
     FOOD_ART_IDS,
@@ -26,11 +26,11 @@ import {
     KITCHEN_TOOL_IDS,
     KITCHEN_PREP_IDS,
     KITCHEN_EFFECT_IDS
-} from "./KitchenArt";
-import { KitchenDirectionArt, KITCHEN_ARROW_DIRECTIONS } from "./KitchenDirectionArt";
-import { KitchenExtraArt, EXTRA_KITCHEN_ART_IDS } from "./KitchenExtraArt";
+} from "./features/kitchen/KitchenArt";
+import { KitchenDirectionArt, KITCHEN_ARROW_DIRECTIONS } from "./features/kitchen/KitchenDirectionArt";
+import { KitchenExtraArt, EXTRA_KITCHEN_ART_IDS } from "./features/kitchen/KitchenExtraArt";
 import { COSMETIC_SLOTS, SLOT_NAMES, type OutfitSlot } from "./outfitCatalog";
-import { MoleArt } from "./WhackAMole";
+import { MoleArt } from "./features/arcade/WhackAMole";
 import { ENVELOPE_DESIGNS, EnvelopeArtwork } from "./PawMailArt";
 import {
     BUILDING_ART,
@@ -46,9 +46,9 @@ import {
     MoleGameIcon,
     ClawMenuIcon,
     arcadeSpriteSrc
-} from "./ArcadeArt";
+} from "./features/arcade/ArcadeArt";
 import "./Develop.css";
-import "./AdminShared.css";
+import "./features/admin/AdminShared.css";
 
 const API = import.meta.env.VITE_API_URL || "";
 const SPECIES = ["cat", "dog", "bunny", "fox", "hamster", "panda", "penguin", "axolotl"];

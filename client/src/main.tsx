@@ -5,9 +5,9 @@ import "./style.css";
 
 // Staff and recovery screens are rare entry points; keep them out of the
 // player bundle.
-const Admin = lazy(() => import("./Admin"));
+const Admin = lazy(() => import("./features/admin/Admin"));
 const Develop = lazy(() => import("./Develop"));
-const ResetPassword = lazy(() => import("./ResetPassword"));
+const ResetPassword = lazy(() => import("./features/auth/ResetPassword"));
 
 const path = window.location.pathname.replace(/\/$/, "");
 

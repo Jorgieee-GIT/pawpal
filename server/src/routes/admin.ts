@@ -3,20 +3,19 @@ import type { Express } from "express";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { writeAdminAudit } from "../adminConsole.js";
-import { adminAttempts, adminAuth, adminSecret } from "../auth.js";
+import { adminAuth, adminSecret } from "../auth.js";
 import { pool } from "../db.js";
 import { handle } from "../http.js";
+import { createRateLimiter, logSafeError } from "../security.js";
+
+const adminLoginLimit = createRateLimiter({
+    max: 5,
+    windowMs: 15 * 60 * 1000,
+    message: "Too many sign-in attempts. Try again in 15 minutes."
+});
 
 export function registerAdminRoutes(app: Express) {
-    app.post("/api/admin/login", handle(async (req, res) => {
-        const ip = String(req.ip || req.socket.remoteAddress || "unknown");
-        const state = adminAttempts.get(ip);
-        if (state && state.until > Date.now() && state.count >= 5) {
-            res.status(429).json({
-                error: "Too many attempts. Try again in 15 minutes."
-            });
-            return;
-        }
+    app.post("/api/admin/login", adminLoginLimit, handle(async (req, res) => {
         const configuredName = process.env.ADMIN_USERNAME;
         const configuredHash = process.env.ADMIN_PASSWORD_HASH;
         if (!configuredName || !configuredHash) {
@@ -30,17 +29,11 @@ export function registerAdminRoutes(app: Express) {
         const validPassword =
             pass.length <= 128 && (await bcrypt.compare(pass, configuredHash));
         if (name !== configuredName || !validPassword) {
-            const nextCount = (state && state.until > Date.now() ? state.count : 0) + 1;
-            adminAttempts.set(ip, {
-                count: nextCount,
-                until: Date.now() + 15 * 60 * 1000
-            });
             res.status(401).json({
                 error: "Invalid admin credentials."
             });
             return;
         }
-        adminAttempts.delete(ip);
         res.json({
             token: jwt.sign(
                 {
@@ -133,7 +126,7 @@ export function registerAdminRoutes(app: Express) {
             );
             await client.query("COMMIT");
             console.info("[ADMIN] Password reset for user", q.rows[0].id);
-            void writeAdminAudit("password_reset", String(q.rows[0].id)).catch(console.error);
+            void writeAdminAudit("password_reset", String(q.rows[0].id)).catch((error) => logSafeError("Admin audit write failed", error));
             res.json({
                 message:
                     "Password reset successfully. Share the new password securely with the account owner. Existing sessions were signed out."

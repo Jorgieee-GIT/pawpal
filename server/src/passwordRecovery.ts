@@ -3,6 +3,7 @@ import type { Express } from "express";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { pool } from "./db.js";
+import { createRateLimiter, logSafeError } from "./security.js";
 
 const RESET_LINK_MINUTES = 5;
 const REQUEST_HOURS = 24;
@@ -13,7 +14,21 @@ const localUrl = (process.env.PAWPAL_LOCAL_URL || "http://localhost:5173").repla
 const passwordSchema = z.string().min(6).max(100);
 const usernameSchema = z.string().regex(/^[a-zA-Z0-9_]{3,24}$/);
 const resetTokenSchema = z.string().regex(/^[a-f0-9]{64}$/);
-const rateLimits = new Map<string, { count: number; resetsAt: number }>();
+const resetRequestLimit = createRateLimiter({
+    max: 8,
+    windowMs: 60 * 60 * 1000,
+    message: "Too many requests. Please try again later."
+});
+const resetLookupLimit = createRateLimiter({
+    max: 120,
+    windowMs: 15 * 60 * 1000,
+    message: "Too many reset checks. Wait a few minutes and try again."
+});
+const resetCompletionLimit = createRateLimiter({
+    max: 8,
+    windowMs: 15 * 60 * 1000,
+    message: "Too many password reset attempts. Try again in a few minutes."
+});
 
 function hash(value: string) {
     return createHash("sha256").update(value).digest("hex");
@@ -21,17 +36,6 @@ function hash(value: string) {
 
 function generateSecret() {
     return randomBytes(32).toString("hex");
-}
-
-function rateLimited(ip: string) {
-    const now = Date.now();
-    const state = rateLimits.get(ip);
-    if (!state || state.resetsAt <= now) {
-        rateLimits.set(ip, { count: 1, resetsAt: now + 60 * 60 * 1000 });
-        return false;
-    }
-    state.count += 1;
-    return state.count > 8;
 }
 
 function resetLinks(rawToken: string) {
@@ -64,7 +68,7 @@ async function issueLink(client: any, userId: string, requestId: string | null =
 
 export function registerPasswordRecovery(app: Express, adminAuth: any) {
     // This endpoint is always generic: usernames must not be enumerable.
-    app.post("/api/auth/password-reset/request", async (req, res) => {
+    app.post("/api/auth/password-reset/request", resetRequestLimit, async (req, res) => {
         const requestId = randomUUID();
         const requestSecret = generateSecret();
         const generic = {
@@ -76,10 +80,6 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
         const username = String(req.body?.username || "").trim().toLowerCase();
         if (!usernameSchema.safeParse(username).success) {
             res.status(400).json({ error: "Enter a valid username (3–24 letters, numbers or underscores)." });
-            return;
-        }
-        if (rateLimited(String(req.ip || req.socket.remoteAddress || "unknown"))) {
-            res.status(429).json({ error: "Too many requests. Please try again later." });
             return;
         }
         try {
@@ -106,12 +106,12 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
             }
             res.status(202).json(generic);
         } catch (error) {
-            console.error("Password request failed:", error);
+            logSafeError("Password request failed", error);
             res.status(503).json({ error: "Could not submit the request. Please try again later." });
         }
     });
 
-    app.post("/api/auth/password-reset/request-status", async (req, res) => {
+    app.post("/api/auth/password-reset/request-status", resetLookupLimit, async (req, res) => {
         res.setHeader("Cache-Control", "no-store");
         const id = z.string().uuid().safeParse(req.body?.requestId);
         const key = resetTokenSchema.safeParse(req.body?.requestKey);
@@ -134,7 +134,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
         }
     });
 
-    app.post("/api/auth/password-reset/verify", async (req, res) => {
+    app.post("/api/auth/password-reset/verify", resetLookupLimit, async (req, res) => {
         res.setHeader("Cache-Control", "no-store");
         const parsed = resetTokenSchema.safeParse(req.body?.token);
         if (!parsed.success) {
@@ -154,7 +154,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
         }
     });
 
-    app.post("/api/auth/password-reset/complete", async (req, res) => {
+    app.post("/api/auth/password-reset/complete", resetCompletionLimit, async (req, res) => {
         res.setHeader("Cache-Control", "no-store");
         const parsedToken = resetTokenSchema.safeParse(req.body?.token);
         const parsedPassword = passwordSchema.safeParse(req.body?.newPassword);
@@ -195,7 +195,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
             res.json({ message: "Your password was changed. You can now log in with your new password." });
         } catch (error) {
             await client.query("ROLLBACK").catch(() => {});
-            console.error("Reset completion failed", error);
+            logSafeError("Reset completion failed", error);
             res.status(503).json({ error: "Password reset is temporarily unavailable. Try again." });
         } finally {
             client.release();
@@ -220,7 +220,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
                     ? "expired" : row.status
             })) });
         } catch (error) {
-            console.error("Admin reset inbox failed", error);
+            logSafeError("Admin reset inbox failed", error);
             res.status(503).json({ error: "Could not load password requests. Check the migration." });
         }
     });
@@ -263,7 +263,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
             });
         } catch (error) {
             await client.query("ROLLBACK").catch(() => {});
-            console.error("Reset approval failed", error);
+            logSafeError("Reset approval failed", error);
             res.status(503).json({ error: "Could not process this request." });
         } finally {
             client.release();
@@ -296,7 +296,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
             res.json({ username: user.rows[0].username, ...link });
         } catch (error) {
             await client.query("ROLLBACK").catch(() => {});
-            console.error("Reset link creation failed", error);
+            logSafeError("Reset link creation failed", error);
             res.status(503).json({ error: "Could not create a reset link." });
         } finally {
             client.release();

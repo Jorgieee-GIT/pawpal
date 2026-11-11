@@ -1,12 +1,29 @@
 import bcrypt from "bcryptjs";
 import type { Express } from "express";
 import { randomUUID } from "node:crypto";
+import { z } from "zod";
 import { register, token } from "../auth.js";
 import { pool } from "../db.js";
 import { handle } from "../http.js";
+import { createRateLimiter } from "../security.js";
+
+const registrationLimit = createRateLimiter({
+    max: 20,
+    windowMs: 60 * 60 * 1000,
+    message: "Too many account creation attempts. Try again later."
+});
+const loginLimit = createRateLimiter({
+    max: 20,
+    windowMs: 15 * 60 * 1000,
+    message: "Too many sign-in attempts. Try again in a few minutes."
+});
+const loginInput = z.object({
+    identity: z.string().regex(/^[a-zA-Z0-9_]{3,24}$/),
+    password: z.string().min(1).max(100)
+});
 
 export function registerAuthRoutes(app: Express) {
-    app.post("/api/auth/register", handle(async (req, res) => {
+    app.post("/api/auth/register", registrationLimit, handle(async (req, res) => {
         const v = register.safeParse(req.body);
         if (!v.success) {
             return void res.status(400).json({
@@ -34,8 +51,14 @@ export function registerAuthRoutes(app: Express) {
         }
     }));
 
-    app.post("/api/auth/login", handle(async (req, res) => {
-        const { identity, password } = req.body || {};
+    app.post("/api/auth/login", loginLimit, handle(async (req, res) => {
+        const parsed = loginInput.safeParse(req.body);
+        if (!parsed.success) {
+            return void res.status(400).json({
+                error: "Enter a valid username and password."
+            });
+        }
+        const { identity, password } = parsed.data;
         const q = await pool.query("SELECT * FROM users WHERE username=$1", [
             String(identity || "").toLowerCase()
         ]);

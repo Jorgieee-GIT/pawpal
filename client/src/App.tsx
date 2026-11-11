@@ -25,14 +25,14 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 // Preserve stylesheet evaluation order when importing extracted feature views.
 import SettingsModal from "./SettingsModal";
 import "./style.css";
-import "./PasswordRecovery.css";
-import AdoptionScreen from "./AdoptionScreen";
-import AuthScreen from "./AuthScreen";
+import "./features/auth/PasswordRecovery.css";
+import AdoptionScreen from "./features/auth/AdoptionScreen";
+import AuthScreen from "./features/auth/AuthScreen";
 import BackgroundMusic from "./BackgroundMusic";
 import { PAW_GAMES } from "./gameCatalog";
 import { PawIcon } from "./PawIcons";
 import { ENVELOPE_DESIGNS, EnvelopeArtwork } from "./PawMailArt";
-import { ENVELOPE_COLORS, PawPostcard } from "./PawPostcard";
+import { ENVELOPE_COLORS, PawPostcard } from "./features/social/PawPostcard";
 import PetArt from "./PetArt";
 import SectionHeading from "./SectionHeading";
 import type { AppearanceChoice } from "./SettingsArt";
@@ -44,18 +44,18 @@ import type { Friend, MealData, PawMail, PawNotification, Pet, RoomPet, User } f
 
 // Feature panels and game screens load on demand so the login screen does not
 // download the entire playhouse.
-const RoomPanel = lazy(() => import("./RoomPanel"));
-const FriendsPanel = lazy(() => import("./FriendsPanel"));
-const WardrobePanel = lazy(() => import("./WardrobePanel"));
-const MarketPanel = lazy(() => import("./MarketPanel"));
-const Multiplayer = lazy(() => import("./Multiplayer"));
-const ArcadePanel = lazy(() => import("./ArcadePanel"));
-const GardenPanel = lazy(() => import("./GardenPanel"));
-const Kitchen = lazy(() => import("./Kitchen"));
-const MissionCenter = lazy(() => import("./MissionCenter"));
-const MiniGame = lazy(() => import("./MiniGame").then((module) => ({ default: module.MiniGame })));
-const PawClaw = lazy(() => import("./PawClaw"));
-const WhackAMole = lazy(() => import("./WhackAMole"));
+const RoomPanel = lazy(() => import("./features/rooms/RoomPanel"));
+const FriendsPanel = lazy(() => import("./features/social/FriendsPanel"));
+const WardrobePanel = lazy(() => import("./features/shop/WardrobePanel"));
+const MarketPanel = lazy(() => import("./features/shop/MarketPanel"));
+const Multiplayer = lazy(() => import("./features/multiplayer/Multiplayer"));
+const ArcadePanel = lazy(() => import("./features/arcade/ArcadePanel"));
+const GardenPanel = lazy(() => import("./features/garden/GardenPanel"));
+const Kitchen = lazy(() => import("./features/kitchen/Kitchen"));
+const MissionCenter = lazy(() => import("./features/missions/MissionCenter"));
+const MiniGame = lazy(() => import("./features/arcade/MiniGame").then((module) => ({ default: module.MiniGame })));
+const PawClaw = lazy(() => import("./features/arcade/PawClaw"));
+const WhackAMole = lazy(() => import("./features/arcade/WhackAMole"));
 
 function PanelLoader() {
     return (

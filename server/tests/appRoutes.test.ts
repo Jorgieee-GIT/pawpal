@@ -9,18 +9,37 @@ process.env.JWT_SECRET = "pawpal-route-regression-test-secret";
 const { pool } = await import("../src/db.js");
 const { createApp } = await import("../src/app.js");
 const userId = "11111111-1111-4111-8111-111111111111";
+const otherUserId = "22222222-2222-4222-8222-222222222222";
+const mailId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const token = jwt.sign({ sub: userId, ver: 0 }, process.env.JWT_SECRET);
+const otherToken = jwt.sign({ sub: otherUserId, ver: 0 }, process.env.JWT_SECRET);
 let server: Server;
 let origin: string;
 let connections = 0;
 const queries: string[] = [];
+const ownershipQueries: Array<{ sql: string; args: unknown[] }> = [];
 
 function result(rows: unknown[] = []) {
     return { rows, rowCount: rows.length };
 }
 
-async function query(sql: string) {
+async function query(sql: string, args: unknown[] = []) {
     queries.push(sql);
+    if (sql.includes("FROM pets p JOIN users u")) {
+        ownershipQueries.push({ sql, args });
+        assert.match(sql, /WHERE p\.owner_id=\$1 OR EXISTS/);
+        return result([{ id: "pet-for-" + args[0], user_id: args[0] }]);
+    }
+    if (sql.startsWith("UPDATE paw_mail SET read_at=")) {
+        ownershipQueries.push({ sql, args });
+        assert.match(sql, /WHERE id=\$1 AND recipient_id=\$2/);
+        return args[0] === mailId && args[1] === userId ? result([{ id: mailId }]) : result();
+    }
+    if (sql.startsWith("DELETE FROM paw_mail WHERE id=")) {
+        ownershipQueries.push({ sql, args });
+        assert.match(sql, /WHERE id=\$1 AND recipient_id=\$2/);
+        return args[0] === mailId && args[1] === userId ? result([{ id: mailId }]) : result();
+    }
     if (sql.includes("FROM admin_game_settings")) {
         return result();
     }
@@ -187,6 +206,40 @@ test("Care still applies wake middleware before the transactional pet mutation",
     assert.equal(queries.filter((sql) => sql === "BEGIN").length, 2);
     assert.ok(queries.includes("COMMIT"));
     assert.ok(queries.includes("ROLLBACK"));
+});
+
+test("Room data and postcard actions stay scoped to the authenticated account", async () => {
+    const getRoom = (authToken: string) => fetch(origin + "/api/room", {
+        headers: { Authorization: "Bearer " + authToken }
+    });
+    const firstRoom = await getRoom(token);
+    const secondRoom = await getRoom(otherToken);
+    assert.equal(firstRoom.status, 200);
+    assert.equal(secondRoom.status, 200);
+    assert.equal((await firstRoom.json())[0].user_id, userId);
+    assert.equal((await secondRoom.json())[0].user_id, otherUserId);
+    assert.deepEqual(ownershipQueries.filter((entry) => entry.sql.includes("FROM pets p JOIN users u")).map((entry) => entry.args[0]), [userId, otherUserId]);
+
+    const mailAction = (method: "PATCH" | "DELETE", authToken: string) => fetch(origin + "/api/mail/" + mailId + "/read", {
+        method,
+        headers: { Authorization: "Bearer " + authToken }
+    });
+    const ownerRead = await mailAction("PATCH", token);
+    const otherRead = await mailAction("PATCH", otherToken);
+    assert.equal(ownerRead.status, 200);
+    assert.equal(otherRead.status, 404, "another account cannot read this postcard");
+
+    const ownerDelete = await fetch(origin + "/api/mail/" + mailId, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + token }
+    });
+    const otherDelete = await fetch(origin + "/api/mail/" + mailId, {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + otherToken }
+    });
+    assert.equal(ownerDelete.status, 200);
+    assert.equal(otherDelete.status, 404, "another account cannot delete this postcard");
+    assert.deepEqual(ownershipQueries.filter((entry) => entry.sql.includes("paw_mail")).map((entry) => entry.args[1]), [userId, otherUserId, userId, otherUserId]);
 });
 
 test("Unknown API routes still return a JSON 404", async () => {

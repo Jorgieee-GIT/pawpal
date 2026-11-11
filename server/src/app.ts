@@ -26,9 +26,17 @@ import { registerNotificationRoutes } from "./routes/notifications.js";
 import { registerPetRoutes } from "./routes/pets.js";
 import { registerRoomRoutes } from "./routes/rooms.js";
 import { registerShopRoutes } from "./routes/shop.js";
+import { logSafeError } from "./security.js";
 
 export function createApp() {
     const app = express();
+    app.disable("x-powered-by");
+    app.use((_req: any, res: any, next: any) => {
+        res.setHeader("X-Content-Type-Options", "nosniff");
+        res.setHeader("X-Frame-Options", "DENY");
+        res.setHeader("Referrer-Policy", "no-referrer");
+        next();
+    });
     app.use(express.json({
         limit: "24kb"
     }));
@@ -83,7 +91,7 @@ export function createApp() {
 
     // Centralized error capture. Log error codes only, never private request data.
     app.use((error: any, req: any, res: any, _next: any) => {
-        console.error("API request failed", req.path, error);
+        logSafeError("API request failed", error);
         logServerFailure(String(req.path || "unknown"), error?.code);
         if (!res.headersSent) {
             if (error?.code === "42P01" || error?.code === "42703") {

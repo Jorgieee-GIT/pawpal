@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { logSafeError } from "./security.js";
 import type { Express } from "express";
 import { z } from "zod";
 import { pool } from "./db.js";
@@ -797,7 +798,7 @@ async function cleanupExpired() {
 export function registerMultiplayer(app: Express, auth: any, publishLive: (users: string[], type: string) => void) {
     const handle = (fn: (req: any, res: any) => Promise<void>) => (req: any, res: any) => {
         Promise.resolve(fn(req, res)).catch(error => {
-            console.error("Multiplayer error", error);
+            logSafeError("Multiplayer request failed", error);
             if (!res.headersSent) {
                 const migrationMissing = error?.code === "42P01" && String(error?.message || "").includes("arena_fee_ledger");
                 res.status(500).json({
@@ -820,7 +821,7 @@ export function registerMultiplayer(app: Express, auth: any, publishLive: (users
                 notify(users)
 
             }
-}).catch(console.error);
+}).catch((error) => logSafeError("Multiplayer sweep failed", error));
     }, 60000);
     timer.unref();
 
@@ -848,7 +849,7 @@ export function registerMultiplayer(app: Express, auth: any, publishLive: (users
             }
         } catch (error) {
             await client.query("ROLLBACK");
-            console.error("Paw Brawl turn timeout", error)
+            logSafeError("Paw Brawl turn timeout failed", error)
         }
         finally {
             client.release()

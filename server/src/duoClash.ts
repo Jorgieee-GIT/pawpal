@@ -5,6 +5,7 @@ import { pool } from "./db.js";
 import { calculateArenaPayout, recordArenaFee } from "./arenaFees.js";
 import { applyMove, makePlayer, type Player, type Battle, type BattleVisualChange } from "./multiplayer.js";
 import { BRAWL_RULES, FOCUS_CAP, SHIELD_CAP, getCombatKit } from "./brawlAbilities.js";
+import { logSafeError } from "./security.js";
 
 export type DuoPlayer = Player & {
     team: 0 | 1;
@@ -349,7 +350,7 @@ async function assertNotOccupied(client: Queryable, userId: string) {
 
 export function registerDuoClash(app: Express, auth: any, publish: (users: string[], type: string) => void) {
     const handler = (fn: (req: any, res: any) => Promise<void>) => (req: any, res: any) => void Promise.resolve(fn(req, res)).catch(error => {
-        console.error("Duo Clash", error);
+        logSafeError("Duo Clash request failed", error);
         if (!res.headersSent) {
             const migrationMissing = (error as any)?.code === "42P01" && String((error as any)?.message || "").includes("arena_fee_ledger");
             res.status(migrationMissing ? 500 : 400).json({ error: migrationMissing
@@ -702,7 +703,7 @@ export function registerDuoClash(app: Express, auth: any, publish: (users: strin
             }
             await client.query("COMMIT");
             changed.forEach(inform);
-        } catch (e) { await client.query("ROLLBACK"); console.error("Duo Clash sweep:", e); } finally { client.release(); }
+        } catch (e) { await client.query("ROLLBACK"); logSafeError("Duo Clash sweep failed", e); } finally { client.release(); }
     }, 3000);
     sweep.unref();
 }

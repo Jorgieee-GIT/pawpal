@@ -3,6 +3,7 @@ import { publicPetGarden } from "./gardenRules.js";
 import { publishLive, publishPetToFriends } from "./live.js";
 import { recordMissionEvent } from "./missions.js";
 import { catalog } from "./petCatalog.js";
+import { logSafeError } from "./security.js";
 
 export const fields =
     "id,owner_id,name,species,breed,color,owned_colors,owned_breeds,hunger,happiness,energy,cleanliness,affection,coins,xp,level,food,toys,owned_cosmetics,equipped_cosmetic,equipped_outfit,room_theme,active_room,unlocked_rooms,room_layouts,owned_items,placed_items,garden,last_daily,daily_claimed_at,last_game_at,created_at,updated_at";
@@ -93,7 +94,7 @@ export async function wakePetForActivity(userId: string) {
     }
     if (changed) {
         publishLive([userId], "pet_sleep_changed");
-        void publishPetToFriends(userId, true).catch(console.error);
+        void publishPetToFriends(userId, true).catch((error) => logSafeError("Pet broadcast failed", error));
     }
     return changed;
 }
@@ -253,7 +254,7 @@ export async function mutate(req: any, res: any, fn: (p: any) => string | Promis
             void publishPetToFriends(
                 String(req.userId),
                 action === "sleep_toggle" || req.path === "/api/item"
-            ).catch(console.error);
+            ).catch((error) => logSafeError("Pet update broadcast failed", error));
         }
         res.json({
             pet: publicPetGarden(out.rows[0]),
