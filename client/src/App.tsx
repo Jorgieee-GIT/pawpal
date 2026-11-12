@@ -125,6 +125,7 @@ export default function App() {
     const [mailCatalog, setMailCatalog] = useState(ENVELOPE_DESIGNS);
     const [notifications, setNotifications] = useState<PawNotification[]>([]);
     const pendingSeenNotifications = useRef(new Set<string>());
+    const lastLiveActivity = useRef(0);
     const [multiplayerSignal, setMultiplayerSignal] = useState(0);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [announcementOpen, setAnnouncementOpen] = useState<PawNotification | null>(null);
@@ -343,7 +344,11 @@ export default function App() {
     }, [token]);
     useEffect(() => {
         let mounted = true;
+        let checking = false;
+        let interval: ReturnType<typeof window.setInterval> | undefined;
         async function checkMaintenance() {
+            if (!mounted || document.visibilityState === "hidden" || checking) return;
+            checking = true;
             try {
                 const response = await fetch(API + "/api/system/status", { cache: "no-store" });
                 if (response.ok) {
@@ -352,14 +357,31 @@ export default function App() {
                 }
             } catch {
                 // Preserve the last known banner during a transient network interruption.
+            } finally {
+                checking = false;
             }
         }
+        function startPolling() {
+            if (document.visibilityState === "hidden" || interval !== undefined) return;
+            interval = window.setInterval(() => void checkMaintenance(), 60000);
+        }
+        function syncVisibility() {
+            if (document.visibilityState === "hidden") {
+                if (interval !== undefined) window.clearInterval(interval);
+                interval = undefined;
+                return;
+            }
+            void checkMaintenance();
+            startPolling();
+        }
         void checkMaintenance();
-        const interval = window.setInterval(() => void checkMaintenance(), 60000);
+        startPolling();
+        document.addEventListener("visibilitychange", syncVisibility);
         window.addEventListener("focus", checkMaintenance);
         return () => {
             mounted = false;
-            window.clearInterval(interval);
+            if (interval !== undefined) window.clearInterval(interval);
+            document.removeEventListener("visibilitychange", syncVisibility);
             window.removeEventListener("focus", checkMaintenance);
         };
     }, []);
@@ -454,7 +476,7 @@ export default function App() {
         let controller: AbortController | undefined;
         let retryDelay = 1500;
         const pending = new Set<string>();
-        let lastStreamActivity = Date.now();
+        lastLiveActivity.current = 0;
         let notificationsInitialized = false;
         const knownNotificationIds = new Set<string>();
         const syncNotifications = (items: PawNotification[]) => {
@@ -570,7 +592,7 @@ export default function App() {
                 .then(syncNotifications)
                 .catch(() => {});
             // A browser may silently suspend the response stream in background.
-            if (Date.now() - lastStreamActivity > 45000) {
+            if (Date.now() - lastLiveActivity.current > 45000) {
                 controller?.abort();
             }
         };
@@ -593,7 +615,7 @@ export default function App() {
                     throw Error("Live updates unavailable");
                 }
                 retryDelay = 1500;
-                lastStreamActivity = Date.now();
+                lastLiveActivity.current = Date.now();
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let buffer = "";
@@ -602,7 +624,7 @@ export default function App() {
                     if (done) {
                         break;
                     }
-                    lastStreamActivity = Date.now();
+                    lastLiveActivity.current = Date.now();
                     buffer += decoder
                         .decode(value, {
                             stream: true
@@ -656,17 +678,21 @@ export default function App() {
         void connect();
         // Notifications must not wait 60 seconds when Render or SSE reconnects.
         const notificationFallback = window.setInterval(() => {
-            if (document.visibilityState === "visible") {
+            const liveIsStale = Date.now() - lastLiveActivity.current > 45000;
+            if (document.visibilityState === "visible" && liveIsStale) {
                 void request("/notifications")
                     .then(syncNotifications)
                     .catch(() => {});
             }
-            if (Date.now() - lastStreamActivity > 45000) {
+            if (liveIsStale) {
                 controller?.abort();
             }
         }, 12000);
         const profileFallback = window.setInterval(() => {
-            if (document.visibilityState === "visible") {
+            if (
+                document.visibilityState === "visible" &&
+                Date.now() - lastLiveActivity.current > 45000
+            ) {
                 void request("/me")
                     .then((data) => {
                         setUser(data.user);
@@ -709,12 +735,18 @@ export default function App() {
             }
         };
         const timer = window.setInterval(() => {
-            if (document.visibilityState === "visible") {
+            if (
+                document.visibilityState === "visible" &&
+                Date.now() - lastLiveActivity.current > 45000
+            ) {
                 void syncRoom();
             }
         }, 20000);
         const onVisible = () => {
-            if (document.visibilityState === "visible") {
+            if (
+                document.visibilityState === "visible" &&
+                Date.now() - lastLiveActivity.current > 45000
+            ) {
                 void syncRoom();
             }
         };

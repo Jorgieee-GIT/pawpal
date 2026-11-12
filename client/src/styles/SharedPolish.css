@@ -237,23 +237,34 @@
     letter-spacing: 1.8px;
     text-transform: uppercase;
 }
-.panel .paw-section-title {
+.paw-section-title {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    max-width: 100%;
+    margin: 3px 0 14px;
     color: #865671;
     font-size: 24px;
     font-weight: 900;
     line-height: 1.22;
 }
-.panel .paw-section-title > svg {
+.paw-section-title > svg {
+    display: block;
+    flex: 0 0 23px;
+    width: 23px;
+    height: 23px;
     color: #c77c9f;
+    stroke: currentColor;
 }
 .paw-dark .panel > .eyebrow,
 .paw-dark .paw-garden-header-copy > .eyebrow {
     color: #e4a6c7;
 }
-.paw-dark .panel .paw-section-title {
+.paw-dark .paw-section-title {
     color: #ffe0ef;
 }
-.paw-dark .panel .paw-section-title > svg {
+.paw-dark .paw-section-title > svg {
     color: #f0afce;
 }
 /* Old Kitchen tab CSS styled *every* span like a white number badge.

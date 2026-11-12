@@ -7,7 +7,7 @@
 .paw-garden-header {
     display: flex;
     gap: 14px;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: space-between;
     flex-wrap: wrap;
     margin-bottom: 14px;
@@ -19,7 +19,7 @@
     margin: 3px 0 6px;
 }
 .paw-garden-header-copy h2 svg {
-    color: #d88ba3;
+    color: #c77c9f;
 }
 .paw-garden-header-copy p {
     margin: 0;
@@ -35,18 +35,20 @@
 .paw-garden-header-actions button {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    border: 1.5px solid #eac3d2;
-    background: #fff9fa;
-    color: #945976;
-    padding: 9px 12px;
-    border-radius: 13px;
-    font-size: 12px;
+    justify-content: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #895474;
+    font-size: 11px;
     font-weight: 800;
     cursor: pointer;
 }
 .paw-garden-header-actions button:hover {
-    background: #fce8f1;
+    background: transparent;
 }
 .paw-garden-header-actions button span {
     padding: 2px 6px;
@@ -744,9 +746,8 @@
     color: #e9c3d8;
 }
 .paw-dark .paw-garden-header-actions button {
-    background: #64465a;
+    background: transparent;
     color: #ffe6f1;
-    border-color: #926d83;
 }
 .paw-dark .paw-garden-stock > div {
     background: #5a4655;
@@ -821,13 +822,6 @@
     }
 }
 @media(max-width:700px) {
-    .paw-garden-header-actions {
-        width: 100%;
-    }
-    .paw-garden-header-actions button {
-        flex: 1;
-        justify-content: center;
-    }
     .paw-garden-bed-grid {
         grid-template-columns: repeat(2,minmax(0,1fr));
         gap: 11px 9px;
@@ -1087,28 +1081,8 @@
         gap: 6px;
     }
 }
-/* Unified SVG heading treatment across all main gameplay pages. */
-.paw-section-title {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 9px;
-    max-width: 100%;
-    margin: 3px 0 14px;
-}
-.paw-section-title > svg {
-    display: block;
-    flex: 0 0 23px;
-    width: 23px;
-    height: 23px;
-    color: #d88ba3;
-    stroke: currentColor;
-}
 .paw-garden-header-copy .paw-section-title {
     margin: 3px 0 6px;
-}
-.paw-dark .paw-section-title > svg {
-    color: #e9afcf;
 }
 /* The timer has one stable numeric line; stage detail remains in its accessible label. */
 .paw-garden-bed-status {
