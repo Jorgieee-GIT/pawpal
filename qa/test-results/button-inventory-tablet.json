@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T03:08:28.784Z",
+  "generatedAt": "2026-11-12T03:15:12.831Z",
   "baseURL": "http://127.0.0.1:5173",
   "note": "Visible controls are inventoried. State-changing controls are flagged for review and are not clicked.",
   "buttons": [
@@ -194,6 +194,13 @@
     },
     {
       "section": "Room",
+      "label": "×",
+      "disabled": false,
+      "classification": "non-destructive-or-unknown",
+      "clicked": false
+    },
+    {
+      "section": "Room",
       "label": "Room",
       "disabled": false,
       "classification": "non-destructive-or-unknown",
@@ -351,6 +358,13 @@
       "label": "Log out of PawPal",
       "disabled": false,
       "classification": "review-before-clicking",
+      "clicked": false
+    },
+    {
+      "section": "Friends",
+      "label": "×",
+      "disabled": false,
+      "classification": "non-destructive-or-unknown",
       "clicked": false
     },
     {
@@ -1909,21 +1923,21 @@
     },
     {
       "section": "Missions",
-      "label": "Daily 0/5 claimed",
+      "label": "Daily 0/0 claimed",
       "disabled": false,
       "classification": "review-before-clicking",
       "clicked": false
     },
     {
       "section": "Missions",
-      "label": "Weekly 10/10 claimed",
+      "label": "Weekly 0/0 claimed",
       "disabled": false,
       "classification": "review-before-clicking",
       "clicked": false
     },
     {
       "section": "Missions",
-      "label": "Milestones 290/290 claimed",
+      "label": "Milestones 0/0 claimed",
       "disabled": false,
       "classification": "review-before-clicking",
       "clicked": false
@@ -1933,41 +1947,6 @@
       "label": "Claim all",
       "disabled": true,
       "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Missions",
-      "label": "In progress",
-      "disabled": true,
-      "classification": "non-destructive-or-unknown",
-      "clicked": false
-    },
-    {
-      "section": "Missions",
-      "label": "In progress",
-      "disabled": true,
-      "classification": "non-destructive-or-unknown",
-      "clicked": false
-    },
-    {
-      "section": "Missions",
-      "label": "In progress",
-      "disabled": true,
-      "classification": "non-destructive-or-unknown",
-      "clicked": false
-    },
-    {
-      "section": "Missions",
-      "label": "In progress",
-      "disabled": true,
-      "classification": "non-destructive-or-unknown",
-      "clicked": false
-    },
-    {
-      "section": "Missions",
-      "label": "In progress",
-      "disabled": true,
-      "classification": "non-destructive-or-unknown",
       "clicked": false
     },
     {

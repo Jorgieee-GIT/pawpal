@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T03:08:15.492Z",
+  "generatedAt": "2026-11-12T03:14:58.145Z",
   "baseURL": "http://127.0.0.1:5173",
   "note": "Visible controls are inventoried. State-changing controls are flagged for review and are not clicked.",
   "buttons": [
@@ -778,13 +778,6 @@
       "label": "Log out of PawPal",
       "disabled": false,
       "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Wardrobe",
-      "label": "×",
-      "disabled": false,
-      "classification": "non-destructive-or-unknown",
       "clicked": false
     },
     {
@@ -1713,7 +1706,7 @@
     },
     {
       "section": "Kitchen",
-      "label": "Pantry 2084",
+      "label": "Pantry",
       "disabled": false,
       "classification": "non-destructive-or-unknown",
       "clicked": false
@@ -1737,300 +1730,6 @@
       "label": "Mystery",
       "disabled": false,
       "classification": "non-destructive-or-unknown",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 136",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 160",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 104",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 120",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 210",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 248",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 238",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 236",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 196",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 334",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 302",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 236",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 170",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 196",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 184",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 200",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 226",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 224",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 264",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 204",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Cook",
-      "disabled": false,
-      "classification": "review-before-clicking",
-      "clicked": false
-    },
-    {
-      "section": "Kitchen",
-      "label": "Buy · 262",
-      "disabled": false,
-      "classification": "review-before-clicking",
       "clicked": false
     },
     {
@@ -2126,21 +1825,21 @@
     },
     {
       "section": "Missions",
-      "label": "Daily 0/0 claimed",
+      "label": "Daily 0/5 claimed",
       "disabled": false,
       "classification": "review-before-clicking",
       "clicked": false
     },
     {
       "section": "Missions",
-      "label": "Weekly 0/0 claimed",
+      "label": "Weekly 10/10 claimed",
       "disabled": false,
       "classification": "review-before-clicking",
       "clicked": false
     },
     {
       "section": "Missions",
-      "label": "Milestones 0/0 claimed",
+      "label": "Milestones 290/290 claimed",
       "disabled": false,
       "classification": "review-before-clicking",
       "clicked": false
@@ -2150,6 +1849,41 @@
       "label": "Claim all",
       "disabled": true,
       "classification": "review-before-clicking",
+      "clicked": false
+    },
+    {
+      "section": "Missions",
+      "label": "In progress",
+      "disabled": true,
+      "classification": "non-destructive-or-unknown",
+      "clicked": false
+    },
+    {
+      "section": "Missions",
+      "label": "In progress",
+      "disabled": true,
+      "classification": "non-destructive-or-unknown",
+      "clicked": false
+    },
+    {
+      "section": "Missions",
+      "label": "In progress",
+      "disabled": true,
+      "classification": "non-destructive-or-unknown",
+      "clicked": false
+    },
+    {
+      "section": "Missions",
+      "label": "In progress",
+      "disabled": true,
+      "classification": "non-destructive-or-unknown",
+      "clicked": false
+    },
+    {
+      "section": "Missions",
+      "label": "In progress",
+      "disabled": true,
+      "classification": "non-destructive-or-unknown",
       "clicked": false
     },
     {

@@ -31,7 +31,8 @@ import { KitchenDirectionArt, KITCHEN_ARROW_DIRECTIONS } from "./features/kitche
 import { KitchenExtraArt, EXTRA_KITCHEN_ART_IDS } from "./features/kitchen/KitchenExtraArt";
 import { COSMETIC_SLOTS, SLOT_NAMES, type OutfitSlot } from "./outfitCatalog";
 import { MoleArt } from "./features/arcade/WhackAMole";
-import { ENVELOPE_DESIGNS, EnvelopeArtwork } from "./PawMailArt";
+import { EnvelopeArtwork } from "./PawMailArt";
+import { ENVELOPE_DESIGNS } from "./features/social/pawMailCatalog";
 import {
     BUILDING_ART,
     CACTUS_ART,

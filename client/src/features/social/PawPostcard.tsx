@@ -1,23 +1,6 @@
-import { ENVELOPE_DESIGNS, EnvelopeArtwork } from "../../PawMailArt";
+import { EnvelopeArtwork } from "../../PawMailArt";
 import PetArt from "../../PetArt";
-
-export const ENVELOPE_COLORS = [
-    ["blush", "Blush", "#ffe1eb"],
-    ["rose", "Rose", "#f5bdcf"],
-    ["peach", "Peach", "#ffdcc7"],
-    ["apricot", "Apricot", "#ffe4b8"],
-    ["butter", "Butter", "#fff2b8"],
-    ["mint", "Mint", "#d9f4df"],
-    ["sage", "Sage", "#d3e4ce"],
-    ["aqua", "Aqua", "#d3f1f2"],
-    ["sky", "Sky", "#d6eafa"],
-    ["periwinkle", "Periwinkle", "#dcdfff"],
-    ["lavender", "Lavender", "#e8dcfc"],
-    ["lilac", "Lilac", "#efddf5"],
-    ["cream", "Cream", "#fff5e6"],
-    ["coral", "Coral", "#ffd2cb"],
-    ["slate", "Twilight", "#ccd8e9"]
-] as const;
+import { ENVELOPE_COLORS, ENVELOPE_DESIGNS } from "./pawMailCatalog";
 
 export function PawPostcard({
     design,

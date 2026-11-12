@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import "./PublicPage.css";
 
 type Page = "privacy" | "terms";
 export default function PublicPage({ page, onClose, onSwitch, modal = false }: { page: Page; onClose?: () => void; onSwitch?: (page: Page) => void; modal?: boolean }) {

@@ -23,18 +23,14 @@ import {
 } from "lucide-react";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 // Preserve stylesheet evaluation order when importing extracted feature views.
-import SettingsModal from "./SettingsModal";
-import PublicPage from "./PublicPage";
 import PublicWelcome from "./PublicWelcome";
 import "./style.css";
 import "./features/auth/PasswordRecovery.css";
-import AdoptionScreen from "./features/auth/AdoptionScreen";
 import AuthScreen from "./features/auth/AuthScreen";
 import BackgroundMusic from "./BackgroundMusic";
 import { PAW_GAMES } from "./gameCatalog";
 import { PawIcon } from "./PawIcons";
-import { ENVELOPE_DESIGNS, EnvelopeArtwork } from "./PawMailArt";
-import { ENVELOPE_COLORS, PawPostcard } from "./features/social/PawPostcard";
+import { ENVELOPE_COLORS, ENVELOPE_DESIGNS } from "./features/social/pawMailCatalog";
 import PetArt from "./PetArt";
 import SectionHeading from "./SectionHeading";
 import type { AppearanceChoice } from "./SettingsArt";
@@ -43,6 +39,12 @@ import { useApiRequest } from "./hooks/useApiRequest";
 import { musicZoneForTab, readAudioPreferences } from "./musicTracks";
 import { themes } from "./shopCatalog";
 import type { Friend, MealData, PawMail, PawNotification, Pet, RoomPet, User } from "./types";
+
+const SettingsModal = lazy(() => import("./SettingsModal"));
+const PublicPage = lazy(() => import("./PublicPage"));
+const AdoptionScreen = lazy(() => import("./features/auth/AdoptionScreen"));
+const EnvelopeArtwork = lazy(() => import("./PawMailArt").then(({ EnvelopeArtwork }) => ({ default: EnvelopeArtwork })));
+const PawPostcard = lazy(() => import("./features/social/PawPostcard").then(({ PawPostcard }) => ({ default: PawPostcard })));
 
 // Feature panels and game screens load on demand so the login screen does not
 // download the entire playhouse.
@@ -155,7 +157,8 @@ export default function App() {
     const [editFurniture, setEditFurniture] = useState(false);
     const [selectedFurniture, setSelectedFurniture] = useState<string | null>(null);
     const [adoptionAcknowledged, setAdoptionAcknowledged] = useState(false);
-    const [settingsOpen, setSettingsOpen] = useState(false);
+    const [settingsState, setSettingsState] = useState<"unopened" | "open" | "closed">("unopened");
+    const settingsOpen = settingsState === "open";
     const [policyOpen, setPolicyOpen] = useState<"privacy" | "terms" | null>(null);
     const [appearance, setAppearance] = useState<AppearanceChoice>(() => {
         const saved = localStorage.getItem("pawpal-theme");
@@ -1470,7 +1473,7 @@ export default function App() {
                         className="secondary theme-toggle paw-header-settings"
                         onClick={() => {
                             setNotificationsOpen(false);
-                            setSettingsOpen(true);
+                            setSettingsState("open");
                         }}
                         aria-label="Open Settings"
                         title="Settings"
@@ -1526,21 +1529,27 @@ export default function App() {
                     </section>
                 </div>
             )}
-            <SettingsModal
-                open={settingsOpen}
-                onClose={() => setSettingsOpen(false)}
-                appearance={appearance}
-                onAppearanceChange={setAppearance}
-                audio={audioPreferences}
-                onAudioChange={setAudioPreferences}
-                zone={musicZone}
-                canReport={Boolean(user)}
-                onSendReport={async (category, description) => {
-                    await request("/support/report", "POST", { category, description });
-                }}
-                onOpenPolicy={setPolicyOpen}
-            />
-            {policyOpen && <PublicPage page={policyOpen} modal onClose={() => setPolicyOpen(null)} onSwitch={setPolicyOpen} />}
+            <Suspense fallback={null}>
+                {settingsState !== "unopened" && (
+                    <SettingsModal
+                        open={settingsOpen}
+                        onClose={() => setSettingsState("closed")}
+                        appearance={appearance}
+                        onAppearanceChange={setAppearance}
+                        audio={audioPreferences}
+                        onAudioChange={setAudioPreferences}
+                        zone={musicZone}
+                        canReport={Boolean(user)}
+                        onSendReport={async (category, description) => {
+                            await request("/support/report", "POST", { category, description });
+                        }}
+                        onOpenPolicy={setPolicyOpen}
+                    />
+                )}
+            </Suspense>
+            <Suspense fallback={null}>
+                {policyOpen && <PublicPage page={policyOpen} modal onClose={() => setPolicyOpen(null)} onSwitch={setPolicyOpen} />}
+            </Suspense>
             {maintenanceNotice && (
                 <div className="paw-maintenance-banner" role="status">
                     PawPal is temporarily in maintenance mode. Some game actions are paused until
@@ -1597,12 +1606,14 @@ export default function App() {
                                             : `To @${selectedLetter.recipient_username}`}
                                     </p>
                                     <div className="pawmail-letter-detail">
-                                        <PawPostcard
-                                            design={selectedLetter.design}
-                                            color={selectedLetter.color || "blush"}
-                                            message={selectedLetter.message}
-                                            senderPet={selectedLetter.sender_pet}
-                                        />
+                                        <Suspense fallback={null}>
+                                            <PawPostcard
+                                                design={selectedLetter.design}
+                                                color={selectedLetter.color || "blush"}
+                                                message={selectedLetter.message}
+                                                senderPet={selectedLetter.sender_pet}
+                                            />
+                                        </Suspense>
                                     </div>
                                     <div className="pawmail-detail-actions">
                                         {mailFolder === "received" &&
@@ -1719,7 +1730,9 @@ export default function App() {
                                                                 m.design
                                                             }
                                                         >
-                                                            <EnvelopeArtwork design={m.design} />
+                                                            <Suspense fallback={null}>
+                                                                <EnvelopeArtwork design={m.design} />
+                                                            </Suspense>
                                                         </span>
                                                         <span className="pawmail-list-copy">
                                                             <b>
@@ -1835,7 +1848,9 @@ export default function App() {
                                                 "pawmail-design-icon paw-envelope-" + mailDesign
                                             }
                                         >
-                                            <EnvelopeArtwork design={mailDesign} />
+                                            <Suspense fallback={null}>
+                                                <EnvelopeArtwork design={mailDesign} />
+                                            </Suspense>
                                         </span>
                                         <span>
                                             <small>Your envelope</small>
@@ -1876,12 +1891,14 @@ export default function App() {
                                 </div>
                                 <div className="pawmail-live-side">
                                     <div className="pawmail-live-title">LIVE PREVIEW</div>
-                                    <PawPostcard
-                                        design={mailDesign}
-                                        color={mailColor}
-                                        message={mailMessage}
-                                        senderPet={pet}
-                                    />
+                                    <Suspense fallback={null}>
+                                        <PawPostcard
+                                            design={mailDesign}
+                                            color={mailColor}
+                                            message={mailMessage}
+                                            senderPet={pet}
+                                        />
+                                    </Suspense>
                                 </div>
                             </div>
                         </section>
@@ -1943,7 +1960,9 @@ export default function App() {
                                                     "pawmail-collection-art paw-envelope-" + d.id
                                                 }
                                             >
-                                                <EnvelopeArtwork design={d.id} />
+                                                <Suspense fallback={null}>
+                                                    <EnvelopeArtwork design={d.id} />
+                                                </Suspense>
                                                 {levelLocked && (
                                                     <span className="pawmail-art-lock">
                                                         <LockKeyhole size={17} /> Lv. {d.level}
@@ -2324,17 +2343,19 @@ export default function App() {
                 ) : !user ? (
                     <p>Loading your playhouse…</p>
                 ) : !pet ? (
-                    <AdoptionScreen
-                        oldPetId={oldPetId}
-                        execute={execute}
-                        choice={choice}
-                        setChoice={setChoice}
-                        petName={petName}
-                        setPetName={setPetName}
-                        adoptionAcknowledged={adoptionAcknowledged}
-                        setAdoptionAcknowledged={setAdoptionAcknowledged}
-                        busy={busy}
-                    />
+                    <Suspense fallback={<PanelLoader />}>
+                        <AdoptionScreen
+                            oldPetId={oldPetId}
+                            execute={execute}
+                            choice={choice}
+                            setChoice={setChoice}
+                            petName={petName}
+                            setPetName={setPetName}
+                            adoptionAcknowledged={adoptionAcknowledged}
+                            setAdoptionAcknowledged={setAdoptionAcknowledged}
+                            busy={busy}
+                        />
+                    </Suspense>
                 ) : (
                     <>
                         <div className="heading paw-dashboard-heading">

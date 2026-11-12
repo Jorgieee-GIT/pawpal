@@ -1,0 +1,6 @@
+.paw-policy-backdrop { z-index: 5400; }
+.paw-policy-modal { width:min(100%,850px); max-height:min(90dvh,900px); overflow:auto; padding:24px; }
+.paw-policy-modal article { border:0; box-shadow:none; padding:12px 10px 28px; }
+.paw-policy-modal header { display:flex; justify-content:space-between; align-items:center; }
+.paw-policy-modal footer { display:flex; justify-content:flex-end; padding:14px 10px 4px; }
+.paw-policy-modal footer button { border:0; background:transparent; color:#a65f83; font-weight:700; text-decoration:underline; cursor:pointer; padding:4px 6px; }
