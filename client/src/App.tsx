@@ -418,7 +418,9 @@ export default function App() {
             ]);
             setUser(data.user);
             setPet(data.pet);
-            setMissionRefreshKey((value) => value + 1);
+            if (user) {
+                setMissionRefreshKey((value) => value + 1);
+            }
             if (!editingNote) {
                 setNoteDraft(data.user?.pet_note || "");
             }
