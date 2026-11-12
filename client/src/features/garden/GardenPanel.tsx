@@ -1,3 +1,4 @@
+import "./GardenRevamp.css";
 import { useEffect, useState, type CSSProperties } from "react";
 import { BookOpen, Check, CircleHelp, Clock3, Coins, Droplets, Flower2, Leaf, LockKeyhole, Sparkles, X } from "lucide-react";
 import { GARDEN_FLOWER_CATALOG, GardenIcon } from "./GardenArt";

@@ -6,28 +6,29 @@ const password = process.env.PAWPAL_QA_PASSWORD;
 const stateChangingButton = /buy|purchase|claim|send|submit|feed|bathe|cuddle|sleep|wake|play|plant|water|harvest|gift|unfriend|remove|delete|reset|adjust|unlock|equip|publish|archive|accept|reject|confirm|log out|create account|save|cook|try to discover|invite|challenge|battle|request|message|pawmail/i;
 
 async function inventoryVisibleButtons(page: import("@playwright/test").Page, section: string) {
-    const buttons = page.locator("button");
-    const inventory = [] as Array<{ section: string; label: string; disabled: boolean; classification: string; clicked: false }>;
-    for (let index = 0; index < await buttons.count(); index++) {
-        const button = buttons.nth(index);
-        if (!(await button.isVisible())) continue;
-        const details = await button.evaluate(element => {
-            const button = element as HTMLButtonElement;
-            const imageAlt = Array.from(button.querySelectorAll("img[alt]")).map(image => image.getAttribute("alt")).filter(Boolean).join(" ");
-            return {
-                label: (button.getAttribute("aria-label") || button.getAttribute("title") || button.innerText || imageAlt || "").trim().replace(/\s+/g, " "),
-                disabled: button.disabled
-            };
-        });
-        inventory.push({
-            section,
-            label: details.label,
-            disabled: details.disabled,
-            classification: stateChangingButton.test(details.label) ? "review-before-clicking" : "non-destructive-or-unknown",
-            clicked: false
-        });
-    }
-    return inventory;
+    const buttons = await page.locator("button").evaluateAll(elements => elements.flatMap(element => {
+        const button = element as HTMLButtonElement;
+        const style = getComputedStyle(button);
+        const rect = button.getBoundingClientRect();
+        if (!rect.width || !rect.height || style.display === "none" || style.visibility === "hidden") return [];
+        const imageAlt = Array.from(button.querySelectorAll("img[alt]"))
+            .map(image => image.getAttribute("alt"))
+            .filter(Boolean)
+            .join(" ");
+        return [{
+            label: (button.getAttribute("aria-label") || button.getAttribute("title") || button.innerText || imageAlt || "")
+                .trim()
+                .replace(/\s+/g, " "),
+            disabled: button.disabled
+        }];
+    }));
+    return buttons.map(details => ({
+        section,
+        label: details.label,
+        disabled: details.disabled,
+        classification: stateChangingButton.test(details.label) ? "review-before-clicking" : "non-destructive-or-unknown",
+        clicked: false as const
+    }));
 }
 
 async function expectNoPageScroll(page: import("@playwright/test").Page) {
@@ -62,6 +63,7 @@ test("welcome, signup, and login fit the screen and policy modals open", async (
         await expect(page.getByPlaceholder("Username")).toBeVisible();
         const signupCard = await page.locator(".auth-card").boundingBox();
         await expectNoPageScroll(page);
+        await page.waitForTimeout(450);
         await page.getByRole("button", { name: "Already registered? Log in" }).click();
         await expect(page.getByRole("heading", { name: "Welcome back!" })).toBeVisible();
         const loginCard = await page.locator(".auth-card").boundingBox();
@@ -70,7 +72,7 @@ test("welcome, signup, and login fit the screen and policy modals open", async (
         await expectNoPageScroll(page);
         await page.goto("/");
     }
-}
+});
 
 test("signed-in navigation and Settings policies work with a supplied test account", async ({ page }) => {
     test.skip(!username || !password, "Set PAWPAL_QA_USERNAME and PAWPAL_QA_PASSWORD to enable the signed-in browser check.");
@@ -86,9 +88,15 @@ test("signed-in navigation and Settings policies work with a supplied test accou
     await expect(page.getByRole("button", { name: "Open Settings" })).toBeVisible({ timeout: 30000 });
     buttonInventory.push(...await inventoryVisibleButtons(page, "Room"));
 
-    for (const label of ["Room", "Friends", "Market", "Wardrobe", "Mini-games", "Multiplayer", "Lucky Garden", "Kitchen", "Missions"]) {
-        if ((page.viewportSize()?.width ?? 1024) <= 700) await page.getByRole("button", { name: "Toggle navigation" }).click();
-        const section = page.getByRole("button", { name: new RegExp(`^${label}`) });
+    const sectionLabels = ["Room", "Friends", "Market", "Wardrobe", "Mini-games", "Multiplayer", "Lucky Garden", "Kitchen", "Missions"];
+    for (const [sectionIndex, label] of sectionLabels.entries()) {
+        const navigationToggle = page.getByRole("button", { name: "Toggle navigation" });
+        const section = page.locator(".sidebar nav button").nth(sectionIndex);
+        if (!(await section.isVisible()) && await navigationToggle.isVisible()) {
+            await navigationToggle.click();
+        }
+        await expect(section).toBeVisible();
+        await expect(section).toHaveAttribute("aria-label", new RegExp(`^${label}(?:$|,)`));
         await section.click();
         await expect(section).toHaveClass(/active/);
         await expect(page.locator(".layout")).toBeVisible();

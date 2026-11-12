@@ -1,3 +1,5 @@
+import "./KitchenBase.css";
+import "./KitchenRevamp.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
     BookOpen,

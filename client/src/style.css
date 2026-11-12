@@ -12,13 +12,10 @@
 @import "./styles/SharedRefinements1.css";
 @import "./features/social/MailCollection.css";
 @import "./features/garden/GardenPurchaseRefinements.css";
-@import "./features/kitchen/KitchenBase.css";
 @import "./features/rooms/RoomActions.css";
 @import "./features/rooms/RoomArtAndArcade.css";
 @import "./styles/SharedRefinements2.css";
 @import "./features/social/MailPanels.css";
-@import "./features/garden/GardenRevamp.css";
-@import "./features/kitchen/KitchenRevamp.css";
 @import "./styles/SharedPolish.css";
 @import "./features/auth/AuthCanvas.css";
 @import "./styles/DarkModePolish.css";
