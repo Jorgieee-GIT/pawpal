@@ -1,0 +1,458 @@
+/* Batch 57: illustrated collectible envelopes, live letters and pet wax seals */
+.paw-envelope {
+    --envelope-color: #ffe1eb;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 190px;
+    border-radius: 17px;
+    border: 1px solid #cba9b9;
+    background: var(--envelope-color);
+    color: #78526d;
+    padding: 13px 15px;
+    box-shadow: inset 0 0 0 5px #ffffff35,0 5px 12px #5b284115;
+}
+.paw-envelope:before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: .36;
+    background: repeating-linear-gradient(45deg,transparent 0 16px,#fff7 16px 17px);
+}
+.paw-envelope-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+}
+.paw-envelope-postmark {
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 1.6px;
+    opacity: .75;
+}
+.paw-envelope-seal {
+    height: 62px;
+    width: 62px;
+    flex: none;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%,#ffacc6,#b53f76 75%);
+    box-shadow: 0 3px 0 #873359,0 0 0 4px #d47e9b66;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 25px;
+    overflow: hidden;
+}
+.paw-envelope-seal .pet-art,.paw-envelope-seal svg {
+    max-width: 55px;
+    max-height: 55px;
+    width: 100%;
+    height: 100%;
+}
+.paw-envelope-illustration {
+    height: 52px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.paw-envelope-illustration svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .5;
+}
+.paw-envelope-art-left,.paw-envelope-art-right {
+    font-size: 28px;
+    z-index: 1;
+    filter: drop-shadow(0 1px 1px #fff);
+}
+.paw-envelope-art-left {
+    margin-right: auto;
+}
+.paw-envelope-art-right {
+    margin-left: auto;
+}
+.paw-envelope-content {
+    position: relative;
+    z-index: 1;
+    background: #fff9;
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px #71425417;
+}
+.paw-envelope-content small {
+    font-size: 10px;
+    letter-spacing: 1px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+.paw-envelope-content p {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+    font-size: 13px;
+    margin: 7px 0 0;
+    font-weight: 600;
+}
+.paw-envelope-rose_garden {
+    background-image: radial-gradient(circle at 12% 25%,#e7638566 0 6px,transparent 7px),radial-gradient(circle at 85% 72%,#d94e8466 0 9px,transparent 10px);
+}
+.paw-envelope-starry_night {
+    background-image: radial-gradient(circle,#fff 1.5px,transparent 2px),linear-gradient(135deg,#515487aa,#bda2d3aa);
+    background-size: 24px 24px,auto;
+}
+.paw-envelope-ocean_waves {
+    background-image: repeating-radial-gradient(ellipse at bottom,#4ab9ce55 0 3px,transparent 4px 19px);
+}
+.paw-envelope-cherry_blossom {
+    background-image: radial-gradient(ellipse at 20% 30%,#e87caa88 0 4px,transparent 5px),radial-gradient(ellipse at 70% 55%,#e87caa88 0 5px,transparent 6px);
+}
+.paw-envelope-woodland {
+    background-image: repeating-linear-gradient(120deg,#568c5c30 0 3px,transparent 4px 30px);
+}
+.paw-envelope-royal {
+    background-image: repeating-linear-gradient(45deg,#c29b4a66 0 2px,transparent 2px 20px),linear-gradient(120deg,#a78bc055,#ffe8a755);
+}
+.paw-envelope-sweet_treats {
+    background-image: radial-gradient(circle at 18% 25%,#e8517266 0 6px,transparent 7px),repeating-linear-gradient(125deg,#fff7 0 5px,transparent 5px 24px);
+}
+.paw-envelope-celestial {
+    background-image: radial-gradient(circle at 70% 15%,#fff6aa 0 13px,transparent 14px),radial-gradient(circle at 10% 60%,#fff8 0 2px,transparent 3px);
+}
+.paw-envelope-butterfly {
+    background-image: radial-gradient(ellipse at 15% 20%,#a4b9ebaa 0 10px,transparent 11px),radial-gradient(ellipse at 85% 70%,#d8a6dfaa 0 12px,transparent 13px);
+}
+.paw-envelope-winter {
+    background-image: repeating-linear-gradient(45deg,#fff8 0 2px,transparent 3px 28px),radial-gradient(circle at 30% 50%,#91c4ee88,transparent 55%);
+}
+.paw-envelope-colors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.paw-envelope-colors button {
+    height: 29px;
+    width: 29px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px #c9a8b9;
+    cursor: pointer;
+    padding: 0;
+}
+.paw-envelope-colors button.selected {
+    outline: 2px solid #ae4d80;
+    outline-offset: 2px;
+}
+.paw-envelope-designs {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 9px;
+}
+.paw-envelope-design-option {
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid #e4bfd2;
+    border-radius: 12px;
+    background: #fff9fc;
+}
+.paw-envelope-design-option.selected {
+    border: 2px solid #ba6693;
+}
+.paw-envelope-design-select {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    background: none!important;
+    border: 0!important;
+    color: inherit!important;
+    padding: 2px!important;
+    box-shadow: none!important;
+}
+.paw-envelope-design-select b {
+    font-size: 11px;
+}
+.paw-envelope-design-select small {
+    font-size: 10px;
+}
+.paw-envelope-mini {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 47px;
+    border-radius: 8px;
+    background: var(--envelope-color,#ffe1eb);
+    font-size: 25px;
+    color: #a25a81;
+}
+.paw-envelope-buy {
+    font-size: 10px!important;
+    width: 100%;
+    padding: 7px 3px!important;
+    margin-top: 6px!important;
+}
+.paw-mail-compose textarea {
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 100px;
+    border: 1px solid #dfa8c0;
+    border-radius: 12px;
+    background: #fff;
+    color: #67445d;
+    padding: 12px;
+    font: inherit;
+}
+.paw-mail-letter .paw-envelope {
+    min-height: 0;
+    padding: 8px;
+}
+.paw-mail-letter .paw-envelope-seal {
+    width: 40px;
+    height: 40px;
+}
+.paw-mail-letter .paw-envelope-illustration {
+    height: 25px;
+}
+.paw-mail-letter .paw-envelope-art-left,.paw-mail-letter .paw-envelope-art-right {
+    font-size: 16px;
+}
+.paw-mail-letter .paw-envelope-content {
+    padding: 8px;
+}
+.paw-mail-letter .paw-envelope-content p {
+    font-size: 11px;
+}
+.paw-dark .paw-envelope-design-option {
+    background: #453447;
+    border-color: #805a72;
+}
+.paw-dark .paw-mail-compose textarea {
+    background: #4c394e;
+    color: #fff;
+    border-color: #906b81;
+}
+@media(max-width:650px) {
+    .paw-envelope-designs {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+    .paw-envelope-colors button {
+        width: 32px;
+        height: 32px;
+    }
+}
+/* Batch 58: compact PawMail design picker with side-by-side live preview */
+.paw-mail-compose .paw-envelope-compose-grid {
+    display: grid;
+    grid-template-columns: minmax(0,1.25fr) minmax(0,1fr);
+    gap: 14px;
+    align-items: start;
+}
+.paw-mail-compose .paw-envelope-picker,.paw-mail-compose .paw-envelope-preview-side {
+    min-width: 0;
+}
+.paw-mail-compose .paw-envelope-picker {
+    max-height: 340px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 4px;
+}
+.paw-mail-compose .paw-envelope-designs {
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 6px;
+}
+.paw-mail-compose .paw-envelope-design-option {
+    padding: 6px;
+    border-radius: 10px;
+}
+.paw-mail-compose .paw-envelope-mini {
+    height: 32px;
+    font-size: 20px;
+}
+.paw-mail-compose .paw-envelope-design-select {
+    gap: 2px;
+}
+.paw-mail-compose .paw-envelope-design-select b {
+    font-size: 10px;
+    line-height: 1.2;
+}
+.paw-mail-compose .paw-envelope-design-select small {
+    font-size: 9px;
+}
+.paw-mail-compose .paw-envelope-buy {
+    font-size: 9px!important;
+    padding: 5px 2px!important;
+    margin-top: 3px!important;
+}
+.paw-mail-compose .paw-envelope-preview-side .paw-envelope {
+    min-height: 220px;
+}
+@media(max-width:700px) {
+    .paw-mail-compose .paw-envelope-compose-grid {
+        grid-template-columns: 1fr;
+    }
+    .paw-mail-compose .paw-envelope-picker {
+        max-height: 260px;
+    }
+    .paw-mail-compose .paw-envelope-designs {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+    }
+}
+@media(max-width:370px) {
+    .paw-mail-compose .paw-envelope-designs {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+}
+/* Batch 59: illustrated SVG envelopes and compact inbox dialog */
+.paw-envelope-art-svg {
+    width: 100%;
+    height: 100%;
+    max-height: 108px;
+    display: block;
+    filter: drop-shadow(0 2px 1px rgba(100,60,80,.08));
+}
+.paw-envelope-mini .paw-envelope-art-svg {
+    height: 35px;
+    width: 54px;
+    max-height: 35px;
+}
+.paw-envelope-illustration {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.paw-mail-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.paw-inbox-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+.paw-inbox-trigger:hover {
+    background: rgba(220,112,150,.13);
+}
+.paw-inbox-trigger.has-unread {
+    color: #e23e55;
+    background: rgba(226,62,85,.09);
+}
+.paw-inbox-alert {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #e23e55;
+    border: 2px solid white;
+}
+.paw-inbox-modal {
+    width: min(760px,calc(100vw - 28px));
+    max-width: 760px;
+    max-height: min(88vh,900px);
+    overflow-y: auto;
+}
+.paw-inbox-modal .paw-mail-inbox {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(min(100%,270px),1fr));
+    gap: 14px;
+}
+.paw-inbox-modal .paw-mail-letter {
+    min-width: 0;
+}
+@media(max-width:600px) {
+    .paw-inbox-modal {
+        padding: 16px;
+        max-height: 90vh;
+    }
+    .paw-inbox-modal .paw-mail-inbox {
+        grid-template-columns: 1fr;
+    }
+}
+/* Batch 61: two-column mobile PawMail inbox and market-style envelope purchase buttons. */
+.paw-mail-compose .paw-envelope-design-option .paw-envelope-buy {
+    display: block;
+    width: 100%;
+    min-height: 32px;
+    margin-top: 7px!important;
+    padding: 7px 5px!important;
+    background: #f9e6ef!important;
+    color: #a95c83!important;
+    border: 1px solid #f1cddd!important;
+    border-radius: 11px!important;
+    font-size: 10px!important;
+    font-weight: 800!important;
+    line-height: 1.2;
+    box-shadow: none!important;
+    cursor: pointer;
+}
+.paw-mail-compose .paw-envelope-design-option .paw-envelope-buy:hover:not(:disabled) {
+    background: #f3d7e5!important;
+    border-color: #e5acc7!important;
+}
+.paw-mail-compose .paw-envelope-design-option .paw-envelope-buy:focus-visible {
+    outline: 2px solid #ac668d;
+    outline-offset: 2px;
+}
+.paw-mail-compose .paw-envelope-design-option .paw-envelope-buy:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+.paw-dark .paw-mail-compose .paw-envelope-design-option .paw-envelope-buy {
+    background: #583d52!important;
+    color: #ffe5f1!important;
+    border-color: #916b82!important;
+}
+.paw-dark .paw-mail-compose .paw-envelope-design-option .paw-envelope-buy:hover:not(:disabled) {
+    background: #704a65!important;
+}
+@media(max-width:600px) {
+    .paw-inbox-modal .paw-mail-inbox {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 8px;
+    }
+    .paw-inbox-modal .paw-mail-letter {
+        padding: 8px;
+        min-width: 0;
+    }
+    .paw-inbox-modal .paw-mail-actions {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 4px;
+    }
+    .paw-inbox-modal .paw-mail-actions>button {
+        min-width: 0;
+        padding: 7px 3px;
+        font-size: 10px;
+    }
+    .paw-inbox-modal .paw-mail-letter .paw-envelope {
+        min-height: 145px;
+        padding: 7px;
+    }
+    .paw-inbox-modal .paw-mail-letter .paw-envelope-content {
+        padding: 7px;
+    }
+    .paw-inbox-modal .paw-mail-letter .paw-envelope-seal {
+        width: 38px;
+        height: 38px;
+    }
+}

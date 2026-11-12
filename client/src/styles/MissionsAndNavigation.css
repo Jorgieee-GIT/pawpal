@@ -1,0 +1,827 @@
+/* Batch 13 Mission Center */
+.mission-tabs {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin: 20px 0 14px;
+}
+.mission-tabs button {
+    border: 1px solid #dfc6df;
+    border-radius: 13px;
+    background: var(--card,#fff8fd);
+    padding: 10px 15px;
+    color: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+.mission-tabs button.active {
+    background: #e7bce5;
+    color: #482b4b;
+    border-color: #c68dc6;
+}
+.mission-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    font-size: 1.05rem;
+}
+.mission-reset {
+    font-size: .85rem;
+    opacity: .75;
+}
+.mission-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+.mission-card {
+    border: 1px solid #e9cfe2;
+    background: rgba(255,249,253,.75);
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.mission-card.claimed {
+    opacity: .65;
+}
+.mission-top,.mission-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.mission-top span {
+    font-size: .8rem;
+    white-space: nowrap;
+}
+.mission-track {
+    height: 9px;
+    border-radius: 20px;
+    background: #eadde9;
+    overflow: hidden;
+}
+.mission-track span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg,#e4a4c7,#ac9adf);
+    border-radius: 20px;
+}
+.mission-footer small {
+    font-size: .76rem;
+}
+.mission-footer button {
+    font-size: .8rem;
+    padding: 8px 12px;
+    border-radius: 12px;
+}
+.mission-message {
+    background: rgba(197,156,212,.16);
+    border-radius: 12px;
+    padding: 12px;
+}
+.paw-dark .mission-card {
+    background: #3b3044;
+    border-color: #68566e;
+}
+.paw-dark .mission-tabs button {
+    background: #47384c;
+    border-color: #6b5570;
+    color: #fff;
+}
+.paw-dark .mission-tabs button.active {
+    background: #b18ab8;
+    color: #221627;
+}
+@media(max-width:720px) {
+    .mission-grid {
+        grid-template-columns: 1fr;
+    }
+    .mission-tabs button {
+        flex: 1;
+        padding: 9px 7px;
+        font-size: .78rem;
+    }
+    .mission-footer {
+        flex-wrap: wrap;
+    }
+}
+/* Batch 15: cohesive vector icon language and responsive navigation */
+.paw-svg-icon {
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+    stroke: currentColor;
+}
+.sidebar nav button {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+.sidebar nav button > span:last-child {
+    margin-left: auto;
+}
+.pills > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.daily > b,.friend-row > b {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.care-grid button > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+}
+.games-grid button > span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@media(max-width:780px) {
+    .sidebar.menu-open {
+        max-height: calc(100dvh - 150px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+    .sidebar nav button {
+        min-height: 46px;
+    }
+    .pills {
+        flex-wrap: wrap;
+    }
+    .pills > span {
+        white-space: nowrap;
+    }
+    .room-card,.panel {
+        min-width: 0;
+    }
+    .paw-market-tabs {
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+}
+@media(prefers-reduced-motion:reduce) {
+    .sidebar,.sidebar * {
+        scroll-behavior: auto!important;
+    }
+}
+/* Batch 16: missions, header, distinct arcade tiles and SVG furniture */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.paw-header-username {
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--text,#79566b);
+}
+.mission-reset {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.mission-rewards {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+.mission-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.mission-claim-button {
+    border: 2px solid transparent!important;
+    border-radius: 12px!important;
+    padding: 10px 17px!important;
+    font-weight: 800!important;
+    transition: transform .18s ease,background .18s ease,box-shadow .18s ease!important;
+}
+.mission-claim-button.is-ready {
+    background: linear-gradient(135deg,#f8a8c8,#c1a3ed)!important;
+    color: #422c55!important;
+    box-shadow: 0 4px 0 #ae7fa5,0 7px 15px #8b658433!important;
+    cursor: pointer;
+}
+.mission-claim-button.is-ready:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #ae7fa5,0 10px 18px #8b658444!important;
+}
+.mission-claim-button.is-ready:active {
+    transform: translateY(2px);
+}
+.mission-claim-button.is-pending {
+    background: #ece9ef!important;
+    color: #746b80!important;
+    opacity: .85;
+}
+.mission-claim-button.is-claimed {
+    background: #e0f3e9!important;
+    color: #38795f!important;
+    opacity: 1!important;
+}
+.paw-game-art {
+    width: 76px;
+    height: 76px;
+    border-radius: 22px;
+    display: flex!important;
+    align-items: center;
+    justify-content: center;
+    margin: auto auto 10px;
+    box-shadow: inset 0 -5px 0 #ffffff44;
+}
+.paw-game-art-memory {
+    background: #e9dcff;
+    color: #8054ba;
+}
+.paw-game-art-dino {
+    background: #dbf3de;
+    color: #4b986a;
+}
+.paw-game-art-runner {
+    background: #ffe6c9;
+    color: #bd7d42;
+}
+.paw-game-art-pattern {
+    background: #ffdeec;
+    color: #cf5b88;
+}
+.games-grid button {
+    transition: transform .15s ease,box-shadow .15s ease;
+}
+.games-grid button:hover {
+    transform: translateY(-3px);
+}
+.paw-furniture-market-art svg,.room-furniture-piece svg {
+    overflow: visible;
+    filter: drop-shadow(0 3px 2px #5e466b20);
+}
+@media(max-width:580px) {
+    .paw-header-username {
+        font-size: 12px;
+        max-width: 110px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .nav-right {
+        gap: 5px;
+    }
+    .mission-footer {
+        align-items: stretch;
+    }
+    .mission-claim-button {
+        width: 100%;
+    }
+}
+@media(prefers-reduced-motion:reduce) {
+    .mission-claim-button,.games-grid button {
+        transition: none!important;
+    }
+}
+/* Batch 17: stats at a glance; no second stats panel below the room */
+.paw-stats-hud {
+    position: sticky;
+    top: 8px;
+    z-index: 18;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 16px;
+    background: #fffdfef5;
+    border: 1px solid #efcfdf;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px #b9799422;
+    backdrop-filter: blur(12px);
+}
+.paw-hud-title {
+    min-width: 100px;
+    max-width: 155px;
+    display: grid;
+    gap: 1px;
+}
+.paw-hud-title b {
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.paw-hud-title small {
+    font-size: 11px;
+    color: #a9899c;
+}
+.paw-hud-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(5,minmax(0,1fr));
+    gap: 12px;
+}
+.paw-hud-stat {
+    min-width: 0;
+}
+.paw-hud-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    font-size: 11px;
+    color: #806777;
+}
+.paw-hud-label b {
+    font-size: 11px;
+    white-space: nowrap;
+}
+.paw-hud-track {
+    height: 7px;
+    background: #f3e6ed;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+.paw-hud-track>div {
+    height: 100%;
+    border-radius: 99px;
+    transition: width .3s ease;
+}
+.paw-hud-low .paw-hud-label {
+    color: #ce537c;
+    font-weight: 800;
+}
+.paw-hud-low .paw-hud-track {
+    outline: 1px solid #e99bb4;
+}
+.paw-dark .paw-stats-hud {
+    background: #382c3cf2;
+    color: #fbeaf3;
+    border-color: #76556d;
+}
+.paw-dark .paw-hud-label,.paw-dark .paw-hud-title small {
+    color: #e0bfd2;
+}
+.paw-dark .paw-hud-track {
+    background: #5b465b;
+}
+.room-footer:has(>button:only-child) {
+    justify-content: flex-end;
+}
+@media(max-width:800px) {
+    .paw-stats-hud {
+        display: block;
+        top: 4px;
+        padding: 11px 12px;
+    }
+    .paw-hud-title {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        max-width: none;
+        margin-bottom: 8px;
+    }
+    .paw-hud-grid {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 8px 12px;
+    }
+    .paw-hud-label {
+        font-size: 10px;
+    }
+    .paw-hud-label b {
+        font-size: 10px;
+    }
+}
+@media(max-width:390px) {
+    .paw-hud-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+    .paw-stats-hud {
+        padding: 9px;
+    }
+}
+/* Batch 18 - explicit cosmetic shop equipment state and quieter notifications */
+.v8-item.paw-cosmetic-equipped {
+    border: 2px solid #b9a0d9!important;
+    background: linear-gradient(155deg,#fff9fe,#f2edff)!important;
+    box-shadow: 0 5px 16px #b69bd322;
+}
+.paw-equipped-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    border-radius: 999px;
+    padding: 5px 12px;
+    background: #e7ddf7;
+    color: #7454a0!important;
+    font-weight: 800;
+    font-size: 12px;
+}
+.v8-item.paw-cosmetic-equipped .paw-wardrobe-unequip {
+    background: #f5eafa;
+    border: 1px solid #d6bde9;
+    color: #845da0;
+    border-radius: 11px;
+    font-weight: 800;
+}
+.paw-toast {
+    background: rgba(255,242,249,.82)!important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 5px 18px #5b425421!important;
+}
+.paw-dark .paw-toast {
+    background: rgba(56,44,60,.83)!important;
+}
+.paw-dark .v8-item.paw-cosmetic-equipped {
+    background: linear-gradient(155deg,#493950,#52415f)!important;
+    border-color: #b89acb!important;
+}
+.paw-dark .paw-equipped-label {
+    background: #6a537e;
+    color: #fff2ff!important;
+}
+@media(max-width:700px) {
+    .paw-toast {
+        top: 64px!important;
+        left: auto!important;
+        right: 10px!important;
+        max-width: min(265px,calc(100vw - 20px))!important;
+        width: max-content!important;
+        padding: 8px 11px!important;
+        font-size: 12px!important;
+        line-height: 1.35;
+        border-radius: 11px!important;
+        gap: 8px;
+        box-shadow: 0 3px 12px #5b425421!important;
+    }
+    .paw-toast button {
+        font-size: 16px!important;
+        margin-left: 4px!important;
+        padding: 0 3px!important;
+    }
+    .paw-toast:not(:has(button)) {
+        max-width: 265px!important;
+    }
+}
+/* Batch 18: translucent compact notifications. Explicitly override earlier desktop/mobile rules. */
+.paw-toast.notice {
+    opacity: .88!important;
+    background: rgba(255,242,249,.62)!important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(228,169,196,.6)!important;
+    box-shadow: 0 4px 16px rgba(76,49,67,.12)!important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.35;
+    padding: 10px 13px;
+    width: max-content;
+    max-width: min(360px,calc(100vw - 28px));
+}
+.paw-dark .paw-toast.notice {
+    background: rgba(56,44,60,.65)!important;
+}
+.paw-toast .paw-svg-icon,.paw-toast svg {
+    flex-shrink: 0;
+}
+.paw-toast button {
+    margin-left: auto;
+}
+@media(max-width:700px) {
+    .paw-toast.notice {
+        opacity: .85!important;
+        background: rgba(255,242,249,.6)!important;
+        top: 65px!important;
+        right: 8px!important;
+        left: auto!important;
+        width: max-content!important;
+        max-width: min(245px,calc(100vw - 16px))!important;
+        padding: 7px 9px!important;
+        font-size: 11px!important;
+        border-radius: 10px!important;
+        box-shadow: 0 3px 12px rgba(76,49,67,.1)!important;
+    }
+    .paw-dark .paw-toast.notice {
+        background: rgba(56,44,60,.66)!important;
+    }
+}
+.v8-item {
+    position: relative;
+}
+.paw-equipped-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 4px 7px;
+    background: #e6f6e9;
+    border: 1px solid #9acda7;
+    border-radius: 999px;
+    color: #367b51;
+    font-size: 11px;
+    font-weight: 800;
+}
+.paw-dark .paw-equipped-badge {
+    background: #28533d;
+    color: #d6ffe3;
+    border-color: #47825e;
+}
+.paw-equipped-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.v8-slots button b {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    text-transform: capitalize;
+}
+.panel>h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+/* Batch 18 refinement: brand hierarchy, unlock affordance, dense postcard grid */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.logo .paw-logo-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    line-height: 1.05;
+}
+.logo .paw-logo-copy b {
+    font-size: 25px;
+    line-height: 1.1;
+}
+.logo .paw-logo-copy span {
+    display: block;
+    position: static;
+    margin: 3px 0 0;
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    line-height: 1.15;
+}
+.product.paw-level-locked {
+    position: relative;
+    isolation: isolate;
+    border-style: dashed;
+    border-color: #d5b9ce;
+    background: #f8f2f7;
+}
+.product.paw-level-locked>span,.product.paw-level-locked>b {
+    filter: grayscale(.65);
+    opacity: .46;
+}
+.product.paw-level-locked>small {
+    color: #9b6685;
+    font-weight: 800;
+}
+.product.paw-level-locked button:disabled {
+    opacity: .7;
+    background: #e8dbe6;
+    color: #846a7c;
+    cursor: not-allowed;
+}
+.paw-level-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: #e8d9ea;
+    color: #76516f;
+    font-size: 12px;
+    font-weight: 900;
+}
+.paw-dark .product.paw-level-locked {
+    background: #332b37!important;
+    border-color: #765a78!important;
+}
+.paw-dark .paw-level-overlay {
+    background: #5d4862;
+    color: #f9e2f3;
+}
+.paw-mail-inbox {
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 10px;
+}
+.paw-mail-letter {
+    padding: 10px;
+    border-radius: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+.paw-mail-letter .paw-postcard {
+    padding: 6px;
+    border-radius: 11px;
+}
+.paw-mail-letter .paw-postcard svg {
+    max-height: 65px;
+}
+.paw-mail-letter .paw-postcard b {
+    font-size: 12px;
+}
+.paw-mail-letter .paw-postcard p {
+    font-size: 11px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+.paw-mail-meta {
+    margin: 0;
+    gap: 4px;
+}
+.paw-mail-meta b {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+.paw-mail-meta small {
+    font-size: 10px;
+}
+.paw-mail-actions {
+    margin-top: auto;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.paw-mail-actions button {
+    font-size: 11px;
+    padding: 7px 9px;
+}
+@media(max-width:850px) {
+    .paw-mail-inbox {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+}
+@media(max-width:600px) {
+    .logo .paw-logo-copy b {
+        font-size: 21px;
+    }
+    .logo .paw-logo-copy span {
+        font-size: 7px;
+        letter-spacing: .65px;
+    }
+    .paw-mail-inbox {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 7px;
+    }
+    .paw-mail-letter {
+        padding: 8px;
+    }
+    .paw-mail-letter .paw-postcard svg {
+        max-height: 52px;
+    }
+}
+/* Batch 18: compact postcard chooser and friends controls */
+.paw-friends-panel .search-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 8px;
+    max-width: 520px;
+}
+.paw-friends-panel .search-row input {
+    width: auto;
+    min-width: 0;
+    flex: 1 1 auto;
+    padding: 9px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+.paw-friends-panel .search-row button {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+.paw-friends-panel .friend-row {
+    padding: 9px 0;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.paw-friends-panel .friend-row>b {
+    font-size: 13px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.paw-friend-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+/* Standard compact button scale, matching the room/atmosphere tabs. */
+.paw-friends-panel .friend-row button,
+.paw-friends-panel .search-row button,
+.paw-friends-panel .paw-mail-send,
+.paw-friends-panel .paw-mail-actions button,
+.paw-friends-panel .secondary,
+.paw-friends-panel .primary {
+    font-size: 12px!important;
+    padding: 8px 12px!important;
+    border-radius: 10px!important;
+    min-height: 32px;
+    line-height: 1.2;
+    box-shadow: none!important;
+}
+.paw-friends-panel .paw-mail-compose {
+    padding: 12px;
+    gap: 9px;
+}
+.paw-friends-panel .paw-mail-compose select {
+    padding: 9px 11px;
+    max-width: 300px;
+    font-size: 13px;
+}
+.paw-friends-panel .paw-postcard-selector {
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 8px;
+}
+.paw-friends-panel .paw-postcard-selector .paw-design-choice {
+    padding: 2px!important;
+    border-radius: 12px;
+    min-width: 0;
+}
+.paw-friends-panel .paw-postcard-selector .paw-postcard {
+    padding: 6px 4px;
+    border-radius: 11px;
+    min-width: 0;
+}
+.paw-friends-panel .paw-postcard-selector .paw-postcard svg {
+    max-height: 60px;
+    width: 100%;
+}
+.paw-friends-panel .paw-postcard-selector .paw-postcard b {
+    font-size: 11px;
+    line-height: 1.2;
+}
+.paw-friends-panel .paw-postcard-selector .paw-postcard p {
+    font-size: 10px;
+    line-height: 1.25;
+    margin: 3px 0;
+    overflow-wrap: anywhere;
+}
+@media(max-width:680px) {
+    .paw-friends-panel .search-row {
+        flex-wrap: nowrap!important;
+        gap: 6px;
+        max-width: none;
+    }
+    .paw-friends-panel .search-row input {
+        width: 0;
+        min-width: 0;
+        padding: 8px 9px;
+        font-size: 12px;
+    }
+    .paw-friends-panel .search-row button {
+        width: auto!important;
+        flex: 0 0 auto;
+        padding: 8px 10px!important;
+    }
+    .paw-friends-panel .friend-row {
+        align-items: center;
+        padding: 8px 0;
+    }
+    .paw-friends-panel .paw-postcard-selector {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 7px;
+    }
+    .paw-friends-panel .paw-postcard-selector .paw-postcard svg {
+        max-height: 55px;
+    }
+    .paw-friend-actions {
+        gap: 5px;
+    }
+    .paw-friends-panel .friend-row button {
+        padding: 7px 9px!important;
+        font-size: 11px!important;
+    }
+}

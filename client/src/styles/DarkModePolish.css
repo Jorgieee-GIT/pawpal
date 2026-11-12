@@ -1,0 +1,129 @@
+/* Dark mode contrast pass. Keep the existing plum and rose palette, while
+   lifting small labels and giving disabled states enough separation. */
+.paw-dark {
+    --paw-dark-text: #fff4fa;
+    --paw-dark-muted: #e1cfdd;
+    --paw-dark-subtle: #cdb8cb;
+    --paw-dark-surface: #382c3c;
+    --paw-dark-surface-raised: #49364a;
+    --paw-dark-border: #80647b;
+    --paw-dark-rose: #f0bdd5;
+}
+
+/* Disabled actions stay legible instead of fading into pale light-mode fills. */
+.paw-dark .daily button:disabled {
+    background: #554252 !important;
+    color: #e8d7e4 !important;
+    border-color: #856b80 !important;
+    opacity: 1 !important;
+}
+.paw-dark .mission-claim-button.is-pending {
+    background: #514052 !important;
+    color: #eaddea !important;
+    border-color: #80677c !important;
+    opacity: 1 !important;
+}
+.paw-dark .mission-claim-button.is-claimed {
+    background: #2d5042 !important;
+    color: #d5f5df !important;
+    border-color: #608c73 !important;
+}
+.paw-dark button.primary,
+.paw-dark .sidebar nav button.active {
+    background: #965a7a !important;
+    color: #fff7fb !important;
+    border-color: #d18bab !important;
+}
+
+/* Selected wardrobe controls use a deeper rose so white labels remain clear. */
+.paw-dark .paw-wardrobe-toolbar .v8-tabs button.selected {
+    background: #925b78 !important;
+    color: #fff5fa !important;
+    border-color: #d79ab8 !important;
+}
+.paw-dark .v8-tabs .selected,
+.paw-dark .v8-slots .selected {
+    background: #925b78 !important;
+    color: #fff5fa !important;
+    border-color: #d79ab8 !important;
+}
+
+/* Mini-game and multiplayer descriptions were using light-mode rose ink. */
+.paw-dark .games-grid > button > strong {
+    color: #ffe5f1 !important;
+}
+.paw-dark .games-grid > button > small {
+    color: #e2cddd !important;
+}
+.paw-dark .paw-multi-game-info small {
+    color: #e0cedd !important;
+}
+.paw-dark .paw-multi-game-info strong {
+    color: #f2c4da !important;
+}
+.paw-dark .paw-multi-header-history small {
+    background: #67475f !important;
+    color: #fff4fa !important;
+    border-color: #a27b96 !important;
+}
+
+/* Kitchen recipe titles, stat chips and history labels need lighter ink. */
+.paw-dark .kitchen-revamp .k3-title-row b {
+    color: #fff0f7 !important;
+}
+.paw-dark .kitchen-revamp .k3-title-row .k3-starter-chip {
+    color: #355b3d !important;
+}
+.paw-dark .kitchen-revamp .k3-benefits > span {
+    color: #f1d4e3 !important;
+}
+.paw-dark .kitchen-revamp .k3-record {
+    color: #decbd9 !important;
+}
+.paw-dark .kitchen-revamp h3 {
+    color: #fff0f7 !important;
+}
+.paw-dark .kitchen-revamp .k3-clue {
+    color: #e2d1e1 !important;
+}
+.paw-dark .kitchen-revamp .k3-clue small {
+    color: #d5c4d7 !important;
+}
+
+/* Preserve the garden's warm wooden signs; deepen only small scene captions. */
+.paw-dark .paw-garden-scene-title small {
+    color: #526d57 !important;
+}
+.paw-dark .paw-garden-qty {
+    background: #3f3244 !important;
+    color: #fff4fa !important;
+    border-color: #80647b !important;
+}
+.paw-dark .paw-garden-qty button {
+    background: #614558 !important;
+    color: #ffe7f0 !important;
+    border-color: #98758a !important;
+}
+.paw-dark .paw-garden-qty output {
+    color: #fff4fa !important;
+}
+
+/* Pet nameplates sit over the room illustration, so give them their own dark
+   translucent surface instead of inheriting pale foreground text. */
+.paw-dark .living-room .nameplate {
+    background: rgba(45, 34, 49, .94) !important;
+    color: #fff4fa !important;
+    border-color: #9b7891 !important;
+    text-shadow: none !important;
+}
+.paw-dark .living-room .nameplate b,
+.paw-dark .living-room .nameplate small {
+    color: #fff4fa !important;
+}
+.paw-dark .living-room .room-lights {
+    color: #e3ceff !important;
+    filter: drop-shadow(0 1px 3px #281f30);
+}
+.paw-dark .paw-stats-hud sup {
+    color: #decfff !important;
+}

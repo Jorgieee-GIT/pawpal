@@ -1,0 +1,54 @@
+.paw-dark .paw-welcome {
+    color: #f9e8f3;
+}
+
+.paw-dark .paw-welcome-logo,
+.paw-dark .paw-welcome-copy h1,
+.paw-dark .paw-welcome-features h2 {
+    color: #fbeaf3;
+}
+
+.paw-dark .paw-welcome-copy h1 em {
+    color: #e6a4c2;
+}
+
+.paw-dark .paw-welcome-kicker,
+.paw-dark .paw-welcome-footer button {
+    color: #f1b7d0;
+}
+
+.paw-dark .paw-welcome-copy > p,
+.paw-dark .paw-welcome-copy > small {
+    color: #d3b8ca;
+}
+
+.paw-dark .paw-welcome-pets {
+    background: radial-gradient(
+        ellipse,
+        rgb(201 122 164 / 18%) 0%,
+        rgb(133 83 125 / 13%) 55%,
+        transparent 74%
+    );
+}
+
+.paw-dark .paw-welcome-login {
+    color: #fbeaf3;
+    background: #382c3c;
+    border-color: #76556d;
+}
+
+.paw-dark .paw-welcome-features article {
+    color: #fbeaf3;
+    background: #382c3c;
+    border-color: #76556d;
+}
+
+.paw-dark .paw-welcome-features article > span {
+    color: #f1c0d7;
+    background: #4c394e;
+}
+
+.paw-dark .paw-welcome-footer {
+    color: #d3b8ca;
+    border-color: #76556d;
+}

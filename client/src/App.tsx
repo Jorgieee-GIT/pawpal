@@ -24,6 +24,8 @@ import {
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 // Preserve stylesheet evaluation order when importing extracted feature views.
 import SettingsModal from "./SettingsModal";
+import PublicPage from "./PublicPage";
+import PublicWelcome from "./PublicWelcome";
 import "./style.css";
 import "./features/auth/PasswordRecovery.css";
 import AdoptionScreen from "./features/auth/AdoptionScreen";
@@ -154,6 +156,7 @@ export default function App() {
     const [selectedFurniture, setSelectedFurniture] = useState<string | null>(null);
     const [adoptionAcknowledged, setAdoptionAcknowledged] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
+    const [policyOpen, setPolicyOpen] = useState<"privacy" | "terms" | null>(null);
     const [appearance, setAppearance] = useState<AppearanceChoice>(() => {
         const saved = localStorage.getItem("pawpal-theme");
 
@@ -209,7 +212,7 @@ export default function App() {
     const bathLastMove = useRef(0);
     const bathRequest = useRef(false);
     const [authMode, setAuthMode] = useState(() =>
-        sessionStorage.getItem("pawpal-forgot-ticket") ? "forgot" : "login"
+        sessionStorage.getItem("pawpal-forgot-ticket") ? "forgot" : "welcome"
     );
     const [forgotTicket, setForgotTicket] = useState<{
         requestId: string;
@@ -1158,7 +1161,7 @@ export default function App() {
                     musicVolume: user ? audioPreferences.musicVolume : 0
                 }}
             />
-            <header className="nav">
+            {user && <header className="nav">
                 <div
                     className="logo paw-logo-home"
                     role="button"
@@ -1487,7 +1490,7 @@ export default function App() {
                         </button>
                     )}
                 </div>
-            </header>
+            </header>}
             {announcementOpen && (
                 <div
                     className="paw-modal-backdrop"
@@ -1535,7 +1538,9 @@ export default function App() {
                 onSendReport={async (category, description) => {
                     await request("/support/report", "POST", { category, description });
                 }}
+                onOpenPolicy={setPolicyOpen}
             />
+            {policyOpen && <PublicPage page={policyOpen} modal onClose={() => setPolicyOpen(null)} onSwitch={setPolicyOpen} />}
             {maintenanceNotice && (
                 <div className="paw-maintenance-banner" role="status">
                     PawPal is temporarily in maintenance mode. Some game actions are paused until
@@ -2295,6 +2300,8 @@ export default function App() {
                     </div>
                 )}
                 {!token ? (
+                    <>
+                    {authMode === "welcome" ? <PublicWelcome onLogin={() => setAuthMode("login")} onRegister={() => setAuthMode("register")} onPolicy={setPolicyOpen} /> :
                     <AuthScreen
                         authMode={authMode}
                         forgotTicket={forgotTicket}
@@ -2312,6 +2319,8 @@ export default function App() {
                         busy={busy}
                         forgotBusy={forgotBusy}
                     />
+                    }
+                    </>
                 ) : !user ? (
                     <p>Loading your playhouse…</p>
                 ) : !pet ? (

@@ -1,0 +1,673 @@
+/* PawMail: mailbox, small composer, and collectible envelopes */
+.paw-friends-panel .paw-friends-mail-action {
+    position: relative;
+    color: #a84d85!important;
+}
+.paw-friends-panel .paw-friends-compose-action {
+    color: #a84d85!important;
+}
+.paw-friends-panel .paw-friend-mail {
+    color: #b35b91!important;
+}
+.paw-friends-panel .paw-friends-title-row .paw-requests-launch-row {
+    gap: 3px;
+    align-items: center;
+}
+.pawmail-window {
+    box-sizing: border-box;
+    width: min(760px,calc(100vw - 24px));
+    max-width: 760px;
+    max-height: min(92dvh,920px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.pawmail-window .paw-modal-top {
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.pawmail-window .paw-modal-top h2 {
+    margin: 3px 0;
+}
+.pawmail-window button:focus-visible {
+    outline: 3px solid #b05a8c;
+    outline-offset: 2px;
+}
+.pawmail-window button:disabled {
+    opacity: .54;
+    cursor: not-allowed;
+}
+.pawmail-folder-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.pawmail-folder-tabs button {
+    border: 1px solid #ecc6dc;
+    background: #fff;
+    color: #955778;
+    min-width: 0;
+    padding: 9px 12px;
+    border-radius: 13px;
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.pawmail-folder-tabs button.active {
+    background: #fae0eb;
+    border-color: #cc8bad;
+    color: #874565;
+}
+.pawmail-folder-tabs .pawmail-folder-compose {
+    background: #d985ac;
+    color: #fff;
+    border-color: #cb7da5;
+}
+.pawmail-unread-pill {
+    background: #ce6692;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 20px;
+    font-size: 10px;
+}
+.pawmail-letter-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 9px;
+}
+.pawmail-list-letter {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    text-align: left;
+    border: 1px solid #efd0dc;
+    border-radius: 16px;
+    padding: 10px 13px;
+    background: #fffafd;
+    color: #714b63;
+    box-shadow: 0 3px 9px #ae66821a;
+}
+.pawmail-list-letter.unread {
+    background: #fff0f6;
+    border-color: #dca1c0;
+}
+.pawmail-list-icon {
+    width: 68px;
+    height: 58px;
+    flex: none;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: #ffe3ed;
+    color: #b46691;
+}
+.pawmail-list-icon svg {
+    height: 49px;
+    width: 90%;
+    max-width: 90%;
+    opacity: .88;
+}
+.pawmail-list-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.pawmail-list-copy b {
+    font-size: 13px;
+}
+.pawmail-list-copy>span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    max-width: 100%;
+    opacity: .85;
+}
+.pawmail-list-copy small {
+    font-size: 10px;
+    opacity: .68;
+}
+.pawmail-new-dot {
+    width: 10px;
+    height: 10px;
+    background: #d34f88;
+    border: 2px solid white;
+    border-radius: 50%;
+    flex: none;
+}
+.pawmail-list-arrow {
+    opacity: .5;
+    flex: none;
+}
+.pawmail-empty {
+    padding: 48px 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 9px;
+    text-align: center;
+    color: #98617f;
+}
+.pawmail-empty b {
+    font-size: 15px;
+}
+.pawmail-empty span {
+    font-size: 12px;
+}
+.pawmail-detail-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 4px 0;
+}
+.pawmail-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 0;
+    color: #a15983;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+}
+.pawmail-date {
+    font-size: 10px;
+    opacity: .7;
+    text-align: right;
+}
+.pawmail-from {
+    font-size: 13px;
+    font-weight: 800;
+    color: #83526e;
+    margin: 12px 0;
+}
+.pawmail-letter-detail {
+    width: min(100%,500px);
+    margin-inline: auto;
+}
+.pawmail-letter-detail .paw-envelope {
+    min-height: 260px;
+}
+.pawmail-letter-detail .paw-envelope-illustration {
+    height: 94px;
+}
+.pawmail-detail-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+.pawmail-detail-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+}
+.pawmail-compose-layout {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+    gap: 17px;
+    align-items: start;
+}
+.pawmail-write-side {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    min-width: 0;
+}
+.pawmail-write-side label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #8e5575;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+.pawmail-write-side select,.pawmail-write-side textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    border-radius: 12px;
+    border: 1px solid #e4b6cc;
+    background: #fff;
+    padding: 10px 12px;
+    font: inherit;
+    font-size: 13px;
+    color: #764662;
+}
+.pawmail-write-side textarea {
+    resize: vertical;
+    min-height: 104px;
+}
+.pawmail-compose-colors {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+}
+.pawmail-compose-colors button {
+    min-width: 26px;
+    min-height: 26px;
+    width: 26px;
+    height: 26px;
+}
+.pawmail-design-summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px;
+    background: #fff2f8;
+    border: 1px solid #f0ccdf;
+    border-radius: 14px;
+    min-width: 0;
+}
+.pawmail-design-icon {
+    flex: 0 0 46px;
+    width: 46px;
+    height: 42px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    background: #ffe7ee;
+    overflow: hidden;
+    color: #a36290;
+}
+.pawmail-design-icon svg {
+    width: 96%;
+    height: 100%;
+}
+.pawmail-design-summary>span:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+.pawmail-design-summary small {
+    font-size: 10px;
+    opacity: .68;
+}
+.pawmail-design-summary b {
+    font-size: 12px;
+    line-height: 1.2;
+}
+.pawmail-collection-launch {
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 7px!important;
+    border-radius: 10px!important;
+    font-size: 11px!important;
+    border: 1px solid #e6acc8!important;
+    background: #fff!important;
+    color: #a45b84!important;
+}
+.pawmail-send-button {
+    width: 100%;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 800;
+    margin-top: 2px;
+}
+.pawmail-live-side {
+    min-width: 0;
+    position: sticky;
+    top: 0;
+}
+.pawmail-live-title {
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.4px;
+    color: #9b6683;
+    margin: 0 0 9px;
+}
+.pawmail-live-side .paw-envelope {
+    min-height: 280px;
+}
+.pawmail-live-side .paw-envelope-illustration {
+    height: 95px;
+}
+.pawmail-collection-window {
+    width: min(850px,calc(100vw - 24px));
+    max-width: 850px;
+}
+.pawmail-collection-intro {
+    margin: 3px 0 0!important;
+    font-size: 12px;
+    color: #99728a;
+}
+.pawmail-collection-count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #976384;
+    background: #fff0f6;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+}
+.pawmail-collection-grid {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 10px;
+}
+.pawmail-collection-card {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 7px;
+    gap: 7px;
+    border-radius: 15px;
+    background: #fff9fc;
+    border: 1px solid #eac5d8;
+    box-shadow: 0 2px 5px #ad72900d;
+}
+.pawmail-collection-card.selected {
+    border: 2px solid #c26497;
+    padding: 6px;
+    background: #fff0f7;
+}
+.pawmail-collection-card.level-locked .pawmail-collection-art svg {
+    opacity: .6;
+}
+.pawmail-collection-art {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    isolation: isolate;
+    height: 100px;
+    border-radius: 11px;
+    background: #ffe6ef;
+    color: #ae6590;
+    border: 1px solid #fff9;
+    box-shadow: inset 0 0 0 3px #fff5;
+}
+.pawmail-collection-art svg {
+    position: relative;
+    z-index: 1;
+    width: min(95%,145px);
+    height: 90px;
+    filter: drop-shadow(0 3px 3px #623e6330);
+}
+.pawmail-art-lock {
+    position: absolute;
+    inset: auto 4px 4px 4px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 25px;
+    border-radius: 9px;
+    background: #fff9fcdf;
+    color: #8d6480;
+    font-weight: 800;
+    font-size: 10px;
+}
+.pawmail-collection-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-height: 40px;
+}
+.pawmail-collection-info b {
+    font-size: 12px;
+    line-height: 1.2;
+    color: #7d4a69;
+    overflow-wrap: anywhere;
+}
+.pawmail-collection-info small {
+    font-size: 10px;
+    color: #a06b86;
+    line-height: 1.25;
+}
+.pawmail-collection-card>button {
+    margin-top: auto;
+    width: 100%;
+    min-height: 34px;
+    padding: 7px 4px!important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border-radius: 10px!important;
+    font-size: 11px!important;
+    font-weight: 800!important;
+}
+.pawmail-choose {
+    background: #f7e0ec!important;
+    color: #9d5681!important;
+    border: 1px solid #e8b9d0!important;
+}
+.pawmail-choose.chosen {
+    background: #cc78a4!important;
+    color: #fff!important;
+    border-color: #bd6c99!important;
+}
+.pawmail-buy {
+    background: #f8e5ed!important;
+    color: #985777!important;
+    border: 1px solid #e8b8cd!important;
+}
+.pawmail-collection-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+.pawmail-collection-footer button {
+    min-height: 37px;
+}
+/* Distinct collectible backgrounds, with later envelopes becoming more elaborate. */
+.paw-envelope-strawberry_picnic {
+    background-image: radial-gradient(circle at 18% 16%,#ff799466 0 6px,transparent 7px),radial-gradient(circle at 82% 48%,#ed739766 0 7px,transparent 8px),repeating-linear-gradient(145deg,transparent 0 14px,#fff9 15px 17px),linear-gradient(125deg,#ffe3dc,#ffc0d6);
+}
+.paw-envelope-moonlit_library {
+    background-image: radial-gradient(circle at 80% 20%,#fff9c4 0 18px,transparent 19px),repeating-linear-gradient(90deg,#4f4b8870 0 3px,transparent 3px 18px),linear-gradient(145deg,#7270ae,#aab4df);
+    color: #514c8d;
+}
+.paw-envelope-coral_kingdom {
+    background-image: radial-gradient(circle at 18% 20%,#fff9 0 4px,transparent 5px),repeating-radial-gradient(ellipse at bottom,#53b7c466 0 4px,transparent 5px 26px),linear-gradient(160deg,#b5f7f4,#94d5e6);
+    color: #418f9e;
+}
+.paw-envelope-enchanted_greenhouse {
+    background-image: radial-gradient(circle at 20% 15%,#fff5c6 0 13px,transparent 14px),repeating-linear-gradient(60deg,#82b6a544 0 2px,transparent 2px 19px),linear-gradient(145deg,#e6f4ca,#b2e2c9);
+    color: #478a73;
+}
+.paw-envelope-cloud_palace {
+    background-image: radial-gradient(ellipse at 20% 85%,#fff 0 18px,transparent 19px),radial-gradient(ellipse at 80% 20%,#fff 0 19px,transparent 20px),linear-gradient(135deg,#cce3ff,#e8cafa,#fce6f1);
+    color: #9987cb;
+}
+.paw-envelope-lantern_festival {
+    background-image: radial-gradient(circle at 16% 27%,#ffe9a5 0 14px,transparent 15px),radial-gradient(circle at 80% 50%,#ffc38699 0 16px,transparent 17px),linear-gradient(155deg,#fbd5cf,#c9a0d3);
+    color: #ac678f;
+}
+.paw-envelope-crystal_cavern {
+    background-image: repeating-conic-gradient(from 40deg at 60% 70%,#d9c5f566 0 12deg,#a8dbe955 12deg 30deg),linear-gradient(140deg,#dbefff,#c7bce9);
+    color: #749fc9;
+}
+.paw-envelope-aurora_fox {
+    background-image: radial-gradient(ellipse at 60% 10%,#f0ffaf88,transparent 56%),repeating-linear-gradient(140deg,#8be5db77 0 15px,#bd9eec77 20px 40px,#f0b2d777 50px 65px);
+    color: #8470aa;
+}
+.paw-envelope-sunfire_phoenix {
+    background-image: radial-gradient(circle at 50% 10%,#fff5b7 0 25px,transparent 45px),repeating-linear-gradient(125deg,#e8a17855 0 4px,transparent 5px 18px),linear-gradient(145deg,#ffdab4,#f49bb1);
+    color: #d27783;
+}
+.paw-envelope-dreamscape {
+    background-image: radial-gradient(circle at 20% 30%,#fff8cd 0 12px,transparent 13px),radial-gradient(circle at 85% 65%,#fff8 0 3px,transparent 4px),repeating-conic-gradient(from 10deg at center,#ddc0f255 0 16deg,#a9d7e555 16deg 32deg),linear-gradient(135deg,#d3dafa,#f8cce8);
+    color: #a28dcf;
+}
+.pawmail-collection-art.paw-envelope-cloud_palace::after,.pawmail-collection-art.paw-envelope-dreamscape::after,.pawmail-collection-art.paw-envelope-aurora_fox::after {
+    content: "✧ ✦ ✧";
+    position: absolute;
+    inset: 8px auto auto 8px;
+    font-size: 15px;
+    letter-spacing: 8px;
+    color: #fff;
+    opacity: .85;
+}
+.paw-dark .pawmail-window {
+    background: #382b3c!important;
+    color: #ffeff6!important;
+}
+.paw-dark .pawmail-folder-tabs button,.paw-dark .pawmail-list-letter,.paw-dark .pawmail-collection-card,.paw-dark .pawmail-design-summary {
+    background: #49364a;
+    color: #fff0f7;
+    border-color: #77536d;
+}
+.paw-dark .pawmail-collection-info b,.paw-dark .pawmail-collection-info small,.paw-dark .pawmail-write-side label,.paw-dark .pawmail-list-copy {
+    color: #ffeaf4;
+}
+.paw-dark .pawmail-write-side select,.paw-dark .pawmail-write-side textarea {
+    background: #4a374d;
+    color: #fff;
+    border-color: #845e78;
+}
+@media(max-width:760px) {
+    .pawmail-compose-layout {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    .pawmail-live-side {
+        position: static;
+    }
+    .pawmail-live-side .paw-envelope {
+        min-height: 195px;
+    }
+    .pawmail-live-side .paw-envelope-illustration {
+        height: 60px;
+    }
+    .pawmail-collection-grid {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+    }
+}
+@media(max-width:490px) {
+    .pawmail-window {
+        max-height: 94dvh;
+        padding: 14px!important;
+        border-radius: 19px;
+    }
+    .pawmail-folder-tabs {
+        gap: 5px;
+    }
+    .pawmail-folder-tabs button {
+        font-size: 11px;
+        padding: 9px 5px;
+        gap: 4px;
+    }
+    .pawmail-list-letter {
+        gap: 8px;
+        padding: 9px;
+    }
+    .pawmail-list-icon {
+        width: 56px;
+        height: 54px;
+    }
+    .pawmail-collection-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 8px;
+    }
+    .pawmail-collection-art {
+        height: 93px;
+    }
+    .pawmail-collection-art svg {
+        height: 86px;
+    }
+    .pawmail-detail-actions {
+        justify-content: stretch;
+    }
+    .pawmail-detail-actions button {
+        flex: 1;
+        justify-content: center;
+    }
+    .pawmail-design-summary {
+        gap: 6px;
+    }
+    .pawmail-collection-launch {
+        font-size: 10px!important;
+    }
+    .paw-friends-panel .paw-friend-icon-actions .paw-friend-icon-button {
+        width: 31px;
+        height: 34px;
+        min-width: 31px;
+        flex: 0 0 31px;
+        padding: 5px;
+    }
+    .paw-friends-panel .paw-friends-title-row .paw-requests-launch-row {
+        gap: 0;
+    }
+}
+@media(max-width:360px) {
+    .pawmail-list-icon {
+        width: 47px;
+        height: 47px;
+    }
+    .pawmail-collection-info b {
+        font-size: 11px;
+    }
+    .pawmail-folder-tabs button {
+        font-size: 10px;
+    }
+}
+/* Subtle tint support for collectible PawMail envelopes.
+   Classic letters retain a full color change. Premium backgrounds keep their
+   original themed artwork, with only a soft wash from the sender's color. */
+.paw-envelope:not(.paw-envelope-classic) {
+    background-color: var(--envelope-theme-base,#ffe6ef);
+    box-shadow: inset 0 0 0 5px #ffffff35,
+        inset 0 0 0 1000px color-mix(in srgb,var(--envelope-color) 20%,transparent),
+        0 5px 12px #5b284115;
+}
+.paw-envelope.paw-envelope-rose_garden {
+    --envelope-theme-base: #f9dae8;
+}
+.paw-envelope.paw-envelope-starry_night {
+    --envelope-theme-base: #9b98c5;
+}
+.paw-envelope.paw-envelope-ocean_waves {
+    --envelope-theme-base: #cbeff0;
+}
+.paw-envelope.paw-envelope-cherry_blossom {
+    --envelope-theme-base: #fbe3ec;
+}
+.paw-envelope.paw-envelope-woodland {
+    --envelope-theme-base: #d9ecd8;
+}
+.paw-envelope.paw-envelope-royal {
+    --envelope-theme-base: #e4d8f3;
+}
+.paw-envelope.paw-envelope-sweet_treats {
+    --envelope-theme-base: #fce7d6;
+}
+.paw-envelope.paw-envelope-celestial {
+    --envelope-theme-base: #dcd9f5;
+}
+.paw-envelope.paw-envelope-butterfly {
+    --envelope-theme-base: #e6ddf3;
+}
+.paw-envelope.paw-envelope-winter {
+    --envelope-theme-base: #e0eef9;
+}

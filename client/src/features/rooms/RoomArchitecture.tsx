@@ -6,7 +6,7 @@ function RoomArchitecture({ room }: {
 }) {
     const kind = ["bedroom", "studio", "sports"].includes(room) ? room : "living";
     return (
-        <svg className="paw-room-architecture" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <svg className="paw-room-architecture" viewBox="0 0 1000 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
             {kind === "living" && <g>
                 <svg x="2.4%" y="6%" width="23%" height="43%" viewBox="20 32 233 263" preserveAspectRatio="xMidYMid meet" overflow="visible">
                     <rect

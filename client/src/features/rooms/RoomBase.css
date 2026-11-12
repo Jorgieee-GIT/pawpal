@@ -1,0 +1,845 @@
+/* Batch 8 - collectible themed rooms and instant room picker */
+.paw-theme-picker {
+    margin: 0 0 16px;
+    padding: 17px;
+    border: 1px solid rgba(160,115,150,.2);
+    background: var(--card,#fff9fc);
+    border-radius: 22px;
+    box-shadow: 0 8px 24px rgba(120,77,113,.06);
+}
+.paw-theme-picker-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+.paw-theme-picker-heading>div {
+    display: grid;
+    gap: 3px;
+}
+.paw-theme-picker-heading small {
+    font-size: 12px;
+    opacity: .72;
+}
+.paw-active-theme {
+    font-size: 12px;
+    font-weight: 800;
+    border-radius: 999px;
+    padding: 8px 12px;
+    background: #fce2ed;
+    color: #874667;
+}
+.paw-theme-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(112px,1fr));
+    gap: 9px;
+}
+.paw-theme-option {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    border: 2px solid transparent;
+    border-radius: 15px;
+    padding: 9px 6px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(115,72,100,.08);
+    color: #66435a;
+    cursor: pointer;
+    transition: transform .15s,border-color .15s;
+}
+.paw-theme-option:not(:disabled):hover {
+    transform: translateY(-2px);
+    border-color: #e6a3c1;
+}
+.paw-theme-option.active {
+    border-color: #d66c9e;
+    background: #fff0f6;
+}
+.paw-theme-option.locked {
+    opacity: .53;
+    cursor: not-allowed;
+}
+.paw-theme-option:disabled:not(.locked) {
+    cursor: default;
+}
+.paw-theme-option>span:nth-child(2) {
+    font-size: 11px;
+    font-weight: 800;
+    text-align: center;
+}
+.paw-theme-option small {
+    font-size: 10px;
+    opacity: .8;
+}
+.paw-theme-swatch {
+    width: 100%;
+    height: 47px;
+    display: block;
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(90,60,80,.1);
+}
+.paw-theme-swatch i {
+    position: absolute;
+    left: 43%;
+    top: 12px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    opacity: .7;
+    box-shadow: 0 0 0 5px #ffffff55;
+}
+.paw-shop-theme-preview {
+    display: block;
+    width: 100%;
+    height: 72px;
+    border-radius: 13px;
+    position: relative;
+    border: 1px solid #00000012;
+}
+.paw-shop-theme-preview i {
+    position: absolute;
+    left: 45%;
+    top: 20px;
+    width: 23px;
+    height: 23px;
+    border-radius: 50%;
+    opacity: .65;
+    box-shadow: 0 0 0 9px #ffffff50;
+}
+.paw-themed-room {
+    transition: background .35s,background-color .35s;
+    border-color: var(--room-accent)!important;
+}
+.paw-themed-room .wall-art {
+    color: var(--room-accent)!important;
+    opacity: .6;
+}
+.paw-themed-room .room-lights {
+    color: var(--room-accent)!important;
+}
+.paw-themed-room .rug {
+    border-color: var(--room-accent)!important;
+}
+.paw-theme-moonlight .room-lights,.paw-theme-night_room .room-lights {
+    filter: drop-shadow(0 0 7px #fff);
+    opacity: 1;
+}
+.paw-theme-honey_cottage .wall-art,.paw-theme-sage_forest .wall-art {
+    filter: sepia(.25);
+}
+.paw-dark .paw-theme-picker {
+    background: #282435;
+    border-color: #55445e;
+}
+.paw-dark .paw-theme-option {
+    background: #393044;
+    color: #f9e7f1;
+}
+.paw-dark .paw-theme-option.active {
+    background: #50334c;
+    border-color: #e8a4c8;
+}
+.paw-dark .paw-active-theme {
+    background: #52354b;
+    color: #ffe2ef;
+}
+@media(max-width:600px) {
+    .paw-theme-picker {
+        padding: 12px;
+    }
+    .paw-theme-options {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 6px;
+    }
+    .paw-theme-option {
+        padding: 6px 3px;
+    }
+    .paw-theme-swatch {
+        height: 37px;
+    }
+}
+/* Batch 9 - unobstructed room-first experience, room-corner actions and modals */
+.paw-room-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 0 0 12px;
+}
+.paw-room-switcher {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+.paw-room-tab {
+    border-radius: 999px!important;
+    padding: 9px 12px!important;
+    font-size: 12px!important;
+    font-weight: 800;
+    white-space: nowrap;
+    background: #fff6fa!important;
+    color: #855471!important;
+    border: 1px solid #edc5d8!important;
+}
+.paw-room-tab.active {
+    background: #ca7aa5!important;
+    color: white!important;
+    border-color: #ca7aa5!important;
+}
+.paw-room-tab small {
+    font-size: 10px;
+}
+.paw-room-tools {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+}
+.paw-room-tools button {
+    border: 1px solid #e5b4cf!important;
+    background: #fff8fc!important;
+    color: #8c4c75!important;
+    border-radius: 12px!important;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 9px 11px!important;
+    box-shadow: 0 4px 10px #91527718;
+}
+.paw-room-tools button:hover {
+    background: #fbe1ef!important;
+}
+.paw-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(43,26,45,.55);
+    backdrop-filter: blur(6px);
+}
+.paw-modal {
+    width: min(100%,480px);
+    max-height: min(85vh,800px);
+    overflow: auto;
+    background: #fff9fc;
+    color: #67405a;
+    border: 1px solid #f1ccdf;
+    border-radius: 24px;
+    padding: 22px;
+    box-shadow: 0 22px 70px #24132255;
+}
+.paw-theme-modal {
+    width: min(100%,690px);
+}
+.paw-modal-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+.paw-modal-top h2 {
+    margin: 5px 0 8px;
+}
+.paw-modal-close {
+    border-radius: 50%!important;
+    width: 36px;
+    height: 36px;
+    padding: 0!important;
+    font-size: 24px!important;
+    background: #f7e1ec!important;
+    color: #875270!important;
+}
+.paw-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+.paw-modal .pet-note-editor {
+    margin: 10px 0 0;
+    box-shadow: none;
+}
+.paw-modal .pet-note-editor-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.paw-modal .pet-note-editor-row input {
+    min-width: 0;
+    flex: 1;
+}
+.paw-modal .paw-theme-picker {
+    padding: 0;
+    margin: 10px 0 0;
+    box-shadow: none;
+    border: 0;
+    background: transparent;
+}
+.paw-room-feature {
+    position: absolute;
+    left: 8%;
+    top: 22%;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    font-size: 32px;
+    color: #88688b;
+    opacity: .7;
+    pointer-events: none;
+}
+.paw-room-feature span {
+    font-size: 11px;
+    font-weight: 900;
+}
+.paw-room-studio {
+    background: linear-gradient(180deg,#f8e8fc 0 66%,#ead4c7 66% 100%)!important;
+}
+.paw-room-sports {
+    background: linear-gradient(180deg,#e1f4ef 0 66%,#bcd9c9 66% 100%)!important;
+}
+.paw-room-bedroom {
+    background: linear-gradient(180deg,#f2e9ff 0 66%,#e4c8dc 66% 100%)!important;
+}
+.paw-dark .paw-modal {
+    background: #30283a;
+    color: #fff0f7;
+    border-color: #74566d;
+}
+.paw-dark .paw-room-tab {
+    background: #3f3347!important;
+    color: #ffe6f4!important;
+    border-color: #765772!important;
+}
+.paw-dark .paw-room-tab.active {
+    background: #ab6894!important;
+}
+.paw-dark .paw-room-tools button {
+    background: #49374c!important;
+    color: #ffe7f3!important;
+    border-color: #765772!important;
+}
+@media(max-width:640px) {
+    .paw-room-toolbar {
+        flex-direction: column;
+    }
+    .paw-room-tools {
+        align-self: flex-end;
+    }
+    .paw-room-tab {
+        font-size: 11px!important;
+        padding: 8px 9px!important;
+    }
+    .paw-modal {
+        padding: 16px;
+    }
+    .paw-modal-backdrop {
+        padding: 10px;
+    }
+}
+/* Batch 10: furniture, room hamburger, room-specific market and compact mobile navigation */
+.paw-room-dropdown {
+    position: relative;
+    z-index: 50;
+}
+.paw-room-dropdown-trigger {
+    background: #fff0f7!important;
+    border: 1px solid #e3a5c3!important;
+    border-radius: 14px!important;
+    color: #85446d!important;
+    font-weight: 900!important;
+    padding: 10px 14px!important;
+    white-space: nowrap;
+}
+.paw-room-dropdown-list {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 7px);
+    width: 230px;
+    max-width: 85vw;
+    padding: 7px;
+    background: #fff9fc;
+    border: 1px solid #e8bcd2;
+    border-radius: 17px;
+    box-shadow: 0 12px 30px #64415a35;
+    display: grid;
+    gap: 4px;
+}
+.paw-room-dropdown-list button {
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    text-align: left;
+    padding: 12px;
+    color: #71465e;
+    font-weight: 800;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+.paw-room-dropdown-list button.active,.paw-room-dropdown-list button:hover {
+    background: #ffe4f0;
+}
+.paw-room-dropdown-list small {
+    font-size: 10px;
+}
+.paw-furniture-editor {
+    padding: 13px 18px;
+    background: #fff8fb;
+    border-top: 1px solid #f2dce6;
+}
+.paw-furniture-editor-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.paw-furniture-editor p {
+    font-size: 12px;
+    margin: 8px 0;
+}
+.paw-furniture-placed {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+.paw-furniture-placed button,.paw-market-tabs button {
+    border: 1px solid #e7b6cd;
+    border-radius: 12px;
+    background: #fff;
+    color: #8a5574;
+    padding: 9px 11px;
+    font-size: 12px;
+    font-weight: 800;
+}
+.paw-furniture-placed button.active,.paw-market-tabs button.active {
+    background: #d88eae;
+    color: white;
+    border-color: #c67d9d;
+}
+.paw-market-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0;
+}
+.paw-furniture-market-art {
+    height: 110px;
+    width: 100%;
+    display: block!important;
+    max-width: 145px;
+    margin: auto;
+}
+.room-furniture-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+.room-furniture-layer.editing {
+    pointer-events: none;
+}
+.room-furniture-piece {
+    position: absolute;
+    width: clamp(62px,13%,125px);
+    height: clamp(60px,24%,122px);
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+    filter: drop-shadow(0 6px 3px #80627428);
+    touch-action: none;
+}
+.room-furniture-layer.editing .room-furniture-piece {
+    pointer-events: auto;
+    cursor: grab;
+    border: 2px dashed #c06b9e;
+    border-radius: 14px;
+    background: #fff5fa25;
+}
+.room-furniture-layer.editing .room-furniture-piece.selected {
+    border: 3px solid #ad4e84;
+    background: #fff5fa65;
+}
+.room-furniture-piece small {
+    position: absolute;
+    bottom: -19px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff7fa;
+    color: #7c4a6d;
+    border-radius: 7px;
+    padding: 2px 5px;
+    font-size: 9px;
+    white-space: nowrap;
+}
+.paw-room-feature,.svg-furnishings {
+    display: none!important;
+}
+.paw-dark .paw-furniture-editor,.paw-dark .paw-room-dropdown-list {
+    background: #382c3c;
+    color: #fce8f3;
+    border-color: #76556d;
+}
+.paw-dark .paw-room-dropdown-list button {
+    color: #ffe5f2;
+}
+.paw-dark .paw-market-tabs button,.paw-dark .paw-furniture-placed button {
+    background: #4b394c;
+    color: #ffe6f2;
+    border-color: #88627b;
+}
+@media(max-width:700px) {
+    .heading {
+        gap: 8px;
+    }
+    .heading .pills {
+        display: flex!important;
+        flex-wrap: nowrap!important;
+        align-items: center;
+        width: 100%;
+        gap: 5px;
+    }
+    .heading .pills span {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 8px 5px!important;
+        font-size: 10px!important;
+        text-align: center;
+    }
+    .heading .pills .mobile-menu-toggle {
+        display: grid!important;
+        place-items: center;
+        flex: 0 0 39px;
+        width: 39px;
+        height: 37px;
+        margin: 0!important;
+        padding: 0!important;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 22px;
+        line-height: 1;
+    }
+    .paw-room-toolbar {
+        flex-direction: row!important;
+        align-items: center;
+    }
+    .paw-room-tools {
+        margin-left: auto;
+        align-self: auto;
+    }
+    .paw-room-tools button {
+        padding: 8px!important;
+        font-size: 11px!important;
+    }
+    .paw-room-dropdown-trigger {
+        padding: 9px!important;
+        font-size: 11px!important;
+    }
+    .paw-furniture-editor {
+        padding: 11px;
+    }
+    .room-furniture-piece {
+        width: 19%;
+        height: 20%;
+    }
+}
+/* Batch 11: bigger furniture and age-based pets, consistent room controls */
+.room-card {
+    padding-top: 16px!important;
+}
+.paw-room-toolbar {
+    padding: 0 17px;
+    margin-bottom: 14px;
+}
+.paw-room-dropdown-trigger {
+    background: #fff8fc!important;
+    color: #8c4c75!important;
+    border: 1px solid #e5b4cf!important;
+    border-radius: 12px!important;
+    box-shadow: 0 4px 10px #91527718;
+    font-size: 12px!important;
+    font-weight: 800!important;
+    padding: 9px 11px!important;
+}
+.paw-room-dropdown-trigger:hover {
+    background: #fbe1ef!important;
+}
+.paw-dark .paw-room-dropdown-trigger {
+    background: #49374c!important;
+    color: #ffe7f3!important;
+    border-color: #765772!important;
+}
+.room-furniture-piece {
+    width: clamp(76px,16%,150px);
+    height: clamp(74px,29%,146px);
+}
+.wanderer {
+    width: 112px;
+}
+.pet-body {
+    width: 108px;
+    position: relative;
+    transform-origin: 50% 90%;
+}
+.paw-condition-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.paw-condition-dirt,.paw-condition-face {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+.paw-condition-sleep {
+    position: absolute;
+    top: -14px;
+    right: 0;
+    color: #9674b4;
+    font-weight: 900;
+    font-size: 20px;
+    transform: rotate(-14deg);
+    text-shadow: 0 2px 3px white;
+    animation: paw-sleep-float 2s ease-in-out infinite;
+}
+.paw-condition-heart {
+    position: absolute;
+    top: 6px;
+    left: -8px;
+    font-size: 23px;
+    color: #c68da9;
+    text-shadow: 0 1px 3px white;
+}
+@keyframes paw-sleep-float {
+    50% {
+        transform: translateY(-8px) rotate(-14deg);
+        opacity: .55;
+    }
+}
+/* Remove the older animated window/wavy room effect */
+.living-room .window,.living-room .window::before,.living-room .window::after {
+    animation: none!important;
+}
+@media(max-width:700px) {
+    .room-card {
+        padding-top: 13px!important;
+    }
+    .paw-room-toolbar {
+        padding: 0 11px;
+    }
+    .room-furniture-piece {
+        width: 23%;
+        height: 25%;
+    }
+    .wanderer {
+        width: 76px;
+    }
+    .pet-body {
+        width: 73px;
+    }
+}
+@media(max-width:380px) {
+    .wanderer {
+        width: 66px;
+    }
+    .pet-body {
+        width: 63px;
+    }
+}
+/* Batch 12: compact icon-only day/night switch */
+.theme-toggle {
+    width: 43px;
+    height: 43px;
+    min-width: 43px;
+    padding: 0!important;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 14px!important;
+    font-size: 24px;
+    line-height: 1;
+    background: #fff1f7;
+    color: #b978a0;
+    border: 1px solid #e9c4d6;
+    box-shadow: 0 3px 10px #b36e8a13;
+}
+.theme-toggle:hover {
+    transform: translateY(-1px);
+    background: #fbe4ef;
+}
+.paw-dark .theme-toggle {
+    background: #3b3047;
+    color: #f8d79e;
+    border-color: #64516b;
+}
+.paw-kitchen .kitchen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(175px,1fr));
+    gap: 14px;
+}
+.paw-kitchen .kitchen-item {
+    background: #fff9fc;
+    border: 1px solid #efd9e5;
+    border-radius: 19px;
+    padding: 17px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+}
+.paw-kitchen .kitchen-item>b {
+    text-transform: capitalize;
+}
+.paw-kitchen .kitchen-item small {
+    color: #9c8291;
+    line-height: 1.4;
+}
+.paw-kitchen .kitchen-art {
+    font-size: 46px;
+    background: #ffedf5;
+    border-radius: 17px;
+    padding: 12px;
+    width: 86px;
+    height: 80px;
+    display: grid;
+    place-items: center;
+}
+.paw-kitchen .kitchen-item>button,.paw-kitchen .kitchen-actions button {
+    border-radius: 12px;
+    padding: 11px 14px;
+    background: #f4d9e7;
+    color: #8d5274;
+    border: 1px solid #e9bcd1;
+    font-weight: 800;
+    width: 100%;
+}
+.paw-kitchen .kitchen-item>button.primary {
+    background: #d992b1;
+    color: white;
+}
+.paw-kitchen .kitchen-qty {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    justify-content: center;
+}
+.paw-kitchen .kitchen-qty button {
+    border-radius: 9px;
+    border: 1px solid #e9bcd1;
+    background: white;
+    width: 33px;
+    height: 33px;
+    color: #b56c90;
+    font-weight: 900;
+}
+.paw-kitchen .kitchen-counter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(120deg,#fff0f6,#f1e7ff);
+    border-radius: 20px;
+    padding: 16px;
+    margin: 16px 0 24px;
+}
+.paw-kitchen .kitchen-counter-art {
+    width: 170px;
+    max-width: 48%;
+    flex-shrink: 0;
+}
+.paw-kitchen .kitchen-counter-art svg {
+    width: 100%;
+    height: auto;
+}
+.paw-kitchen .kitchen-counter small {
+    display: block;
+    color: #957b8e;
+    margin-top: 6px;
+}
+.paw-kitchen .kitchen-active {
+    background: #fff4e9;
+    border: 1px solid #f1d7bc;
+    border-radius: 19px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.paw-kitchen .kitchen-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.paw-kitchen .kitchen-steps span {
+    padding: 8px 12px;
+    background: white;
+    border-radius: 99px;
+    color: #a18b96;
+}
+.paw-kitchen .kitchen-steps .done {
+    background: #d8f1e2;
+    color: #497c61;
+}
+.paw-kitchen .kitchen-steps .current {
+    background: #f6c8da;
+    color: #7f4663;
+    font-weight: 800;
+}
+.paw-kitchen .kitchen-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(100px,1fr));
+    gap: 8px;
+}
+.paw-kitchen .kitchen-message {
+    background: #fce5ef;
+    padding: 13px 16px;
+    border-radius: 12px;
+    margin: 12px 0;
+    color: #895575;
+}
+.paw-dark .paw-kitchen .kitchen-item,.paw-dark .paw-kitchen .kitchen-active,.paw-dark .paw-kitchen .kitchen-counter {
+    background: #382c40;
+    border-color: #6b5369;
+}
+.paw-dark .paw-kitchen .kitchen-steps span {
+    background: #4b3b50;
+}
+.paw-dark .paw-kitchen .kitchen-steps .current {
+    background: #9c5c7c;
+    color: white;
+}
+.paw-dark .paw-kitchen .kitchen-steps .done {
+    background: #376b57;
+    color: white;
+}
+.paw-dark .paw-kitchen .kitchen-message {
+    background: #54384b;
+    color: #ffe6f1;
+}
+@media(max-width:600px) {
+    .paw-kitchen .kitchen-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 9px;
+    }
+    .paw-kitchen .kitchen-item {
+        padding: 11px;
+    }
+    .paw-kitchen .kitchen-counter {
+        gap: 8px;
+    }
+    .theme-toggle {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+    }
+}

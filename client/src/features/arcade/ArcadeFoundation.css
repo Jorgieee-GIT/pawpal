@@ -1,0 +1,277 @@
+/* Cozy Arcade v2 */
+.living-room {
+    height: clamp(420px,52vw,610px);
+    background: linear-gradient(to bottom,#fcecf6 0%,var(--wall) 53%,#e8c5c8 53%,var(--floor) 100%);
+}
+.living-room:before {
+    content: '✧  ✦  ✧  ✦  ✧';
+    position: absolute;
+    inset: 8px 0 auto;
+    text-align: center;
+    color: #e7a9c5;
+    letter-spacing: 22px;
+    opacity: .7;
+}
+.living-room:after {
+    top: 53%;
+}
+.window {
+    top: 12%;
+    left: 8%;
+    width: 23%;
+    height: 31%;
+    max-width: 190px;
+    border-radius: 65px 65px 12px 12px;
+    background: linear-gradient(150deg,#bce9fb,#fef2e2);
+    box-shadow: inset 0 0 0 4px #f9dae8,0 5px 18px #ae7b9930;
+}
+.window:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 49%;
+    border-left: 5px solid #fff9fa;
+}
+.sofa {
+    top: 37%;
+    right: 14%;
+    font-size: clamp(78px,11vw,130px);
+}
+.wall-art {
+    top: 10%;
+    right: 22%;
+    font-size: 35px;
+}
+.rug {
+    height: 90px;
+    bottom: 5%;
+    left: 25%;
+    width: 50%;
+    background: radial-gradient(ellipse,#fffdfd,#ffe8ef);
+    border-width: 8px;
+}
+.wanderer {
+    width: 74px;
+    bottom: 12%;
+}
+.pet-body {
+    width: 70px;
+}
+.nameplate {
+    max-width: 110px;
+}
+.room-shelf,.room-clock,.room-curtain,.room-table,.room-bed,.room-toys,.room-lights {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 3px #956b7e25);
+}
+.room-shelf {
+    top: 24%;
+    right: 3%;
+    font-size: 24px;
+    background: #fff8f3aa;
+    padding: 5px 12px;
+    border-bottom: 8px solid #bd98a0;
+    border-radius: 8px;
+}
+.room-clock {
+    top: 9%;
+    left: 48%;
+    font-size: 31px;
+}
+.room-curtain {
+    top: 10%;
+    left: 7%;
+    font-size: 26px;
+}
+.room-table {
+    bottom: 27%;
+    left: 8%;
+    font-size: 33px;
+    background: #eec1b5;
+    padding: 3px 14px;
+    border-radius: 60%;
+}
+.room-bed {
+    bottom: 18%;
+    right: 3%;
+    font-size: 46px;
+}
+.room-toys {
+    bottom: 8%;
+    left: 3%;
+    font-size: 29px;
+}
+.room-lights {
+    top: 2%;
+    left: 28%;
+    font-size: 20px;
+    letter-spacing: 7px;
+    color: #dba0bf;
+}
+.furniture {
+    z-index: 4;
+}
+.arcade-modal {
+    width: min(100%,740px);
+}
+.arcade-world {
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: linear-gradient(#e5e9fc,#ffecf5 75%,#d5e6c4 75%);
+    touch-action: pan-y;
+    user-select: none;
+    border: 3px solid #f0c9d9;
+}
+.arcade-sky {
+    position: absolute;
+    top: 14px;
+    left: 10%;
+    font-size: 25px;
+}
+.arcade-ground {
+    position: absolute;
+    bottom: 45px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: #c89ca6;
+}
+.arcade-hero {
+    position: absolute;
+    left: 10%;
+    bottom: 51px;
+    font-size: 54px;
+    transition: bottom .15s;
+}
+.arcade-hero.jump {
+    bottom: 155px;
+}
+.arcade-obstacle {
+    position: absolute;
+    bottom: 48px;
+    font-size: 45px;
+}
+.run-track {
+    position: absolute;
+    inset: 25% 10% 0;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    background: #e3b8c7;
+    transform: perspective(400px) rotateX(17deg);
+    border: 4px solid #fff;
+}
+.run-track div {
+    border-right: 3px dashed #fff9;
+}
+.runner-hero {
+    position: absolute;
+    bottom: 15px;
+    transform: translateX(-50%);
+    font-size: 51px;
+    z-index: 5;
+    transition: left .13s;
+}
+.runner-obstacle {
+    position: absolute;
+    transform: translateX(-50%);
+    font-size: 42px;
+    z-index: 4;
+}
+.arcade-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+.arcade-controls button {
+    min-width: 120px;
+    touch-action: manipulation;
+}
+.target-heart {
+    display: grid;
+    place-items: center;
+    margin: 20px auto;
+}
+.heart-choices {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+.heart-choices button {
+    font-size: clamp(37px,7vw,62px);
+    color: var(--heart-color);
+    background: #fff;
+    border: 2px solid #f0d6e3;
+    border-radius: 15px;
+    min-width: 70px;
+    min-height: 78px;
+    line-height: 1;
+}
+.heart-choices button:hover {
+    transform: scale(1.07);
+}
+.centered {
+    justify-content: center;
+}
+@media(max-width:600px) {
+    .living-room {
+        height: 420px;
+    }
+    .wanderer {
+        width: 56px;
+    }
+    .pet-body {
+        width: 52px;
+    }
+    .nameplate {
+        min-width: 55px;
+    }
+    .sofa {
+        right: 8%;
+        top: 40%;
+        font-size: 78px;
+    }
+    .room-shelf {
+        font-size: 15px;
+        right: 2%;
+    }
+    .room-clock {
+        left: 51%;
+        font-size: 23px;
+    }
+    .room-table {
+        font-size: 20px;
+    }
+    .room-bed {
+        font-size: 29px;
+    }
+    .room-toys {
+        font-size: 19px;
+    }
+    .room-lights {
+        font-size: 13px;
+        letter-spacing: 2px;
+    }
+    .arcade-world {
+        height: 250px;
+    }
+    .arcade-hero,.runner-hero {
+        font-size: 40px;
+    }
+    .arcade-obstacle,.runner-obstacle {
+        font-size: 34px;
+    }
+    .heart-choices button {
+        min-width: 53px;
+        min-height: 62px;
+    }
+    .game-modal {
+        max-height: 96dvh;
+    }
+}

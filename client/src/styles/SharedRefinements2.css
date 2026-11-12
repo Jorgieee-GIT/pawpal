@@ -1,0 +1,2189 @@
+/* Sticky site-wide header: keep greeting, alerts, theme and logout on screen. */
+.app > .nav {
+    position: sticky;
+    top: 0;
+    z-index: 1400;
+    width: 100%;
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 3px 16px rgba(116, 76, 104, .08);
+}
+.paw-dark .app > .nav {
+    background: rgba(43, 34, 49, .98);
+}
+/* Modal screens always appear above the sticky site header. */
+.app .overlay {
+    z-index: 5000;
+}
+/* The notification popover stays anchored to the sticky bell button. */
+.app > .nav .paw-notifications-panel {
+    max-height: min(65dvh, 480px);
+    overscroll-behavior: contain;
+}
+@media (max-width: 600px) {
+    .app > .nav {
+        min-height: 65px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+}
+/* Garden cards are the same dimensions at every growth stage and plot count. */
+.garden-plots {
+    align-items: stretch;
+}
+.garden-plot-card, .garden-plot-card.garden-unlock {
+    height: 172px;
+    min-height: 172px;
+    max-height: 172px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+.garden-plot-card .garden-plant-button {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    width: 100%;
+    padding-top: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+.garden-plot-card .garden-plant-button > svg {
+    width: min(100%, 78px);
+    height: 78px;
+    flex: 0 0 78px;
+}
+.garden-plot-card .garden-water-action {
+    flex: 0 0 26px;
+    min-height: 26px;
+    max-height: 26px;
+    white-space: nowrap;
+}
+.garden-plot-card .garden-flower-details-trigger {
+    cursor: pointer;
+}
+.garden-plot-detail-hint {
+    font-size: 10px;
+    line-height: 1.15;
+    font-weight: 850;
+    color: #945f7a;
+}
+.garden-details-backdrop {
+    z-index: 12000;
+}
+.garden-details-modal {
+    width: min(420px, calc(100vw - 24px));
+    max-height: 90dvh;
+    overflow-y: auto;
+    text-align: center;
+    padding: 20px;
+}
+.garden-details-modal .paw-modal-top {
+    text-align: left;
+}
+.garden-details-art {
+    width: min(190px, 52vw);
+    height: min(190px, 52vw);
+    margin: 12px auto 4px;
+    padding: 10px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fffef3 0%, #f9e1eb 74%, transparent 75%);
+}
+.garden-details-art svg {
+    width: 100%;
+    height: 100%;
+}
+.garden-details-modal h3 {
+    margin: 4px 0 9px;
+    font-size: 23px;
+    color: #83536c;
+}
+.garden-details-rarity {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    background: #fce2ed;
+    color: #9d547b;
+    font-weight: 900;
+}
+.garden-details-wilted {
+    background: #e3d1d0;
+    color: #7d6066;
+}
+.garden-details-uncommon {
+    background: #e9e1ff;
+    color: #7256ad;
+}
+.garden-details-rare {
+    background: #def5fe;
+    color: #377c9e;
+}
+.garden-details-legendary {
+    background: #fff0c9;
+    color: #a07026;
+}
+.garden-details-reward {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    margin: 17px 0 8px;
+    padding: 12px;
+    border: 1px solid #f0d3af;
+    border-radius: 14px;
+    background: #fff6e8;
+    color: #946d38;
+}
+.garden-details-reward div {
+    text-align: left;
+    display: grid;
+    gap: 2px;
+}
+.garden-details-reward small {
+    font-size: 11px;
+}
+.garden-details-reward strong {
+    font-size: 17px;
+}
+.garden-details-timer {
+    margin: 10px 0 12px;
+    color: #905d7b;
+    font-size: 13px;
+    font-weight: 750;
+}
+.garden-details-harvest {
+    width: 100%;
+    border: 0;
+    border-radius: 12px;
+    padding: 12px;
+    background: #d77eaa;
+    color: white;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+}
+.garden-details-harvest:disabled {
+    opacity: .62;
+    cursor: not-allowed;
+}
+.paw-dark .garden-plot-detail-hint, .paw-dark .garden-details-modal h3, .paw-dark .garden-details-timer {
+    color: #ffe2ee;
+}
+.paw-dark .garden-details-reward {
+    background: #564654;
+    border-color: #896f5e;
+    color: #ffe6b6;
+}
+.paw-dark .garden-details-modal {
+    background: #453444;
+}
+@media (max-width: 750px) {
+    .garden-plot-card, .garden-plot-card.garden-unlock {
+        height: 160px;
+        min-height: 160px;
+        max-height: 160px;
+    }
+    .garden-plot-card .garden-plant-button > svg {
+        width: min(100%, 70px);
+        height: 70px;
+        flex-basis: 70px;
+    }
+}
+@media (max-width: 390px) {
+    .garden-plot-card, .garden-plot-card.garden-unlock {
+        height: 155px;
+        min-height: 155px;
+        max-height: 155px;
+    }
+}
+/* Garden flower encyclopedia: opens from the Info button, never from harvesting. */
+.garden-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.garden-heading h2 {
+    margin: 0;
+}
+.garden-info-button {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    padding: 0;
+    border: 2px solid #d9a8c3;
+    border-radius: 50%;
+    background: #fff1f7;
+    color: #8d4d70;
+    font-size: 17px;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
+}
+.garden-info-button:focus-visible {
+    outline: 3px solid #ba7199;
+    outline-offset: 3px;
+}
+.garden-info-button:hover {
+    background: #fbe1ed;
+}
+.garden-catalog-modal {
+    width: min(760px,calc(100vw - 22px));
+    max-height: min(88dvh,790px);
+    overflow-y: auto;
+    padding: 20px;
+}
+.garden-catalog-intro {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #946d85;
+    margin: 6px 0 0;
+}
+.garden-catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 12px;
+    margin: 18px 0;
+}
+.garden-catalog-flower {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #edcfdf;
+    border-radius: 16px;
+    padding: 12px;
+    background: #fff8fb;
+}
+.garden-catalog-art {
+    flex: 0 0 92px;
+    width: 92px;
+    height: 100px;
+    display: grid;
+    place-items: center;
+    background: radial-gradient(circle,#fff9e8,#f9e7f1);
+    border-radius: 14px;
+}
+.garden-catalog-art svg {
+    width: 82px;
+    height: 90px;
+}
+.garden-catalog-description {
+    min-width: 0;
+}
+.garden-catalog-description h3 {
+    font-size: 16px;
+    color: #84546e;
+    margin: 0 0 8px;
+}
+.garden-catalog-description .garden-details-rarity {
+    font-size: 11px;
+    padding: 4px 9px;
+}
+.garden-catalog-coins {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    color: #8b6840;
+    font-size: 12px;
+    margin: 10px 0 6px;
+}
+.garden-catalog-description > small {
+    color: #967a89;
+    font-size: 11px;
+}
+.garden-catalog-footnote {
+    font-size: 12px;
+    line-height: 1.55;
+    color: #8f7081;
+}
+.garden-growing-flower {
+    cursor: default;
+}
+.garden-harvest-action {
+    font-weight: 800;
+    color: #fff;
+    background: #9b6683;
+}
+.paw-dark .garden-info-button {
+    background: #67465c;
+    color: #ffe4f0;
+    border-color: #a2708e;
+}
+.paw-dark .garden-catalog-flower {
+    background: #554152;
+    border-color: #90667e;
+}
+.paw-dark .garden-catalog-description h3, .paw-dark .garden-catalog-intro, .paw-dark .garden-catalog-footnote {
+    color: #ffe3ef;
+}
+.paw-dark .garden-catalog-coins, .paw-dark .garden-catalog-description > small {
+    color: #ffe0ac;
+}
+@media(max-width:570px) {
+    .garden-catalog-modal {
+        padding: 13px;
+    }
+    .garden-catalog-grid {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+    .garden-catalog-art {
+        flex-basis: 80px;
+        width: 80px;
+        height: 88px;
+    }
+    .garden-catalog-art svg {
+        width: 74px;
+        height: 82px;
+    }
+    .garden-heading {
+        flex-wrap: wrap;
+    }
+}
+/* Account dashboard: Paw Coins, Level and Friends are the primary account indicators. */
+.heading.paw-dashboard-heading {
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 23px;
+}
+.paw-dashboard-greeting {
+    min-width: 0;
+    flex: 1 1 260px;
+}
+.paw-dashboard-greeting h1 {
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+.paw-account-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+    flex: 0 1 495px;
+    min-width: min(100%, 440px);
+}
+.paw-account-stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 78px;
+    padding: 12px;
+    border: 2px solid transparent;
+    border-radius: 19px;
+    box-shadow: 0 4px 0 #c3a0b523, 0 8px 20px #96768b11;
+}
+.paw-account-coins {
+    background: linear-gradient(145deg, #fff2d2, #ffe8b6);
+    border-color: #f0ce82;
+    color: #8c612a;
+}
+.paw-account-level {
+    background: linear-gradient(145deg, #eee8ff, #e4daff);
+    border-color: #cfc1f3;
+    color: #6e579a;
+}
+.paw-account-friends {
+    background: linear-gradient(145deg, #ffe7f2, #ffdae9);
+    border-color: #ecc1d8;
+    color: #945273;
+}
+.paw-account-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+    background: #ffffffb5;
+    box-shadow: inset 0 1px 0 #fff8;
+}
+.paw-account-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    gap: 2px;
+}
+.paw-account-copy small {
+    display: block;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: .6px;
+    white-space: nowrap;
+}
+.paw-account-copy strong {
+    display: block;
+    font-family: Nunito, sans-serif;
+    font-size: clamp(18px, 2.25vw, 25px);
+    font-weight: 1000;
+    line-height: 1.08;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+.paw-account-xp {
+    display: block;
+    height: 4px;
+    width: 100%;
+    margin-top: 3px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #a99ad352;
+}
+.paw-account-xp > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #9b79d9;
+}
+.paw-dark .paw-account-coins {
+    background: #58472e;
+    border-color: #937b51;
+    color: #ffe3aa;
+}
+.paw-dark .paw-account-level {
+    background: #493d5b;
+    border-color: #7c6a9d;
+    color: #f1e2ff;
+}
+.paw-dark .paw-account-friends {
+    background: #593c50;
+    border-color: #956983;
+    color: #ffe0ef;
+}
+.paw-dark .paw-account-icon {
+    background: #ffffff17;
+}
+@media (max-width: 850px) {
+    .heading.paw-dashboard-heading {
+        align-items: stretch;
+    }
+    .paw-dashboard-greeting {
+        flex-basis: 100%;
+    }
+    .paw-account-summary {
+        width: 100%;
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+}
+@media (max-width: 600px) {
+    .heading.paw-dashboard-heading {
+        position: relative;
+        gap: 12px;
+    }
+    .paw-dashboard-greeting {
+        padding-right: 43px;
+    }
+    .paw-dashboard-greeting h1 {
+        font-size: clamp(23px, 6vw, 32px);
+    }
+    .paw-account-summary {
+        gap: 6px;
+    }
+    .paw-account-stat {
+        min-height: 70px;
+        gap: 5px;
+        padding: 9px 7px;
+        border-radius: 13px;
+        flex-direction: column;
+        text-align: center;
+    }
+    .paw-account-icon {
+        flex: 0 0 26px;
+        height: 26px;
+        width: 26px;
+        border-radius: 9px;
+    }
+    .paw-account-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+    .paw-account-copy {
+        width: 100%;
+        align-items: center;
+        gap: 3px;
+    }
+    .paw-account-copy small {
+        font-size: 9px;
+        letter-spacing: .1px;
+    }
+    .paw-account-copy strong {
+        font-size: clamp(16px, 5.2vw, 22px);
+    }
+    .paw-account-xp {
+        width: 85%;
+    }
+    .paw-account-summary .mobile-menu-toggle {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+        margin: 0;
+    }
+}
+@media (max-width: 360px) {
+    .paw-account-stat {
+        padding-inline: 4px;
+    }
+    .paw-account-copy small {
+        font-size: 8px;
+    }
+    .paw-account-copy strong {
+        font-size: 16px;
+    }
+}
+/* Arcade mini-game UI refresh: consistent title alignment, score HUD, and touch targets. */
+.overlay:has(.game-modal) {
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+    overflow: hidden;
+}
+.game-modal.arcade-modal,
+.game-modal.paw-claw-modal {
+    width: min(100%, 740px);
+    max-height: calc(100dvh - 16px);
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+}
+.game-modal.mole-modal {
+    width: min(100%, 540px);
+}
+.game-modal.paw-claw-modal {
+    width: min(100%, 620px);
+}
+.game-modal .paw-arcade-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+}
+.game-modal .paw-arcade-modal-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    margin: 0;
+    line-height: 1.23;
+    font-size: clamp(18px, 4vw, 25px);
+}
+.game-modal .paw-arcade-modal-header h2 > svg {
+    display: block;
+    width: 23px;
+    height: 23px;
+    flex: 0 0 23px;
+    align-self: center;
+}
+.game-modal .paw-arcade-modal-header h2 > span {
+    min-width: 0;
+}
+.game-modal .paw-arcade-exit {
+    display: grid;
+    place-items: center;
+    flex: 0 0 36px;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0;
+    border: 1px solid #e7bfce;
+    border-radius: 12px;
+    background: #fff0f6;
+    color: #885972;
+    cursor: pointer;
+    box-shadow: none;
+}
+.game-modal .paw-arcade-exit:disabled {
+    opacity: .55;
+    cursor: progress;
+}
+.game-modal .paw-arcade-exit:hover:not(:disabled) {
+    background: #ffe3ef;
+}
+.game-modal .paw-arcade-exit:focus-visible {
+    outline: 3px solid #be79a5;
+    outline-offset: 2px;
+}
+.game-modal .paw-arcade-hud {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: clamp(5px, 1.5vw, 12px);
+    margin: 12px 0 11px;
+    padding: 8px 3px;
+    font-weight: 800;
+    font-size: clamp(11px, 2.4vw, 14px);
+    color: #81576d;
+}
+.game-modal .paw-arcade-hud > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    white-space: nowrap;
+}
+.game-modal .paw-arcade-hud .paw-arcade-hearts {
+    display: inline-flex;
+    gap: 1px;
+    flex: 0 0 auto;
+}
+.game-modal .paw-arcade-hud .mole-heart {
+    display: inline-flex;
+    margin: 0;
+    line-height: 1;
+}
+.game-modal .paw-arcade-hud .mole-heart svg {
+    width: clamp(15px, 4vw, 21px);
+    height: clamp(15px, 4vw, 21px);
+}
+.paw-arcade-gesture-hint {
+    text-align: center;
+    margin: 9px 0 3px;
+    color: #96748a;
+    font-size: 12px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+.paw-color-match-prompt {
+    text-align: center;
+    margin: 9px 0 0;
+    font-weight: 800;
+}
+.arcade-modal .target-heart {
+    margin: 7px auto 11px;
+}
+.arcade-modal .target-heart svg {
+    width: min(105px, 21dvh);
+    height: auto;
+}
+.arcade-modal .heart-choices.paw-palette-choices {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: min(100%, 412px);
+    max-width: 100%;
+    gap: 9px;
+    margin: 0 auto;
+}
+.arcade-modal .heart-choices .paw-palette-choice {
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    padding: 4px;
+    aspect-ratio: 1;
+}
+.arcade-modal .heart-choices .paw-palette-choice svg {
+    width: min(82px, 100%);
+    max-height: 100%;
+}
+.paw-arcade-reward-error {
+    color: #bd4f74;
+    font-weight: 750;
+    font-size: 13px;
+}
+.game-modal .paw-game-over-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 450px;
+    margin: 10px auto;
+    gap: 10px;
+}
+.game-modal .paw-game-over-actions > button {
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+    white-space: normal;
+    min-height: 42px;
+}
+.paw-dark .game-modal .paw-arcade-hud,
+.paw-dark .paw-arcade-gesture-hint {
+    color: #f5d9e8;
+}
+.paw-dark .game-modal .paw-arcade-exit {
+    background: #5d4158;
+    color: #ffedf6;
+    border-color: #956d86;
+}
+@media (max-width: 600px) {
+    .game-modal.arcade-modal, .game-modal.paw-claw-modal {
+        padding: 13px;
+    }
+    .game-modal .paw-arcade-modal-header h2 {
+        gap: 7px;
+        font-size: clamp(17px, 4.8vw, 21px);
+    }
+    .game-modal .paw-arcade-hud {
+        gap: 5px;
+        margin: 9px 0;
+    }
+    .game-modal .paw-arcade-hud .paw-hud-clock svg {
+        width: 14px;
+        height: 14px;
+    }
+    .game-modal .paw-game-over-actions {
+        gap: 7px;
+    }
+    .game-modal .paw-game-over-actions > button {
+        padding: 9px 7px;
+        font-size: 11px;
+    }
+    .arcade-modal .heart-choices.paw-palette-choices {
+        gap: 5px;
+    }
+    .arcade-modal .heart-choices .paw-palette-choice {
+        padding: 2px;
+        min-height: 0;
+    }
+    .arcade-modal .target-heart {
+        margin: 4px auto 7px;
+    }
+    .game-modal .game-center {
+        padding: min(25px, 3vh) 8px;
+    }
+    .game-modal .paw-arcade-gesture-hint {
+        font-size: 11px;
+    }
+}
+@media (max-height: 540px) and (orientation: landscape) {
+    .game-modal.arcade-modal, .game-modal.paw-claw-modal {
+        padding: 8px 12px;
+    }
+    .game-modal .paw-arcade-hud {
+        margin: 4px 0;
+        padding: 4px 0;
+    }
+    .arcade-modal .target-heart svg {
+        width: 68px;
+    }
+    .arcade-modal .target-heart {
+        margin: 2px auto;
+    }
+    .arcade-modal .heart-choices.paw-palette-choices {
+        width: min(100%, 365px);
+    }
+    .arcade-modal .heart-choices .paw-palette-choice {
+        max-height: 67px;
+    }
+}
+/* October refresh: compact tabs keep cooking and pantry items within reach. */
+.paw-kitchen .kitchen-shelf-tabs {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 8px;
+    margin: 14px 0 16px;
+    position: sticky;
+    top: 8px;
+    z-index: 12;
+    padding: 6px;
+    border: 1px solid #ebc8da;
+    border-radius: 16px;
+    background: var(--card,#fff5f9);
+    box-shadow: 0 3px 12px #7b476015;
+}
+.paw-kitchen .kitchen-shelf-tabs button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 40px;
+    padding: 8px 5px;
+    border: 1px solid #edd1df;
+    border-radius: 11px;
+    background: var(--card,#fffafd);
+    color: inherit;
+    font-weight: 800;
+    font-size: clamp(10px,1.3vw,13px);
+    cursor: pointer;
+}
+.paw-kitchen .kitchen-shelf-tabs button.active {
+    background: #f3bfd7;
+    border-color: #c984aa;
+    color: #6d3154;
+}
+.paw-kitchen .kitchen-shelf-tabs button span {
+    font-size: 10px;
+    background: #fff7fc;
+    border-radius: 100px;
+    min-width: 21px;
+    padding: 2px;
+}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions {
+    grid-column: 2;
+    grid-row: 4;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin-top: 7px;
+    width: 100%;
+    min-width: 0;
+}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions button {
+    width: 100%;
+    min-width: 0;
+    min-height: 32px;
+    padding: 5px 3px;
+    border-radius: 9px;
+    font-size: clamp(9px,1vw,11px);
+    line-height: 1.18;
+    white-space: normal;
+}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions .secondary {
+    background: #fff0de;
+    color: #97614d;
+    border: 1px solid #edc9a6;
+}
+.paw-kitchen .kitchen-pantry-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    text-align: left;
+}
+.paw-kitchen .kitchen-pantry-item .kitchen-art {
+    flex: 0 0 60px;
+    width: 60px;
+    height: 60px;
+    margin: 0;
+}
+.paw-kitchen .kitchen-pantry-copy {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.paw-kitchen .kitchen-pantry-copy b {
+    font-size: 13px;
+}
+.paw-kitchen .kitchen-pantry-copy small {
+    font-size: 11px;
+}
+.paw-kitchen .kitchen-pantry-item>button {
+    min-width: 70px;
+    width: auto;
+    margin: 0;
+}
+.paw-kitchen .kitchen-empty {
+    grid-column: 1/-1;
+    padding: 22px;
+    border: 1px dashed #dca7c4;
+    border-radius: 13px;
+    text-align: center;
+}
+@media(max-width:800px) {
+    .paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions {
+        grid-column: 2;
+        grid-row: 4;
+    }
+    .paw-kitchen .kitchen-pantry-item {
+        min-height: 66px;
+    }
+    .paw-kitchen .kitchen-pantry-item .kitchen-art {
+        flex-basis: 45px;
+        width: 45px;
+        height: 45px;
+    }
+}
+@media(max-width:390px) {
+    .paw-kitchen .kitchen-shelf-tabs {
+        gap: 4px;
+        padding: 4px;
+    }
+    .paw-kitchen .kitchen-shelf-tabs button {
+        padding: 6px 2px;
+        font-size: 10px;
+    }
+    .paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions {
+        gap: 4px;
+    }
+    .paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions button {
+        font-size: 9px;
+        padding: 5px 2px;
+    }
+}
+.paw-dark .paw-kitchen .kitchen-shelf-tabs {
+    background: #443446;
+    border-color: #75576a;
+}
+.paw-dark .paw-kitchen .kitchen-shelf-tabs button {
+    background: #524158;
+    border-color: #80667b;
+}
+.paw-dark .paw-kitchen .kitchen-shelf-tabs button.active {
+    background: #b985a8;
+    color: #2d1931;
+}
+.paw-dark .paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions .secondary {
+    background: #584454;
+    color: #ffdfcd;
+}
+/* Equal-height, one-line Wardrobe navigation on narrow phones. */
+@media(max-width:700px) {
+    .paw-wardrobe-toolbar .v8-tabs button,.paw-wardrobe-toolbar .v8-slots button {
+        height: 42px!important;
+        min-height: 42px!important;
+        max-height: 42px!important;
+        box-sizing: border-box;
+    }
+    .paw-wardrobe-toolbar .v8-slots button b {
+        line-height: 1.05;
+    }
+    .paw-wardrobe-toolbar .v8-tabs {
+        align-items: stretch;
+    }
+}
+@media(max-width:370px) {
+    .paw-wardrobe-toolbar .v8-tabs button {
+        font-size: 9px!important;
+        padding: 5px 3px!important;
+    }
+    .paw-wardrobe-toolbar .v8-slots button b {
+        font-size: 8px!important;
+    }
+    .paw-wardrobe-toolbar {
+        gap: 3px!important;
+    }
+}
+/* Shared compact circular info triggers; full dialog content is unchanged. */
+.garden-info-button {
+    width: 29px;
+    min-width: 29px;
+    height: 29px;
+    min-height: 29px;
+    flex-basis: 29px;
+    font-size: 14px;
+    border-width: 1.5px;
+}
+/* PawPal Missions: easily scanned quest tabs, compact reward bar, and milestone categories. */
+.paw-missions-refreshed .paw-missions-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.paw-missions-refreshed .paw-missions-heading h2 {
+    margin: 0;
+}
+.paw-missions-reward-ready {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #92547c;
+    padding: 8px 11px;
+    background: #fff0d5;
+    border: 1px solid #eccfa1;
+    border-radius: 50px;
+}
+.paw-missions-kinds {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 9px;
+    margin: 18px 0 10px;
+}
+.paw-missions-kinds button {
+    min-width: 0;
+    min-height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--card,#fff7fb);
+    border: 2px solid #e4c9da;
+    border-radius: 15px;
+    color: inherit;
+    cursor: pointer;
+}
+.paw-missions-kinds button span {
+    font-weight: 900;
+    font-size: 14px;
+}
+.paw-missions-kinds button small {
+    font-size: 11px;
+    opacity: .8;
+}
+.paw-missions-kinds button.active {
+    background: #f3d6e8;
+    border-color: #d18db5;
+    color: #75415f;
+    box-shadow: 0 3px 0 #e4afcc;
+}
+.paw-missions-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #ead1df;
+    border-radius: 14px;
+    background: var(--card,#fff8fb);
+}
+.paw-missions-reset {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+.paw-missions-claim-all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    min-height: 35px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 11px;
+    background: #d889ac;
+    color: white;
+    font-weight: 900;
+    font-size: 12px;
+    cursor: pointer;
+}
+.paw-missions-claim-all:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+.paw-missions-overview {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 9px;
+    margin: 12px 0 16px;
+}
+.paw-missions-overview>div {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 7px;
+    row-gap: 2px;
+    min-width: 0;
+    padding: 10px;
+    border-radius: 13px;
+    background: #fff0f6;
+    border: 1px solid #eed0dd;
+    color: #8e5875;
+}
+.paw-missions-overview strong {
+    font-size: 17px;
+    line-height: 1;
+}
+.paw-missions-overview span {
+    grid-column: 1/-1;
+    font-size: 11px;
+}
+.paw-missions-refreshed .mission-grid {
+    margin-top: 8px;
+    gap: 10px;
+}
+.paw-missions-refreshed .mission-card {
+    padding: 12px;
+    gap: 8px;
+    min-width: 0;
+}
+.paw-missions-refreshed .mission-card.claimed {
+    opacity: .7;
+}
+.paw-missions-refreshed .paw-mission-ready {
+    border-color: #daa6c4;
+    background: #fff0fa;
+}
+.paw-mission-category {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #af7893;
+    font-weight: 800;
+    font-size: 10px;
+    letter-spacing: .02em;
+}
+.paw-mission-category span {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-left: auto;
+}
+.paw-missions-refreshed .mission-top {
+    gap: 7px;
+}
+.paw-missions-refreshed .mission-top b {
+    font-size: 13px;
+    min-width: 0;
+}
+.paw-missions-refreshed .mission-top span {
+    font-weight: 900;
+}
+.paw-missions-refreshed .mission-footer {
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.paw-missions-refreshed .mission-rewards {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 6px;
+}
+.paw-missions-refreshed .mission-footer button {
+    min-height: 31px;
+    min-width: 74px;
+}
+.paw-missions-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.paw-missions-filters button {
+    padding: 7px 10px;
+    border: 1px solid #ebc6dc;
+    border-radius: 100px;
+    background: var(--card,#fff7fc);
+    color: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.paw-missions-filters button.active {
+    background: #eabbd6;
+    border-color: #ce86b2;
+    color: #63314e;
+}
+.paw-missions-show-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    border: 1px solid #e2bed6;
+    border-radius: 12px;
+    background: #f8e7f0;
+    color: #7f4369;
+    font-weight: 900;
+    cursor: pointer;
+}
+.paw-dark .paw-missions-reward-ready,.paw-dark .paw-missions-overview>div,.paw-dark .paw-missions-show-more {
+    background: #544052;
+    color: #ffdbec;
+    border-color: #77576d;
+}
+.paw-dark .paw-missions-kinds button,.paw-dark .paw-missions-toolbar,.paw-dark .paw-missions-filters button {
+    background: #48374a;
+    border-color: #72556c;
+    color: #ffe7ef;
+}
+.paw-dark .paw-missions-kinds button.active,.paw-dark .paw-missions-filters button.active {
+    background: #875d79;
+    border-color: #d8a3c1;
+    color: white;
+}
+@media(max-width:680px) {
+    .paw-missions-kinds {
+        gap: 5px;
+    }
+    .paw-missions-kinds button {
+        min-height: 54px;
+        border-radius: 11px;
+    }
+    .paw-missions-kinds button span {
+        font-size: 12px;
+    }
+    .paw-missions-kinds button small {
+        font-size: 10px;
+    }
+    .paw-missions-toolbar {
+        padding: 8px;
+        gap: 6px;
+    }
+    .paw-missions-reset {
+        font-size: 10px;
+    }
+    .paw-missions-claim-all {
+        padding: 8px 9px;
+        font-size: 11px;
+        min-height: 33px;
+    }
+    .paw-missions-overview {
+        gap: 5px;
+    }
+    .paw-missions-overview>div {
+        padding: 8px 6px;
+        column-gap: 4px;
+    }
+    .paw-missions-overview strong {
+        font-size: 15px;
+    }
+    .paw-missions-overview span {
+        font-size: 9px;
+    }
+    .paw-missions-refreshed .mission-card {
+        padding: 10px;
+    }
+    .paw-missions-refreshed .mission-top b {
+        font-size: 12px;
+    }
+}
+@media(max-width:350px) {
+    .paw-missions-reward-ready {
+        font-size: 10px;
+        padding: 7px;
+    }
+    .paw-missions-claim-all {
+        gap: 3px;
+        padding: 7px;
+    }
+    .paw-missions-claim-all svg {
+        width: 14px;
+    }
+    .paw-missions-reset svg {
+        width: 14px;
+    }
+}
+/* Cozy UX refresh: compact Kitchen inventory and clear ingredient readiness */
+.paw-kitchen .kitchen-shelf-tabs {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    max-width: 660px;
+    margin-inline: auto;
+}
+.paw-kitchen .kitchen-recipe-inventory {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    margin: 5px 0 8px;
+    min-width: 0;
+}
+.paw-kitchen .kitchen-recipe-ingredient {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 4px 7px;
+    border-radius: 999px;
+    border: 1px solid #b4d9b6;
+    background: #f1fff2;
+    color: #386c4c;
+    font-size: 10px;
+    white-space: nowrap;
+}
+.paw-kitchen .kitchen-recipe-ingredient.missing {
+    border-color: #e5bac8;
+    background: #fff1f2;
+    color: #a34d68;
+}
+.paw-kitchen .kitchen-recipe-ingredient-icon {
+    display: inline-flex;
+    width: 19px;
+    height: 19px;
+    flex-shrink: 0;
+}
+.paw-kitchen .kitchen-recipe-ingredient-icon svg {
+    width: 100%;
+    height: 100%;
+}
+.paw-kitchen .kitchen-recipe-ingredient b {
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-inventory {
+    grid-column: 2;
+    grid-row: 2;
+    justify-content: flex-start;
+}
+.paw-kitchen .kitchen-recipe-card .kitchen-boosts {
+    grid-column: 2;
+    grid-row: 3;
+}
+.paw-kitchen .kitchen-recipe-card .kitchen-recipe-actions {
+    grid-column: 2;
+    grid-row: 4;
+}
+.paw-kitchen .kitchen-recipe-actions button:disabled {
+    cursor: not-allowed;
+}
+.paw-dark .paw-kitchen .kitchen-recipe-ingredient.available {
+    color: #b0e7b7;
+    background: #304c3a;
+    border-color: #54735d;
+}
+.paw-dark .paw-kitchen .kitchen-recipe-ingredient.missing {
+    color: #ffcfdb;
+    background: #593948;
+    border-color: #92516c;
+}
+@media(min-width:1080px) {
+    .paw-kitchen .kitchen-recipe-card .kitchen-recipe-inventory {
+        justify-content: center;
+    }
+}
+@media(max-width:680px) {
+    .paw-kitchen .kitchen-recipe-ingredient {
+        font-size: 9px;
+        padding: 3px 5px;
+        gap: 3px;
+    }
+    .paw-kitchen .kitchen-recipe-ingredient-icon {
+        width: 16px;
+        height: 16px;
+    }
+}
+/* Missions: the milestone category bar scrolls sideways instead of wrapping. */
+.paw-missions-refreshed .paw-missions-filters {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-width: 100%;
+    width: 100%;
+    gap: 7px;
+    padding: 4px 2px 10px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+    scrollbar-color: #dca2bd transparent;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+}
+.paw-missions-refreshed .paw-missions-filters button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    scroll-snap-align: start;
+}
+/* Wardrobe: ownership is a navigation mode, accessories are a separate choice. */
+.paw-wardrobe-toolbar {
+    display: flex!important;
+    flex-direction: column!important;
+    align-items: stretch!important;
+    flex-wrap: nowrap!important;
+    gap: 12px!important;
+    min-width: 0;
+}
+.paw-wardrobe-toolbar .v8-tabs {
+    display: grid!important;
+    grid-template-columns: repeat(2,minmax(0,1fr))!important;
+    width: 100%!important;
+    flex: none!important;
+    gap: 8px!important;
+    padding: 5px!important;
+    border: 1px solid #ebcfda;
+    border-radius: 15px;
+    background: #fff4f8;
+}
+.paw-wardrobe-toolbar .v8-tabs button {
+    width: 100%;
+    min-width: 0!important;
+    height: 42px!important;
+    min-height: 42px!important;
+    max-height: none!important;
+    border-radius: 11px;
+    font-size: 13px!important;
+    font-weight: 850!important;
+}
+.paw-wardrobe-toolbar .v8-tabs button.selected {
+    background: #d988b0!important;
+    color: white!important;
+    box-shadow: 0 3px 10px #9c416c30;
+}
+.paw-wardrobe-toolbar .v8-slots {
+    display: grid!important;
+    grid-template-columns: repeat(4,minmax(0,1fr))!important;
+    width: 100%!important;
+    flex: none!important;
+    gap: 7px!important;
+}
+.paw-wardrobe-toolbar .v8-slots button {
+    min-width: 0!important;
+    width: 100%;
+    height: 46px!important;
+    min-height: 46px!important;
+    max-height: none!important;
+    border-radius: 12px!important;
+    font-size: 11px!important;
+    padding: 6px 3px!important;
+}
+.paw-wardrobe-toolbar .v8-slots button.selected {
+    border-color: #c98aab!important;
+    background: #fce4ee!important;
+    color: #753d60!important;
+}
+.paw-wardrobe-toolbar .v8-slots button b {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    line-height: 1.1;
+    font-size: 11px!important;
+}
+.paw-wardrobe-toolbar .v8-slots button svg {
+    width: 16px!important;
+    height: 16px!important;
+    flex-shrink: 0;
+}
+.paw-dark .paw-wardrobe-toolbar .v8-tabs {
+    background: #4a3546;
+    border-color: #84627a;
+}
+@media(max-width:680px) {
+    .paw-wardrobe-toolbar {
+        gap: 9px!important;
+    }
+    .paw-wardrobe-toolbar .v8-tabs button {
+        height: 39px!important;
+        min-height: 39px!important;
+        font-size: 12px!important;
+    }
+    .paw-wardrobe-toolbar .v8-slots button {
+        height: 48px!important;
+        min-height: 48px!important;
+    }
+    .paw-wardrobe-toolbar .v8-slots button b {
+        flex-direction: column;
+        gap: 3px;
+        font-size: 10px!important;
+    }
+    .paw-wardrobe-toolbar .v8-slots button svg {
+        width: 16px!important;
+        height: 16px!important;
+    }
+}
+@media(max-width:350px) {
+    .paw-wardrobe-toolbar .v8-slots {
+        gap: 4px!important;
+    }
+    .paw-wardrobe-toolbar .v8-slots button {
+        padding: 5px 1px!important;
+    }
+    .paw-wardrobe-toolbar .v8-slots button b {
+        font-size: 9px!important;
+    }
+}
+/* Room atmosphere is the sole place to purchase and apply themes. */
+.paw-theme-modal .paw-theme-picker-heading {
+    margin-bottom: 12px;
+}
+.paw-theme-modal .paw-theme-options {
+    grid-template-columns: repeat(auto-fill,minmax(125px,1fr));
+    gap: 10px;
+}
+.paw-theme-modal .paw-theme-option {
+    position: relative;
+    padding: 9px 7px 10px;
+    border: 2px solid #ebc9d9;
+    background: #fff8fb;
+    opacity: 1;
+    box-shadow: 0 3px 8px #90436514;
+    min-height: 107px;
+}
+.paw-theme-modal .paw-theme-option.unowned {
+    background: #f9f5fa;
+    border-style: dashed;
+    border-color: #d6c5d1;
+    color: #816d80;
+}
+.paw-theme-modal .paw-theme-option.level-locked {
+    opacity: .72;
+    cursor: not-allowed;
+}
+.paw-theme-modal .paw-theme-option.active {
+    border: 2px solid #bc518f;
+    background: #ffe6f2;
+    box-shadow: 0 0 0 2px #eaa9cf80,0 4px 14px #a14e7c24;
+    color: #7b2e5b;
+    opacity: 1;
+}
+.paw-theme-modal .paw-theme-option.owned:not(.active) {
+    border: 2px solid #dba1bf;
+    background: #fff8fc;
+}
+.paw-theme-modal .paw-theme-option:disabled:not(.level-locked) {
+    opacity: 1;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-name {
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1.1;
+    text-align: center;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label {
+    display: block;
+    min-width: 0;
+    color: #78495f;
+    opacity: 1;
+    font-size: 10px;
+    font-weight: 850;
+}
+.paw-theme-modal .paw-theme-option.unowned .paw-theme-action-label {
+    color: #8b667b;
+}
+.paw-theme-current-tag {
+    position: absolute;
+    top: 2px;
+    right: 3px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 5px;
+    border-radius: 999px;
+    color: #fff;
+    background: #b65c8f;
+    font-size: 9px;
+    font-weight: 800;
+    z-index: 2;
+}
+.paw-theme-modal .paw-theme-option.active .paw-theme-action-label {
+    color: #9e3b74;
+}
+.paw-room-tools button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+}
+.paw-room-theme-mini {
+    position: relative;
+    display: inline-flex;
+    width: 25px;
+    height: 25px;
+    flex: 0 0 25px;
+    border-radius: 7px;
+    border: 1px solid #c993ad;
+    box-shadow: inset 0 0 0 1px #ffffff88;
+    overflow: hidden;
+}
+.paw-room-theme-mini i {
+    position: absolute;
+    left: 40%;
+    top: 29%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px #ffffff66;
+}
+.paw-pet-note-icon {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    color: #ac638c;
+}
+.paw-pet-note-icon svg:first-child {
+    position: absolute;
+    z-index: 1;
+    top: 4px;
+    left: 7px;
+    fill: #ffe0ed;
+    transform: rotate(-15deg);
+}
+.paw-pet-note-icon svg:last-child {
+    transform: rotate(-14deg);
+}
+@media(max-width:500px) {
+    .paw-room-tools .paw-room-tool-label {
+        display: none;
+    }
+    .paw-room-tools button {
+        padding: 6px!important;
+        min-width: 37px;
+        height: 37px;
+        justify-content: center;
+    }
+    .paw-theme-modal .paw-theme-options {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 6px;
+    }
+    .paw-theme-modal .paw-theme-option {
+        padding: 5px 3px;
+        min-height: 100px;
+    }
+    .paw-theme-modal .paw-theme-swatch {
+        height: 33px;
+    }
+    .paw-theme-modal .paw-theme-option .paw-theme-name {
+        font-size: 9px;
+    }
+    .paw-theme-current-tag {
+        font-size: 8px;
+    }
+}
+.paw-dark .paw-theme-modal .paw-theme-option.unowned {
+    background: #47394b;
+    border-color: #746076;
+    color: #e0c6d6;
+}
+.paw-dark .paw-theme-modal .paw-theme-option.owned:not(.active) {
+    background: #574258;
+    border-color: #a67d9d;
+}
+.paw-dark .paw-theme-modal .paw-theme-option.active {
+    background: #754666;
+    border-color: #ecadd0;
+    color: #fff;
+}
+/* Icon-only room tools: atmosphere preview and pet note illustration. */
+.paw-room-tools button {
+    width: 40px!important;
+    min-width: 40px!important;
+    height: 40px!important;
+    padding: 5px!important;
+    display: inline-grid!important;
+    place-items: center!important;
+    border-radius: 12px!important;
+}
+.paw-room-theme-svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 7px;
+}
+.paw-room-tools .paw-pet-note-icon {
+    width: 28px;
+    height: 28px;
+}
+@media(max-width:500px) {
+    .paw-room-tools button {
+        width: 37px!important;
+        min-width: 37px!important;
+        height: 37px!important;
+    }
+}
+/* Room actions: a full-bleed rectangular atmosphere swatch and centered pet note icon. */
+.main-column .paw-room-tools .paw-room-theme-trigger {
+    display: block !important;
+    width: 78px !important;
+    min-width: 78px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    overflow: hidden;
+    border-radius: 11px !important;
+    flex: 0 0 auto;
+}
+.paw-room-tools .paw-room-theme-trigger .paw-room-theme-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}
+.paw-room-tools .paw-room-note-trigger {
+    display: grid !important;
+    place-items: center !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    padding: 0 !important;
+    flex: 0 0 auto;
+}
+.paw-room-note-trigger .paw-pet-note-icon {
+    width: 27px;
+    height: 27px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    flex: 0 0 27px;
+}
+.paw-room-note-trigger .paw-pet-note-icon svg:first-child {
+    position: static;
+    transform: none;
+    fill: none;
+    width: 22px;
+    height: 22px;
+}
+.paw-room-note-trigger .paw-pet-note-icon svg:last-child {
+    position: absolute;
+    top: 1px;
+    right: 0;
+    left: auto;
+    transform: rotate(12deg);
+    width: 13px;
+    height: 13px;
+    padding: 1px;
+    border-radius: 50%;
+    background: #fff8fc;
+    fill: #ffe0ed;
+}
+/* Atmosphere actions use the same pastel buy-button treatment as Market cards. */
+.paw-theme-modal .paw-theme-option {
+    gap: 7px;
+    justify-content: flex-start;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    min-height: 29px;
+    padding: 6px 5px;
+    margin-top: auto;
+    border: 1px solid #f1cddd;
+    border-radius: 10px;
+    background: #f9e6ef;
+    color: #a95c83;
+    font-size: 10px;
+    font-weight: 850;
+    opacity: 1;
+    line-height: 1.15;
+    white-space: normal;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label.is-selected {
+    border-color: #ca8eae;
+    background: #df9dbd;
+    color: #fff;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label.is-locked {
+    background: #f1e8ee;
+    color: #826d7d;
+    border-color: #e2d2de;
+}
+.paw-theme-modal .paw-theme-option .paw-theme-action-label.can-buy {
+    border-color: #ebb7d0;
+    background: #f8dfeb;
+    color: #955072;
+}
+.paw-theme-modal .paw-theme-option:disabled:not(.level-locked) .paw-theme-action-label.is-selected {
+    color: #fff;
+}
+.paw-dark .paw-theme-modal .paw-theme-action-label:not(.is-selected) {
+    background: #62445c;
+    color: #ffe3f0;
+    border-color: #946681;
+}
+.paw-dark .paw-room-note-trigger .paw-pet-note-icon svg:last-child {
+    background: #49374c;
+}
+/* Pet Note: small personal postcard with a live speech-bubble preview. */
+.paw-note-modal {
+    width: min(100%, 465px);
+}
+.paw-note-modal .paw-modal-top h2 {
+    margin-bottom: 2px;
+}
+.paw-note-preview {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px solid #efccdc;
+    border-radius: 19px;
+    background: radial-gradient(circle at 8% 5%, #fff 0, transparent 50%), linear-gradient(135deg, #fff1f7, #f6e7fa);
+    box-shadow: inset 0 1px 0 #fff, 0 5px 15px #ab6d9120;
+}
+.paw-note-preview-pet {
+    flex: 0 0 78px;
+    width: 78px;
+    height: 87px;
+    display: grid;
+    place-items: center;
+}
+.paw-note-preview-pet .pet-svg {
+    width: 100%;
+    height: auto;
+    max-height: 85px;
+}
+.paw-note-preview-content {
+    min-width: 0;
+    flex: 1;
+    display: grid;
+    justify-items: start;
+    gap: 7px;
+}
+.paw-note-preview-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #995a83;
+    font-size: 11px;
+    font-weight: 850;
+}
+.paw-note-preview-bubble {
+    display: block;
+    max-width: 100%;
+    padding: 10px 12px;
+    border: 2px solid #d9b0c8;
+    border-radius: 15px 15px 15px 4px;
+    background: #fffdf4;
+    color: #77546d;
+    font-size: 14px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+    box-shadow: 0 2px 0 #d7b5c750;
+}
+.paw-note-modal .paw-note-helper {
+    margin: 12px 2px 15px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #9d7b90;
+}
+.paw-note-form {
+    display: grid;
+    gap: 11px;
+}
+.paw-note-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.paw-note-label-row label {
+    color: #774963;
+    font-weight: 850;
+    font-size: 13px;
+}
+.paw-note-char-count {
+    color: #946e83;
+    background: #f8e8f0;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+.paw-note-form > input {
+    width: 100%;
+    min-width: 0;
+    border: 2px solid #eac3d6;
+    background: #fff;
+    color: #63435a;
+    border-radius: 13px;
+    padding: 13px 14px;
+    font-weight: 650;
+    font-size: 14px;
+}
+.paw-note-form > input:focus-visible {
+    outline: 3px solid #e7accb;
+    outline-offset: 2px;
+}
+.paw-note-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+.paw-note-suggestions > span {
+    color: #aa859a;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 2px;
+}
+.paw-note-suggestion {
+    border: 1px solid #eed2de;
+    border-radius: 999px;
+    background: #fff4fa;
+    color: #945475;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 800;
+}
+.paw-note-suggestion:hover {
+    border-color: #d794b7;
+    background: #ffe2f0;
+}
+.paw-note-actions {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1.25fr);
+    gap: 9px;
+    margin-top: 6px;
+}
+.paw-note-actions button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    min-height: 42px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 850;
+}
+.paw-note-actions .paw-note-delete {
+    color: #a76988;
+}
+.paw-dark .paw-note-preview {
+    background: linear-gradient(135deg, #46384d, #3d344c);
+    border-color: #76586f;
+}
+.paw-dark .paw-note-preview-bubble {
+    background: #5c465a;
+    border-color: #98788f;
+    color: #fff0f8;
+}
+.paw-dark .paw-note-preview-label,
+.paw-dark .paw-note-label-row label {
+    color: #ffe0ef;
+}
+.paw-dark .paw-note-char-count,
+.paw-dark .paw-note-suggestion {
+    background: #503a50;
+    color: #ffe3ef;
+    border-color: #806077;
+}
+.paw-dark .paw-note-form > input {
+    background: #443449;
+    color: #fff0f8;
+    border-color: #88627c;
+}
+@media (max-width: 500px) {
+    .main-column .paw-room-tools .paw-room-theme-trigger {
+        width: 69px !important;
+        min-width: 69px !important;
+        height: 37px !important;
+    }
+    .paw-room-tools .paw-room-note-trigger {
+        width: 37px !important;
+        min-width: 37px !important;
+        height: 37px !important;
+    }
+    .paw-note-modal {
+        padding: 17px;
+    }
+    .paw-note-preview {
+        gap: 9px;
+        padding: 11px;
+        margin-top: 12px;
+    }
+    .paw-note-preview-pet {
+        width: 66px;
+        height: 75px;
+        flex-basis: 66px;
+    }
+    .paw-note-preview-bubble {
+        font-size: 12px;
+    }
+    .paw-theme-modal .paw-theme-option {
+        padding: 6px 4px;
+    }
+    .paw-theme-modal .paw-theme-option .paw-theme-action-label {
+        font-size: 9px;
+        padding: 5px 2px;
+        gap: 3px;
+    }
+    .paw-theme-modal .paw-theme-option .paw-theme-action-label svg {
+        width: 11px;
+        height: 11px;
+    }
+}
+@media (max-width: 350px) {
+    .paw-note-actions button {
+        padding: 10px 7px;
+        font-size: 11px;
+    }
+    .paw-note-suggestion {
+        padding: 5px 8px;
+    }
+}
+/* Room toolbar finishing touches: preserve edge-to-edge SVG artwork and mobile icon centering. */
+@media (max-width: 500px) {
+    .main-column .paw-room-note-trigger .paw-pet-note-icon {
+        transform: translateY(-2px);
+    }
+}
+/* Living Room Pet Notes: visible nameplate marker and a compact, non-modal message. */
+.living-room .nameplate.paw-nameplate-has-note {
+    width: max-content;
+    max-width: 140px;
+    padding: 3px 6px;
+}
+.paw-nameplate-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    min-width: 0;
+}
+.paw-nameplate-title b {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.living-room .paw-note-indicator {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 23px;
+    width: 23px;
+    height: 23px;
+    min-width: 23px;
+    padding: 0;
+    border: 1px solid #eab6d0;
+    border-radius: 50%;
+    background: #ffe3f0;
+    color: #a95080;
+    box-shadow: 0 1px 3px #a64a801f;
+    pointer-events: auto;
+    cursor: pointer;
+    touch-action: manipulation;
+    animation: paw-note-greeting 650ms ease-out 1;
+}
+.living-room .paw-note-indicator svg:first-child {
+    display: block;
+}
+.living-room .paw-note-indicator .paw-note-indicator-heart {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    fill: #f4a3c4;
+    background: #ffe3f0;
+    border-radius: 50%;
+}
+.living-room .paw-note-indicator:hover,
+.living-room .paw-note-indicator.is-open {
+    background: #f6bed9;
+    border-color: #d789b0;
+}
+.living-room .paw-note-indicator:focus-visible,
+.paw-room-note-popover-close:focus-visible {
+    outline: 2px solid #a9518b;
+    outline-offset: 2px;
+}
+@keyframes paw-note-greeting {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    38% {
+        transform: translateY(-3px);
+    }
+    72% {
+        transform: translateY(1px);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .living-room .paw-note-indicator {
+        animation: none;
+    }
+}
+.living-room .paw-room-note-popover {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 120;
+    width: max-content;
+    max-width: min(235px, calc(100% - 24px));
+    min-width: min(176px, calc(100% - 24px));
+    padding: 11px 12px 10px;
+    border: 2px solid #ecc1d6;
+    border-radius: 16px 16px 7px 16px;
+    background: #fffafc;
+    color: #744761;
+    box-shadow: 0 9px 24px #69425c30, inset 0 1px 0 white;
+    pointer-events: auto;
+    overflow-wrap: anywhere;
+    animation: paw-note-card-appear 150ms ease-out;
+}
+@keyframes paw-note-card-appear {
+    from {
+        opacity: .2;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.paw-room-note-popover-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 7px;
+}
+.paw-room-note-popover-from {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    font-size: 11px;
+    font-weight: 850;
+    color: #a15d87;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.paw-room-note-popover-close {
+    flex: 0 0 23px;
+    display: grid;
+    place-items: center;
+    width: 23px;
+    height: 23px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    color: #aa6d90;
+    background: #fbe8f1;
+}
+.paw-room-note-popover p {
+    margin: 9px 0 5px;
+    color: #6d4b60;
+    font-size: 13px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+.paw-room-note-popover > small {
+    display: block;
+    font-size: 10px;
+    color: #a17e93;
+}
+.paw-dark .paw-room-note-popover {
+    background: #493749;
+    border-color: #976b88;
+    color: #ffe3f2;
+}
+.paw-dark .paw-room-note-popover p {
+    color: #fff1f9;
+}
+@media (max-width: 600px) {
+    .living-room .nameplate.paw-nameplate-has-note {
+        max-width: 116px;
+        padding: 2px 4px;
+    }
+    .living-room .paw-note-indicator {
+        flex-basis: 22px;
+        width: 22px;
+        min-width: 22px;
+        height: 22px;
+    }
+    .living-room .paw-room-note-popover {
+        top: 9px;
+        right: 9px;
+        max-width: min(215px, calc(100% - 18px));
+    }
+}

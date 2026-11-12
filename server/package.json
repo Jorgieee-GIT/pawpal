@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "dev": "tsx watch src/index.ts",
+        "sandbox:seed": "tsx src/seedSandbox.ts --seed-local-sandbox",
         "build": "tsc",
         "start": "node dist/index.js",
         "db:init": "tsx src/init.ts",

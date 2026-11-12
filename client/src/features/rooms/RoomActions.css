@@ -1,0 +1,447 @@
+/* Batch 78: icon-only feeding and interactive care play picker */
+.paw-room-meals-trigger {
+    width: 43px;
+    height: 43px;
+    min-height: 43px;
+    padding: 0;
+    border-radius: 14px;
+    gap: 0;
+}
+.paw-play-picker {
+    max-width: 510px;
+    width: min(94vw,510px);
+}
+.paw-play-options {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 9px;
+    margin-top: 14px;
+}
+.paw-play-options button {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 53px;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 13px;
+    border: 1px solid #e8c8d7;
+    background: #fff8fc;
+    color: #7d4862;
+    font-weight: 750;
+    cursor: pointer;
+}
+.paw-play-options button:hover {
+    background: #fbe8f2;
+}
+.paw-play-options button svg {
+    flex-shrink: 0;
+}
+@media(max-width:380px) {
+    .paw-play-options {
+        grid-template-columns: 1fr;
+    }
+    .paw-room-meals-trigger {
+        width: 39px;
+        height: 39px;
+        min-height: 39px;
+        padding: 0;
+    }
+}
+/* Batch 79: room action dock and persistent sleep mode */
+.paw-room-action {
+    position: absolute;
+    bottom: 14px;
+    z-index: 12;
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    border: 1px solid #e8bacb;
+    background: #fff8fb;
+    color: #88566c;
+    box-shadow: 0 4px 12px #62415429;
+    cursor: pointer;
+    padding: 0;
+}
+.paw-room-play {
+    left: 65px;
+}
+.paw-room-nap {
+    left: 116px;
+}
+.paw-room-nap.active {
+    background: #ded3f4;
+    color: #654888;
+}
+.paw-room-sleeping::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: rgba(23,19,55,.40);
+    z-index: 7;
+    border-radius: inherit;
+}
+.paw-room-sleeping .wanderer.own {
+    z-index: 15!important;
+}
+.paw-room-sleeping .wanderer.own .pet-body {
+    filter: brightness(.78);
+}
+.paw-sleep-zzz {
+    position: absolute;
+    right: -8px;
+    top: -22px;
+    font-size: 24px;
+    font-weight: 900;
+    color: #d6c6ff;
+    text-shadow: 0 1px 5px #34264d;
+    animation: paw-sleep-float 2.4s ease-in-out infinite;
+}
+.paw-sleep-zzz sup {
+    font-size: 14px;
+}
+@keyframes paw-sleep-float {
+    50% {
+        transform: translateY(-8px);
+        opacity: .6;
+    }
+}
+.paw-sleep-status {
+    position: absolute;
+    bottom: 65px;
+    left: 14px;
+    z-index: 14;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 9px;
+    background: #f8f0ff;
+    color: #604579;
+    font-size: 11px;
+    font-weight: 750;
+    padding: 5px 8px;
+    box-shadow: 0 3px 10px #0002;
+}
+@media(max-width:430px) {
+    .paw-room-action {
+        bottom: 9px;
+        width: 39px;
+        height: 39px;
+    }
+    .paw-room-play {
+        left: 55px;
+    }
+    .paw-room-nap {
+        left: 101px;
+    }
+    .paw-sleep-status {
+        left: 9px;
+        bottom: 55px;
+        font-size: 10px;
+        max-width: calc(100% - 20px);
+    }
+}
+/* Batch 80: darken the complete room, not only the pet; keep interactive dock usable. */
+.living-room.paw-room-sleeping {
+    isolation: isolate;
+    filter: none!important;
+}
+.living-room.paw-room-sleeping::after {
+    content: ""!important;
+    position: absolute!important;
+    inset: 0!important;
+    background: rgba(15,16,40,.55)!important;
+    z-index: 50!important;
+    pointer-events: none!important;
+    border-radius: inherit;
+}
+.living-room.paw-room-sleeping .wanderer.own {
+    z-index: 55!important;
+}
+.living-room.paw-room-sleeping .paw-room-action,.living-room.paw-room-sleeping .paw-room-meals-trigger,.living-room.paw-room-sleeping .paw-sleep-status {
+    z-index: 60!important;
+}
+.living-room.paw-room-sleeping .wanderer.own .pet-body {
+    filter: brightness(.7);
+}
+/* Batch 81: explicit night overlay, independent of themed room pseudo-elements. */
+.living-room.paw-room-sleeping::after {
+    content: none!important;
+    display: none!important;
+}
+.living-room .paw-room-night-overlay {
+    position: absolute!important;
+    inset: 0!important;
+    width: 100%;
+    height: 100%;
+    background: rgba(12,14,37,.64)!important;
+    z-index: 900!important;
+    pointer-events: none!important;
+    border-radius: inherit;
+}
+.living-room.paw-room-sleeping .wanderer.own {
+    z-index: 920!important;
+}
+.living-room.paw-room-sleeping .paw-room-action,.living-room.paw-room-sleeping .paw-room-meals-trigger,.living-room.paw-room-sleeping .paw-sleep-status {
+    position: absolute!important;
+    z-index: 1000!important;
+    pointer-events: auto!important;
+}
+.living-room.paw-room-sleeping .paw-room-nap {
+    cursor: pointer!important;
+    opacity: 1!important;
+}
+/* Batch 82: keep sleep controls operable on desktop across room themes. */
+.living-room.paw-room-sleeping .paw-room-night-overlay {
+    pointer-events: none!important;
+}
+.living-room.paw-room-sleeping button.paw-room-nap {
+    z-index: 2147483000!important;
+    pointer-events: auto!important;
+    isolation: isolate;
+    transform: translateZ(0);
+}
+.room-header .paw-room-header-right {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.room-header .paw-wake-header {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    border: 1px solid #b8a1d8;
+    border-radius: 9px;
+    background: #efe6ff;
+    color: #604579;
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+}
+.room-header .paw-wake-header:disabled {
+    opacity: .5;
+    cursor: wait;
+}
+/* Batch 83: wake controls never inherit global action busy state or night overlay hit-testing. */
+.room-header {
+    position: relative;
+    z-index: 1010!important;
+}
+.room-header .paw-wake-header {
+    position: relative;
+    z-index: 1011!important;
+    pointer-events: auto!important;
+    touch-action: manipulation;
+}
+.living-room .paw-room-night-overlay {
+    pointer-events: none!important;
+}
+.living-room .paw-room-nap {
+    pointer-events: auto!important;
+    touch-action: manipulation;
+}
+/* Batch 87: interactive bathing beside sleep. */
+.paw-room-bathe {
+    left: 167px;
+}
+.paw-room-bathe.active {
+    background: #d9f3fa;
+    color: #236d88;
+    border-color: #86d1e3;
+}
+.paw-bath-hint {
+    position: absolute;
+    left: 14px;
+    bottom: 65px;
+    z-index: 1002;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: #f1fcff;
+    color: #316b82;
+    border: 1px solid #b8e5f1;
+    border-radius: 10px;
+    padding: 6px 9px;
+    font-size: 11px;
+    font-weight: 700;
+    pointer-events: none;
+}
+.paw-scrub-target {
+    touch-action: none;
+    cursor: grab;
+    outline: 2px dashed #8cd6e7;
+    outline-offset: 4px;
+    border-radius: 40%;
+}
+.paw-scrub-target:active {
+    cursor: grabbing;
+}
+.living-room.paw-room-sleeping .paw-room-bathe,.living-room.paw-room-sleeping .paw-bath-hint {
+    z-index: 1002!important;
+}
+@media(max-width:430px) {
+    .paw-room-bathe {
+        left: 147px;
+    }
+    .paw-bath-hint {
+        left: 9px;
+        bottom: 55px;
+        font-size: 10px;
+    }
+}
+/* Batch 88: allow real mouse/touch events to reach the pet while bathing.
+   The original .wanderer uses pointer-events:none, preventing scrubbing entirely. */
+.living-room .wanderer.own:has(.paw-scrub-target) {
+    pointer-events: auto!important;
+}
+.living-room .wanderer.own .paw-scrub-target {
+    pointer-events: auto!important;
+    touch-action: none!important;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+}
+.living-room .wanderer.own .paw-scrub-target:active {
+    cursor: grabbing;
+}
+.living-room .wanderer.own .paw-scrub-target svg,.living-room .wanderer.own .paw-scrub-target svg * {
+    pointer-events: none;
+}
+/* Batch 89: interactive room cuddles */
+.paw-room-cuddle {
+    position: relative;
+    z-index: 35;
+}
+.paw-room-cuddle.active {
+    background: #ffe4ed!important;
+    color: #be426f!important;
+    border-color: #eaa6bf!important;
+}
+.paw-cuddle-hint {
+    position: absolute;
+    left: 12px;
+    bottom: 68px;
+    z-index: 35;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: #fff6faed;
+    color: #9d3d65;
+    font-size: 11px;
+    pointer-events: none;
+}
+.paw-cuddle-target {
+    touch-action: none!important;
+    cursor: grab!important;
+    pointer-events: auto!important;
+}
+.paw-cuddle-target:active {
+    cursor: grabbing!important;
+}
+.paw-cuddle-hearts {
+    position: absolute;
+    top: -14px;
+    left: 35%;
+    color: #ff5896;
+    font-size: 23px;
+    pointer-events: none;
+    animation: pawCuddleFloat 1.2s ease-in-out infinite alternate;
+}
+@keyframes pawCuddleFloat {
+    to {
+        transform: translateY(-13px);
+        opacity: .5;
+    }
+}
+/* Batch 90: Keep Cuddle in the same bottom-left dock as Feed, Play, Sleep, Bath.
+   Batch 89 accidentally used position:relative, pushing it into document flow. */
+.living-room button.paw-room-cuddle {
+    position: absolute!important;
+    left: 218px;
+    bottom: 14px;
+    z-index: 35;
+}
+@media(max-width:430px) {
+    .living-room button.paw-room-cuddle {
+        left: 193px;
+        bottom: 9px;
+    }
+}
+.living-room.paw-room-sleeping button.paw-room-cuddle {
+    z-index: 1002!important;
+    pointer-events: auto!important;
+}
+/* SVG sponge tracks mouse, stylus and touch during the existing scrub interaction. */
+.paw-svg-sponge {
+    position: absolute;
+    z-index: 60;
+    pointer-events: none;
+    transform: translate(-45%,-55%) rotate(-16deg);
+    opacity: 0;
+    transition: opacity .12s ease;
+    filter: drop-shadow(0 3px 2px rgba(90,70,55,.18));
+}
+.paw-svg-sponge.is-visible {
+    opacity: 1;
+}
+.living-room .wanderer.own .paw-scrub-target {
+    cursor: none!important;
+}
+@media (prefers-reduced-motion:reduce) {
+    .paw-svg-sponge {
+        transition: none;
+    }
+}
+/* Wardrobe controls: flat, solid pastel buttons with no raised 3D treatment. */
+.v8-wardrobe .paw-wardrobe-equip {
+    appearance: none;
+    background: #eaa5c4 !important;
+    color: #58384c !important;
+    border: 1px solid #d98eb1 !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+    font-weight: 700 !important;
+    transition: background-color 150ms ease, border-color 150ms ease !important;
+}
+.v8-wardrobe .paw-wardrobe-equip:hover:not(:disabled) {
+    background: #f2bdd4 !important;
+    border-color: #ce7fa6 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transform: none !important;
+}
+.v8-wardrobe .paw-wardrobe-equip:active:not(:disabled) {
+    background: #dc91b4 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+.v8-wardrobe .paw-wardrobe-equip:focus-visible {
+    outline: 2px solid #a95582;
+    outline-offset: 2px;
+}
+.v8-wardrobe .paw-wardrobe-equip:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none !important;
+}
+.paw-dark .v8-wardrobe .paw-wardrobe-equip {
+    background: #855875 !important;
+    color: #fff2f8 !important;
+    border-color: #a77896 !important;
+}
+.paw-dark .v8-wardrobe .paw-wardrobe-equip:hover:not(:disabled) {
+    background: #986a89 !important;
+}

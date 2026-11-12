@@ -23,6 +23,7 @@ type SettingsModalProps = {
     zone: MusicZone;
     canReport: boolean;
     onSendReport: (category: "bug" | "player" | "feedback" | "other", description: string) => Promise<void>;
+    onOpenPolicy: (page: "privacy" | "terms") => void;
 };
 
 const APPEARANCE_OPTIONS: Array<{
@@ -56,7 +57,8 @@ export default function SettingsModal({
     onAudioChange,
     zone,
     onSendReport,
-    canReport
+    canReport,
+    onOpenPolicy
 }: SettingsModalProps) {
     const [reportCategory, setReportCategory] = useState<"bug" | "player" | "feedback" | "other">("bug");
     const [reportDescription, setReportDescription] = useState("");
@@ -229,8 +231,7 @@ export default function SettingsModal({
                     </form>
                 </section>}
                 <div className="paw-settings-footer">
-                    <span>Preferences are saved on this device.</span>
-                    <button type="button" className="paw-settings-done" onClick={onClose}>Done</button>
+                    <div className="paw-settings-legal"><button type="button" onClick={() => onOpenPolicy("terms")}>Terms of Service</button><button type="button" onClick={() => onOpenPolicy("privacy")}>Privacy Policy</button></div>
                 </div>
             </section>
         </div>

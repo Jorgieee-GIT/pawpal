@@ -541,6 +541,7 @@ export default function RoomPanel({
                     )}
                     <div className="wall-art">♡</div>
                     <RoomArchitecture room={pet.active_room || "living"} />
+                    <div className="paw-room-dark-overlay" aria-hidden="true" />
                     <RoomFurniture
                         room={pet.active_room || "living"}
                         layout={furnitureLayout(pet.active_room || "living", pet.room_layouts)}

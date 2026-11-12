@@ -1,0 +1,1843 @@
+/* Lucky Garden revamp — a shared outdoor setting with miniature raised beds. */
+.paw-garden-panel {
+    --garden-rose: #9c6484;
+    --garden-ink: #76536c;
+    overflow: hidden;
+}
+.paw-garden-header {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+}
+.paw-garden-header-copy h2 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 3px 0 6px;
+}
+.paw-garden-header-copy h2 svg {
+    color: #d88ba3;
+}
+.paw-garden-header-copy p {
+    margin: 0;
+    color: #9c738b;
+    font-size: 13px;
+    line-height: 1.5;
+}
+.paw-garden-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.paw-garden-header-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: 1.5px solid #eac3d2;
+    background: #fff9fa;
+    color: #945976;
+    padding: 9px 12px;
+    border-radius: 13px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.paw-garden-header-actions button:hover {
+    background: #fce8f1;
+}
+.paw-garden-header-actions button span {
+    padding: 2px 6px;
+    border-radius: 8px;
+    background: #f2dbe6;
+    font-size: 10px;
+}
+.paw-garden-stock {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 9px;
+    margin-bottom: 16px;
+}
+.paw-garden-stock > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-width: 0;
+    border: 1px solid #efd9d7;
+    border-radius: 15px;
+    padding: 10px 6px;
+    background: #fff9f4;
+}
+.paw-garden-stock > div:nth-child(2) {
+    background: #f0f8fc;
+}
+.paw-garden-stock > div:nth-child(3) {
+    background: #fdf0f6;
+}
+.paw-garden-stock > div:nth-child(4) {
+    background: #f1f9ed;
+}
+.paw-garden-stock svg {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    color: #8eb18a;
+}
+.paw-garden-stock span {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+}
+.paw-garden-stock strong {
+    font-size: 17px;
+    line-height: 1.1;
+    color: #76536c;
+}
+.paw-garden-stock small {
+    font-size: 10px;
+    color: #9e7c8d;
+}
+.paw-garden-landscape {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 2px solid #bad5ab;
+    border-radius: 24px;
+    padding: 25px 16px 17px;
+    background: linear-gradient(180deg,#d9f4f7 0%,#e3f4d7 19%,#a9d797 36%,#b8dba4 100%);
+    box-shadow: inset 0 4px 13px #ffffff99;
+}
+.paw-garden-scenery {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.paw-garden-sun {
+    position: absolute;
+    top: 20px;
+    right: 15%;
+    width: 47px;
+    height: 47px;
+    border-radius: 50%;
+    background: #fff4bd;
+    box-shadow: 0 0 0 11px #fff9d65c;
+}
+.paw-garden-cloud {
+    position: absolute;
+    top: 19px;
+    left: 11%;
+    width: 89px;
+    height: 22px;
+    border-radius: 99px;
+    background: #fffefa9c;
+    box-shadow: 18px -12px 0 -2px #fffefa9c,48px -8px 0 0 #fffefa9c;
+}
+.paw-garden-cloud.cloud-two {
+    left: auto;
+    right: 30%;
+    top: 64px;
+    transform: scale(.65);
+    opacity: .8;
+}
+.paw-garden-hill {
+    position: absolute;
+    top: 73px;
+    left: -12%;
+    height: 98px;
+    width: 72%;
+    border-radius: 55% 55% 0 0;
+    background: #9ed08f;
+    opacity: .9;
+}
+.paw-garden-hill.hill-two {
+    left: 44%;
+    top: 82px;
+    width: 79%;
+    background: #8fc481;
+}
+.paw-garden-fence {
+    position: absolute;
+    top: 132px;
+    left: 0;
+    right: 0;
+    height: 26px;
+    opacity: .42;
+    background: repeating-linear-gradient(90deg,transparent 0 7px,#f9f0d9 7px 17px,transparent 17px 23px),linear-gradient(transparent 8px,#f9f0d9 8px 14px,transparent 14px);
+}
+.paw-garden-butterfly {
+    position: absolute;
+    right: 6%;
+    top: 70px;
+    color: #fff2f6;
+    font-size: 24px;
+    text-shadow: 2px 2px #da86a3;
+}
+.paw-garden-scene-title {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    width: max-content;
+    max-width: 100%;
+    padding: 8px 13px;
+    border: 1px solid #c5d8b0;
+    border-radius: 99px;
+    background: #fff9eae8;
+    color: #64836a;
+    font-size: 12px;
+    font-weight: 900;
+    margin-bottom: 16px;
+    box-shadow: 0 3px 0 #80aa723d;
+}
+.paw-garden-scene-title small {
+    font-size: 10px;
+    font-weight: 700;
+    color: #82957f;
+    margin-left: 5px;
+}
+.paw-garden-bed-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 18px 13px;
+}
+.paw-garden-bed {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+    min-height: 227px;
+    padding: 31px 9px 11px;
+    border: 1px solid #afd29a;
+    border-radius: 20px;
+    background: linear-gradient(160deg,#ffffff4d,#f9f5dd35 50%,#7abf7550);
+    box-shadow: 0 8px 0 #78ac6740, inset 0 1px 1px #ffffffb5;
+    color: var(--garden-ink);
+    text-align: center;
+}
+.paw-garden-bed::before {
+    content: '';
+    position: absolute;
+    bottom: 44px;
+    left: 6%;
+    right: 6%;
+    height: 28%;
+    border-radius: 50%;
+    background: #8fbc81a1;
+    filter: blur(12px);
+    pointer-events: none;
+}
+.paw-garden-wood-sign {
+    position: absolute;
+    top: 9px;
+    left: 9px;
+    z-index: 2;
+    padding: 4px 8px 5px;
+    border: 2px solid #926b54;
+    border-radius: 6px 6px 9px 9px;
+    background: linear-gradient(#f8d8a5,#d4a379);
+    box-shadow: 0 3px 0 #986548;
+    color: #764e3b;
+    text-shadow: 0 1px #ffe8c4;
+    letter-spacing: .7px;
+    font-size: 9px;
+    font-weight: 950;
+}
+.paw-garden-bed-art {
+    position: relative;
+    width: 100%;
+    max-width: 245px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 112px;
+}
+.paw-garden-bed-svg {
+    width: 100%;
+    max-height: 164px;
+    overflow: visible;
+    filter: drop-shadow(0 6px 3px #547b5033);
+}
+.paw-garden-live-plant {
+    transform-origin: 50% 75%;
+    animation: paw-garden-sway 3.8s ease-in-out infinite alternate;
+}
+@keyframes paw-garden-sway {
+    from {
+        transform: rotate(-2deg);
+    }
+    to {
+        transform: rotate(2deg);
+    }
+}
+.paw-garden-bud-sparkles {
+    animation: paw-garden-glitter 1.7s ease-in-out infinite alternate;
+}
+@keyframes paw-garden-glitter {
+    from {
+        opacity: .4;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.paw-garden-bed-status {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    min-width: 0;
+    max-width: 100%;
+    padding: 5px 8px;
+    border-radius: 10px;
+    color: #695e56;
+    background: #fffcefdb;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+.paw-garden-bed-status.is-ready {
+    background: #ffedc3;
+    color: #916329;
+}
+.paw-garden-plot-action {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    min-height: 34px;
+    margin-top: 7px;
+    padding: 7px 10px;
+    width: 100%;
+    border: 1px solid #b38f7d;
+    border-radius: 11px;
+    background: #fff5e8;
+    color: #825c61;
+    font-weight: 900;
+    font-size: 11px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #a679654c;
+}
+.paw-garden-plot-action.plant {
+    background: #fff0e4;
+}
+.paw-garden-plot-action.harvest {
+    background: #d18caa;
+    border-color: #b67c9a;
+    color: #fff;
+    box-shadow: 0 3px 0 #93567866;
+}
+.paw-garden-plot-action.water {
+    background: #e6f5fa;
+    color: #527f95;
+    border-color: #a9c4d0;
+}
+.paw-garden-plot-action:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+.paw-garden-locked-bed {
+    border: 2px dashed #94af8c;
+    cursor: pointer;
+    font: inherit;
+}
+.paw-garden-locked-bed:disabled {
+    cursor: not-allowed;
+    opacity: .7;
+}
+.paw-garden-locked-label {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 8px;
+    font-size: 11px;
+    font-weight: 900;
+    border-radius: 9px;
+    background: #fff8ed;
+}
+.paw-garden-locked-price {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 34px;
+    margin-top: 7px;
+    border: 1px solid #bc9c77;
+    background: #f7d49c;
+    border-radius: 11px;
+    font-weight: 900;
+    font-size: 12px;
+}
+.paw-garden-landscape-foot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #486d4e;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.45;
+    margin-top: 20px;
+    padding: 8px 12px;
+    border-radius: 11px;
+    background: #e7f2dddb;
+}
+.paw-garden-landscape-foot svg {
+    flex: none;
+}
+.paw-garden-supplies {
+    margin-top: 20px;
+}
+.paw-garden-supplies-intro {
+    margin-bottom: 11px;
+}
+.paw-garden-supplies h3 {
+    color: var(--garden-ink);
+    font-size: 19px;
+    margin: 0 0 5px;
+}
+.paw-garden-supplies p {
+    color: #9d7d8c;
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0;
+}
+.paw-garden-shop-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 12px;
+}
+.paw-garden-shop-card {
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #ecd1d9;
+    background: #fff8f6;
+    border-radius: 17px;
+}
+.paw-garden-shop-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+.paw-garden-shop-heading svg {
+    width: 44px;
+    height: 44px;
+    flex: none;
+}
+.paw-garden-shop-heading strong {
+    display: block;
+    font-size: 13px;
+    color: #81536f;
+}
+.paw-garden-shop-heading small {
+    display: block;
+    font-size: 11px;
+    color: #96778b;
+}
+.paw-garden-shop-controls {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+.paw-garden-qty {
+    display: flex;
+    height: 34px;
+    border: 1px solid #e2b7ca;
+    border-radius: 10px;
+    overflow: hidden;
+    background: white;
+}
+.paw-garden-qty button {
+    width: 29px;
+    border: 0;
+    border-radius: 0;
+    color: #a56786;
+    background: #ffeaf2;
+    font-weight: 900;
+    font-size: 17px;
+    cursor: pointer;
+}
+.paw-garden-qty output {
+    min-width: 25px;
+    padding-top: 7px;
+    font-size: 12px;
+    text-align: center;
+    color: #81536f;
+    font-weight: 900;
+}
+.paw-garden-shop-buy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 11px;
+    color: white;
+    background: #cf80a8;
+    font-size: 11px;
+    font-weight: 900;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.paw-garden-shop-buy:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+.paw-garden-modal-backdrop {
+    z-index: 13000;
+}
+.paw-garden-guide-modal {
+    width: min(760px,calc(100vw - 22px));
+    max-height: 90dvh;
+    overflow-y: auto;
+    padding: 20px;
+}
+.paw-garden-guide-modal .paw-modal-top p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #97728c;
+}
+.paw-garden-guide-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 15px;
+}
+.paw-garden-guide-tabs button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 12px;
+    border: 1px solid #e6bfd0;
+    border-radius: 10px;
+    color: #996782;
+    background: #fff6fa;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.paw-garden-guide-tabs button.active {
+    background: #d58eac;
+    border-color: #b8799b;
+    color: white;
+}
+.paw-garden-discovery-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 11px;
+    margin-top: 16px;
+}
+.paw-garden-discovery {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    border: 1px solid #ebd1d9;
+    border-radius: 16px;
+    padding: 10px;
+    background: #fff9fa;
+}
+.paw-garden-discovery-art {
+    display: grid;
+    place-items: center;
+    width: 90px;
+    height: 96px;
+    flex: 0 0 90px;
+    background: radial-gradient(circle,#fffbe5,#f7e6f2);
+    border-radius: 14px;
+    position: relative;
+}
+.paw-garden-discovery-art > svg {
+    width: 80px;
+    height: 86px;
+}
+.paw-garden-mystery-flower {
+    font-size: 46px;
+    font-weight: 900;
+    color: #c9b8c1;
+}
+.paw-garden-discovery-art > svg:last-child:not(:first-child) {
+    position: absolute;
+    right: 8px;
+    bottom: 9px;
+    width: 18px;
+    height: 18px;
+}
+.paw-garden-discovery-info {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+}
+.paw-garden-discovery-info h3 {
+    margin: 0;
+    color: #815b74;
+    font-size: 14px;
+    line-height: 1.25;
+}
+.paw-garden-rarity {
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: 900;
+    padding: 5px 9px;
+    border-radius: 99px;
+    background: #f4dfea;
+    color: #9e597c;
+}
+.paw-garden-rarity.rarity-wilted {
+    background: #ebe0dc;
+    color: #8c7167;
+}
+.paw-garden-rarity.rarity-uncommon {
+    background: #e9dcfb;
+    color: #7861ac;
+}
+.paw-garden-rarity.rarity-rare {
+    background: #d9f4fb;
+    color: #3b829c;
+}
+.paw-garden-rarity.rarity-legendary {
+    background: #fff1ba;
+    color: #a06a22;
+}
+.paw-garden-discovery-info p {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    line-height: 1.25;
+    margin: 0;
+    color: #987787;
+}
+.paw-garden-discovery-info strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #9c7542;
+}
+.paw-garden-guide-note {
+    color: #957a89;
+    line-height: 1.55;
+    font-size: 12px;
+    margin: 15px 0 0;
+}
+.paw-garden-reveal {
+    width: min(420px,calc(100vw - 26px));
+    text-align: center;
+    max-height: 90dvh;
+    overflow-y: auto;
+    padding: 24px;
+    border: 2px solid #eed5c9;
+    background: linear-gradient(#fffdfa,#fff0f6);
+}
+.paw-garden-reveal-stars {
+    color: #eebd70;
+    font-size: 20px;
+    letter-spacing: 11px;
+    margin-bottom: 6px;
+}
+.paw-garden-reveal-art {
+    width: 185px;
+    height: 180px;
+    max-width: 58vw;
+    margin: 4px auto 8px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: radial-gradient(circle,#fff7d9,#f6d8e5 65%,transparent 70%);
+}
+.paw-garden-reveal-art svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 5px 3px #aa709c33);
+}
+.paw-garden-reveal h2 {
+    margin: 9px 0 10px;
+    color: #85546e;
+}
+.paw-garden-reveal-reward {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+    padding: 12px;
+    background: #fff2d4;
+    border: 1px solid #f0d6a3;
+    border-radius: 14px;
+    color: #936934;
+}
+.paw-garden-reveal-reward strong {
+    font-size: 18px;
+}
+.paw-garden-reveal-reward small {
+    font-size: 11px;
+}
+.paw-garden-reveal.rarity-legendary {
+    border-color: #ebc57f;
+    background: linear-gradient(#fffdf4,#fff1cd);
+}
+.paw-garden-first-find {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #e7f5e5;
+    color: #5c8a66;
+    font-size: 12px;
+    font-weight: 900;
+}
+.paw-garden-reveal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 7px;
+    width: 100%;
+    padding: 12px;
+    border: 0;
+    border-radius: 12px;
+    background: #d187a8;
+    color: #fff;
+    font-weight: 900;
+    cursor: pointer;
+}
+.paw-garden-view-book {
+    margin-top: 9px;
+    background: none;
+    border: 0;
+    color: #976d88;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.paw-dark .paw-garden-header-copy p,.paw-dark .paw-garden-supplies p {
+    color: #e9c3d8;
+}
+.paw-dark .paw-garden-header-actions button {
+    background: #64465a;
+    color: #ffe6f1;
+    border-color: #926d83;
+}
+.paw-dark .paw-garden-stock > div {
+    background: #5a4655;
+    border-color: #8e6a7c;
+}
+.paw-dark .paw-garden-stock strong,.paw-dark .paw-garden-supplies h3 {
+    color: #ffe7ee;
+}
+.paw-dark .paw-garden-stock small {
+    color: #e8c1d3;
+}
+.paw-dark .paw-garden-landscape {
+    border-color: #637b77;
+    background: linear-gradient(180deg, #252b43 0%, #34394f 25%, #3b514b 54%, #30443d 100%);
+    box-shadow: inset 0 4px 18px rgb(10 15 34 / 42%);
+}
+.paw-dark .paw-garden-scenery::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 44%;
+    background:
+        radial-gradient(circle at 8% 26%, #f5e8bd 0 1px, transparent 2px),
+        radial-gradient(circle at 24% 58%, #f5e8bd 0 1px, transparent 2px),
+        radial-gradient(circle at 39% 22%, #f5e8bd 0 1px, transparent 2px),
+        radial-gradient(circle at 57% 48%, #f5e8bd 0 1px, transparent 2px),
+        radial-gradient(circle at 73% 20%, #f5e8bd 0 1px, transparent 2px),
+        radial-gradient(circle at 91% 54%, #f5e8bd 0 1px, transparent 2px);
+    opacity: .82;
+}
+.paw-dark .paw-garden-sun {
+    background: #e6e4c7;
+    box-shadow: 0 0 0 9px rgb(204 209 198 / 10%), 0 0 24px rgb(225 229 206 / 24%);
+}
+.paw-dark .paw-garden-cloud {
+    background: #abb8c7a8;
+    box-shadow: 18px -12px 0 -2px #abb8c7a8, 48px -8px 0 0 #abb8c7a8;
+}
+.paw-dark .paw-garden-hill {
+    background: #4a6457;
+}
+.paw-dark .paw-garden-hill.hill-two {
+    background: #3f574f;
+}
+.paw-dark .paw-garden-fence {
+    opacity: .3;
+    background: repeating-linear-gradient(90deg, transparent 0 7px, #d8cedb 7px 17px, transparent 17px 23px), linear-gradient(transparent 8px, #d8cedb 8px 14px, transparent 14px);
+}
+.paw-dark .paw-garden-shop-card,.paw-dark .paw-garden-discovery {
+    background: #594452;
+    border-color: #8d657a;
+}
+.paw-dark .paw-garden-shop-heading strong,.paw-dark .paw-garden-discovery-info h3 {
+    color: #ffe3ed;
+}
+.paw-dark .paw-garden-shop-heading small,.paw-dark .paw-garden-guide-note,.paw-dark .paw-garden-guide-modal .paw-modal-top p {
+    color: #e0bfd0;
+}
+.paw-dark .paw-garden-guide-modal {
+    background: #453444;
+}
+.paw-dark .paw-garden-guide-tabs button {
+    background: #654a60;
+    color: #f9dce9;
+    border-color: #977289;
+}
+.paw-dark .paw-garden-guide-tabs button.active {
+    background: #b87a9a;
+}
+@media(max-width:1100px) {
+    .paw-garden-bed-grid {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+    }
+}
+@media(max-width:700px) {
+    .paw-garden-header-actions {
+        width: 100%;
+    }
+    .paw-garden-header-actions button {
+        flex: 1;
+        justify-content: center;
+    }
+    .paw-garden-bed-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 11px 9px;
+    }
+    .paw-garden-landscape {
+        padding: 18px 8px 13px;
+    }
+    .paw-garden-bed {
+        padding: 28px 6px 8px;
+        min-height: 195px;
+        border-radius: 15px;
+    }
+    .paw-garden-bed-art {
+        min-height: 100px;
+    }
+    .paw-garden-bed-svg {
+        max-height: 135px;
+    }
+    .paw-garden-stock {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 7px;
+    }
+    .paw-garden-shop-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media(max-width:520px) {
+    .paw-garden-discovery-grid {
+        grid-template-columns: 1fr;
+    }
+    .paw-garden-guide-modal {
+        padding: 14px;
+    }
+    .paw-garden-discovery-art {
+        width: 72px;
+        height: 79px;
+        flex-basis: 72px;
+    }
+    .paw-garden-discovery-art > svg {
+        width: 65px;
+        height: 72px;
+    }
+}
+@media(max-width:370px) {
+    .paw-garden-bed {
+        padding: 28px 4px 7px;
+        min-height: 185px;
+    }
+    .paw-garden-bed-status {
+        font-size: 9px;
+        padding: 5px 4px;
+    }
+    .paw-garden-plot-action {
+        font-size: 10px;
+        padding: 6px 4px;
+    }
+    .paw-garden-shop-card {
+        padding: 9px;
+    }
+    .paw-garden-shop-heading svg {
+        width: 34px;
+        height: 34px;
+    }
+    .paw-garden-shop-buy {
+        font-size: 10px;
+    }
+    .paw-garden-stock > div {
+        gap: 6px;
+    }
+}
+@media(prefers-reduced-motion:reduce) {
+    .paw-garden-live-plant,.paw-garden-bud-sparkles {
+        animation: none;
+    }
+}
+/* Lucky Garden — compact beds and mobile-friendly supplies (October 2026). */
+.paw-garden-bed-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px 8px;
+}
+.paw-garden-bed {
+    min-height: 163px;
+    padding: 26px 5px 8px;
+    border-radius: 14px;
+}
+.paw-garden-wood-sign {
+    top: 6px;
+    left: 6px;
+    padding: 3px 5px;
+    font-size: 8px;
+}
+.paw-garden-bed-art {
+    min-height: 78px;
+}
+.paw-garden-bed-svg {
+    max-height: 113px;
+}
+.paw-garden-bed-status {
+    min-height: 28px;
+    padding: 4px 3px;
+    font-size: 9px;
+    line-height: 1.15;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.paw-garden-plot-action,
+.paw-garden-locked-price {
+    min-height: 31px;
+    padding: 6px 3px;
+    margin-top: 5px;
+    font-size: 9px;
+    line-height: 1.15;
+    gap: 3px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.paw-garden-locked-label {
+    min-height: 28px;
+    font-size: 9px;
+    padding: 4px 3px;
+    gap: 3px;
+}
+.paw-garden-plot-action svg,
+.paw-garden-locked-label svg,
+.paw-garden-locked-price svg,
+.paw-garden-bed-status svg {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
+.paw-garden-shop-grid {
+    align-items: stretch;
+}
+.paw-garden-shop-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 10px;
+}
+.paw-garden-shop-controls {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+.paw-garden-qty {
+    min-width: 0;
+    justify-content: space-between;
+}
+.paw-garden-shop-buy {
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.2;
+    text-align: center;
+}
+@media (max-width: 1100px) {
+    .paw-garden-bed-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        max-width: 620px;
+        margin: 0 auto;
+    }
+}
+@media (max-width: 700px) {
+    .paw-garden-bed-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 9px 6px;
+    }
+    .paw-garden-landscape {
+        padding: 17px 6px 13px;
+    }
+    .paw-garden-bed {
+        padding: 24px 3px 6px;
+        min-height: 151px;
+        border-radius: 12px;
+    }
+    .paw-garden-bed-art {
+        min-height: 69px;
+    }
+    .paw-garden-bed-svg {
+        max-height: 96px;
+    }
+    .paw-garden-bed-status {
+        font-size: 8px;
+        min-height: 27px;
+    }
+    .paw-garden-plot-action,
+    .paw-garden-locked-price {
+        font-size: 8.5px;
+        min-height: 30px;
+    }
+    .paw-garden-shop-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+    .paw-garden-shop-card {
+        padding: 12px;
+    }
+    .paw-garden-shop-heading {
+        gap: 10px;
+    }
+    .paw-garden-shop-controls {
+        grid-template-columns: minmax(94px, auto) minmax(0, 1fr);
+    }
+    .paw-garden-qty {
+        height: 38px;
+    }
+    .paw-garden-qty button {
+        width: 32px;
+    }
+    .paw-garden-qty output {
+        padding-top: 9px;
+    }
+    .paw-garden-shop-buy {
+        padding: 8px 10px;
+        min-height: 38px;
+        font-size: 12px;
+    }
+}
+@media (max-width: 370px) {
+    .paw-garden-bed-grid {
+        gap: 8px 4px;
+    }
+    .paw-garden-bed {
+        min-height: 141px;
+        padding: 23px 2px 6px;
+    }
+    .paw-garden-wood-sign {
+        font-size: 7px;
+        padding: 2px 4px;
+    }
+    .paw-garden-bed-art {
+        min-height: 61px;
+    }
+    .paw-garden-bed-svg {
+        max-height: 83px;
+    }
+    .paw-garden-bed-status {
+        font-size: 7.5px;
+        min-height: 26px;
+    }
+    .paw-garden-plot-action,
+    .paw-garden-locked-price,
+    .paw-garden-locked-label {
+        font-size: 8px;
+    }
+    .paw-garden-plot-action svg,
+    .paw-garden-locked-label svg,
+    .paw-garden-locked-price svg,
+    .paw-garden-bed-status svg {
+        width: 10px;
+        height: 10px;
+    }
+    .paw-garden-shop-controls {
+        grid-template-columns: minmax(94px, auto) minmax(0, 1fr);
+        gap: 6px;
+    }
+}
+/* Unified SVG heading treatment across all main gameplay pages. */
+.paw-section-title {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    max-width: 100%;
+    margin: 3px 0 14px;
+}
+.paw-section-title > svg {
+    display: block;
+    flex: 0 0 23px;
+    width: 23px;
+    height: 23px;
+    color: #d88ba3;
+    stroke: currentColor;
+}
+.paw-garden-header-copy .paw-section-title {
+    margin: 3px 0 6px;
+}
+.paw-dark .paw-section-title > svg {
+    color: #e9afcf;
+}
+/* The timer has one stable numeric line; stage detail remains in its accessible label. */
+.paw-garden-bed-status {
+    box-sizing: border-box;
+    flex: 0 0 28px;
+    width: 100%;
+    height: 28px;
+    min-height: 28px;
+    max-height: 28px;
+    overflow: hidden;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.paw-garden-bed-status svg {
+    flex: 0 0 auto;
+}
+.paw-garden-countdown {
+    display: inline-block;
+    min-width: 5ch;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum';
+    white-space: nowrap;
+    text-align: center;
+}
+/* Tablets navigate with the same collapsible menu as phones. */
+@media (max-width: 1100px) {
+    .layout {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+    .sidebar:not(.menu-open) {
+        display: none !important;
+    }
+    .sidebar.menu-open {
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        max-height: 70dvh;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        animation: paw-menu-reveal .25s cubic-bezier(.2,.8,.2,1) both;
+    }
+    .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .paw-account-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) 40px;
+    }
+    .paw-account-summary .mobile-menu-toggle {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        min-height: 40px;
+        margin: auto 0;
+        padding: 0;
+        border: 0 !important;
+        background: transparent !important;
+        color: inherit !important;
+        box-shadow: none !important;
+    }
+}
+@media (max-width: 700px) {
+    .sidebar nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .heading.paw-dashboard-heading {
+        position: relative;
+    }
+    .paw-dashboard-greeting {
+        padding-right: 43px;
+    }
+    .paw-account-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .paw-account-summary .mobile-menu-toggle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+        min-height: 38px;
+    }
+}
+/* All four stock counters stay together in one compact mobile / small-tablet row. */
+@media (max-width: 700px) {
+    .paw-garden-stock {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 5px;
+    }
+    .paw-garden-stock > div {
+        box-sizing: border-box;
+        min-width: 0;
+        padding: 7px 2px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        border-radius: 11px;
+    }
+    .paw-garden-stock svg {
+        width: 23px;
+        height: 23px;
+    }
+    .paw-garden-stock span {
+        justify-items: center;
+        gap: 1px;
+        width: 100%;
+        text-align: center;
+    }
+    .paw-garden-stock strong {
+        font-size: 14px;
+        line-height: 1.15;
+    }
+    .paw-garden-stock small {
+        font-size: clamp(7px, 2.1vw, 9px);
+        line-height: 1.15;
+        white-space: nowrap;
+        letter-spacing: -.15px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sidebar.menu-open {
+        animation: none;
+    }
+}
+
+/* One shared soil bed keeps the plots compact and leaves room for the plants. */
+.paw-garden-bed-grid {
+    display: block;
+    position: relative;
+    height: 600px;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 18px 12px 14px;
+    border: 8px solid #a87653;
+    border-radius: 24px;
+    background-color: #79513d;
+    background-image:
+        radial-gradient(ellipse at 18% 28%, #a8765338 0 2px, transparent 3px),
+        radial-gradient(ellipse at 76% 65%, #442d2738 0 2px, transparent 3px),
+        repeating-linear-gradient(168deg, transparent 0 31px, #52382b26 32px 34px, transparent 35px 59px);
+    box-shadow: inset 0 0 0 3px #694732, inset 0 10px 22px #432c2c66, 0 7px 0 #684933;
+}
+.paw-garden-bed-grid > .paw-garden-bed {
+    position: absolute;
+    left: var(--plot-x);
+    top: var(--plot-y);
+    width: 17%;
+    height: 112px;
+    min-height: 0;
+    padding: 23px 6px 7px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    box-shadow: none;
+    color: #fff0d9;
+}
+.paw-garden-bed-grid > .paw-garden-bed::before {
+    bottom: 13px;
+    left: 30%;
+    right: 30%;
+    height: 10px;
+    border-radius: 50%;
+    background: #4d342b;
+    filter: blur(3px);
+}
+.paw-garden-bed-grid .paw-garden-bed-art {
+    min-height: 58px;
+}
+.paw-garden-bed-grid .paw-garden-bed-svg {
+    width: min(100%, 105px);
+    height: 70px;
+    max-height: 70px;
+    filter: drop-shadow(0 4px 4px #301e1b66);
+}
+.paw-garden-bed-grid .paw-garden-bed-status {
+    width: auto;
+    max-width: 100%;
+    min-height: 24px;
+    height: auto;
+    max-height: none;
+    flex: 0 0 auto;
+    padding: 4px 7px;
+    border: 1px solid #d7bb8e;
+    border-radius: 999px;
+    background: #fff5dfed;
+    color: #604638;
+    font-size: 9px;
+    white-space: nowrap;
+}
+.paw-garden-bed-grid .paw-garden-plot-action,
+.paw-garden-bed-grid .paw-garden-locked-price {
+    width: min(100%, 150px);
+}
+.paw-garden-bed-grid .paw-garden-locked-bed {
+    border: 1px dashed #e4c18d;
+    background: #412f2a2b;
+    cursor: pointer;
+}
+.paw-garden-bed-grid .paw-garden-locked-bed::before {
+    display: none;
+}
+.paw-dark .paw-garden-bed-grid {
+    border-color: #795945;
+    background-color: #342c32;
+    background-image:
+        radial-gradient(ellipse at 18% 28%, #ad87613b 0 2px, transparent 3px),
+        radial-gradient(ellipse at 76% 65%, #211c2538 0 2px, transparent 3px),
+        repeating-linear-gradient(168deg, transparent 0 31px, #d6b79812 32px 34px, transparent 35px 59px);
+    box-shadow: inset 0 0 0 3px #50404a, inset 0 10px 22px #17151d88, 0 7px 0 #3a2c31;
+}
+.paw-dark .paw-garden-bed-grid > .paw-garden-bed {
+    color: #ffe9d0;
+}
+.paw-dark .paw-garden-bed-grid > .paw-garden-bed::before {
+    background: #211b22;
+}
+.paw-dark .paw-garden-bed-grid .paw-garden-bed-status {
+    background: #453745ed;
+    border-color: #836b7d;
+    color: #f9e5f0;
+}
+.paw-dark .paw-garden-bed-grid .paw-garden-locked-bed {
+    border-color: #a88871;
+    background: #1e1b2440;
+}
+@media (max-width: 1100px) {
+    .paw-garden-bed-grid {
+        max-width: 650px;
+    }
+}
+@media (max-width: 700px) {
+    .paw-garden-bed-grid {
+        height: 650px;
+        padding: 13px 7px 10px;
+        border-width: 6px;
+        border-radius: 19px;
+    }
+    .paw-garden-bed-grid > .paw-garden-bed {
+        left: var(--plot-mobile-x);
+        top: var(--plot-mobile-y);
+        width: 23%;
+        height: 112px;
+        min-height: 0;
+        padding: 22px 3px 6px;
+    }
+    .paw-garden-bed-grid .paw-garden-bed-art {
+        min-height: 46px;
+    }
+    .paw-garden-bed-grid .paw-garden-bed-svg {
+        height: 54px;
+        max-height: 54px;
+    }
+    .paw-garden-bed-grid .paw-garden-bed-status {
+        min-height: 22px;
+        padding: 3px 5px;
+        font-size: 8px;
+    }
+    .paw-garden-bed-grid .paw-garden-plot-action,
+    .paw-garden-bed-grid .paw-garden-locked-price {
+        min-height: 24px;
+        margin-top: 3px;
+        font-size: 8px;
+        padding: 4px 2px;
+    }
+    .paw-garden-bed-grid .paw-garden-locked-label {
+        min-height: 20px;
+        font-size: 8px;
+        padding: 3px 2px;
+    }
+}
+.paw-garden-bed-grid > .paw-garden-bed {
+    appearance: none;
+    display: grid;
+    place-items: center;
+    overflow: visible;
+    font: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+.paw-garden-bed-grid > .paw-garden-bed:focus-visible {
+    outline: 3px solid #ffe6a0;
+    outline-offset: 1px;
+}
+.paw-garden-bed-grid > .paw-garden-bed:hover {
+    transform: translateY(-3px) scale(1.04);
+}
+.paw-garden-bed-grid > .paw-garden-bed.is-selected {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 7px #fff0ad);
+}
+.paw-garden-bed-grid .paw-garden-bed-svg {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 112px;
+    height: 76px;
+    max-height: 76px;
+    pointer-events: none;
+}
+.paw-garden-plot-indicator,
+.paw-garden-plot-lock {
+    position: absolute;
+    z-index: 4;
+    top: 7px;
+    right: 9px;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border: 1px solid #dbccaa;
+    border-radius: 50%;
+    background: #fff4d9e8;
+    color: #7d6d58;
+}
+.paw-garden-plot-indicator.is-ready {
+    color: #a46728;
+    background: #ffebad;
+    border-color: #e6c767;
+}
+.paw-garden-plot-indicator.is-growing svg {
+    opacity: .38;
+}
+.paw-garden-plot-lock {
+    top: auto;
+    right: 50%;
+    bottom: 18px;
+    transform: translateX(50%);
+}
+.paw-garden-plot-action-panel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: min(100%, 580px);
+    min-height: 58px;
+    margin: 16px auto 2px;
+    padding: 9px 10px 9px 16px;
+    border: 1px solid #c5d8b0;
+    border-radius: 17px;
+    background: #fff9ebed;
+    box-shadow: 0 4px 0 #80aa723d;
+}
+.paw-garden-plot-action-copy {
+    display: grid;
+    gap: 3px;
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #64836a;
+}
+.paw-garden-plot-action-copy strong {
+    font-size: 13px;
+}
+.paw-garden-plot-action-copy span {
+    color: #82957f;
+    font-size: 11px;
+}
+.paw-garden-plot-action-panel .paw-garden-plot-action {
+    width: auto;
+    min-width: 132px;
+    min-height: 38px;
+    margin: 0;
+    padding: 7px 12px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+.paw-garden-plot-action-panel .paw-garden-plot-action.unlock {
+    background: #f5d49c;
+    color: #684a32;
+    border-color: #bb9364;
+}
+.paw-garden-plot-action-close {
+    display: grid;
+    place-items: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #e9efdf;
+    color: #67806a;
+    cursor: pointer;
+}
+.paw-garden-action-toast {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: max-content;
+    max-width: min(100%, 440px);
+    margin: 12px auto 0;
+    padding: 9px 15px;
+    border: 1px solid #a7cb92;
+    border-radius: 999px;
+    background: #f4ffe9;
+    color: #416841;
+    box-shadow: 0 4px 14px #253c2c28;
+    font-size: 12px;
+    font-weight: 850;
+    text-align: center;
+    animation: paw-garden-toast-in 180ms ease-out both;
+}
+.paw-garden-action-toast svg {
+    flex: none;
+}
+@keyframes paw-garden-toast-in {
+    from { opacity: 0; transform: translateY(5px) scale(.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.paw-dark .paw-garden-bed-grid > .paw-garden-bed:focus-visible {
+    outline-color: #f0d295;
+}
+.paw-dark .paw-garden-bed-grid > .paw-garden-bed.is-selected {
+    filter: drop-shadow(0 0 8px #f0d295a8);
+}
+.paw-dark .paw-garden-plot-indicator,
+.paw-dark .paw-garden-plot-lock {
+    border-color: #8d7887;
+    background: #453747ed;
+    color: #f6dfc3;
+}
+.paw-dark .paw-garden-plot-indicator.is-ready {
+    background: #665239;
+    color: #ffe29f;
+    border-color: #b69356;
+}
+.paw-dark .paw-garden-plot-action-panel {
+    border-color: #836b7d;
+    background: #453745f2;
+    box-shadow: 0 4px 0 #1b18224d;
+}
+.paw-dark .paw-garden-plot-action-copy,
+.paw-dark .paw-garden-plot-action-copy span {
+    color: #f3ddeb;
+}
+.paw-dark .paw-garden-plot-action-close {
+    background: #5a4759;
+    color: #f5ddec;
+}
+.paw-dark .paw-garden-action-toast {
+    border-color: #668369;
+    background: #334536;
+    color: #e5f7d9;
+}
+.paw-garden-mode-tools {
+    position: absolute;
+    z-index: 7;
+    left: 12px;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.paw-garden-mode-tools button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 58px;
+    min-height: 30px;
+    padding: 4px 7px;
+    border: 1px solid #d2bd91;
+    border-radius: 10px;
+    background: #fff4dfed;
+    color: #6b6744;
+    box-shadow: 0 3px 0 #47312455;
+    font-size: 9px;
+    font-weight: 900;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+.paw-garden-mode-tools button.active {
+    border-color: #f4e1a1;
+    background: #f2d88f;
+    color: #594125;
+    box-shadow: 0 0 0 2px #ffedb555, 0 2px 0 #47312466;
+}
+.paw-garden-mode-tools button:focus-visible,
+.paw-garden-unlock-popover button:focus-visible {
+    outline: 3px solid #ffe6a0;
+    outline-offset: 2px;
+}
+.paw-garden-unlock-popover {
+    position: absolute;
+    z-index: 12;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    width: min(290px, calc(100% - 24px));
+    padding: 18px 16px 14px;
+    border: 1px solid #c5d8b0;
+    border-radius: 19px;
+    background: #fff9ed;
+    color: #594739;
+    box-shadow: 0 12px 36px #2e211f66;
+    transform: translate(-50%, -50%);
+}
+.paw-garden-unlock-popover strong {
+    font-size: 15px;
+}
+.paw-garden-unlock-popover > span {
+    color: #967043;
+    font-size: 12px;
+    font-weight: 800;
+}
+.paw-garden-unlock-popover > div {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin-top: 3px;
+}
+.paw-garden-unlock-popover > div button {
+    flex: 1;
+    min-height: 36px;
+    border: 1px solid #c7b99f;
+    border-radius: 11px;
+    background: #f2eadb;
+    color: #66584c;
+    font-weight: 850;
+    cursor: pointer;
+}
+.paw-garden-unlock-popover > div button.confirm {
+    border-color: #a77c4f;
+    background: #a77c4f;
+    color: white;
+}
+.paw-garden-unlock-popover > div button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+.paw-garden-unlock-dismiss {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #efe6d8;
+    color: #695849;
+    cursor: pointer;
+}
+.paw-garden-action-toast {
+    position: fixed;
+    z-index: 9800;
+    top: calc(78px + env(safe-area-inset-top, 0px));
+    left: 50%;
+    width: max-content;
+    max-width: min(440px, calc(100vw - 28px));
+    margin: 0;
+    transform: translateX(-50%);
+    pointer-events: none;
+    animation: paw-garden-toast-in 180ms ease-out both;
+}
+@keyframes paw-garden-toast-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.paw-dark .paw-garden-mode-tools button {
+    border-color: #8b7965;
+    background: #473d3b;
+    color: #f0dfc1;
+}
+.paw-dark .paw-garden-mode-tools button.active {
+    border-color: #d0b371;
+    background: #786342;
+    color: #fff1c9;
+}
+.paw-dark .paw-garden-unlock-popover {
+    border-color: #806877;
+    background: #453745;
+    color: #f6e4ef;
+}
+.paw-dark .paw-garden-unlock-popover > span {
+    color: #e1c29f;
+}
+.paw-dark .paw-garden-unlock-popover > div button {
+    border-color: #756378;
+    background: #5b495d;
+    color: #f5e6ef;
+}
+.paw-dark .paw-garden-unlock-popover > div button.confirm {
+    border-color: #b887a5;
+    background: #a76e92;
+    color: white;
+}
+.paw-dark .paw-garden-unlock-dismiss {
+    background: #5b495d;
+    color: #f5e6ef;
+}
+@media (max-width: 520px) {
+    .paw-garden-plot-action-panel {
+        gap: 6px;
+        padding: 8px;
+        border-radius: 14px;
+    }
+    .paw-garden-plot-action-panel .paw-garden-plot-action {
+        min-width: 0;
+        padding: 7px 8px;
+        white-space: normal;
+    }
+    .paw-garden-plot-action-copy strong {
+        font-size: 12px;
+    }
+    .paw-garden-plot-action-copy span {
+        font-size: 10px;
+    }
+}
+@media (max-width: 700px) {
+    .paw-garden-bed-grid .paw-garden-bed-svg {
+        height: 64px;
+        max-height: 64px;
+    }
+}
+@media (max-width: 520px) {
+    .paw-garden-bed-grid {
+        height: 500px;
+    }
+    .paw-garden-bed-grid > .paw-garden-bed {
+        width: 18%;
+        height: 88px;
+        padding: 0;
+    }
+    .paw-garden-bed-grid .paw-garden-bed-art {
+        min-height: 0;
+    }
+    .paw-garden-bed-grid .paw-garden-bed-svg {
+        height: 56px;
+        max-height: 56px;
+    }
+    .paw-garden-plot-indicator,
+    .paw-garden-plot-lock {
+        top: 2px;
+        right: 3px;
+        width: 19px;
+        height: 19px;
+    }
+    .paw-garden-plot-lock {
+        top: auto;
+        right: 50%;
+        bottom: 12px;
+    }
+}
+
+/* Keep the Garden Shed compact and comfortable on phones. */
+@media (max-width: 700px) {
+    .paw-garden-supplies {
+        margin-top: 15px;
+    }
+    .paw-garden-supplies-intro {
+        margin-bottom: 8px;
+    }
+    .paw-garden-supplies h3 {
+        font-size: 17px;
+    }
+    .paw-garden-supplies p {
+        max-width: 38ch;
+        font-size: 11px;
+        line-height: 1.35;
+    }
+    .paw-garden-shop-grid {
+        gap: 8px;
+    }
+    .paw-garden-shop-card {
+        padding: 10px;
+        gap: 8px;
+        border-radius: 14px;
+    }
+    .paw-garden-shop-heading {
+        gap: 8px;
+    }
+    .paw-garden-shop-heading svg {
+        width: 34px;
+        height: 34px;
+    }
+    .paw-garden-shop-heading strong {
+        font-size: 12px;
+    }
+    .paw-garden-shop-heading small {
+        font-size: 10px;
+    }
+    .paw-garden-shop-controls {
+        grid-template-columns: 90px minmax(0, 1fr);
+        gap: 7px;
+    }
+    .paw-garden-qty {
+        height: 34px;
+    }
+    .paw-garden-qty button {
+        width: 28px;
+        font-size: 16px;
+    }
+    .paw-garden-qty output {
+        min-width: 22px;
+        padding-top: 7px;
+    }
+    .paw-garden-shop-buy {
+        min-height: 34px;
+        padding: 6px 8px;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+}
+@media (max-width: 370px) {
+    .paw-garden-shop-card {
+        padding: 9px;
+    }
+    .paw-garden-shop-controls {
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 6px;
+    }
+    .paw-garden-qty button {
+        width: 26px;
+    }
+    .paw-garden-shop-buy {
+        gap: 3px;
+        padding-inline: 5px;
+        font-size: 10px;
+    }
+}

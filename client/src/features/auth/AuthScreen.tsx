@@ -38,7 +38,7 @@ export default function AuthScreen({
     forgotBusy
 }: Props) {
     return (
-        <div className="auth-wrap">
+        <div className={`auth-wrap ${authMode === "register" ? "is-register" : ""}`}>
             <div className="auth-art">
                 <div
                     className="hero-pets paw-auth-svg-pets"
@@ -132,7 +132,7 @@ export default function AuthScreen({
                             autoComplete="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            placeholder="unique_username"
+                            placeholder="Username"
                         />
                         {authMode === "register" && (
                             <div className="username-warning" role="note">
@@ -140,10 +140,7 @@ export default function AuthScreen({
                                     <AlertTriangle size={16} aria-hidden="true" /> DON'T USE YOUR
                                     REAL NAME!
                                 </strong>
-                                <span>
-                                    Use a nickname. Your username appears above your pet and is how
-                                    friends find you.
-                                </span>
+                                <span>Use a nickname. Friends can see this username.</span>
                             </div>
                         )}
                         {authMode !== "forgot" && (
@@ -155,15 +152,9 @@ export default function AuthScreen({
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="At least 6 characters"
+                                    placeholder={authMode === "register" ? "Unique password (6+ characters)" : "At least 6 characters"}
                                 />
                             </>
-                        )}
-                        {authMode === "register" && (
-                            <small className="password-safety-note">
-                                For your security, please use a unique password that you don't use
-                                for your email, social media, or other accounts.
-                            </small>
                         )}
                         {authMode === "login" && (
                             <button

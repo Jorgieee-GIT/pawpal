@@ -1,0 +1,89 @@
+/* V3 cohesive, flat SVG furnishings */
+.svg-furnishings {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.furnish {
+    position: absolute;
+    filter: drop-shadow(0 6px 3px #89667920);
+}
+.sofa-svg {
+    width: 31%;
+    height: 35%;
+    right: 10%;
+    top: 37%;
+}
+.window-svg {
+    width: 22%;
+    height: 32%;
+    left: 9%;
+    top: 12%;
+}
+.table-svg {
+    width: 22%;
+    height: 20%;
+    left: 10%;
+    bottom: 19%;
+}
+.lamp-svg {
+    height: 36%;
+    width: 11%;
+    right: 1%;
+    top: 23%;
+}
+.plant-svg {
+    height: 23%;
+    width: 12%;
+    left: 2%;
+    bottom: 24%;
+}
+.books-svg {
+    height: 32%;
+    width: 13%;
+    right: 1%;
+    top: 11%;
+}
+.tree-svg {
+    height: 28%;
+    width: 14%;
+    right: 2%;
+    bottom: 12%;
+}
+.polished-arcade canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 3px solid #eabfce;
+    border-radius: 18px;
+    touch-action: none;
+    background: #fff5f8;
+}
+.polished-arcade .arcade-controls {
+    color: #97748a;
+    font-size: 13px;
+    padding: 8px;
+}
+.room-lights {
+    pointer-events: none;
+}
+@media(max-width:600px) {
+    .sofa-svg {
+        width: 39%;
+        right: 4%;
+    }
+    .window-svg {
+        width: 27%;
+    }
+    .table-svg {
+        width: 28%;
+    }
+    .furnish.lamp-svg {
+        right: 0;
+        width: 13%;
+    }
+}
+/* The new SVG illustrations replace the older emoji furniture. */
+.sofa,.room-shelf,.room-clock,.room-curtain,.room-table,.room-bed,.room-toys,.furniture {
+    display: none;
+}

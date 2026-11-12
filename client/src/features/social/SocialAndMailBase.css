@@ -1,0 +1,244 @@
+/* Batch 6: Pet Notes */
+.pet-note-editor {
+    margin: 12px 0;
+    padding: 12px 15px;
+    background: #fff1f6;
+    border: 2px solid #e8b9d0;
+    border-radius: 15px;
+    color: #654a60;
+}
+.pet-note-editor label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.pet-note-editor-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.pet-note-editor-row input {
+    flex: 1 1 180px;
+    min-width: 0;
+    max-width: 320px;
+}
+.pet-note-editor-row span {
+    white-space: nowrap;
+    font-size: 12px;
+}
+/* Batch 7: PawMail and consistent, accessible pastel action buttons */
+.paw-note-save,.paw-wardrobe-equip,.paw-mail-send,.paw-mail-actions button:not(.secondary) {
+    background: linear-gradient(145deg,#ef92b9,#cc6598)!important;
+    color: #fff!important;
+    border: 1px solid #bb5c8a!important;
+    border-radius: 12px!important;
+    padding: 10px 17px!important;
+    font-weight: 800!important;
+    box-shadow: 0 3px 0 #a64b79!important;
+    cursor: pointer;
+    transition: transform .15s,filter .15s;
+}
+.paw-note-save:hover,.paw-wardrobe-equip:hover,.paw-mail-send:hover,.paw-mail-actions button:not(.secondary):hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+}
+.paw-wardrobe-unequip,.v8-owned>button.secondary {
+    background: #fff0f6!important;
+    color: #945477!important;
+    border: 1px solid #d99ab8!important;
+    border-radius: 12px!important;
+    padding: 10px 14px!important;
+    font-weight: 800!important;
+    cursor: pointer;
+}
+.paw-note-save:disabled,.paw-wardrobe-equip:disabled,.paw-wardrobe-unequip:disabled,.paw-mail-send:disabled {
+    opacity: .55!important;
+    cursor: not-allowed;
+    box-shadow: none!important;
+}
+.paw-mail-section {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 2px dashed #e5bfd0;
+}
+.paw-mail-heading h3 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 5px 0;
+}
+.paw-unread-count {
+    font-size: 12px;
+    color: #9a5479;
+    background: #ffe1ef;
+    padding: 5px 10px;
+    border-radius: 20px;
+}
+.paw-mail-compose {
+    display: grid;
+    gap: 12px;
+    padding: 18px;
+    border: 1px solid #eac5d7;
+    border-radius: 20px;
+    background: #fff6fa;
+}
+.paw-mail-compose label {
+    font-weight: 800;
+}
+.paw-mail-compose select {
+    width: 100%;
+    max-width: 360px;
+    padding: 12px;
+    border: 1px solid #dfa8c0;
+    border-radius: 12px;
+    background: #fff;
+    color: #67445d;
+    font: inherit;
+}
+.paw-postcard-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 12px;
+}
+.paw-design-choice {
+    background: transparent!important;
+    border: 2px solid transparent!important;
+    padding: 3px!important;
+    border-radius: 20px;
+    cursor: pointer;
+    min-width: 0;
+}
+.paw-design-choice.active {
+    border-color: #b8588b!important;
+    box-shadow: 0 0 0 3px #f6d7e5;
+}
+.paw-postcard {
+    border-radius: 18px;
+    padding: 12px;
+    text-align: center;
+    min-width: 0;
+    background: #ffe1eb;
+    color: #a54e77;
+    border: 1px solid #e8b6cc;
+}
+.paw-postcard svg {
+    display: block;
+    width: 100%;
+    max-height: 130px;
+}
+.paw-postcard b {
+    display: block;
+    font-size: 15px;
+}
+.paw-postcard p {
+    margin: 6px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: inherit;
+}
+.paw-postcard-lavender {
+    background: #ece2ff;
+    color: #8055b0;
+    border-color: #cbb7ec;
+}
+.paw-postcard-sunshine {
+    background: #fff0c9;
+    color: #b98235;
+    border-color: #efd7a0;
+}
+.paw-postcard-moonlight {
+    background: #e3e9ff;
+    color: #6578b3;
+    border-color: #c3ceef;
+}
+.paw-mail-send {
+    justify-self: start;
+}
+.paw-mail-inbox {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 14px;
+}
+.paw-mail-letter {
+    padding: 14px;
+    border: 1px solid #ebc5d8;
+    border-radius: 18px;
+    background: #fff9fc;
+    min-width: 0;
+}
+.paw-mail-letter.unread {
+    border: 2px solid #cb77a2;
+}
+.paw-mail-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.paw-mail-meta small {
+    font-size: 11px;
+    color: #97788b;
+}
+.paw-new {
+    font-size: 10px;
+    background: #d875a5;
+    color: #fff;
+    border-radius: 8px;
+    padding: 3px 6px;
+    font-weight: 900;
+}
+.paw-mail-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+.paw-mail-actions button {
+    font-size: 12px;
+}
+.paw-mail-empty {
+    padding: 20px;
+    background: #fff6fa;
+    border: 1px dashed #e8bfd1;
+    border-radius: 14px;
+}
+.paw-dark .paw-mail-compose,.paw-dark .paw-mail-letter,.paw-dark .paw-mail-empty {
+    background: #403241;
+    border-color: #805a72;
+    color: #fff0f7;
+}
+.paw-dark .paw-mail-compose select {
+    background: #4c394e;
+    color: #fff;
+    border-color: #906b81;
+}
+.paw-dark .paw-wardrobe-unequip {
+    background: #583c52!important;
+    color: #fff!important;
+}
+.paw-dark .paw-postcard {
+    color: #804161;
+}
+.paw-dark .paw-postcard-lavender {
+    color: #8055b0;
+}
+.paw-dark .paw-postcard-sunshine {
+    color: #93652a;
+}
+.paw-dark .paw-postcard-moonlight {
+    color: #53669d;
+}
+@media(max-width:640px) {
+    .paw-postcard-grid,.paw-mail-inbox {
+        grid-template-columns: 1fr;
+    }
+    .paw-mail-compose {
+        padding: 12px;
+    }
+    .paw-note-save {
+        flex: 1 1 90px;
+    }
+}

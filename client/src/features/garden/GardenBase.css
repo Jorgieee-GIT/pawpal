@@ -1,0 +1,315 @@
+/* Batch 4: responsive multi-plot garden and independent, spin-free quantities */
+.garden-inventory {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0;
+}
+.garden-inventory>div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1px solid #efd9e3;
+    background: #fff8fb;
+    border-radius: 15px;
+}
+.garden-inventory svg {
+    width: 34px;
+    height: 34px;
+}
+.garden-inventory small {
+    color: #a17c90;
+}
+.garden-plots {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 12px;
+    padding: 16px;
+    border-radius: 20px;
+    background: #f9edf0;
+    border: 2px solid #efd8dd;
+}
+.garden-plot-card {
+    min-height: 190px;
+    min-width: 0;
+    position: relative;
+    border: 2px solid #d6b5a5;
+    border-radius: 19px;
+    background: #f5e4d5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    gap: 4px;
+    color: #945f7a;
+}
+.plot-number {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+.garden-plant-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    width: 100%;
+    min-height: 125px;
+    border: 0;
+    background: transparent;
+    color: #945f7a;
+    font-weight: 800;
+}
+.garden-plant-button svg {
+    width: min(100%,112px);
+    height: 110px;
+}
+.garden-water-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: #fff8fc;
+    border: 1px solid #e7b8c9;
+    border-radius: 12px;
+    color: #945f7a;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 4px 9px;
+}
+.garden-water-action svg {
+    width: 24px;
+    height: 24px;
+}
+.garden-unlock {
+    border-style: dashed;
+    background: #fff6f8;
+    font-size: 14px;
+}
+.garden-unlock small {
+    font-size: 12px;
+}
+.flower-countdown {
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 5px 9px;
+}
+.garden-purchase-grid {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+.garden-purchase-card {
+    border: 1px solid #efd8e3;
+    border-radius: 18px;
+    padding: 14px;
+    background: #fff8fb;
+    min-width: 0;
+}
+.garden-purchase-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.garden-purchase-title svg {
+    width: 62px;
+    height: 62px;
+    flex: none;
+}
+.garden-purchase-title small {
+    display: block;
+    color: #a17c90;
+}
+.garden-purchase-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+.garden-qty {
+    display: inline-flex;
+    gap: 0;
+    align-items: center;
+    border: 1px solid #e5b4c8;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    flex: none;
+}
+.garden-qty button {
+    border: 0;
+    border-radius: 0;
+    background: #fff0f6;
+    color: #9b5679;
+    font-weight: 900;
+    font-size: 19px;
+    min-width: 36px;
+    height: 39px;
+    padding: 0;
+}
+.garden-qty output {
+    width: 39px;
+    text-align: center;
+    font-weight: 900;
+    color: #805d73;
+    font-variant-numeric: tabular-nums;
+}
+.garden-buy-button {
+    border: 0;
+    background: #e5a0bc;
+    color: white;
+    border-radius: 11px;
+    padding: 11px 13px;
+    font-weight: 900;
+    flex: 1;
+    white-space: nowrap;
+}
+.paw-dark .garden-plots {
+    background: #463443;
+    border-color: #806477;
+}
+.paw-dark .garden-plot-card {
+    background: #6e5554;
+    color: #fff0f5;
+}
+.paw-dark .garden-purchase-card,.paw-dark .garden-inventory>div {
+    background: #473746;
+    border-color: #806477;
+}
+.paw-dark .garden-qty output {
+    color: #594052;
+}
+@media(max-width:750px) {
+    .garden-plots {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 8px;
+        padding: 9px;
+    }
+    .garden-plot-card {
+        min-height: 160px;
+        padding: 7px;
+    }
+    .garden-plant-button svg {
+        height: 88px;
+    }
+    .garden-purchase-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media(max-width:390px) {
+    .garden-plots {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+}
+/* Batch 5: compact, legible Lucky Garden. Six columns by two rows at 12 plots. */
+.garden-plots {
+    grid-template-columns: repeat(6,minmax(0,1fr));
+    gap: 8px;
+    padding: 12px;
+    background: #f8e5ec;
+    border-color: #dba8bc;
+}
+.garden-plot-card {
+    min-height: 145px;
+    padding: 7px 4px 6px;
+    gap: 2px;
+    border-width: 2px;
+    border-color: #c79586;
+    background: #f2d5c0;
+    border-radius: 15px;
+    box-shadow: inset 0 -5px 0 #d9b59d55;
+}
+.garden-plot-card .plot-number {
+    top: 5px;
+    left: 7px;
+    font-size: 9px;
+    color: #7e4d63;
+}
+.garden-plant-button {
+    min-height: 101px;
+    gap: 1px;
+    padding: 0;
+    opacity: 1!important;
+}
+.garden-plant-button:disabled {
+    opacity: 1!important;
+    cursor: default;
+}
+.garden-plant-button svg {
+    width: min(100%,83px);
+    height: 79px;
+    opacity: 1;
+    filter: none;
+}
+.garden-plant-button b {
+    font-size: 11px;
+}
+.garden-plot-card .flower-countdown {
+    font-size: 10px;
+    padding: 3px 7px;
+    background: #fffafc;
+    color: #824b68;
+    border: 1px solid #ce91ab;
+    opacity: 1;
+    line-height: 1.2;
+}
+.garden-water-action {
+    font-size: 10px;
+    padding: 3px 5px;
+    gap: 2px;
+    min-height: 25px;
+}
+.garden-water-action svg {
+    width: 18px;
+    height: 18px;
+}
+.garden-water-action:disabled {
+    opacity: .68;
+}
+.garden-unlock {
+    background: #ffedf2;
+    border-color: #c58ba4;
+    color: #8b4e6a;
+    min-height: 145px;
+}
+.garden-unlock small {
+    font-size: 10px;
+}
+.garden-plot-card svg {
+    opacity: 1!important;
+}
+@media(max-width:1100px) {
+    .garden-plots {
+        grid-template-columns: repeat(4,minmax(0,1fr));
+    }
+}
+@media(max-width:750px) {
+    .garden-plots {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 7px;
+        padding: 8px;
+    }
+    .garden-plot-card {
+        min-height: 137px;
+    }
+    .garden-plant-button {
+        min-height: 94px;
+    }
+    .garden-plant-button svg {
+        height: 73px;
+    }
+}
+@media(max-width:390px) {
+    .garden-plots {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+}

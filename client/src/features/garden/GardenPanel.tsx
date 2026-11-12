@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { BookOpen, Check, CircleHelp, Clock3, Coins, Droplets, Flower2, Leaf, LockKeyhole, Shovel, Sparkles, X } from "lucide-react";
+import { useEffect, useState, type CSSProperties } from "react";
+import { BookOpen, Check, CircleHelp, Clock3, Coins, Droplets, Flower2, Leaf, LockKeyhole, Sparkles, X } from "lucide-react";
 import { GARDEN_FLOWER_CATALOG, GardenIcon } from "./GardenArt";
 import { GardenBedArt, GardenGrowthStage } from "./GardenBedArt";
 import SectionHeading from "../../SectionHeading";
@@ -44,6 +44,29 @@ type Props = {
 };
 const PLOT_PRICES = [750, 1500, 2500, 4000, 6000, 9000, 13000, 18000, 25000];
 const GROWTH_TIME = 300000;
+const PLOT_SCATTER = [
+    { x: 2, y: 1, mobileX: 2, mobileY: 0 },
+    { x: 28, y: 9, mobileX: 40, mobileY: 4 },
+    { x: 54, y: 1, mobileX: 78, mobileY: 1 },
+    { x: 80, y: 10, mobileX: 13, mobileY: 23 },
+    { x: 10, y: 35, mobileX: 51, mobileY: 25 },
+    { x: 36, y: 30, mobileX: 80, mobileY: 22 },
+    { x: 62, y: 42, mobileX: 1, mobileY: 45 },
+    { x: 82, y: 34, mobileX: 39, mobileY: 48 },
+    { x: 2, y: 65, mobileX: 77, mobileY: 44 },
+    { x: 28, y: 70, mobileX: 13, mobileY: 67 },
+    { x: 56, y: 68, mobileX: 51, mobileY: 69 },
+    { x: 82, y: 63, mobileX: 80, mobileY: 66 }
+];
+const plotPosition = (index: number): CSSProperties => {
+    const position = PLOT_SCATTER[index % PLOT_SCATTER.length];
+    return {
+        "--plot-x": `${position.x}%`,
+        "--plot-y": `${position.y}%`,
+        "--plot-mobile-x": `${position.mobileX}%`,
+        "--plot-mobile-y": `${position.mobileY}%`
+    } as CSSProperties;
+};
 const SEED_PRICE = 40;
 const WATER_PRICE = 10;
 
@@ -90,10 +113,23 @@ export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: 
     const [guideTab, setGuideTab] = useState<"collection" | "odds">("collection");
     const [reveal, setReveal] = useState<Reveal | null>(null);
     const [pendingAction, setPendingAction] = useState<string | null>(null);
+    const [gardenMode, setGardenMode] = useState<"plant" | "water" | null>(null);
+    const [unlockPrompt, setUnlockPrompt] = useState(false);
+    const [gardenNotice, setGardenNotice] = useState("");
     const unlocked = garden.unlocked_plots || 3;
     const discoveries = garden.discoveries || {};
     const foundCount = GARDEN_FLOWER_CATALOG.filter(flower => discoveries[flower.rarity]?.count > 0).length;
     const plotPrice = PLOT_PRICES[unlocked - 3];
+    useEffect(() => {
+        if (!gardenNotice) return;
+        const timer = window.setTimeout(() => setGardenNotice(""), 2600);
+        return () => window.clearTimeout(timer);
+    }, [gardenNotice]);
+    const plotAt = (index: number): Plot => garden.plots?.[index] || (index === 0 && garden.planted_at ? {
+        planted_at: garden.planted_at,
+        watered_minutes: garden.watered_minutes || 0
+    } : null);
+    const remainingFor = (plot: Plot) => plot ? Math.max(0, GROWTH_TIME - (nowTick - new Date(plot.planted_at).getTime()) - (plot.watered_minutes || 0) * 60000) : 0;
     const act = async (action: string, plotIndex?: number, quantity?: number) => {
         if (busy || pendingAction) {
             return;
@@ -109,9 +145,11 @@ export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: 
                     quantity
                 })
             });
+            if (!result) return;
             if (action === "harvest" && result?.gardenReveal) {
                 setReveal(result.gardenReveal);
             }
+            if (action === "unlock_plot") setUnlockPrompt(false);
         } finally {
             setPendingAction(null);
         }
@@ -119,6 +157,25 @@ export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: 
     const openGuide = (which: "collection" | "odds") => {
         setGuideTab(which);
         setGuideOpen(true);
+    };
+    const handlePlotTap = (index: number) => {
+        const plot = plotAt(index);
+        const remaining = remainingFor(plot);
+        if (plot && remaining === 0) {
+            void act("harvest", index);
+        } else if (!plot && gardenMode === "plant") {
+            if (garden.seeds > 0) void act("plant", index);
+            else setGardenNotice("No seeds left. Pick some up in the Garden shed.");
+        } else if (plot && gardenMode === "water") {
+            if ((garden.watering_cans || 0) > 0) void act("water", index);
+            else setGardenNotice("No watering cans left. Pick some up in the Garden shed.");
+        } else if (!plot) {
+            setGardenNotice("Choose the seed button, then tap an empty spot.");
+        } else if (gardenMode === "plant") {
+            setGardenNotice("That spot is growing. Choose the watering can to tend it.");
+        } else {
+            setGardenNotice("Choose the watering can, then tap a growing spot.");
+        }
     };
 
     return <section className="panel paw-garden-panel">
@@ -188,74 +245,62 @@ export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: 
                 {Array.from({
                     length: unlocked
                 }, (_, index) => {
-                    const plot = garden.plots?.[index] || (index === 0 && garden.planted_at ? {
-                        planted_at: garden.planted_at,
-                        watered_minutes: garden.watered_minutes || 0
-                    } : null);
-                    const remaining = plot ? Math.max(0, GROWTH_TIME - (nowTick - new Date(plot.planted_at).getTime()) - (plot.watered_minutes || 0) * 60000) : 0;
+                    const plot = plotAt(index);
+                    const remaining = remainingFor(plot);
                     const progress = plot ? 1 - remaining / GROWTH_TIME : 0;
                     const stage: GardenGrowthStage = !plot ? "empty" : remaining === 0 ? "ready" : progress < .22 ? "seed" : progress < .58 ? "sprout" : "bud";
-                    const canWater = !!plot && remaining > 0 && (garden.watering_cans || 0) > 0;
-                    const time = `${String(Math.floor(remaining / 60000)).padStart(2, "0")}:${String(Math.floor((remaining % 60000) / 1000)).padStart(2, "0")}`;
-                    return <article key={index} className={`paw-garden-bed stage-${stage}`}>
-                        <span className="paw-garden-wood-sign">PLOT {index + 1}
-                        </span>
-                        <div className="paw-garden-bed-art">
-                            <GardenBedArt stage={stage} />
-                        </div>
-                        {plot ? <>
-                            <div
-                                className={`paw-garden-bed-status ${remaining === 0 ? "is-ready" : ""}`}
-                                title={remaining === 0 ? "Mystery bloom ready to harvest" : stage === "seed" ? "Seed planted" : stage === "sprout" ? "Little sprout" : "Growing bud"}
-                                aria-label={remaining === 0 ? "Mystery bloom ready to harvest" : `${time} remaining, ${stage === "seed" ? "seed planted" : stage === "sprout" ? "little sprout" : "growing bud"}`}
-                                aria-live="off"
-                            >
-                                {remaining === 0 ? <>
-                                    <Sparkles size={13} /> Ready!</> : <>
-                                    <Clock3 size={13} />
-                                    <span className="paw-garden-countdown">
-                                        {time}
-                                    </span>
-                                </>}
-                            </div>
-                            {remaining === 0 ? <button type="button" className="paw-garden-plot-action harvest" data-operation-locked={busy ? "true" : undefined} data-pending={pendingAction === `harvest:${index}` ? "true" : undefined} disabled={busy} onClick={() => void act("harvest", index)}>
-                                <Flower2 size={15} /> Reveal & harvest</button> : <button
-                                    type="button"
-                                    className="paw-garden-plot-action water"
-                                    data-operation-locked={busy && canWater ? "true" : undefined}
-                                    data-pending={pendingAction === `water:${index}` ? "true" : undefined}
-                                    disabled={busy || !canWater}
-                                    onClick={() => void act("water", index)}
-                                    title="Use one watering can to shorten growth by one minute"
-                                >
-                                <Droplets size={15} /> Water · −1 min</button>}
-                        </> : <>
-                            <div className="paw-garden-bed-status">
-                                <Shovel size={13} /> Fresh soil</div>
-                            <button type="button" className="paw-garden-plot-action plant" data-operation-locked={busy && garden.seeds > 0 ? "true" : undefined} data-pending={pendingAction === `plant:${index}` ? "true" : undefined} disabled={busy || garden.seeds < 1} onClick={() => void act("plant", index)}>
-                                <Leaf size={15} /> Plant seed</button>
-                        </>}
-                    </article>;
+                    return <button
+                        key={index}
+                        type="button"
+                        style={plotPosition(index)}
+                        className={`paw-garden-bed stage-${stage}`}
+                        aria-label={`Plot ${index + 1}: ${!plot ? "empty" : remaining === 0 ? "ready to harvest" : "growing"}`}
+                        onClick={() => handlePlotTap(index)}
+                    >
+                        <GardenBedArt stage={stage} />
+                        {plot && <span className={`paw-garden-plot-indicator ${remaining === 0 ? "is-ready" : "is-growing"}`} aria-hidden="true">
+                            {remaining === 0 ? <Sparkles size={13} /> : <Clock3 size={12} />}
+                        </span>}
+                    </button>;
                 })}
-                {unlocked < 12 && <button type="button" className="paw-garden-bed paw-garden-locked-bed" data-operation-locked={busy && coins >= plotPrice ? "true" : undefined} data-pending={pendingAction === "unlock_plot:shop" ? "true" : undefined} disabled={busy || coins < plotPrice} onClick={() => void act("unlock_plot")}>
-                    <span className="paw-garden-wood-sign">PLOT {unlocked + 1}
-                    </span>
-                    <div className="paw-garden-bed-art">
-                        <GardenBedArt stage="locked" />
-                    </div>
-                    <span className="paw-garden-locked-label">
-                        <LockKeyhole size={15} /> Unlock bed</span>
-                    <span className="paw-garden-locked-price">
-                        {plotPrice.toLocaleString()} <Coins size={13} />
-                    </span>
+                {unlocked < 12 && <button
+                    type="button"
+                    style={plotPosition(unlocked)}
+                    className="paw-garden-bed paw-garden-locked-bed"
+                    aria-label={`Plot ${unlocked + 1}: locked, select to unlock for ${plotPrice} coins`}
+                    disabled={busy}
+                    onClick={() => setUnlockPrompt(true)}
+                >
+                    <GardenBedArt stage="locked" />
+                    <LockKeyhole className="paw-garden-plot-lock" size={15} aria-hidden="true" />
                 </button>}
+                <div className="paw-garden-mode-tools" role="group" aria-label="Garden action mode">
+                    <button type="button" className={gardenMode === "plant" ? "active" : ""} aria-label="Plant seeds" aria-pressed={gardenMode === "plant"} title="Choose a seed, then tap an empty plot" onClick={() => setGardenMode(gardenMode === "plant" ? null : "plant")}>
+                        <Leaf size={14} /><span>Seed</span>
+                    </button>
+                    <button type="button" className={gardenMode === "water" ? "active" : ""} aria-label="Water plants" aria-pressed={gardenMode === "water"} title="Choose a watering can, then tap a growing plot" onClick={() => setGardenMode(gardenMode === "water" ? null : "water")}>
+                        <Droplets size={14} /><span>Water</span>
+                    </button>
+                </div>
+                {unlockPrompt && <div className="paw-garden-unlock-popover" role="dialog" aria-label={`Unlock plot ${unlocked + 1}`}>
+                    <button type="button" className="paw-garden-unlock-dismiss" aria-label="Close unlock prompt" onClick={() => setUnlockPrompt(false)}><X size={16} /></button>
+                    <strong>Unlock Plot {unlocked + 1}?</strong>
+                    <span>{plotPrice.toLocaleString()} Paw Coins</span>
+                    <div>
+                        <button type="button" className="cancel" onClick={() => setUnlockPrompt(false)}>Cancel</button>
+                        <button type="button" className="confirm" disabled={busy || coins < plotPrice} data-pending={pendingAction === "unlock_plot:shop" ? "true" : undefined} onClick={() => void act("unlock_plot")}>Unlock</button>
+                    </div>
+                </div>}
             </div>
+            {gardenNotice && <div className="paw-garden-action-toast" role="status" aria-live="polite">
+                <Check size={16} /> {gardenNotice}
+            </div>}
 
         </div>
         <div className="paw-garden-supplies">
             <div className="paw-garden-supplies-intro">
                 <h3>Garden shed</h3>
-                <p>Stock up for your next little discovery. Watering speeds growth; it doesn't change your odds.</p>
+                <p>Watering speeds growth; it never changes flower odds.</p>
             </div>
             <div className="paw-garden-shop-grid">
                 <StockShop
