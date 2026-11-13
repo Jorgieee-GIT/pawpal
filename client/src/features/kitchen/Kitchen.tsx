@@ -445,8 +445,7 @@ async function act(action: string, item: string, quantity = 1, extras: Record<st
             if (action === "step") {
                 if (data.kitchen.active_recipe) {
                     resetGame();
-                }
-                else {
+                } else {
                     setGameOpen(false);
                 }
             }

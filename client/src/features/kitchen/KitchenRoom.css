@@ -85,9 +85,17 @@
     color: #58374b;
     cursor: pointer;
 }
-.kitchen-revamp .kitchen-room .kitchen-room-station--recipes { left: 4%; bottom: 24%; }
-.kitchen-revamp .kitchen-room .kitchen-room-station--experiment { left: 27%; bottom: 24%; }
-.kitchen-room-station--ingredients { left: 50%; }
+.kitchen-revamp .kitchen-room .kitchen-room-station--recipes {
+    left: 4%;
+    bottom: 24%;
+}
+.kitchen-revamp .kitchen-room .kitchen-room-station--experiment {
+    left: 27%;
+    bottom: 24%;
+}
+.kitchen-room-station--ingredients {
+    left: 50%;
+}
 .kitchen-revamp .kitchen-room .kitchen-room-station--pantry {
     right: 2%;
     width: 23%;
@@ -104,10 +112,17 @@
     max-height: clamp(116px, 27vw, 360px);
 }
 @media (hover: hover) {
-    .kitchen-room-station:hover svg { transform: translateY(-4px); }
+    .kitchen-room-station:hover svg {
+        transform: translateY(-4px);
+    }
 }
-.kitchen-room-station:active svg { transform: translateY(2px); }
-.kitchen-room-station:focus-visible { outline: 3px solid #985078; outline-offset: 3px; }
+.kitchen-room-station:active svg {
+    transform: translateY(2px);
+}
+.kitchen-room-station:focus-visible {
+    outline: 3px solid #985078;
+    outline-offset: 3px;
+}
 .kitchen-room-station span {
     display: inline-flex;
     align-items: center;
@@ -146,7 +161,9 @@
     box-shadow: 0 18px 60px #37213250;
     overflow: hidden;
 }
-.kitchen-station-dialog::backdrop { background: #35253699; }
+.kitchen-station-dialog::backdrop {
+    background: #35253699;
+}
 .kitchen-station-dialog-frame {
     display: flex;
     flex-direction: column;
@@ -289,6 +306,10 @@
     color: #fff2f9;
 }
 @media (prefers-reduced-motion: reduce) {
-    .kitchen-room-station svg { transition: none; }
-    .kitchen-room-station:is(:hover, :active) svg { transform: none; }
+    .kitchen-room-station svg {
+        transition: none;
+    }
+    .kitchen-room-station:is(:hover, :active) svg {
+        transform: none;
+    }
 }

@@ -124,8 +124,7 @@ async function load(t = token, q = search, p = page) {
             const [u, o] = await Promise.all([adminRequest("/users?search=" + encodeURIComponent(q) + "&page=" + p, t), adminRequest("/overview", t)]);
             setUsers(u.users);
             setOverview(o)
-        }
-        catch (e) {
+        } catch (e) {
             if (String(e).includes("session expired")) {
                 logout();
 

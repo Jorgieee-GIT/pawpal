@@ -329,12 +329,7 @@ const matchLeader = (field: "damageDealt" | "coverDamage" | "rescues" | "healing
          */
 const onEscape = (event: KeyboardEvent) => {
             if (event.key !== "Escape") { return; }
-            if (skillHelp !== null) { setSkillHelp(null); }
-            else if (skillsInfoOpen) { setSkillsInfoOpen(false); }
-            else if (statsInfoOpen) { setStatsInfoOpen(false); }
-            else if (battleHistory) { setBattleHistory(false); }
-            else if (confirmQuit) { if (!busy) { setConfirmQuit(false); } }
-            else { setConfirmQuit(true); }
+            if (skillHelp !== null) { setSkillHelp(null); } else if (skillsInfoOpen) { setSkillsInfoOpen(false); } else if (statsInfoOpen) { setStatsInfoOpen(false); } else if (battleHistory) { setBattleHistory(false); } else if (confirmQuit) { if (!busy) { setConfirmQuit(false); } } else { setConfirmQuit(true); }
         };
         window.addEventListener("keydown", onEscape);
         return () => window.removeEventListener("keydown", onEscape);

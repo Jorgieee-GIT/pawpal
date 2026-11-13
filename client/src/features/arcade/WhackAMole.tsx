@@ -47,8 +47,7 @@ async function claimRound(replay: boolean) {
             if (rewarded) {
                 if (replay) {
                     start();
-                }
-                else {
+                } else {
                     onQuit();
                 }
             } else {

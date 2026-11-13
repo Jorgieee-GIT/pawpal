@@ -2494,7 +2494,10 @@
     }
 }
 /* Mission cards: clarify progress, rewards, and claim state. */
-.paw-missions-refreshed .mission-grid { align-items: stretch; gap: 12px; }
+.paw-missions-refreshed .mission-grid {
+    align-items: stretch;
+    gap: 12px;
+}
 .paw-missions-refreshed .mission-card {
     position: relative;
     border: 1px solid #e8ccda;
@@ -2508,8 +2511,12 @@
     box-shadow: 0 5px 12px #93627f1c;
     transform: translateY(-1px);
 }
-.paw-mission-category { min-height: 21px; }
-.paw-mission-category > svg { flex: 0 0 auto; }
+.paw-mission-category {
+    min-height: 21px;
+}
+.paw-mission-category > svg {
+    flex: 0 0 auto;
+}
 .paw-mission-category > span {
     padding: 3px 7px;
     border-radius: 999px;
@@ -2518,8 +2525,12 @@
     font-size: 9px;
     white-space: nowrap;
 }
-.paw-missions-refreshed .mission-top { align-items: flex-start; }
-.paw-missions-refreshed .mission-top b { line-height: 1.35; }
+.paw-missions-refreshed .mission-top {
+    align-items: flex-start;
+}
+.paw-missions-refreshed .mission-top b {
+    line-height: 1.35;
+}
 .paw-missions-refreshed .mission-top > span {
     flex: 0 0 auto;
     padding: 4px 7px;
@@ -2530,7 +2541,10 @@
     font-size: 11px;
     font-variant-numeric: tabular-nums;
 }
-.paw-missions-refreshed .mission-track { height: 8px; background: #f0e4eb; }
+.paw-missions-refreshed .mission-track {
+    height: 8px;
+    background: #f0e4eb;
+}
 .paw-missions-refreshed .mission-footer {
     align-items: center;
     padding-top: 8px;
@@ -2541,8 +2555,14 @@
     font-size: 11px;
     font-weight: 750;
 }
-.paw-missions-refreshed .mission-rewards svg { flex: 0 0 auto; color: #b37996; }
-.paw-missions-refreshed .mission-claim-button { border-radius: 10px; font-weight: 850; }
+.paw-missions-refreshed .mission-rewards svg {
+    flex: 0 0 auto;
+    color: #b37996;
+}
+.paw-missions-refreshed .mission-claim-button {
+    border-radius: 10px;
+    font-weight: 850;
+}
 .paw-dark .paw-missions-refreshed .mission-card {
     border-color: #70566c;
     background: linear-gradient(145deg, #403345, #382d3d);
@@ -2552,31 +2572,70 @@
     border-color: #b687a2;
     box-shadow: 0 5px 12px #1d101c66;
 }
-.paw-dark .paw-mission-category > span { background: #59445a; color: #f6d8e8; }
+.paw-dark .paw-mission-category > span {
+    background: #59445a;
+    color: #f6d8e8;
+}
 .paw-dark .paw-missions-refreshed .mission-top > span {
     border-color: #725b73;
     background: #49394e;
     color: #ffe8f3;
 }
-.paw-dark .paw-missions-refreshed .mission-track { background: #5a485d; }
-.paw-dark .paw-missions-refreshed .mission-footer { border-color: #5d485b; }
-.paw-dark .paw-missions-refreshed .mission-rewards { color: #e6d2e0; }
+.paw-dark .paw-missions-refreshed .mission-track {
+    background: #5a485d;
+}
+.paw-dark .paw-missions-refreshed .mission-footer {
+    border-color: #5d485b;
+}
+.paw-dark .paw-missions-refreshed .mission-rewards {
+    color: #e6d2e0;
+}
 @media(max-width:680px) {
-    .paw-missions-refreshed .mission-grid { gap: 9px; }
-    .paw-missions-refreshed .mission-card { gap: 7px; padding: 10px; }
-    .paw-missions-kinds { margin-top: 12px; }
-    .paw-missions-toolbar { padding: 7px 8px; }
+    .paw-missions-refreshed .mission-grid {
+        gap: 9px;
+    }
+    .paw-missions-refreshed .mission-card {
+        gap: 7px;
+        padding: 10px;
+    }
+    .paw-missions-kinds {
+        margin-top: 12px;
+    }
+    .paw-missions-toolbar {
+        padding: 7px 8px;
+    }
 }
 @media(max-width:390px) {
-    .paw-missions-kinds button { min-height: 48px; gap: 2px; }
-    .paw-missions-kinds button span { font-size: 11px; }
-    .paw-missions-kinds button small { font-size: 9px; }
-    .paw-missions-reset { gap: 5px; font-size: 9px; }
-    .paw-missions-claim-all { min-height: 31px; padding: 6px 8px; }
-    .paw-missions-refreshed .mission-footer { gap: 7px; }
-    .paw-missions-refreshed .mission-rewards { font-size: 10px; }
+    .paw-missions-kinds button {
+        min-height: 48px;
+        gap: 2px;
+    }
+    .paw-missions-kinds button span {
+        font-size: 11px;
+    }
+    .paw-missions-kinds button small {
+        font-size: 9px;
+    }
+    .paw-missions-reset {
+        gap: 5px;
+        font-size: 9px;
+    }
+    .paw-missions-claim-all {
+        min-height: 31px;
+        padding: 6px 8px;
+    }
+    .paw-missions-refreshed .mission-footer {
+        gap: 7px;
+    }
+    .paw-missions-refreshed .mission-rewards {
+        font-size: 10px;
+    }
 }
 @media(prefers-reduced-motion:reduce) {
-    .paw-missions-refreshed .mission-card { transition: none; }
-    .paw-missions-refreshed .mission-card:hover { transform: none; }
+    .paw-missions-refreshed .mission-card {
+        transition: none;
+    }
+    .paw-missions-refreshed .mission-card:hover {
+        transform: none;
+    }
 }

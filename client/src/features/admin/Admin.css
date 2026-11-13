@@ -362,39 +362,206 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex] {
 }
 
 /* Admin-assisted password recovery. Uses the same square modal close button. */
-.admin-account-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
-.admin-account-actions .admin-reset { white-space: nowrap; }
-.admin-request-panel { margin-top: 24px; scroll-margin-top: 15px; }
-.admin-request-panel .admin-panel-head h2 { display: inline-flex; align-items: center; gap: 9px; }
-.admin-request-panel .admin-panel-head p { margin: 8px 0 0; font-size: 12px; }
-.admin-request-tools { display: flex; flex-wrap: wrap; gap: 8px; }
-.admin-request-list { padding: 0 18px 18px; }
-.admin-request-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-top: 1px solid #f4e8ed; padding: 14px 0; }
-.admin-request-info { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
-.admin-request-info > span:not(.admin-request-status) { color: #a18a98; font-size: 12px; }
-.admin-request-status { color: #87667b; background: #fff0f6; border: 1px solid #edcddd; border-radius: 99px; padding: 4px 9px; text-transform: capitalize; font-size: 11px; font-weight: 750; }
-.admin-request-status.approved, .admin-request-status.completed { color: #267e61; background: #eafff1; border-color: #bde6cf; }
-.admin-request-status.rejected, .admin-request-status.expired { color: #a35b6d; background: #fff1f3; border-color: #edcbd4; }
-.admin-request-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
-.admin-request-buttons button { font-size: 12px; padding: 9px 10px; }
-.admin-request-hint { max-width: 300px; font-size: 12px; color: #997d90; }
-.admin-page .admin-reset-header { align-items: flex-start; display: flex; justify-content: space-between; gap: 10px; margin-bottom: 18px; }
-.admin-page .admin-reset-header h2 { text-align: left; font-size: 22px; line-height: 1.25; margin: 0; }
-.admin-page .admin-reset-header .paw-modal-subtitle { text-align: left; margin: 4px 0 0; font-size: 12px; }
-.admin-page .admin-reset-header .paw-modal-close { display: inline-grid !important; place-items: center !important; flex: 0 0 36px; width: 36px; height: 36px; min-width: 36px; min-height: 36px; padding: 0 !important; border: 1px solid #e8cddc !important; border-radius: 11px !important; background: #fff !important; color: #956781 !important; }
-.admin-share-dialog { width: min(100%, 495px); max-height: min(90vh, 660px); overflow: auto; }
-.admin-share-dialog p { text-align: left; margin: 10px 0 15px; }
-.admin-share-dialog textarea { resize: vertical; border: 1px solid #e9d5df; border-radius: 11px; background: #fff; color: #654257; width: 100%; padding: 12px; overflow-wrap: anywhere; font: inherit; font-size: 12px; }
-.admin-share-dialog .admin-link-expiry { color: #a85d82; font-weight: 750; }
-@media(max-width:600px) { .admin-request-list { padding: 0 14px 14px; } .admin-request-buttons { width: 100%; } .admin-request-buttons button { flex: 1; } }
+.admin-account-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.admin-account-actions .admin-reset {
+    white-space: nowrap;
+}
+.admin-request-panel {
+    margin-top: 24px;
+    scroll-margin-top: 15px;
+}
+.admin-request-panel .admin-panel-head h2 {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+}
+.admin-request-panel .admin-panel-head p {
+    margin: 8px 0 0;
+    font-size: 12px;
+}
+.admin-request-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.admin-request-list {
+    padding: 0 18px 18px;
+}
+.admin-request-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-top: 1px solid #f4e8ed;
+    padding: 14px 0;
+}
+.admin-request-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.admin-request-info > span:not(.admin-request-status) {
+    color: #a18a98;
+    font-size: 12px;
+}
+.admin-request-status {
+    color: #87667b;
+    background: #fff0f6;
+    border: 1px solid #edcddd;
+    border-radius: 99px;
+    padding: 4px 9px;
+    text-transform: capitalize;
+    font-size: 11px;
+    font-weight: 750;
+}
+.admin-request-status.approved, .admin-request-status.completed {
+    color: #267e61;
+    background: #eafff1;
+    border-color: #bde6cf;
+}
+.admin-request-status.rejected, .admin-request-status.expired {
+    color: #a35b6d;
+    background: #fff1f3;
+    border-color: #edcbd4;
+}
+.admin-request-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.admin-request-buttons button {
+    font-size: 12px;
+    padding: 9px 10px;
+}
+.admin-request-hint {
+    max-width: 300px;
+    font-size: 12px;
+    color: #997d90;
+}
+.admin-page .admin-reset-header {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.admin-page .admin-reset-header h2 {
+    text-align: left;
+    font-size: 22px;
+    line-height: 1.25;
+    margin: 0;
+}
+.admin-page .admin-reset-header .paw-modal-subtitle {
+    text-align: left;
+    margin: 4px 0 0;
+    font-size: 12px;
+}
+.admin-page .admin-reset-header .paw-modal-close {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0 !important;
+    border: 1px solid #e8cddc !important;
+    border-radius: 11px !important;
+    background: #fff !important;
+    color: #956781 !important;
+}
+.admin-share-dialog {
+    width: min(100%, 495px);
+    max-height: min(90vh, 660px);
+    overflow: auto;
+}
+.admin-share-dialog p {
+    text-align: left;
+    margin: 10px 0 15px;
+}
+.admin-share-dialog textarea {
+    resize: vertical;
+    border: 1px solid #e9d5df;
+    border-radius: 11px;
+    background: #fff;
+    color: #654257;
+    width: 100%;
+    padding: 12px;
+    overflow-wrap: anywhere;
+    font: inherit;
+    font-size: 12px;
+}
+.admin-share-dialog .admin-link-expiry {
+    color: #a85d82;
+    font-weight: 750;
+}
+@media(max-width:600px) {
+    .admin-request-list {
+        padding: 0 14px 14px;
+    }
+    .admin-request-buttons {
+        width: 100%;
+    }
+    .admin-request-buttons button {
+        flex: 1;
+    }
+}
 
 /* Local and production password-reset links use the existing uniform modal header. */
-.admin-share-dialog { width: min(100%, 560px); max-height: min(92dvh, 760px); }
-.admin-reset-link-options { display: grid; gap: 13px; margin: 14px 0; }
-.admin-reset-link-option { background: #fff8fb; border: 1px solid #efd9e5; border-radius: 14px; padding: 13px; display: grid; gap: 10px; }
-.admin-reset-link-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; }
-.admin-reset-link-heading strong { color: #754760; font-size: 13px; }
-.admin-reset-link-heading span { color: #a18394; font-size: 11px; }
-.admin-page .admin-reset-link-option textarea { margin: 0; max-height: 80px; font-size: 12px; white-space: pre-wrap; }
-.admin-page .admin-reset-link-option button { justify-self: start; font-size: 12px; }
-@media (max-width: 480px) { .admin-reset-link-option { padding: 10px; } .admin-share-dialog { padding: 18px; } }
+.admin-share-dialog {
+    width: min(100%, 560px);
+    max-height: min(92dvh, 760px);
+}
+.admin-reset-link-options {
+    display: grid;
+    gap: 13px;
+    margin: 14px 0;
+}
+.admin-reset-link-option {
+    background: #fff8fb;
+    border: 1px solid #efd9e5;
+    border-radius: 14px;
+    padding: 13px;
+    display: grid;
+    gap: 10px;
+}
+.admin-reset-link-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+}
+.admin-reset-link-heading strong {
+    color: #754760;
+    font-size: 13px;
+}
+.admin-reset-link-heading span {
+    color: #a18394;
+    font-size: 11px;
+}
+.admin-page .admin-reset-link-option textarea {
+    margin: 0;
+    max-height: 80px;
+    font-size: 12px;
+    white-space: pre-wrap;
+}
+.admin-page .admin-reset-link-option button {
+    justify-self: start;
+    font-size: 12px;
+}
+@media (max-width: 480px) {
+    .admin-reset-link-option {
+        padding: 10px;
+    }
+    .admin-share-dialog {
+        padding: 18px;
+    }
+}

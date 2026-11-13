@@ -34,8 +34,16 @@
     border-bottom: 1px solid #efd8e7;
     background: #fff3fa;
 }
-.paw-brawl-guide-header > div:first-child { flex: 1 1 auto; min-width: 0; }
-.paw-brawl-guide-header h3 { margin: 0; font-size: 17px; line-height: 1.2; color: #915a7b; }
+.paw-brawl-guide-header > div:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.paw-brawl-guide-header h3 {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.2;
+    color: #915a7b;
+}
 .paw-brawl-guide-header .paw-modal-subtitle {
     margin: 4px 0 0;
     font-size: 11px;
@@ -43,7 +51,11 @@
     color: #a37c91;
     overflow-wrap: anywhere;
 }
-.paw-brawl-guide-header .paw-multi-dialog-close { flex: 0 0 36px; width: 36px; height: 36px; }
+.paw-brawl-guide-header .paw-multi-dialog-close {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+}
 .paw-brawl-guide-body.paw-multi-dialog-body {
     flex: 1 1 auto;
     min-height: 0;
@@ -54,22 +66,54 @@
     -webkit-overflow-scrolling: touch;
 }
 .paw-brawl-guide-body .paw-brawl-stat-guide-grid,
-.paw-brawl-guide-body .paw-brawl-skill-guide-grid { min-width: 0; }
+.paw-brawl-guide-body .paw-brawl-skill-guide-grid {
+    min-width: 0;
+}
 .paw-brawl-guide-body .paw-brawl-skill-guide-pet,
-.paw-brawl-guide-body .paw-brawl-stat-guide-entry { overflow-wrap: anywhere; }
-.paw-dark .paw-brawl-guide-dialog.paw-multi-dialog { background: #3c3045; color: #f6dced; border-color: #7a5979; }
-.paw-dark .paw-brawl-guide-header.paw-multi-dialog-header { background: #4f3b50; border-color: #79576e; }
-.paw-dark .paw-brawl-guide-header h3 { color: #fce0f1; }
-.paw-dark .paw-brawl-guide-header .paw-modal-subtitle { color: #ddbbd1; }
+.paw-brawl-guide-body .paw-brawl-stat-guide-entry {
+    overflow-wrap: anywhere;
+}
+.paw-dark .paw-brawl-guide-dialog.paw-multi-dialog {
+    background: #3c3045;
+    color: #f6dced;
+    border-color: #7a5979;
+}
+.paw-dark .paw-brawl-guide-header.paw-multi-dialog-header {
+    background: #4f3b50;
+    border-color: #79576e;
+}
+.paw-dark .paw-brawl-guide-header h3 {
+    color: #fce0f1;
+}
+.paw-dark .paw-brawl-guide-header .paw-modal-subtitle {
+    color: #ddbbd1;
+}
 @media (max-width: 620px) {
-    .paw-brawl-guide-overlay { padding: max(7px, env(safe-area-inset-top)) 7px max(7px, env(safe-area-inset-bottom)); }
-    .paw-brawl-guide-dialog.paw-multi-dialog { width: 100%; border-radius: 14px; }
-    .paw-brawl-guide-header.paw-multi-dialog-header { padding: 10px 12px; }
-    .paw-brawl-guide-header h3 { font-size: 15px; }
-    .paw-brawl-guide-header .paw-modal-subtitle { font-size: 10px; }
-    .paw-brawl-guide-body.paw-multi-dialog-body { padding: 11px 12px 14px; }
+    .paw-brawl-guide-overlay {
+        padding: max(7px, env(safe-area-inset-top)) 7px max(7px, env(safe-area-inset-bottom));
+    }
+    .paw-brawl-guide-dialog.paw-multi-dialog {
+        width: 100%;
+        border-radius: 14px;
+    }
+    .paw-brawl-guide-header.paw-multi-dialog-header {
+        padding: 10px 12px;
+    }
+    .paw-brawl-guide-header h3 {
+        font-size: 15px;
+    }
+    .paw-brawl-guide-header .paw-modal-subtitle {
+        font-size: 10px;
+    }
+    .paw-brawl-guide-body.paw-multi-dialog-body {
+        padding: 11px 12px 14px;
+    }
 }
 @media (max-width: 360px), (max-height: 530px) {
-    .paw-brawl-guide-header.paw-multi-dialog-header { padding: 7px 10px; }
-    .paw-brawl-guide-body.paw-multi-dialog-body { padding: 9px 10px 12px; }
+    .paw-brawl-guide-header.paw-multi-dialog-header {
+        padding: 7px 10px;
+    }
+    .paw-brawl-guide-body.paw-multi-dialog-body {
+        padding: 9px 10px 12px;
+    }
 }

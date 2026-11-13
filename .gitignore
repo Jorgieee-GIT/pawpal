@@ -6,3 +6,7 @@ dist/
 .DS_Store
 *.tsbuildinfo
 database/migrations/
+/qa/debug.log
+/qa/playwright-report/
+/qa/test-results/
+/repomix-output.xml

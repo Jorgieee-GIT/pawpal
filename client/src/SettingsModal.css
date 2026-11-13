@@ -1,9 +1,24 @@
 .paw-settings-backdrop {
     z-index: 5200;
 }
-.paw-settings-legal button { border:0; background:transparent; color:#a65f83; font-weight:700; text-decoration:underline; cursor:pointer; padding:4px 6px; }
-.paw-settings-legal { display:flex; flex-wrap:wrap; gap:5px; }
-.paw-settings-legal button { font-size:11px; line-height:1.2; }
+.paw-settings-legal button {
+    border: 0;
+    background: transparent;
+    color: #a65f83;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 4px 6px;
+}
+.paw-settings-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.paw-settings-legal button {
+    font-size: 11px;
+    line-height: 1.2;
+}
 
 .paw-settings-modal {
     width: min(100%, 700px);
@@ -463,10 +478,44 @@
 }
 
 /* Player issue reporting, styled like other settings controls. */
-.paw-settings-report { display:grid; gap:12px; }
-.paw-settings-report label { display:grid; gap:7px; font-size:12px; font-weight:700; }
-.paw-settings-report select,.paw-settings-report textarea { width:100%; min-width:0; box-sizing:border-box; background:var(--panel,#fff); color:inherit; border:1px solid #e9ccd9; border-radius:11px; padding:11px 12px; font:inherit; }
-.paw-settings-report textarea { resize:vertical; }
-.paw-settings-report button { justify-self:start; padding:10px 16px; border-radius:11px; border:1px solid #d8759b; background:#d8759b; color:white; font-weight:750; }
-.paw-settings-report button:disabled { opacity:.55; }
-.paw-settings-report-message { margin:0; font-size:12px; color:inherit; }
+.paw-settings-report {
+    display: grid;
+    gap: 12px;
+}
+.paw-settings-report label {
+    display: grid;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.paw-settings-report select,.paw-settings-report textarea {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    background: var(--panel,#fff);
+    color: inherit;
+    border: 1px solid #e9ccd9;
+    border-radius: 11px;
+    padding: 11px 12px;
+    font: inherit;
+}
+.paw-settings-report textarea {
+    resize: vertical;
+}
+.paw-settings-report button {
+    justify-self: start;
+    padding: 10px 16px;
+    border-radius: 11px;
+    border: 1px solid #d8759b;
+    background: #d8759b;
+    color: white;
+    font-weight: 750;
+}
+.paw-settings-report button:disabled {
+    opacity: .55;
+}
+.paw-settings-report-message {
+    margin: 0;
+    font-size: 12px;
+    color: inherit;
+}

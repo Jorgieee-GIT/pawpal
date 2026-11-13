@@ -739,8 +739,7 @@ export async function resolveRound(client: DbClient, row: any, battle: Battle) {
             // locked specials are protected from the other player's Focus drain.
             delete pending[actor.userId];
             applyMove(battle, actor, target, selectedMove);
-        }
-        else {
+        } else {
             battle.log = [...battle.log, `${actor.petName} did not choose a move and skipped this round.`].slice(-12);
         }
     }
@@ -843,8 +842,7 @@ export async function resolveRound(client: DbClient, row: any, battle: Battle) {
             const payout = calculateArenaPayout(row.wager, 2, row.arena_fee_percent);
             await client.query("UPDATE pets SET coins=coins+$2 WHERE owner_id=$1", [winnerId, payout.payoutPerWinner]);
             await recordArenaFee(client, "classic_1v1", row.id, payout);
-        }
-        else {
+        } else {
             await client.query("UPDATE pets SET coins=coins+$2 WHERE owner_id=ANY($1::uuid[])", [people, row.wager]);
         }
         await client.query(`UPDATE multiplayer_challenges SET battle=$2::jsonb,status='finished',winner_id=$3,updated_at=NOW() WHERE id=$1`, [row.id, JSON.stringify(battle), winnerId]);
@@ -1023,8 +1021,7 @@ const notify = (users: string[]) => publishLive(users, "multiplayer_updated");
         } catch (error) {
             await client.query("ROLLBACK");
             logSafeError("Paw Brawl turn timeout failed", error)
-        }
-        finally {
+        } finally {
             client.release()
         }
     }, 2000);
@@ -1159,8 +1156,7 @@ async function catchUpExpiredRound(userId: string): Promise<string[]> {
             }
             if (error) {
                 await client.query("ROLLBACK");
-            }
-            else {
+            } else {
                 await client.query("COMMIT");
             }
         } catch (e) {
@@ -1201,12 +1197,10 @@ async function catchUpExpiredRound(userId: string): Promise<string[]> {
             if (!row) {
                 status = 404;
                 error = "Challenge not found."
-            }
-            else if (row.status !== "pending") {
+            } else if (row.status !== "pending") {
                 status = 409;
                 error = "That challenge is no longer pending."
-            }
-            else if (action === "cancel" && row.challenger_id !== req.userId || action !== "cancel" && row.challenged_id !== req.userId) {
+            } else if (action === "cancel" && row.challenger_id !== req.userId || action !== "cancel" && row.challenged_id !== req.userId) {
                 status = 403;
                 error = "This challenge is not addressed to you.";
             } else if (new Date(row.expires_at).getTime() <= Date.now()) {
@@ -1235,16 +1229,14 @@ async function catchUpExpiredRound(userId: string): Promise<string[]> {
                     const paid = await client.query("UPDATE pets SET coins=coins-$2 WHERE owner_id=$1 AND coins >= $2 RETURNING id", [row.challenged_id, row.wager]);
                     if (!paid.rowCount) {
                         error = "You need enough Paw Coins to match the wager."
-                    }
-                    else {
+                    } else {
                         const p = await client.query(`SELECT p.owner_id, p.name, p.species, p.breed, p.color, u.username
                             FROM pets p JOIN users u ON u.id=p.owner_id WHERE p.owner_id = ANY($1::uuid[])`, [people]);
                         const first = p.rows.find((entry: any) => entry.owner_id === row.challenger_id);
                         const second = p.rows.find((entry: any) => entry.owner_id === row.challenged_id);
                         if (!first || !second) {
                             error = "Both players must have adopted pets."
-                        }
-                        else {
+                        } else {
                             const players: [Player, Player] = [
                                 makePlayer(row.challenger_id, first.username, first),
                                 makePlayer(row.challenged_id, second.username, second)
@@ -1308,26 +1300,20 @@ async function catchUpExpiredRound(userId: string): Promise<string[]> {
             if (!row || ![row.challenger_id, row.challenged_id].includes(req.userId)) {
                 status = 404;
                 error = "Battle not found."
-            }
-            else if (row.status !== "active") {
+            } else if (row.status !== "active") {
                 error = "That battle has already ended.";
-            }
-            else {
+            } else {
                 const battle = row.battle as Battle;
                 const pending = battle.pendingMoves || {};
                 if (pending[req.userId]) {
                     error = "Your move is already locked in for this round.";
-                }
-                else if (!alive(battle)) {
+                } else if (!alive(battle)) {
                     error = "Battle already completed.";
-                }
-                else if (new Date(battle.turnExpiresAt).getTime() <= Date.now()) {
+                } else if (new Date(battle.turnExpiresAt).getTime() <= Date.now()) {
                     error = "This round has expired. Any player who did not choose a move skips the round.";
-                }
-                else if (battle.players.find(player => player.userId === req.userId)!.stunnedRounds) {
+                } else if (battle.players.find(player => player.userId === req.userId)!.stunnedRounds) {
                     error = "Your pet is stunned this round. You will automatically skip and gain stun immunity.";
-                }
-                else if (isSpecial(input.data.action) && (() => {
+                } else if (isSpecial(input.data.action) && (() => {
                     const pet = battle.players.find(player => player.userId === req.userId)!;
                     normalizePlayer(pet);
                     const skillIndex = input.data.action === "special2" ? 1 : 0;
@@ -1335,14 +1321,12 @@ async function catchUpExpiredRound(userId: string): Promise<string[]> {
                     return pet.focus < skill.cost || (pet.cooldowns?.[skillIndex] || 0) > 0;
                 })()) {
                     error = "Not enough Focus or that special is still on cooldown.";
-                }
-                else {
+                } else {
                     pending[req.userId] = input.data.action;
                     battle.pendingMoves = pending;
                     if (Object.keys(pending).length + battle.players.filter(player => !!player.stunnedRounds).length >= 2) {
                         outcome = await resolveRound(client, row, battle);
-                    }
-                    else {
+                    } else {
                         await client.query("UPDATE multiplayer_challenges SET battle=$2::jsonb,updated_at=NOW() WHERE id=$1", [row.id, JSON.stringify(battle)]);
                     }
                     players = [row.challenger_id, row.challenged_id];

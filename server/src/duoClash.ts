@@ -810,8 +810,7 @@ const inform = (participants: DuoParticipant[]) => publish(participants.map(p =>
             const expected = battle.players.filter(p => p.hp > 0 && !(p.stunnedRounds && (p.stunEffectiveRound || 0) <= battle.round)).length;
             if (Object.keys(battle.pendingMoves).length >= expected) {
                 const outcome = resolveDuoRound(battle);
-                if (outcome.finished) { await settle(client, room, outcome.winnerTeam, battle); result = "Round complete. Match finished!"; }
-                else { await client.query("UPDATE duo_rooms SET battle=$2::jsonb,updated_at=NOW() WHERE id=$1", [room.id, JSON.stringify(battle)]); result = "Round resolved!"; }
+                if (outcome.finished) { await settle(client, room, outcome.winnerTeam, battle); result = "Round complete. Match finished!"; } else { await client.query("UPDATE duo_rooms SET battle=$2::jsonb,updated_at=NOW() WHERE id=$1", [room.id, JSON.stringify(battle)]); result = "Round resolved!"; }
             } else {
                 await client.query("UPDATE duo_rooms SET battle=$2::jsonb,updated_at=NOW() WHERE id=$1", [room.id, JSON.stringify(battle)]);
             }
@@ -849,8 +848,7 @@ const inform = (participants: DuoParticipant[]) => publish(participants.map(p =>
                 const timedOut = participants.filter(p => Date.now() - Date.parse(p.lastSeen) >= RECONNECT_MS);
                 if (timedOut.length) {
                     const absentTeams = new Set(timedOut.map(p => p.team));
-                    if (absentTeams.size === 2) { await settle(client, room, null, battle, "void"); }
-                    else { await settle(client, room, (timedOut[0].team === 0 ? 1 : 0) as 0 | 1, battle); }
+                    if (absentTeams.size === 2) { await settle(client, room, null, battle, "void"); } else { await settle(client, room, (timedOut[0].team === 0 ? 1 : 0) as 0 | 1, battle); }
                     changed.push(participants);
                 } else if (disconnected.length) {
                     if (!battle.paused) {
@@ -861,8 +859,7 @@ const inform = (participants: DuoParticipant[]) => publish(participants.map(p =>
                     }
                 } else if (!battle.paused && Date.now() >= Date.parse(battle.deadline)) {
                     const outcome = resolveDuoRound(battle);
-                    if (outcome.finished) { await settle(client, room, outcome.winnerTeam, battle); }
-                    else { await client.query("UPDATE duo_rooms SET battle=$2::jsonb,updated_at=NOW() WHERE id=$1", [room.id, JSON.stringify(battle)]); }
+                    if (outcome.finished) { await settle(client, room, outcome.winnerTeam, battle); } else { await client.query("UPDATE duo_rooms SET battle=$2::jsonb,updated_at=NOW() WHERE id=$1", [room.id, JSON.stringify(battle)]); }
                     changed.push(participants);
                 }
             }

@@ -897,14 +897,7 @@ const floatingNumbers = (petId: string) => {
             {ordered.slice(0, 3).map((change, index) => {
                 const amount = Math.abs(change.amount || 0);
                 let label = change.label || "";
-                if (change.kind === "damage") { label = `−${amount} HP`; }
-                else if (change.kind === "poison") { label = `−${amount} POISON`; }
-                else if (change.kind === "heal") { label = `+${amount} HP`; }
-                else if (change.kind === "shield") { label = `${(change.amount || 0) > 0 ? "+" : "−"}${amount} SHIELD${change.label ? ` · ${change.label}` : ""}`; }
-                else if (change.kind === "focus") { label = `${(change.amount || 0) > 0 ? "+" : "−"}${amount} FOCUS`; }
-                else if (change.kind === "counter") { label = `−${amount} COUNTER`; }
-                else if (change.kind === "recoil") { label = `−${amount} RECOIL`; }
-                else if (change.kind === "pressure") { label = `−${amount} OVERTIME`; }
+                if (change.kind === "damage") { label = `−${amount} HP`; } else if (change.kind === "poison") { label = `−${amount} POISON`; } else if (change.kind === "heal") { label = `+${amount} HP`; } else if (change.kind === "shield") { label = `${(change.amount || 0) > 0 ? "+" : "−"}${amount} SHIELD${change.label ? ` · ${change.label}` : ""}`; } else if (change.kind === "focus") { label = `${(change.amount || 0) > 0 ? "+" : "−"}${amount} FOCUS`; } else if (change.kind === "counter") { label = `−${amount} COUNTER`; } else if (change.kind === "recoil") { label = `−${amount} RECOIL`; } else if (change.kind === "pressure") { label = `−${amount} OVERTIME`; }
                 return <span key={`${change.kind}-${index}`} className={`paw-brawl-float is-${change.kind}`} style={{ "--float-order": index } as CSSProperties}>{label}</span>;
             })}
         </div>;

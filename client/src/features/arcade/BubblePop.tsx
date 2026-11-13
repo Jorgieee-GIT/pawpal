@@ -661,8 +661,7 @@ const add = (cell: number) => {
             working = remix(working);
             setBoard(working);
             setMessage("No swaps left — the board shuffled itself!");
-        }
-        else if (cascadeCount > 1) setMessage(`${cascadeCount}-wave chain reaction · +${cascadeScore} points!`);
+        } else if (cascadeCount > 1) setMessage(`${cascadeCount}-wave chain reaction · +${cascadeScore} points!`);
         else if (cascadeCount === 1) setMessage(`Nice match · +${cascadeScore} points!`);
         setFallOffsets(new Map());
     }

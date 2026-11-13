@@ -530,4 +530,11 @@ input {
     align-items: center;
     min-height: 70vh;
 }
-.paw-public-footer { display:flex; justify-content:center; align-items:center; gap:22px; padding:18px 12px 28px; font-size:14px; }
+.paw-public-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 22px;
+    padding: 18px 12px 28px;
+    font-size: 14px;
+}

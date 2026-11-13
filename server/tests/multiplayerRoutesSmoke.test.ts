@@ -45,13 +45,11 @@ const query = async (sql: string, args: any[] = []): Promise<any> => {
     if (q.startsWith("UPDATE duo_rooms SET status=")) { room.status = args[1]; room.battle = JSON.parse(args[2]); room.winner_team = args[3]; return { rowCount: 1, rows: [] }; }
     if (q.startsWith("UPDATE pets SET coins=coins+")) {
         assert.ok(accountIds.has(args[0]), "payout must go to a participant");
-        if (room?.status === "active" && args[1] === 47) { duoPayouts++; }
-        else { classicPayouts++; }
+        if (room?.status === "active" && args[1] === 47) { duoPayouts++; } else { classicPayouts++; }
         return { rowCount: 1, rows: [] };
     }
     if (q.startsWith("INSERT INTO arena_fee_ledger")) {
-        if (args[0] === "duo_2v2") { duoFees++; }
-        else if (args[0] === "classic_1v1") { classicFees++; }
+        if (args[0] === "duo_2v2") { duoFees++; } else if (args[0] === "classic_1v1") { classicFees++; }
         return { rowCount: 1, rows: [] };
     }
     if (q.startsWith("INSERT INTO duo_records") || q.startsWith("INSERT INTO mission_events")) { return { rowCount: 1, rows: [] }; }

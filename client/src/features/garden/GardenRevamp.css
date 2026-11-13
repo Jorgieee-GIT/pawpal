@@ -1459,8 +1459,14 @@
     flex: none;
 }
 @keyframes paw-garden-toast-in {
-    from { opacity: 0; transform: translateY(5px) scale(.97); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    from {
+        opacity: 0;
+        transform: translateY(5px) scale(.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 .paw-dark .paw-garden-bed-grid > .paw-garden-bed:focus-visible {
     outline-color: #f0d295;
@@ -1613,8 +1619,12 @@
     animation: paw-garden-toast-in 180ms ease-out both;
 }
 @keyframes paw-garden-toast-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 .paw-dark .paw-garden-mode-tools button {
     border-color: #8b7965;

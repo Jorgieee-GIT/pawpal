@@ -61,6 +61,7 @@ app.post("/api/admin/login", handle(async (req, res) => {
 ```
 
 Document functions with this comment structure. Include `@param`, `@returns`, and `@throws` only when they apply.
+When editing a function on a different calendar day, update its `Last Updated` date. Keep `Author: Jorge` and set `Last Updated By: Jorge`.
 
 ```ts
 /*
