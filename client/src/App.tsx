@@ -2768,8 +2768,7 @@ const closeEscape = (event: KeyboardEvent) => {
                                         />
                                     ) : (
                                         <section className="panel">
-                                            <div className="eyebrow">YOUR PAWPAL JOURNEY</div>
-                                            <SectionHeading title="Missions" Icon={Trophy} />
+                                            <SectionHeading title="Missions" Icon={Trophy} eyebrow="YOUR PAWPAL JOURNEY" />
                                             <div className="stats-grid">
                                                 {[
                                                     ["Pet level", pet.level],
@@ -2888,8 +2887,7 @@ const status = (code: string) =>
                 </div>
             )}
             <footer>
-                @ {new Date().getFullYear()} PawPal · Created by <b>HORHEEE</b> · All rights
-                reserved.
+                © {new Date().getFullYear()} PawPal. All rights reserved. Created by <b>HORHEEE</b>.
             </footer>
             <Suspense fallback={null}>
                 {game &&

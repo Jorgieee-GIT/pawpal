@@ -23,8 +23,7 @@ type Props = {
 export default function MarketPanel({ marketRoom, setMarketRoom, pet, busy, execute }: Props) {
     return (
         <section className="panel">
-            <div className="eyebrow">COLLECT & CUSTOMIZE</div>
-            <SectionHeading title="Market" Icon={ShoppingBag} />
+            <SectionHeading title="Market" Icon={ShoppingBag} eyebrow="COLLECT & CUSTOMIZE" />
             <div className="paw-market-furniture">
                 <h3>Furniture Shop</h3>
                 <div className="paw-market-tabs-scroll" role="region" aria-label="Furniture rooms" tabIndex={0}>

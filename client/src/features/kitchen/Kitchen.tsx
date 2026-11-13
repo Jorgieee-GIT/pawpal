@@ -17,10 +17,9 @@ import {
     Sparkles,
     Star,
     UtensilsCrossed,
-    X,
-    CircleHelp
+    X
 } from "lucide-react";
-import SectionHeading from "../../SectionHeading";
+import SectionHeading, { SectionInfoButton } from "../../SectionHeading";
 import { kitchenMarkerPhase, kitchenMarkerScore } from "./KitchenTiming";
 import { randomChallenge, type KitchenChallenge } from "./KitchenChallenges";
 import { KitchenDirectionArt, KITCHEN_ARROW_DIRECTIONS } from "./KitchenDirectionArt";
@@ -782,13 +781,7 @@ function changeHeat(delta: number) {
     }
 
     return <section className="panel paw-kitchen kitchen-revamp">
-        <div className="eyebrow">PAWPAL COOKING CLUB</div>
-        <div className="k4-title-row">
-            <SectionHeading title="Kitchen" Icon={CookingPot} />
-            <button type="button" className="k4-info-button" onClick={() => setGuideOpen(true)}>
-                <CircleHelp size={18} /> Info
-            </button>
-        </div>
+        <SectionHeading title="Kitchen" Icon={CookingPot} eyebrow="PAWPAL COOKING CLUB" actions={<SectionInfoButton onClick={() => setGuideOpen(true)} />} />
         {active && current && <div className="k3-active-bar">
             <div className="k3-active-art">
                 <FoodArt id={active} />

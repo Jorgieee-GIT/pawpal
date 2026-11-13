@@ -4,58 +4,6 @@
     --garden-ink: #76536c;
     overflow: hidden;
 }
-.paw-garden-header {
-    display: flex;
-    gap: 14px;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    margin-bottom: 14px;
-}
-.paw-garden-header-copy h2 {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    margin: 3px 0 6px;
-}
-.paw-garden-header-copy h2 svg {
-    color: #c77c9f;
-}
-.paw-garden-header-copy p {
-    margin: 0;
-    color: #9c738b;
-    font-size: 13px;
-    line-height: 1.5;
-}
-.paw-garden-header-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-.paw-garden-header-actions button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    min-height: 32px;
-    padding: 6px 10px;
-    border: 0;
-    border-radius: 10px;
-    background: transparent;
-    color: #895474;
-    font-size: 11px;
-    font-weight: 800;
-    cursor: pointer;
-}
-.paw-garden-header-actions button:hover {
-    background: transparent;
-}
-.paw-garden-header-actions button span {
-    padding: 2px 6px;
-    border-radius: 8px;
-    background: #f2dbe6;
-    font-size: 10px;
-}
 .paw-garden-stock {
     display: grid;
     grid-template-columns: repeat(4,minmax(0,1fr));
@@ -742,12 +690,8 @@
     text-decoration: underline;
     cursor: pointer;
 }
-.paw-dark .paw-garden-header-copy p,.paw-dark .paw-garden-supplies p {
+.paw-dark .paw-garden-supplies p {
     color: #e9c3d8;
-}
-.paw-dark .paw-garden-header-actions button {
-    background: transparent;
-    color: #ffe6f1;
 }
 .paw-dark .paw-garden-stock > div {
     background: #5a4655;
@@ -1080,9 +1024,6 @@
         grid-template-columns: minmax(94px, auto) minmax(0, 1fr);
         gap: 6px;
     }
-}
-.paw-garden-header-copy .paw-section-title {
-    margin: 3px 0 6px;
 }
 /* The timer has one stable numeric line; stage detail remains in its accessible label. */
 .paw-garden-bed-status {

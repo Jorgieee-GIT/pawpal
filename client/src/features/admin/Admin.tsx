@@ -567,7 +567,7 @@ function viewRequests(username = "") {
                     </div>
                 </form>
             </div>}
-            <footer className="paw-admin-footer">© {new Date().getFullYear()} PawPal. All rights reserved. · Jorge Jose</footer>
+            <footer className="paw-admin-footer">© {new Date().getFullYear()} PawPal. All rights reserved. Created by Jorge Jose.</footer>
         </div>
     </div>
 }

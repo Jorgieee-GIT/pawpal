@@ -233,7 +233,7 @@
 
 /* Main navigation page headings use one palette, size, and eyebrow placement. */
 .panel > .eyebrow,
-.paw-garden-header-copy > .eyebrow {
+.paw-section-heading > .eyebrow {
     color: #c47d9f;
     font-size: 11px;
     line-height: 1.45;
@@ -241,17 +241,67 @@
     letter-spacing: 1.8px;
     text-transform: uppercase;
 }
+.paw-section-heading {
+    margin-bottom: 14px;
+}
+.paw-section-heading-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 12px;
+    min-height: 36px;
+    margin-top: 3px;
+}
 .paw-section-title {
     display: inline-flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 9px;
     max-width: 100%;
-    margin: 3px 0 14px;
+    margin: 0;
+    min-width: 0;
     color: #865671;
     font-size: 24px;
     font-weight: 900;
     line-height: 1.22;
+}
+.paw-section-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    min-width: 0;
+    max-width: 100%;
+    margin-inline-start: auto;
+}
+.paw-section-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 36px;
+    padding: 6px 10px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: #895474;
+    font-size: 12px;
+    font-weight: 800;
+}
+.paw-section-info:hover {
+    background: #f7e7ef;
+}
+.paw-section-info:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+.paw-dark .paw-section-info {
+    color: #ffe6f1;
+}
+.paw-dark .paw-section-info:hover {
+    background: #513b50;
 }
 .paw-section-title > svg {
     display: block;
@@ -262,7 +312,7 @@
     stroke: currentColor;
 }
 .paw-dark .panel > .eyebrow,
-.paw-dark .paw-garden-header-copy > .eyebrow {
+.paw-dark .paw-section-heading > .eyebrow {
     color: #e4a6c7;
 }
 .paw-dark .paw-section-title {

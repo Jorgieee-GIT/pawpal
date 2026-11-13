@@ -28,8 +28,7 @@ type Props = {
 export default function WardrobePanel({ pet, execute, busy }: Props) {
     return (
         <section className="panel">
-            <div className="eyebrow">YOUR COZY CLOSET</div>
-            <SectionHeading title="Wardrobe" Icon={Shirt} />
+            <SectionHeading title="Wardrobe" Icon={Shirt} eyebrow="YOUR COZY CLOSET" />
             <OutfitWardrobe pet={pet} execute={execute} busy={busy} />
             <h3>Breeds, wildlife & prehistoric relatives</h3>
             <div className="shop-grid">

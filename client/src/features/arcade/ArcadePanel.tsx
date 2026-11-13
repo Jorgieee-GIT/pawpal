@@ -22,8 +22,7 @@ type Props = {
 export default function ArcadePanel({ launchGame, pet, records }: Props) {
     return (
         <section className="panel">
-            <div className="eyebrow">THE LITTLE ARCADE</div>
-            <SectionHeading title="Mini-games" Icon={Gamepad2} />
+            <SectionHeading title="Mini-games" Icon={Gamepad2} eyebrow="THE LITTLE ARCADE" />
             <div className="games-grid">
                 {PAW_GAMES.map(([id, icon, label]) => (
                     <button

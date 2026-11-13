@@ -949,15 +949,13 @@ const petCard = (player: Player, mine: boolean) => (
     );
 
     return <section className="panel paw-multiplayer">
-        <div className="eyebrow">PLAY TOGETHER, PAWS TOGETHER</div>
-        <div className="paw-multiplayer-heading">
-            <SectionHeading title="Multiplayer" Icon={Swords} />
+        <SectionHeading title="Multiplayer" Icon={Swords} eyebrow="PLAY TOGETHER, PAWS TOGETHER" actions={
             <button ref={recentBattlesTriggerRef} type="button" className="paw-multi-header-history" aria-haspopup="dialog" aria-expanded={showRecentBattles} onClick={() => setShowRecentBattles(true)}>
                 <Trophy size={16} /> Recent Battles{history.length > 0 && <small>
                     {history.length}
                 </small>}
             </button>
-        </div>
+        } />
         <div className="paw-multi-game-library">
             <div className={`paw-multi-game-tile paw-multi-brawl-card ${gameId === "paw_brawl" ? "selected" : ""}`}>
                 <button type="button" className="paw-multi-game-picker" onClick={() => setGameId(current => current === "paw_brawl" ? null : "paw_brawl")} aria-pressed={gameId === "paw_brawl"}>

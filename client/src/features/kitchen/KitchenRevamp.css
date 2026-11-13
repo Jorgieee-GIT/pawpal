@@ -1554,31 +1554,6 @@
     white-space: nowrap;
 }
 /* Kitchen expansion: four real-time, responsive preparation games. */
-.kitchen-revamp .k4-title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-.kitchen-revamp .k4-title-row .paw-section-title {
-    margin: 0;
-}
-.kitchen-revamp .k4-info-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    min-height: 32px;
-    padding: 6px 10px;
-    border: 0;
-    border-radius: 10px;
-    background: transparent;
-    color: #895474;
-    font-size: 11px;
-    font-weight: 800;
-    cursor: pointer;
-}
 .kitchen-revamp .k4-game {
     display: grid;
     gap: 9px;

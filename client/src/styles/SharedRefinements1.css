@@ -1445,11 +1445,6 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex] {
     }
 }
 /* Batch 51: friend requests are opened in a modal instead of occupying a section */
-.paw-requests-launch-row {
-    display: flex;
-    justify-content: flex-end;
-    margin: 10px 0 16px;
-}
 .paw-friends-panel .paw-requests-launch {
     display: inline-flex;
     align-items: center;
@@ -1518,11 +1513,6 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex] {
     }
 }
 /* Batch 52: icon-only friend requests launcher above friend search. */
-.paw-friends-panel .paw-requests-launch-row {
-    display: flex;
-    justify-content: flex-end;
-    margin: 0 0 10px;
-}
 .paw-friends-panel .paw-requests-launch {
     position: relative;
     width: 40px;
@@ -1552,24 +1542,8 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex] {
 .paw-dark .paw-friends-panel .paw-requests-launch .paw-requests-count {
     border-color: #30232e;
 }
-/* Batch 53: Friends heading and borderless request icon share one compact row. */
-.paw-friends-panel .paw-friends-title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 0 0 12px;
-}
-.paw-friends-panel .paw-friends-title-row h2 {
-    margin: 0;
-    min-width: 0;
-}
-.paw-friends-panel .paw-friends-title-row .paw-requests-launch-row {
-    margin: 0;
-    flex: 0 0 auto;
-}
-.paw-friends-panel .paw-friends-title-row .paw-requests-launch,
-.paw-dark .paw-friends-panel .paw-friends-title-row .paw-requests-launch {
+.paw-friends-panel .paw-section-actions .paw-requests-launch,
+.paw-dark .paw-friends-panel .paw-section-actions .paw-requests-launch {
     width: 36px;
     height: 36px;
     min-width: 36px;
@@ -1579,12 +1553,12 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex] {
     box-shadow: none!important;
     border-radius: 8px;
 }
-.paw-friends-panel .paw-friends-title-row .paw-requests-launch:hover,
-.paw-dark .paw-friends-panel .paw-friends-title-row .paw-requests-launch:hover {
+.paw-friends-panel .paw-section-actions .paw-requests-launch:hover,
+.paw-dark .paw-friends-panel .paw-section-actions .paw-requests-launch:hover {
     background: transparent!important;
     opacity: .75;
 }
-.paw-friends-panel .paw-friends-title-row .paw-requests-launch:focus-visible {
+.paw-friends-panel .paw-section-actions .paw-requests-launch:focus-visible {
     outline: 2px solid currentColor;
     outline-offset: 2px;
 }

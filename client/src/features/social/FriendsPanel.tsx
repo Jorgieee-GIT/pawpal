@@ -57,10 +57,8 @@ export default function FriendsPanel({
 }: Props) {
     return (
         <section className="panel paw-friends-panel">
-            <div className="eyebrow">YOUR LITTLE COMMUNITY</div>
-            <div className="paw-friends-title-row">
-                <SectionHeading title="Friends" Icon={Users} />
-                <div className="paw-requests-launch-row">
+            <SectionHeading title="Friends" Icon={Users} eyebrow="YOUR LITTLE COMMUNITY" actions={
+                <>
                     <button
                         type="button"
                         className={
@@ -85,8 +83,8 @@ export default function FriendsPanel({
                             </span>
                         )}
                     </button>
-                </div>
-            </div>
+                </>
+            } />
             {requestsOpen && (
                 <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setRequestsOpen(false);}}}>
                     <section className="paw-modal paw-requests-modal" role="dialog" aria-modal="true" aria-labelledby="paw-requests-modal-title">

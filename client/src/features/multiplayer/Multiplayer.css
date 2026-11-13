@@ -34,21 +34,6 @@
 .paw-multiplayer *, .paw-multiplayer *::before, .paw-multiplayer *::after {
     box-sizing: border-box;
 }
-.paw-multiplayer-heading {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 16px;
-}
-.paw-multiplayer-heading h2 {
-    margin: 5px 0 4px;
-}
-.paw-multiplayer-heading p {
-    margin: 0;
-    max-width: 510px;
-    font-size: 13px;
-}
 .paw-multiplayer-wallet {
     display: flex;
     align-items: center;
@@ -656,9 +641,6 @@
     }
 }
 @media(max-width:620px) {
-    .paw-multiplayer-heading {
-        flex-wrap: wrap;
-    }
     .paw-multiplayer-wallet {
         width: 100%;
     }
@@ -3598,13 +3580,6 @@ button.paw-multi-game-tile:focus-visible {
     }
 }
 /* Multiplayer: clean page title and a predictable, touch-friendly selected-game toolbar. */
-.paw-multiplayer .paw-multiplayer-heading {
-    align-items: center;
-    margin-bottom: 17px;
-}
-.paw-multiplayer .paw-multiplayer-heading h2 {
-    margin: 4px 0 0;
-}
 .paw-multiplayer .paw-multi-selected-banner {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;

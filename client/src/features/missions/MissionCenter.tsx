@@ -255,10 +255,7 @@ async function claimAll() {
     }
 
     return <section className="panel mission-center paw-missions-refreshed">
-        <div className="eyebrow">YOUR LITTLE ADVENTURES</div>
-        <div className="paw-missions-heading">
-            <SectionHeading title="Missions" Icon={Trophy} />
-        </div>
+        <SectionHeading title="Missions" Icon={Trophy} eyebrow="YOUR LITTLE ADVENTURES" />
         <div className="paw-missions-kinds" role="tablist" aria-label="Mission schedule">
             {types.map(item => {
                 const missions = (data?.missions || []).filter(mission => mission.kind === item.id);

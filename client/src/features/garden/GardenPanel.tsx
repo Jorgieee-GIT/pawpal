@@ -1,9 +1,9 @@
 import "./GardenRevamp.css";
 import { useEffect, useState, type CSSProperties } from "react";
-import { BookOpen, Check, CircleHelp, Clock3, Coins, Droplets, Flower2, Leaf, LockKeyhole, Sparkles, X } from "lucide-react";
+import { BookOpen, Check, Clock3, Coins, Droplets, Flower2, Leaf, LockKeyhole, Sparkles, X } from "lucide-react";
 import { GARDEN_FLOWER_CATALOG, GardenIcon } from "./GardenArt";
 import { GardenBedArt, GardenGrowthStage } from "./GardenBedArt";
-import SectionHeading from "../../SectionHeading";
+import SectionHeading, { SectionInfoButton } from "../../SectionHeading";
 
 type Plot = {
     planted_at: string;
@@ -258,17 +258,7 @@ const handlePlotTap = (index: number) => {
     };
 
     return <section className="panel paw-garden-panel">
-        <header className="paw-garden-header">
-            <div className="paw-garden-header-copy">
-                <div className="eyebrow">A LITTLE PATCH OF MAGIC</div>
-                <SectionHeading title="Lucky Garden" Icon={Flower2} />
-            </div>
-            <div className="paw-garden-header-actions">
-                <button type="button" onClick={() => openGuide("collection")}>
-                    <CircleHelp size={18} /> Info
-                </button>
-            </div>
-        </header>
+        <SectionHeading title="Lucky Garden" Icon={Flower2} eyebrow="A LITTLE PATCH OF MAGIC" actions={<SectionInfoButton onClick={() => openGuide("collection")} />} />
         <div className="paw-garden-stock" aria-label="Garden supplies">
             <div>
                 <GardenIcon kind="seed" />

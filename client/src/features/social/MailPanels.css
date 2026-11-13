@@ -9,10 +9,6 @@
 .paw-friends-panel .paw-friend-mail {
     color: #b35b91!important;
 }
-.paw-friends-panel .paw-friends-title-row .paw-requests-launch-row {
-    gap: 3px;
-    align-items: center;
-}
 .pawmail-window {
     box-sizing: border-box;
     width: min(760px,calc(100vw - 24px));
@@ -615,9 +611,6 @@
         min-width: 31px;
         flex: 0 0 31px;
         padding: 5px;
-    }
-    .paw-friends-panel .paw-friends-title-row .paw-requests-launch-row {
-        gap: 0;
     }
 }
 @media(max-width:360px) {
