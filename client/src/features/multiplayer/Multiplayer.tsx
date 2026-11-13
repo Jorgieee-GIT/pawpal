@@ -174,10 +174,26 @@ type Props = {
     onUpdate: () => Promise<void>;
     onToast: (message: string) => void;
 };
+/*
+ * DOCU: Format the current state for this feature.
+ * @param {number} value - value value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const format = (value: number) => value.toLocaleString();
 // Server performs the same calculation again before transferring any coins.
 const DEFAULT_FOCUS_CAP = 8; // Older saved matches can use this until the server sends its cap.
 
+/*
+ * DOCU: Render the multiplayer interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function Multiplayer({ api, token, userId, friends, coins, petLevel, refreshSignal, onUpdate, onToast }: Props) {
     const [challenges, setChallenges] = useState<Challenge[]>([]);
     const latestRefresh = useRef(0);
@@ -276,7 +292,16 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
     const roundNumber = Math.min(18, (battle?.battle?.roundSerial || 0) + (matchFinished ? 0 : 1));
     const firstSpecial = myPet?.specials?.[0] || myPet?.special;
     const secondSpecial = myPet?.specials?.[1];
-    const conditionalBonusReady = (skill: typeof firstSpecial): boolean => {
+        /*
+     * DOCU: Handle conditional bonus ready behavior for this feature.
+     * @param {typeof firstSpecial} skill - skill value used by this function
+     * @returns {boolean} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const conditionalBonusReady = (skill: typeof firstSpecial): boolean => {
         if (!skill || !myPet || !otherPet) { return false; }
         switch (skill.trigger) {
             case "faster": return myPet.speed > otherPet.speed;
@@ -291,7 +316,16 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         }
     };
     const isStunned = !!myPet?.stunnedRounds;
-    const skillReady = (skill: typeof firstSpecial, slot: number) => !!myPet && !isStunned && !!skill
+        /*
+     * DOCU: Handle skill ready behavior for this feature.
+     * @param {typeof firstSpecial} skill - skill value used by this function
+     * @param {number} slot - slot value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const skillReady = (skill: typeof firstSpecial, slot: number) => !!myPet && !isStunned && !!skill
         && myPet.focus >= skill.cost && (myPet.cooldowns?.[slot] ?? (slot === 0 ? myPet.cooldown : 0)) === 0
         ;
     const guardBoost = myPet?.passive?.kind === "guardboost" ? (myPet.passive.strength || 0) + 2 : 0;
@@ -322,7 +356,15 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         return { hp: raw - absorbed, blocked: absorbed };
     })();
     const locked = open.length > 0;
-    const breedGrade = (player: Player) => player.progression?.grade || player.progression?.tier || "Origin";
+        /*
+     * DOCU: Handle breed grade behavior for this feature.
+     * @param {Player} player - player value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const breedGrade = (player: Player) => player.progression?.grade || player.progression?.tier || "Origin";
     // Short hints fit the action buttons; the full server-defined explanation stays in Battle Info.
 
     const request = useCallback(async (path: string, method = "GET", data?: object) => {
@@ -366,7 +408,16 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         }, 4500);
         return () => window.clearInterval(id);
     }, [reload]);
-    const send = async (path: string, data: object) => {
+        /*
+     * DOCU: Send the current state for this feature.
+     * @param {string} path - path value used by this function
+     * @param {object} data - Input data used by this operation
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const send = async (path: string, data: object) => {
         setBusy(true);
         try {
             const result = await request(path, "POST", data);
@@ -389,7 +440,14 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
             setBusy(false);
         }
     };
-    const challenge = async () => {
+        /*
+     * DOCU: Handle challenge behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const challenge = async () => {
         if (gameId !== "paw_brawl" || !friendId || !validWager || wagerLevelLocked || wagerAmount > coins || locked) {
             return;
         }
@@ -401,16 +459,41 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
             setChallengeModalOpen(false);
         }
     };
-    const respond = (id: string, action: "accept" | "decline" | "cancel") => send(`/challenges/${id}/respond`, {
+        /*
+     * DOCU: Handle respond behavior for this feature.
+     * @param {string} id - Identifier of the record or item being handled
+     * @param {"accept" | "decline" | "cancel"} action - action value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const respond = (id: string, action: "accept" | "decline" | "cancel") => send(`/challenges/${id}/respond`, {
         action
     });
-    const move = async (id: string, action: string) => {
+        /*
+     * DOCU: Move the current state for this feature.
+     * @param {string} id - Identifier of the record or item being handled
+     * @param {string} action - action value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const move = async (id: string, action: string) => {
         const key = `${id}:${battle?.battle?.roundSerial ?? 0}`;
         setLocallyLockedMove(key);
         const success = await send(`/challenges/${id}/move`, { action });
         if (!success) { setLocallyLockedMove(""); }
     };
-    const confirmForfeit = async () => {
+        /*
+     * DOCU: Handle confirm forfeit behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const confirmForfeit = async () => {
         if (!battle) {
             return;
         }
@@ -421,7 +504,14 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         if (succeeded) { setShowForfeitConfirm(false); setForfeitError(""); }
     };
 
-    const closeSpecialHelp = () => {
+        /*
+     * DOCU: Close special help for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const closeSpecialHelp = () => {
         setShowSpecialHelp(false);
         specialHelpTriggerRefs.current[selectedSpecialIndex]?.focus();
     };
@@ -435,15 +525,36 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         setDuoLobbyOpen(false);
         window.requestAnimationFrame(() => duoModeTriggerRef.current?.focus());
     }, []);
-    const closeChallengeModal = () => {
+        /*
+     * DOCU: Close challenge modal for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const closeChallengeModal = () => {
         setChallengeModalOpen(false);
         window.requestAnimationFrame(() => challengeTriggerRef.current?.focus());
     };
-    const closeRecentBattles = () => {
+        /*
+     * DOCU: Close recent battles for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const closeRecentBattles = () => {
         setShowRecentBattles(false);
         window.requestAnimationFrame(() => recentBattlesTriggerRef.current?.focus());
     };
-    const closeBattleLog = () => {
+        /*
+     * DOCU: Close battle log for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const closeBattleLog = () => {
         setShowBattleLog(false);
         window.requestAnimationFrame(() => battleLogTriggerRef.current?.focus());
     };
@@ -452,7 +563,15 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
             return;
         }
         challengeCloseRef.current?.focus();
-        const handleEscape = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Handle escape for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const handleEscape = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 closeChallengeModal();
             }
@@ -470,7 +589,15 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
             return;
         }
         recentBattlesCloseRef.current?.focus();
-        const onEscape = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Handle on escape behavior for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onEscape = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 closeRecentBattles();
             }
@@ -482,7 +609,15 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         if (!battleModalOpen) {
             return;
         }
-        const handleEscape = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Handle escape for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const handleEscape = (event: KeyboardEvent) => {
             if (event.key !== "Escape") {
                 return;
             }
@@ -614,7 +749,16 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         });
     }, [attackEffectActive, visualEffect, effectMotionKey, battleModalOpen, userId]);
 
-    const spriteLungeStyle = (petId: string): CSSProperties | undefined => {
+        /*
+     * DOCU: Handle sprite lunge style behavior for this feature.
+     * @param {string} petId - petId value used by this function
+     * @returns {CSSProperties | undefined} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const spriteLungeStyle = (petId: string): CSSProperties | undefined => {
         if (!attackMotionReady || !lungeOffset || visualEffect?.actorId !== petId) {
             return undefined;
         }
@@ -631,15 +775,19 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
     // strike by the same pet always restarts its animation, including round one.
     const spriteEffectKey = `${battle?.id || "battle"}:${battle?.battle?.roundSerial ?? 0}:${visualEffect?.index ?? "idle"}`;
 
-    const petAura = (petId: string) => {
+        /*
+     * DOCU: Handle pet aura behavior for this feature.
+     * @param {string} petId - petId value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const petAura = (petId: string) => {
         if (!visualEffect || visualEffect.actorId !== petId || !["guard", "focus"].includes(visualEffect.action)) {
             return null;
         }
-        return <div
-            key={`${battle?.id}-${battle?.battle?.roundSerial}-${visualEffect.index}`}
-            className={`paw-brawl-pet-aura paw-brawl-pet-aura-${visualEffect.action}`}
-            aria-hidden="true"
-        >
+        return <div key={`${battle?.id}-${battle?.battle?.roundSerial}-${visualEffect.index}`} className={`paw-brawl-pet-aura paw-brawl-pet-aura-${visualEffect.action}`} aria-hidden="true">
             <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
                 {visualEffect.action === "guard" ? <>
                     <path
@@ -674,7 +822,15 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
             </svg>
         </div>;
     };
-    const spriteMotionClass = (petId: string) => {
+        /*
+     * DOCU: Handle sprite motion class behavior for this feature.
+     * @param {string} petId - petId value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const spriteMotionClass = (petId: string) => {
         if (!attackMotionReady || !visualEffect) {
             return "";
         }
@@ -686,15 +842,19 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         }
         return "";
     };
-    const hitOverlay = (petId: string) => {
+        /*
+     * DOCU: Handle hit overlay behavior for this feature.
+     * @param {string} petId - petId value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const hitOverlay = (petId: string) => {
         if (!attackMotionReady || !visualEffect || visualEffect.targetId !== petId) {
             return null;
         }
-        return <div
-            key={`${battle?.id}-${battle?.battle?.roundSerial}-${visualEffect.index}-hit`}
-            className={`paw-brawl-hit-overlay ${visualEffect.dodged ? "is-dodged" : "is-hit"}`}
-            aria-hidden="true"
-        >
+        return <div key={`${battle?.id}-${battle?.battle?.roundSerial}-${visualEffect.index}-hit`} className={`paw-brawl-hit-overlay ${visualEffect.dodged ? "is-dodged" : "is-hit"}`} aria-hidden="true">
             {!visualEffect.dodged && <svg className="paw-brawl-hit-burst" viewBox="0 0 160 160">
                 <path
                     d="M79 8 L94 49 L129 24 L119 64 L153 77 L119 94 L137 135 L93 116 L75 155 L61 113 L21 134 L38 93 L7 76 L48 63 L31 25 L65 49 Z"
@@ -712,7 +872,15 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
 
     // Values arrive from server-resolved before/after snapshots. Never infer
     // damage from attack animation or calculate opponent move data locally.
-    const floatingNumbers = (petId: string) => {
+        /*
+     * DOCU: Handle floating numbers behavior for this feature.
+     * @param {string} petId - petId value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const floatingNumbers = (petId: string) => {
         const changes = visualPopups?.changes.filter(change => change.targetId === petId) || [];
         if (!changes.length) {
             return null;
@@ -742,7 +910,16 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         </div>;
     };
 
-    const petCard = (player: Player, mine: boolean) => (
+        /*
+     * DOCU: Handle pet card behavior for this feature.
+     * @param {Player} player - player value used by this function
+     * @param {boolean} mine - mine value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const petCard = (player: Player, mine: boolean) => (
         <div className={`paw-brawl-fighter ${mine ? "mine" : ""} ${battle?.battle?.turn === player.userId ? "is-turn" : ""}`} key={player.userId}>
             <div className="paw-brawl-fighter-art">
                 <PetArt species={player.species} breed={player.breed} color={player.color} cosmetic="none" />
@@ -782,14 +959,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         <div className="eyebrow">PLAY TOGETHER, PAWS TOGETHER</div>
         <div className="paw-multiplayer-heading">
             <SectionHeading title="Multiplayer" Icon={Swords} />
-            <button
-                ref={recentBattlesTriggerRef}
-                type="button"
-                className="paw-multi-header-history"
-                aria-haspopup="dialog"
-                aria-expanded={showRecentBattles}
-                onClick={() => setShowRecentBattles(true)}
-            >
+            <button ref={recentBattlesTriggerRef} type="button" className="paw-multi-header-history" aria-haspopup="dialog" aria-expanded={showRecentBattles} onClick={() => setShowRecentBattles(true)}>
                 <Trophy size={16} /> Recent Battles{history.length > 0 && <small>
                     {history.length}
                 </small>}
@@ -797,12 +967,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
         </div>
         <div className="paw-multi-game-library">
             <div className={`paw-multi-game-tile paw-multi-brawl-card ${gameId === "paw_brawl" ? "selected" : ""}`}>
-                <button
-                    type="button"
-                    className="paw-multi-game-picker"
-                    onClick={() => setGameId(current => current === "paw_brawl" ? null : "paw_brawl")}
-                    aria-pressed={gameId === "paw_brawl"}
-                >
+                <button type="button" className="paw-multi-game-picker" onClick={() => setGameId(current => current === "paw_brawl" ? null : "paw_brawl")} aria-pressed={gameId === "paw_brawl"}>
                     <span className="paw-multi-game-art paw-multi-game-art-brawl">
                         <span className="paw-multi-game-art-circle">
                             <Swords size={46} />
@@ -814,14 +979,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                         <strong>{gameId === "paw_brawl" ? "SELECTED" : "PLAY"}</strong>
                     </span>
                 </button>
-                <button
-                    type="button"
-                    className="paw-multi-game-help"
-                    aria-label="View all Paw Brawl pet stats and skills"
-                    title="All pets, special skills and passives"
-                    aria-haspopup="dialog"
-                    onClick={() => setShowGameCatalog(true)}
-                >
+                <button type="button" className="paw-multi-game-help" aria-label="View all Paw Brawl pet stats and skills" title="All pets, special skills and passives" aria-haspopup="dialog" onClick={() => setShowGameCatalog(true)}>
                     <CircleHelp size={21} strokeWidth={2.2} />
                 </button>
             </div>
@@ -921,12 +1079,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                 </div>
             </div>)}
         </div>}
-        {challengeModalOpen && <div className="paw-multi-dialog-backdrop" onMouseDown={event => {
-            if (event.target === event.currentTarget) {
-                closeChallengeModal()
-
-            }
-        }}>
+        {challengeModalOpen && <div className="paw-multi-dialog-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget) {closeChallengeModal()}}}>
             <section className="paw-multi-dialog paw-challenge-form" role="dialog" aria-modal="true" aria-labelledby="paw-challenge-title">
                 <div className="paw-multi-dialog-header">
                     <div>
@@ -1001,12 +1154,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                 </div>
                 <div className="paw-multi-dialog-actions">
                     <button type="button" className="paw-multi-decline" onClick={closeChallengeModal}>Cancel</button>
-                    <button
-                        className="paw-multi-primary"
-                        type="button"
-                        disabled={busy || !friendId || !validWager || wagerLevelLocked || wagerAmount > coins || locked}
-                        onClick={() => void challenge()}
-                    >
+                    <button className="paw-multi-primary" type="button" disabled={busy || !friendId || !validWager || wagerLevelLocked || wagerAmount > coins || locked} onClick={() => void challenge()}>
                         <Swords size={18} /> Send Battle Challenge</button>
                 </div>
             </section>
@@ -1021,15 +1169,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
             </div>
             <button type="button" onClick={() => setHiddenBattleId(null)}>Return to battle</button>
         </div>}
-        {battleModalOpen && battle && battle.battle && myPet && otherPet && <div className="paw-brawl-modal-backdrop" onMouseDown={event => {
-            if (event.target === event.currentTarget && !showForfeitConfirm && !showSpecialHelp && !showBattleLog && !showBattleInfo && !showSkillsInfo) {
-                if (matchFinished) {
-                    setDismissedFinishId(battle.id);
-                } else {
-                    setShowForfeitConfirm(true);
-                }
-            }
-        }}>
+        {battleModalOpen && battle && battle.battle && myPet && otherPet && <div className="paw-brawl-modal-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget && !showForfeitConfirm && !showSpecialHelp && !showBattleLog && !showBattleInfo && !showSkillsInfo) {if (matchFinished) {setDismissedFinishId(battle.id);} else {setShowForfeitConfirm(true);}}}}>
             <section className="paw-brawl-modal" role="dialog" aria-modal="true" aria-labelledby="paw-brawl-modal-title">
                 <div className="paw-brawl-modal-header paw-multi-dialog-header">
                     <div>
@@ -1060,18 +1200,10 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                         </button>
                     </div>
                 </div>
-                {showBattleInfo && <BrawlGuideModal
-                    title="Combat Effects"
-                    subtitle="Poison, Counter, Dodge, Stun, Shield and other statuses"
-                    onClose={() => setShowBattleInfo(false)}
-                >
+                {showBattleInfo && <BrawlGuideModal title="Combat Effects" subtitle="Poison, Counter, Dodge, Stun, Shield and other statuses" onClose={() => setShowBattleInfo(false)}>
                     <BrawlStatGuide />
                 </BrawlGuideModal>}
-                {showSkillsInfo && <BrawlGuideModal
-                    title="Breed Skills & Passives"
-                    subtitle="Special abilities, Focus costs and passive traits"
-                    onClose={() => setShowSkillsInfo(false)}
-                >
+                {showSkillsInfo && <BrawlGuideModal title="Breed Skills & Passives" subtitle="Special abilities, Focus costs and passive traits" onClose={() => setShowSkillsInfo(false)}>
                     <BrawlSkillGuide pets={[myPet, otherPet]} />
                 </BrawlGuideModal>}
                 <div className="paw-brawl-scoreboard" aria-label="Current battle statistics">
@@ -1144,12 +1276,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                     <div className={`paw-brawl-combatant paw-brawl-combatant-enemy ${attackEffectActive && visualEffect?.actorId === otherPet.userId ? "has-attacking-pet" : ""}`}>
                         <div className="paw-brawl-platform" />
                         {floatingNumbers(otherPet.userId)}
-                        <div
-                            key={`${spriteEffectKey}:enemy`}
-                            ref={enemySpriteRef}
-                            style={spriteLungeStyle(otherPet.userId)}
-                            className={`paw-brawl-pet-sprite paw-brawl-sprite-enemy ${spriteMotionClass(otherPet.userId)}`}
-                        >
+                        <div key={`${spriteEffectKey}:enemy`} ref={enemySpriteRef} style={spriteLungeStyle(otherPet.userId)} className={`paw-brawl-pet-sprite paw-brawl-sprite-enemy ${spriteMotionClass(otherPet.userId)}`}>
                             <PetArt species={otherPet.species} breed={otherPet.breed} color={otherPet.color} cosmetic="none" />
                             {petAura(otherPet.userId)}
                             {hitOverlay(otherPet.userId)}
@@ -1158,12 +1285,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                     <div className={`paw-brawl-combatant paw-brawl-combatant-player ${attackEffectActive && visualEffect?.actorId === myPet.userId ? "has-attacking-pet" : ""}`}>
                         <div className="paw-brawl-platform" />
                         {floatingNumbers(myPet.userId)}
-                        <div
-                            key={`${spriteEffectKey}:player`}
-                            ref={playerSpriteRef}
-                            style={spriteLungeStyle(myPet.userId)}
-                            className={`paw-brawl-pet-sprite paw-brawl-sprite-player ${spriteMotionClass(myPet.userId)}`}
-                        >
+                        <div key={`${spriteEffectKey}:player`} ref={playerSpriteRef} style={spriteLungeStyle(myPet.userId)} className={`paw-brawl-pet-sprite paw-brawl-sprite-player ${spriteMotionClass(myPet.userId)}`}>
                             <PetArt species={myPet.species} breed={myPet.breed} color={myPet.color} cosmetic="none" />
                             {petAura(myPet.userId)}
                             {hitOverlay(myPet.userId)}
@@ -1193,12 +1315,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                         onForfeit={() => void confirmForfeit()}
                     />
                 )}
-                {showSpecialHelp && <div className="paw-brawl-special-help-backdrop" onMouseDown={event => {
-                    if (event.target === event.currentTarget) {
-                        closeSpecialHelp()
-
-                    }
-                }}>
+                {showSpecialHelp && <div className="paw-brawl-special-help-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget) {closeSpecialHelp()}}}>
                     <section className="paw-brawl-special-help-dialog" role="dialog" aria-modal="true" aria-labelledby="paw-brawl-special-help-title">
                         <div className="paw-modal-top paw-brawl-special-help-header paw-multi-dialog-header">
                             <div>
@@ -1228,12 +1345,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                         <button type="button" className="paw-brawl-special-help-done" onClick={closeSpecialHelp}>Got it</button>
                     </section>
                 </div>}
-                {showBattleLog && <div className="paw-brawl-log-modal-backdrop" onMouseDown={event => {
-                    if (event.target === event.currentTarget) {
-                        closeBattleLog()
-
-                    }
-                }}>
+                {showBattleLog && <div className="paw-brawl-log-modal-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget) {closeBattleLog()}}}>
                     <section className="paw-brawl-log-modal" role="dialog" aria-modal="true" aria-labelledby="paw-brawl-log-modal-title">
                         <div className="paw-brawl-log-modal-heading paw-multi-dialog-header">
                             <div>
@@ -1268,46 +1380,25 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                         <div className="paw-brawl-hidden-move-note">
                             <Shield size={14} /> Secret moves · 30s rounds · Guard fatigue · Overtime pressure</div>
                         <div className="paw-brawl-action-grid" aria-label="Choose an action">
-                            <button
-                                type="button"
-                                title={`If this attack hits right now: about ${basicAttackPreview?.hp ?? "?"} HP damage${basicAttackPreview?.blocked ? `, with ${basicAttackPreview.blocked} blocked by Shield` : ""}. Dodge and effects may change the actual result. You also earn Focus.`}
-                                disabled={moveLocked || busy || timeLeft === 0}
-                                onClick={() => void move(battle.id, "strike")}
-                            >
+                            <button type="button" title={`If this attack hits right now: about ${basicAttackPreview?.hp ?? "?"} HP damage${basicAttackPreview?.blocked ? `, with ${basicAttackPreview.blocked} blocked by Shield` : ""}. Dodge and effects may change the actual result. You also earn Focus.`} disabled={moveLocked || busy || timeLeft === 0} onClick={() => void move(battle.id, "strike")}>
                                 <Swords size={19} />
                                 <b>Paw Strike</b>
                                 <small>{basicAttackPreview?.hp ?? "?"} HP if hit · +{(battleRules?.strikeFocus ?? 1) + (myPet.passive?.kind === "stride" ? 1 : 0)} Focus</small>
                             </button>
-                            <button
-                                type="button"
-                                title={`Gain up to ${nextGuardShield} Shield and +${nextGuardFocus} Focus. Only a first consecutive Guard with room for Shield earns Focus; the second earns 0 Focus and later Guards are exhausted.`}
-                                disabled={moveLocked || busy || timeLeft === 0}
-                                onClick={() => void move(battle.id, "guard")}
-                            >
+                            <button type="button" title={`Gain up to ${nextGuardShield} Shield and +${nextGuardFocus} Focus. Only a first consecutive Guard with room for Shield earns Focus; the second earns 0 Focus and later Guards are exhausted.`} disabled={moveLocked || busy || timeLeft === 0} onClick={() => void move(battle.id, "guard")}>
                                 <Shield size={19} />
                                 <b>Guard</b>
                                 <small>
                                     {nextGuardShield > 0 ? `+${nextGuardShield} Shield · +${nextGuardFocus} Focus` : "Guard exhausted · +0 Focus"}
                                 </small>
                             </button>
-                            <button
-                                type="button"
-                                title={`Recharge ${battleRules?.focusGain ?? 3} Focus, up to ${focusCap}. Both special skills spend Focus.`}
-                                disabled={moveLocked || busy || timeLeft === 0}
-                                onClick={() => void move(battle.id, "focus")}
-                            >
+                            <button type="button" title={`Recharge ${battleRules?.focusGain ?? 3} Focus, up to ${focusCap}. Both special skills spend Focus.`} disabled={moveLocked || busy || timeLeft === 0} onClick={() => void move(battle.id, "focus")}>
                                 <Zap size={19} />
                                 <b>Focus</b>
                                 <small>Recharge · +{battleRules?.focusGain ?? 3} Focus</small>
                             </button>
                             {([firstSpecial, secondSpecial] as const).map((skill, index) => skill ? <div className="paw-brawl-special-action" key={`${skill.name}-${index}`}>
-                                <button
-                                    type="button"
-                                    className="paw-brawl-special-move"
-                                    title={`${skill.name} · costs ${skill.cost} Focus · ${skill.description}`}
-                                    disabled={moveLocked || busy || timeLeft === 0 || !skillReady(skill, index)}
-                                    onClick={() => void move(battle.id, index === 0 ? "special" : "special2")}
-                                >
+                                <button type="button" className="paw-brawl-special-move" title={`${skill.name} · costs ${skill.cost} Focus · ${skill.description}`} disabled={moveLocked || busy || timeLeft === 0 || !skillReady(skill, index)} onClick={() => void move(battle.id, index === 0 ? "special" : "special2")}>
                                     <Sparkles size={19} />
                                     <b>Special {index + 1}: {skill.name}</b>
                                     <small className="paw-brawl-special-role" aria-label={`Extra skill bonus ${conditionalBonusReady(skill) ? "currently active" : "not currently active"}`}>
@@ -1354,12 +1445,7 @@ export default function Multiplayer({ api, token, userId, friends, coins, petLev
                 </div>
             </section>
         </div>}
-        {showRecentBattles && <div className="paw-multi-dialog-backdrop" onMouseDown={event => {
-            if (event.target === event.currentTarget) {
-                closeRecentBattles()
-
-            }
-        }}>
+        {showRecentBattles && <div className="paw-multi-dialog-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget) {closeRecentBattles()}}}>
             <section className="paw-multi-dialog paw-multi-history-dialog" role="dialog" aria-modal="true" aria-labelledby="paw-recent-battles-title">
                 <div className="paw-multi-dialog-header">
                     <div>

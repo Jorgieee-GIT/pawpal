@@ -290,12 +290,12 @@
 .develop-grid { grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr)); gap:16px; }
 .develop-tile { border-radius:18px; overflow:hidden; }
 @media(max-width:760px) {
- .admin-page,.develop-page { padding:12px; }
- .admin-section-nav,.develop-tabs { top:64px; overflow-x:auto; flex-wrap:nowrap; justify-content:flex-start; }
- .admin-section-nav button,.develop-tabs button { flex:0 0 auto; }
- .admin-console-maintenance { grid-template-columns:1fr; }
+.admin-page,.develop-page { padding:12px; }
+.admin-section-nav,.develop-tabs { top:64px; overflow-x:auto; flex-wrap:nowrap; justify-content:flex-start; }
+.admin-section-nav button,.develop-tabs button { flex:0 0 auto; }
+.admin-console-maintenance { grid-template-columns:1fr; }
 }
 @media(prefers-reduced-motion:reduce) {
- .admin-page button,.develop-page button { transition:none; }
- .admin-page button:hover:not(:disabled),.develop-page button:hover:not(:disabled) { transform:none; }
+.admin-page button,.develop-page button { transition:none; }
+.admin-page button:hover:not(:disabled),.develop-page button:hover:not(:disabled) { transform:none; }
 }

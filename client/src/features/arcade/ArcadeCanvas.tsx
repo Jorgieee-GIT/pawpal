@@ -31,6 +31,14 @@ type Obstacle = {
     variant: number;
 };
 
+/*
+ * DOCU: Render the arcade canvas interface and provide its feature behavior.
+ * @param {ArcadeProps} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function ArcadeCanvas({
     kind,
     species = "cat",
@@ -66,7 +74,15 @@ export default function ArcadeCanvas({
         canvas.height = heightPx;
 
         // Cache illustrations once per round, not once per frame.
-        const loadArt = (documents: string[]) => documents.map(document => {
+                /*
+         * DOCU: Load art for this feature.
+         * @param {string[]} documents - documents value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const loadArt = (documents: string[]) => documents.map(document => {
             const sprite = new Image();
             sprite.src = arcadeSpriteSrc(document);
             return sprite;
@@ -90,20 +106,43 @@ export default function ArcadeCanvas({
         let targetLane = 1;
         let obstacles: Obstacle[] = [];
 
-        const jump = () => {
+                /*
+         * DOCU: Handle jump behavior for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const jump = () => {
             if (kind === "dino" && !ended && jumpHeight <= 0.1) {
                 jumpVelocity = 690;
                 jumpHeight = 1;
                 landing = 0;
             }
         };
-        const move = (direction: number) => {
+                /*
+         * DOCU: Move the current state for this feature.
+         * @param {number} direction - direction value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const move = (direction: number) => {
             if (kind === "runner" && !ended) {
                 targetLane = Math.max(0, Math.min(2, targetLane + direction));
             }
         };
 
-        const onKeyDown = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Handle on key down behavior for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onKeyDown = (event: KeyboardEvent) => {
             if (["Space", "ArrowUp", "ArrowLeft", "ArrowRight"].includes(event.code)) {
                 event.preventDefault();
             }
@@ -122,10 +161,26 @@ export default function ArcadeCanvas({
         };
 
         let touchStartX = 0;
-        const onTouchStart = (event: TouchEvent) => {
+                /*
+         * DOCU: Handle on touch start behavior for this feature.
+         * @param {TouchEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onTouchStart = (event: TouchEvent) => {
             touchStartX = event.touches[0]?.clientX ?? 0;
         };
-        const onTouchEnd = (event: TouchEvent) => {
+                /*
+         * DOCU: Handle on touch end behavior for this feature.
+         * @param {TouchEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onTouchEnd = (event: TouchEvent) => {
             if (kind !== "runner") {
                 return;
             }
@@ -134,7 +189,15 @@ export default function ArcadeCanvas({
                 move(dx > 0 ? 1 : -1);
             }
         };
-        const onPointerDown = (event: PointerEvent) => {
+                /*
+         * DOCU: Handle on pointer down behavior for this feature.
+         * @param {PointerEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onPointerDown = (event: PointerEvent) => {
             if (kind === "dino" && event.pointerType !== "mouse" && event.pointerType !== "touch" && event.pointerType !== "pen") {
                 return;
             }
@@ -147,7 +210,15 @@ export default function ArcadeCanvas({
         let outsideTouchId: number | null = null;
         let outsideStartX = 0;
         let outsideStartY = 0;
-        const outsideStart = (event: TouchEvent) => {
+                /*
+         * DOCU: Handle outside start behavior for this feature.
+         * @param {TouchEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const outsideStart = (event: TouchEvent) => {
             if (ended || !(event.target instanceof Element) || !event.target.classList.contains("overlay")) {
                 return;
             }
@@ -159,7 +230,15 @@ export default function ArcadeCanvas({
             outsideStartX = finger.clientX;
             outsideStartY = finger.clientY;
         };
-        const outsideMove = (event: TouchEvent) => {
+                /*
+         * DOCU: Handle outside move behavior for this feature.
+         * @param {TouchEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const outsideMove = (event: TouchEvent) => {
             if (outsideTouchId === null || kind !== "runner") {
                 return;
             }
@@ -168,7 +247,15 @@ export default function ArcadeCanvas({
                 event.preventDefault();
             }
         };
-        const outsideEnd = (event: TouchEvent) => {
+                /*
+         * DOCU: Handle outside end behavior for this feature.
+         * @param {TouchEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const outsideEnd = (event: TouchEvent) => {
             if (outsideTouchId === null || ended) {
                 return;
             }
@@ -187,7 +274,14 @@ export default function ArcadeCanvas({
                 move(dx > 0 ? 1 : -1);
             }
         };
-        const outsideCancel = () => {
+                /*
+         * DOCU: Handle outside cancel behavior for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const outsideCancel = () => {
             outsideTouchId = null;
         };
 
@@ -212,13 +306,36 @@ export default function ArcadeCanvas({
         });
         canvas.addEventListener("pointerdown", onPointerDown);
 
-        const rounded = (x: number, y: number, w: number, h: number, radius: number, color: string) => {
+                /*
+         * DOCU: Handle rounded behavior for this feature.
+         * @param {number} x - x value used by this function
+         * @param {number} y - y value used by this function
+         * @param {number} w - w value used by this function
+         * @param {number} h - h value used by this function
+         * @param {number} radius - radius value used by this function
+         * @param {string} color - color value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const rounded = (x: number, y: number, w: number, h: number, radius: number, color: string) => {
             ctx.fillStyle = color;
             ctx.beginPath();
             ctx.roundRect(x, y, w, h, radius);
             ctx.fill();
         };
-        const drawCloud = (x: number, y: number, scale: number) => {
+                /*
+         * DOCU: Draw cloud for this feature.
+         * @param {number} x - x value used by this function
+         * @param {number} y - y value used by this function
+         * @param {number} scale - scale value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const drawCloud = (x: number, y: number, scale: number) => {
             ctx.fillStyle = "#fffafc";
             ctx.beginPath();
             ctx.ellipse(x, y, 40 * scale, 16 * scale, 0, 0, Math.PI * 2);
@@ -226,7 +343,20 @@ export default function ArcadeCanvas({
             ctx.ellipse(x + 10 * scale, y - 12 * scale, 25 * scale, 20 * scale, 0, 0, Math.PI * 2);
             ctx.fill();
         };
-        const renderSprite = (image: HTMLImageElement, x: number, y: number, w: number, h: number, fallback: () => void) => {
+                /*
+         * DOCU: Render sprite for this feature.
+         * @param {HTMLImageElement} image - image value used by this function
+         * @param {number} x - x value used by this function
+         * @param {number} y - y value used by this function
+         * @param {number} w - w value used by this function
+         * @param {number} h - h value used by this function
+         * @param {() => void} fallback - fallback value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const renderSprite = (image: HTMLImageElement, x: number, y: number, w: number, h: number, fallback: () => void) => {
             if (image.complete && image.naturalWidth > 0) {
                 ctx.drawImage(image, x, y, w, h);
             } else {
@@ -234,7 +364,15 @@ export default function ArcadeCanvas({
             }
         };
 
-        const render = (time: number) => {
+                /*
+         * DOCU: Render the current state for this feature.
+         * @param {number} time - time value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const render = (time: number) => {
             if (ended) {
                 return;
             }
@@ -404,7 +542,15 @@ export default function ArcadeCanvas({
                         const position = (index / 11 + elapsed * speed * 0.22) % 1;
                         const y1 = horizon + position * position * (bottom - horizon);
                         const y2 = Math.min(bottom, y1 + 5 + position * 23);
-                        const boundaryX = (y: number) => center + (divider - 1.5) * roadHalfWidth(y) * (2 / 3);
+                                                /*
+                         * DOCU: Handle boundary x behavior for this feature.
+                         * @param {number} y - y value used by this function
+                         *
+                         * Last Updated: 2026-11-13
+                         * Author: Jorge
+                         * Last Updated By: Jorge
+                         */
+const boundaryX = (y: number) => center + (divider - 1.5) * roadHalfWidth(y) * (2 / 3);
                         ctx.lineWidth = 1.7 + position * 4;
                         ctx.beginPath();
                         ctx.moveTo(boundaryX(y1), y1);

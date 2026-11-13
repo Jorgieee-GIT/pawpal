@@ -53,12 +53,57 @@ const MAX_LOG = 24;
 const inviteInput = z.object({ friendId: z.string().uuid() });
 const signalInput = z.object({ targetId: z.string().uuid() });
 const eligibleSupportKinds = new Set(["mend", "cleanse", "aegis", "bulwark", "fortress", "riposte", "rallyguard"]);
+/*
+ * DOCU: Handle now iso behavior for this feature.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const nowIso = () => new Date().toISOString();
+/*
+ * DOCU: Handle append log behavior for this feature.
+ * @param {DuoBattle} battle - battle value used by this function
+ * @param {string} message - message value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const appendLog = (battle: DuoBattle, message: string) => { battle.log = [...battle.log, message].slice(-MAX_LOG); };
+/*
+ * DOCU: Handle living behavior for this feature.
+ * @param {DuoBattle} battle - battle value used by this function
+ * @param {0 | 1} team - team value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const living = (battle: DuoBattle, team: 0 | 1) => battle.players.filter(p => p.team === team && p.hp > 0);
+/*
+ * DOCU: Find the current state for this feature.
+ * @param {DuoBattle} battle - battle value used by this function
+ * @param {string} id - Identifier of the record or item being handled
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const find = (battle: DuoBattle, id: string) => battle.players.find(p => p.userId === id);
 const coinsQuery = "UPDATE pets SET coins=coins+$2 WHERE owner_id=$1";
 
+/*
+ * DOCU: Can duo target for this feature.
+ * @param {DuoBattle} battle - battle value used by this function
+ * @param {DuoPlayer} actor - actor value used by this function
+ * @param {DuoMove} move - move value used by this function
+ * @returns {boolean} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function canDuoTarget(battle: DuoBattle, actor: DuoPlayer, move: DuoMove): boolean {
     if (move.action === "focus" || move.action === "guard") { return !move.targetId; }
     if (move.action === "cover") { return actor.coverCooldown <= 0 && !!move.targetId && battle.players.some(p => p.userId === move.targetId && p.team === actor.team && p.userId !== actor.userId && p.hp > 0); }
@@ -72,9 +117,33 @@ export function canDuoTarget(battle: DuoBattle, actor: DuoPlayer, move: DuoMove)
     return eligibleSupportKinds.has(skill.kind);
 }
 
+/*
+ * DOCU: Handle simple change behavior for this feature.
+ * @param {string} targetId - targetId value used by this function
+ * @param {BattleVisualChange["kind"]} kind - kind value used by this function
+ * @param {number} amount - amount value used by this function
+ * @param {string} label - label value used by this function
+ * @returns {BattleVisualChange} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function simpleChange(targetId: string, kind: BattleVisualChange["kind"], amount: number, label?: string): BattleVisualChange {
     return { targetId, kind, amount, label };
 }
+/*
+ * DOCU: Apply ally special for this feature.
+ * @param {DuoBattle} battle - battle value used by this function
+ * @param {DuoPlayer} actor - actor value used by this function
+ * @param {DuoPlayer} target - target value used by this function
+ * @param {"special" | "special2"} action - action value used by this function
+ * @returns {DuoEffect} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function applyAllySpecial(battle: DuoBattle, actor: DuoPlayer, target: DuoPlayer, action: "special" | "special2"): DuoEffect {
     const index = action === "special" ? 0 : 1;
     const skill = getCombatKit(actor.species, actor.breed).specials[index];
@@ -104,6 +173,18 @@ function applyAllySpecial(battle: DuoBattle, actor: DuoPlayer, target: DuoPlayer
 // Existing 1v1 calculations remain the authority for every offensive or self-directed move.
 // The temporary two-player wrapper references the same DuoPlayer objects, so the changes
 // are persisted back into the four-player battle without copying or rewriting breed rules.
+/*
+ * DOCU: Apply existing move for this feature.
+ * @param {DuoBattle} battle - battle value used by this function
+ * @param {DuoPlayer} actor - actor value used by this function
+ * @param {DuoPlayer} opponent - opponent value used by this function
+ * @param {DuoMove} move - move value used by this function
+ * @returns {DuoEffect} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function applyExistingMove(battle: DuoBattle, actor: DuoPlayer, opponent: DuoPlayer, move: DuoMove): DuoEffect {
     const mirror: Battle = {
         players: [actor, opponent], turn: actor.userId, turns: 0,
@@ -120,6 +201,16 @@ function applyExistingMove(battle: DuoBattle, actor: DuoPlayer, opponent: DuoPla
     return { actorId: actor.userId, targetId: opponent.userId, action: move.action, description, changes: effect?.visualChanges || [] };
 }
 
+/*
+ * DOCU: Create the initial state for a Duo Clash battle.
+ * @param {Array<{ userId: string; team: 0 | 1; username: string; pet: any }>} pets - pets value used by this function
+ * @returns {DuoBattle} - Result returned by this function.
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function createDuoBattle(pets: Array<{ userId: string; team: 0 | 1; username: string; pet: any }>): DuoBattle {
     if (pets.length !== 4 || pets.filter(p => p.team === 0).length !== 2 || pets.filter(p => p.team === 1).length !== 2 || new Set(pets.map(p => p.userId)).size !== 4) {
         throw Error("A Duo Clash match requires four distinct pets, two on each team.");
@@ -133,13 +224,30 @@ export function createDuoBattle(pets: Array<{ userId: string; team: 0 | 1; usern
 // Call only when all four players have moved or the server deadline expires.
 // Locked attacks resolve even if an earlier attack knocked the attacker out;
 // stun effects from the current round do not cancel already-locked moves.
+/*
+ * DOCU: Resolve the submitted actions for the current Duo Clash round.
+ * @param {DuoBattle} battle - battle value used by this function
+ * @returns {{ finished: boolean; winnerTeam: 0 | 1 | null; timedOut: string[] }} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function resolveDuoRound(battle: DuoBattle): { finished: boolean; winnerTeam: 0 | 1 | null; timedOut: string[] } {
     const start = structuredClone(battle.players);
     const moves = { ...battle.pendingMoves };
     const timedOut: string[] = [];
     const currentlyAble = start.filter(p => p.hp > 0);
     battle.effects = [];
-    const recordEffect = (effect: DuoEffect) => {
+        /*
+     * DOCU: Record effect for this feature.
+     * @param {DuoEffect} effect - effect value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const recordEffect = (effect: DuoEffect) => {
         // Snapshot actual server-resolved stats, never guessed client-side values.
         effect.playersAfter = structuredClone(battle.players);
         battle.effects.push(effect);
@@ -298,6 +406,18 @@ export function resolveDuoRound(battle: DuoBattle): { finished: boolean; winnerT
     return { finished, winnerTeam: winner, timedOut };
 }
 
+/*
+ * DOCU: Handle settle behavior for this feature.
+ * @param {Queryable} client - client value used by this function
+ * @param {any} row - row value used by this function
+ * @param {0 | 1 | null} winner - winner value used by this function
+ * @param {DuoBattle | null} battle - battle value used by this function
+ * @param {"finished" | "void"} status - status value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 async function settle(client: Queryable, row: any, winner: 0 | 1 | null, battle: DuoBattle | null, status: "finished" | "void" = "finished") {
     const participants = row.participants as DuoParticipant[];
     if (row.status !== "active") { return; }
@@ -323,6 +443,15 @@ async function settle(client: Queryable, row: any, winner: 0 | 1 | null, battle:
     }
 }
 
+/*
+ * DOCU: Handle public room behavior for this feature.
+ * @param {any} row - row value used by this function
+ * @param {string} viewer - viewer value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function publicRoom(row: any, viewer: string) {
     const battle = row.battle ? structuredClone(row.battle) as DuoBattle : null;
     if (battle) {
@@ -341,6 +470,16 @@ function publicRoom(row: any, viewer: string) {
     return { id: row.id, code: row.code, hostId: row.host_id, wager: row.wager, arenaFeePercent: row.arena_fee_percent, status: row.status, participants: row.participants, battle, winnerTeam: row.winner_team, createdAt: row.created_at };
 }
 
+/*
+ * DOCU: Handle assert not occupied behavior for this feature.
+ * @param {Queryable} client - client value used by this function
+ * @param {string} userId - userId value used by this function
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 async function assertNotOccupied(client: Queryable, userId: string) {
     const busy = await client.query(`SELECT 1 FROM multiplayer_challenges WHERE status IN ('pending','active') AND (challenger_id=$1 OR challenged_id=$1) LIMIT 1`, [userId]);
     if (busy.rowCount) { throw Error("Finish your Classic 1v1 invitation or match first."); }
@@ -348,8 +487,26 @@ async function assertNotOccupied(client: Queryable, userId: string) {
     if (duo.rowCount) { throw Error("You already belong to an open Duo Clash room."); }
 }
 
+/*
+ * DOCU: Register the Duo Clash API routes and actions.
+ * @param {Express} app - app value used by this function
+ * @param {any} auth - auth value used by this function
+ * @param {(users: string[], type: string) => void} publish - publish value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerDuoClash(app: Express, auth: any, publish: (users: string[], type: string) => void) {
-    const handler = (fn: (req: any, res: any) => Promise<void>) => (req: any, res: any) => void Promise.resolve(fn(req, res)).catch(error => {
+        /*
+     * DOCU: Handle handler behavior for this feature.
+     * @param {(req: any, res: any) => Promise<void>} fn - fn value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const handler = (fn: (req: any, res: any) => Promise<void>) => (req: any, res: any) => void Promise.resolve(fn(req, res)).catch(error => {
         logSafeError("Duo Clash request failed", error);
         if (!res.headersSent) {
             const migrationMissing = (error as any)?.code === "42P01" && String((error as any)?.message || "").includes("arena_fee_ledger");
@@ -358,13 +515,21 @@ export function registerDuoClash(app: Express, auth: any, publish: (users: strin
                 : error instanceof Error ? error.message : "Duo Clash request failed." });
         }
     });
-    const inform = (participants: DuoParticipant[]) => publish(participants.map(p => p.userId), "multiplayer_updated");
+        /*
+     * DOCU: Handle inform behavior for this feature.
+     * @param {DuoParticipant[]} participants - participants value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const inform = (participants: DuoParticipant[]) => publish(participants.map(p => p.userId), "multiplayer_updated");
 
     app.get("/api/multiplayer/duo/invites", auth, handler(async (req, res) => {
         const q = await pool.query(`SELECT i.id,i.room_id,i.created_at,r.code,r.wager,u.username AS inviter_username
             FROM duo_invites i JOIN duo_rooms r ON r.id=i.room_id JOIN users u ON u.id=i.inviter_id
             WHERE i.recipient_id=$1 AND i.expires_at>NOW() AND r.status='lobby'
-              AND NOT (r.participants @> $2::jsonb) AND jsonb_array_length(r.participants)<4
+                AND NOT (r.participants @> $2::jsonb) AND jsonb_array_length(r.participants)<4
             ORDER BY i.created_at DESC LIMIT 10`, [req.userId, JSON.stringify([{ userId: req.userId }])]);
         res.json(q.rows);
     }));
@@ -382,10 +547,10 @@ export function registerDuoClash(app: Express, auth: any, publish: (users: strin
             participants = room.participants as DuoParticipant[];
             if (participants.some(p => p.userId === friendId) || participants.length >= 4) { throw Error("Friend is already in the room or the room is full."); }
             const f = await client.query(`SELECT 1 FROM friendships WHERE status='accepted' AND
-              ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))`, [req.userId, friendId]);
+                ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))`, [req.userId, friendId]);
             if (!f.rowCount) { throw Error("You can only invite accepted PawPal friends."); }
             await client.query(`INSERT INTO duo_invites(id,room_id,inviter_id,recipient_id)
-              VALUES($1,$2,$3,$4) ON CONFLICT(room_id,recipient_id) DO UPDATE SET created_at=NOW(),expires_at=NOW()+INTERVAL '20 minutes'`, [randomUUID(), room.id, req.userId, friendId]);
+                VALUES($1,$2,$3,$4) ON CONFLICT(room_id,recipient_id) DO UPDATE SET created_at=NOW(),expires_at=NOW()+INTERVAL '20 minutes'`, [randomUUID(), room.id, req.userId, friendId]);
             await client.query("COMMIT");
         } catch (e) { await client.query("ROLLBACK"); throw e; } finally { client.release(); }
         inform([...participants, { userId: friendId, team: 0, ready: false, lastSeen: nowIso() }]);

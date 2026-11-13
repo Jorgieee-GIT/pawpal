@@ -9,6 +9,17 @@ type Target = {
     id: number
 } | null;
 const START_LIVES = 3;
+/*
+ * DOCU: Render the whack amole interface and provide its feature behavior.
+ * @param {{
+    onQuit: () => void;
+    onFinish: (score: number) => Promise<boolean>
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function WhackAMole({ onQuit, onFinish }: {
     onQuit: () => void;
     onFinish: (score: number) => Promise<boolean>
@@ -16,7 +27,15 @@ export default function WhackAMole({ onQuit, onFinish }: {
     const [phase, setPhase] = useState<"ready" | "playing" | "over">("ready");
     const [claiming, setClaiming] = useState(false), [rewardError, setRewardError] = useState(false);
     const claimRef = useRef(false);
-    async function claimRound(replay: boolean) {
+        /*
+     * DOCU: Claim the completed arcade round reward.
+     * @param {boolean} replay - replay value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function claimRound(replay: boolean) {
         if (claimRef.current) {
             return;
         }
@@ -42,7 +61,14 @@ export default function WhackAMole({ onQuit, onFinish }: {
             setClaiming(false);
         }
     }
-    const closeGame = () => {
+        /*
+     * DOCU: Close game for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const closeGame = () => {
         if (phase === "over") {
             void claimRound(false);
         } else {
@@ -62,7 +88,14 @@ export default function WhackAMole({ onQuit, onFinish }: {
         kind: Critter
     } | null>(null);
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null), hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null), effectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-    function clearTimers() {
+        /*
+     * DOCU: Handle clear timers behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function clearTimers() {
         [timer, hideTimer, effectTimer].forEach(t => {
             if (t.current !== null) {
                 clearTimeout(t.current);
@@ -70,19 +103,40 @@ export default function WhackAMole({ onQuit, onFinish }: {
             } t.current = null
         })
     }
-    function stop() {
+        /*
+     * DOCU: Stop the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function stop() {
         active.current = false;
         generation.current++;
         clearTimers();
         targetRef.current = null
     }
     useEffect(() => () => stop(), []);
-    function end() {
+        /*
+     * DOCU: Handle end behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function end() {
         stop();
         setHoles(Array(9).fill(null));
         setPhase("over")
     }
-    function loseLife() {
+        /*
+     * DOCU: Lose life for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function loseLife() {
         livesRef.current = Math.max(0, livesRef.current - 1);
         setLives(livesRef.current);
         if (livesRef.current === 0) {
@@ -90,7 +144,14 @@ export default function WhackAMole({ onQuit, onFinish }: {
 
         }
     }
-    function spawn() {
+        /*
+     * DOCU: Spawn the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function spawn() {
         if (!active.current) {
             return;
         }
@@ -130,7 +191,14 @@ export default function WhackAMole({ onQuit, onFinish }: {
             timer.current = setTimeout(spawn, delay);
         }, visibility);
     }
-    function start() {
+        /*
+     * DOCU: Start the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function start() {
         stop();
         scoreRef.current = 0;
         livesRef.current = 3;
@@ -145,7 +213,15 @@ export default function WhackAMole({ onQuit, onFinish }: {
         active.current = true;
         timer.current = setTimeout(spawn, 550);
     }
-    function tap(index: number) {
+        /*
+     * DOCU: Tap the current state for this feature.
+     * @param {number} index - Position of the item in its collection
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function tap(index: number) {
         if (!active.current) {
             return;
         }
@@ -251,13 +327,7 @@ export default function WhackAMole({ onQuit, onFinish }: {
                             </span>
                         </div>
                         <div className="mole-board">
-                            {holes.map((target, index) => <button
-                                type="button"
-                                key={index}
-                                className={"mole-hole " + (target ? "has-target " : "") + (hit === index ? "mole-hit" : "")}
-                                aria-label={target ? target.kind === "bomb" ? "Bomb! Avoid!" : target.kind === "gold" ? "Golden mouse, 30 points" : "Mouse, 10 points" : "Empty hole"}
-                                onClick={() => tap(index)}
-                            >
+                            {holes.map((target, index) => <button type="button" key={index} className={"mole-hole " + (target ? "has-target " : "") + (hit === index ? "mole-hit" : "")} aria-label={target ? target.kind === "bomb" ? "Bomb! Avoid!" : target.kind === "gold" ? "Golden mouse, 30 points" : "Mouse, 10 points" : "Empty hole"} onClick={() => tap(index)}>
                                 <span className="mole-dirt" />
                                 <span className="mole-creature">
                                     {target && <MoleArt kind={target.kind} />}
@@ -273,6 +343,16 @@ export default function WhackAMole({ onQuit, onFinish }: {
         </div>
     </div>;
 }
+/*
+ * DOCU: Render the mole art interface and provide its feature behavior.
+ * @param {{
+    kind: Critter
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function MoleArt({ kind }: {
     kind: Critter
 }) {

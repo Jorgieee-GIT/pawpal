@@ -20,6 +20,14 @@ type Props = {
     forgotBusy: boolean;
 };
 
+/*
+ * DOCU: Render the auth screen interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function AuthScreen({
     authMode,
     forgotTicket,
@@ -40,11 +48,7 @@ export default function AuthScreen({
     return (
         <div className={`auth-wrap ${authMode === "register" ? "is-register" : ""}`}>
             <div className="auth-art">
-                <div
-                    className="hero-pets paw-auth-svg-pets"
-                    role="img"
-                    aria-label="A cat, bunny, and dog welcoming you to PawPal"
-                >
+                <div className="hero-pets paw-auth-svg-pets" role="img" aria-label="A cat, bunny, and dog welcoming you to PawPal">
                     <div className="paw-auth-pet paw-auth-pet-cat">
                         <PetArt species="cat" />
                     </div>
@@ -76,8 +80,8 @@ export default function AuthScreen({
                     {authMode === "login"
                         ? "Welcome back!"
                         : authMode === "register"
-                          ? "Create your account"
-                          : "Forgot password?"}
+                            ? "Create your account"
+                            : "Forgot password?"}
                 </h2>
                 {authMode === "forgot" && forgotTicket ? (
                     <div className="paw-forgot-waiting" role="status" aria-live="polite">
@@ -87,31 +91,23 @@ export default function AuthScreen({
                             {forgotStatus === "approved"
                                 ? "Admin approved the request. Ask the admin to send your private, five-minute reset link."
                                 : forgotStatus === "rejected"
-                                  ? "The request was rejected. Contact an admin if you need help."
-                                  : forgotStatus === "completed"
+                                    ? "The request was rejected. Contact an admin if you need help."
+                                    : forgotStatus === "completed"
                                     ? "Your password has been updated. You can log in now."
                                     : forgotStatus === "expired"
-                                      ? "This request expired. You can send another one."
-                                      : "Please wait for the admin's decision. You can leave this tab open; status checks automatically."}
+                                        ? "This request expired. You can send another one."
+                                        : "Please wait for the admin's decision. You can leave this tab open; status checks automatically."}
                         </p>
                         <p className="password-safety-note">
                             For security, reset links are shared privately by the admin, not
                             displayed automatically to anyone who knows a username.
                         </p>
                         {forgotStatus !== "pending" && (
-                            <button
-                                type="button"
-                                className="secondary"
-                                onClick={clearForgotRequest}
-                            >
+                            <button type="button" className="secondary" onClick={clearForgotRequest}>
                                 Start a new request
                             </button>
                         )}
-                        <button
-                            type="button"
-                            className="link-button"
-                            onClick={() => setAuthMode("login")}
-                        >
+                        <button type="button" className="link-button" onClick={() => setAuthMode("login")}>
                             Back to login
                         </button>
                     </div>
@@ -179,19 +175,15 @@ export default function AuthScreen({
                                     ? "Submitting..."
                                     : "Request password reset"
                                 : authMode === "login"
-                                  ? "Log in"
-                                  : "Create account"}
+                                    ? "Log in"
+                                    : "Create account"}
                         </button>
-                        <button
-                            type="button"
-                            className="link-button"
-                            onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}
-                        >
+                        <button type="button" className="link-button" onClick={() => setAuthMode(authMode === "login" ? "register" : "login")}>
                             {authMode === "login"
                                 ? "New here? Create an account"
                                 : authMode === "register"
-                                  ? "Already registered? Log in"
-                                  : "Back to login"}
+                                    ? "Already registered? Log in"
+                                    : "Back to login"}
                         </button>
                     </>
                 )}

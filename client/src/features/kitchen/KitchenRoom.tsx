@@ -11,6 +11,14 @@ const stations = {
 
 export type KitchenStation = keyof typeof stations;
 
+/*
+ * DOCU: Render the station art interface and provide its feature behavior.
+ * @param {{ station: KitchenStation }} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function StationArt({ station }: { station: KitchenStation }) {
     if (station === "pantry") {
         return <svg viewBox="0 0 142 222" aria-hidden="true">
@@ -55,6 +63,17 @@ function StationArt({ station }: { station: KitchenStation }) {
     </svg>;
 }
 
+/*
+ * DOCU: Render the kitchen room interface and provide its feature behavior.
+ * @param {{
+    onOpen: (station: KitchenStation) => void;
+    pantryCount: number;
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function KitchenRoom({ onOpen, pantryCount }: {
     onOpen: (station: KitchenStation) => void;
     pantryCount: number;
@@ -75,8 +94,7 @@ export function KitchenRoom({ onOpen, pantryCount }: {
         <div className="kitchen-room-floor" aria-hidden="true" />
         <div className="kitchen-room-island" aria-hidden="true" />
         {(Object.keys(stations) as KitchenStation[]).map(station =>
-            <button key={station} className={`kitchen-room-station kitchen-room-station--${station}`}
-                type="button" aria-haspopup="dialog" onClick={() => onOpen(station)}>
+            <button key={station} className={`kitchen-room-station kitchen-room-station--${station}`} type="button" aria-haspopup="dialog" onClick={() => onOpen(station)}>
                 <StationArt station={station} />
                 <span>{station === "experiment" ? "Experiment" : station === "ingredients" ? "Market" : stations[station]}
                     {station === "pantry" && pantryCount > 0 && <small>{pantryCount}</small>}
@@ -87,6 +105,18 @@ export function KitchenRoom({ onOpen, pantryCount }: {
     </div>;
 }
 
+/*
+ * DOCU: Render the kitchen station dialog interface and provide its feature behavior.
+ * @param {{
+    station: KitchenStation;
+    onDismiss: () => void;
+    children: ReactNode;
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function KitchenStationDialog({ station, onDismiss, children }: {
     station: KitchenStation;
     onDismiss: () => void;
@@ -107,16 +137,13 @@ export function KitchenStationDialog({ station, onDismiss, children }: {
         closeRef.current?.focus();
     }, [station]);
 
-    return <dialog ref={dialogRef} className="kitchen-station-dialog" aria-labelledby="kitchen-station-title"
-        onCancel={event => { event.preventDefault(); onDismiss(); }}
-        onClick={event => { if (event.target === event.currentTarget) onDismiss(); }}>
+    return <dialog ref={dialogRef} className="kitchen-station-dialog" aria-labelledby="kitchen-station-title" onCancel={event => { event.preventDefault(); onDismiss(); }} onClick={event => { if (event.target === event.currentTarget) onDismiss(); }}>
         <div className="kitchen-station-dialog-frame">
             <header className="paw-modal-top kitchen-station-dialog-header">
                 <div>
                     <h2 id="kitchen-station-title">{stations[station]}</h2>
                 </div>
-                <button ref={closeRef} type="button" aria-label="Close kitchen station" className="paw-modal-close"
-                    onClick={onDismiss}><X size={18} aria-hidden="true" /></button>
+                <button ref={closeRef} type="button" aria-label="Close kitchen station" className="paw-modal-close" onClick={onDismiss}><X size={18} aria-hidden="true" /></button>
             </header>
             <div className="kitchen-station-dialog-content" ref={contentRef}>{children}</div>
         </div>

@@ -1,8 +1,24 @@
 import { PawPrint, Heart, Sparkles, Users, Swords } from "lucide-react";
 import { flushSync } from "react-dom";
 import PetArt from "./PetArt";
+/*
+ * DOCU: Render the public welcome interface and provide its feature behavior.
+ * @param {{ onLogin: () => void; onRegister: () => void; onPolicy: (page: "privacy" | "terms") => void }} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function PublicWelcome({ onLogin, onRegister, onPolicy }: { onLogin: () => void; onRegister: () => void; onPolicy: (page: "privacy" | "terms") => void }) {
-    const transitionTo = (callback: () => void) => {
+        /*
+     * DOCU: Handle transition to behavior for this feature.
+     * @param {() => void} callback - Callback to run when this operation completes
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const transitionTo = (callback: () => void) => {
         const doc = document as Document & { startViewTransition?: (update: () => void) => unknown };
         if (doc.startViewTransition) doc.startViewTransition(() => flushSync(callback));
         else callback();

@@ -15,6 +15,14 @@ import { publishLive } from "../live.js";
 import { recordMissionEvent } from "../missions.js";
 import { clamp } from "../petState.js";
 
+/*
+ * DOCU: Register kitchen routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerKitchenRoutes(app: Express) {
     // Kitchen 3: recipe discovery is deterministic and all inventory changes are transactional.
     app.get("/api/kitchen", auth, handle(async (req, res) => {
@@ -107,7 +115,15 @@ export function registerKitchenRoutes(app: Express) {
                 xp: number;
                 level: number;
             } | null = null;
-            const fail = async (error: string) => {
+                        /*
+             * DOCU: Handle fail behavior for this feature.
+             * @param {string} error - Error details to handle or display
+             *
+             * Last Updated: 2026-11-13
+             * Author: Jorge
+             * Last Updated By: Jorge
+             */
+const fail = async (error: string) => {
                 await client.query("ROLLBACK");
                 res.status(400).json({
                     error
@@ -345,8 +361,8 @@ export function registerKitchenRoutes(app: Express) {
                     action === "buy"
                         ? "buy"
                         : action === "buy_meal"
-                          ? "meal_buy"
-                          : action === "serve"
+                            ? "meal_buy"
+                            : action === "serve"
                             ? "serve"
                             : "cook"
                 );

@@ -8,6 +8,14 @@ import { publishLive } from "../live.js";
 import { pawMailCatalog, pawMailDesigns } from "../mailCatalog.js";
 import { recordMissionEvent } from "../missions.js";
 
+/*
+ * DOCU: Register mail routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerMailRoutes(app: Express) {
     // Personalized PawMail envelopes: ownership and coin purchases enforced server-side.
     const pawMailColors = [
@@ -112,9 +120,9 @@ export function registerMailRoutes(app: Express) {
     app.get("/api/mail", auth, handle(async (req, res) => {
         const result = await pool.query(
             `SELECT m.id,m.sender_id,m.design,m.color,m.message,m.created_at,m.expires_at,m.read_at,u.username AS sender_username,
-  CASE WHEN p.id IS NULL THEN NULL ELSE json_build_object('species',p.species,'color',p.color,'breed',p.breed,'equipped_cosmetic',p.equipped_cosmetic,'equipped_outfit',p.equipped_outfit) END AS sender_pet
-  FROM paw_mail m JOIN users u ON u.id=m.sender_id LEFT JOIN pets p ON p.owner_id=m.sender_id
-  WHERE m.recipient_id=$1 AND m.expires_at>NOW() ORDER BY m.created_at DESC LIMIT 60`,
+    CASE WHEN p.id IS NULL THEN NULL ELSE json_build_object('species',p.species,'color',p.color,'breed',p.breed,'equipped_cosmetic',p.equipped_cosmetic,'equipped_outfit',p.equipped_outfit) END AS sender_pet
+    FROM paw_mail m JOIN users u ON u.id=m.sender_id LEFT JOIN pets p ON p.owner_id=m.sender_id
+    WHERE m.recipient_id=$1 AND m.expires_at>NOW() ORDER BY m.created_at DESC LIMIT 60`,
             [req.userId]
         );
         res.json(result.rows);
@@ -123,10 +131,10 @@ export function registerMailRoutes(app: Express) {
     app.get("/api/mail/sent", auth, handle(async (req, res) => {
         const result = await pool.query(
             `SELECT m.id,m.sender_id,m.design,m.color,m.message,m.created_at,m.expires_at,m.read_at,
-  u.username AS recipient_username,
-  CASE WHEN p.id IS NULL THEN NULL ELSE json_build_object('species',p.species,'color',p.color,'breed',p.breed,'equipped_cosmetic',p.equipped_cosmetic,'equipped_outfit',p.equipped_outfit) END AS sender_pet
-  FROM paw_mail m JOIN users u ON u.id=m.recipient_id LEFT JOIN pets p ON p.owner_id=m.sender_id
-  WHERE m.sender_id=$1 AND m.expires_at>NOW() ORDER BY m.created_at DESC LIMIT 60`,
+    u.username AS recipient_username,
+    CASE WHEN p.id IS NULL THEN NULL ELSE json_build_object('species',p.species,'color',p.color,'breed',p.breed,'equipped_cosmetic',p.equipped_cosmetic,'equipped_outfit',p.equipped_outfit) END AS sender_pet
+    FROM paw_mail m JOIN users u ON u.id=m.recipient_id LEFT JOIN pets p ON p.owner_id=m.sender_id
+    WHERE m.sender_id=$1 AND m.expires_at>NOW() ORDER BY m.created_at DESC LIMIT 60`,
             [req.userId]
         );
         res.json(result.rows);
@@ -157,7 +165,7 @@ export function registerMailRoutes(app: Express) {
         }
         const friendship = await pool.query(
             `SELECT 1 FROM friendships WHERE status='accepted' AND
- ((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))`,
+((requester_id=$1 AND recipient_id=$2) OR (requester_id=$2 AND recipient_id=$1))`,
             [req.userId, parsed.data.friendId]
         );
         if (!friendship.rowCount) {
@@ -178,7 +186,7 @@ export function registerMailRoutes(app: Express) {
         }
         await pool.query(
             `INSERT INTO paw_mail(id,sender_id,recipient_id,design,color,message,expires_at)
- VALUES($1,$2,$3,$4,$5,$6,NOW()+INTERVAL '24 hours')`,
+VALUES($1,$2,$3,$4,$5,$6,NOW()+INTERVAL '24 hours')`,
             [
                 randomUUID(),
                 req.userId,

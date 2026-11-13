@@ -7,6 +7,14 @@ import { handle } from "../http.js";
 import { publishLive } from "../live.js";
 import { recordMissionEvent } from "../missions.js";
 
+/*
+ * DOCU: Register friend routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerFriendRoutes(app: Express) {
     app.get("/api/friends", auth, handle(async (req, res) => {
         const q = await pool.query(
@@ -112,9 +120,9 @@ export function registerFriendRoutes(app: Express) {
 
         await pool.query(
             `UPDATE users
-     SET pet_note = $2,
-         note_expires_at = $3
-     WHERE id = $1`,
+    SET pet_note = $2,
+        note_expires_at = $3
+    WHERE id = $1`,
             [req.userId, value || null, expiresAt]
         );
 

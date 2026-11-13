@@ -5,6 +5,13 @@ import "./PasswordRecovery.css";
 
 const API = import.meta.env.VITE_API_URL || "";
 
+/*
+ * DOCU: Render the reset password interface and provide its feature behavior.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function ResetPassword() {
     const [resetToken] = useState(() => {
         // Keep the fragment during the form so a temporary network error can be retried.
@@ -39,7 +46,14 @@ export default function ResetPassword() {
             return;
         }
         let active = true;
-        async function verify() {
+                /*
+         * DOCU: Verify the current state for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+async function verify() {
             try {
                 const response = await fetch(API + "/api/auth/password-reset/verify", {
                     method: "POST",
@@ -69,7 +83,16 @@ export default function ResetPassword() {
         return () => { active = false; };
     }, [resetToken]);
 
-    async function submit(event: React.FormEvent) {
+        /*
+     * DOCU: Submit the current state for this feature.
+     * @param {React.FormEvent} event - User or browser event that triggered this operation
+     * @throws {Error} - Propagates an error when this operation cannot complete.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function submit(event: React.FormEvent) {
         event.preventDefault();
         setError("");
         if (password !== confirm) {

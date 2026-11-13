@@ -470,6 +470,15 @@ export const NEW_COSMETICS: {
             "price": 5420
         }
     ];
+/*
+ * DOCU: Normalize outfit for this feature.
+ * @param {unknown} value - value value used by this function
+ * @returns {Outfit} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function normalizeOutfit(value: unknown): Outfit {
     const obj = (value && typeof value === "object" ? value : {}) as Record<string, unknown>;
     return {

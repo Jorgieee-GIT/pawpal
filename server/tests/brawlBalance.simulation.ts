@@ -1,8 +1,8 @@
 /**
- * Reproducible, lightweight 1v1 balance smoke test. This is NOT a substitute
- * for matches played by people with different strategies.
- * Run with: npm run test:brawl:balance
- */
+* Reproducible, lightweight 1v1 balance smoke test. This is NOT a substitute
+* for matches played by people with different strategies.
+* Run with: npm run test:brawl:balance
+*/
 import assert from "node:assert/strict";
 import { BREED_LIST } from "../src/brawlAbilities.js";
 

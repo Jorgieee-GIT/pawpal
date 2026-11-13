@@ -21,6 +21,14 @@ const DEFAULT_SETTINGS: Record<string, boolean | number> = {
 let cachedSettings = { ...DEFAULT_SETTINGS };
 let settingsExpiry = 0;
 
+/*
+ * DOCU: Handle game settings behavior for this feature.
+ * @returns {Promise<Record<string, boolean | number>>} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function gameSettings(): Promise<Record<string, boolean | number>> {
     if (Date.now() < settingsExpiry) {
         return cachedSettings;
@@ -37,6 +45,16 @@ export async function gameSettings(): Promise<Record<string, boolean | number>> 
     return next;
 }
 
+/*
+ * DOCU: Handle enforce admin game settings behavior for this feature.
+ * @param {unknown} req - Express request containing route input and session data
+ * @param {unknown} res - Express response used to send the route result
+ * @param {unknown} next - Express callback used to pass control or errors onward
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export const enforceAdminGameSettings: RequestHandler = async (req, res, next) => {
     const path = req.path;
     if (path.startsWith("/admin/") || path.startsWith("/auth/") || path === "/health" ||
@@ -72,16 +90,43 @@ export const enforceAdminGameSettings: RequestHandler = async (req, res, next) =
     }
 };
 
+/*
+ * DOCU: Handle write admin audit behavior for this feature.
+ * @param {string} action - action value used by this function
+ * @param {string | null} target - target value used by this function
+ * @param {object} details - details value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function writeAdminAudit(action: string, target: string | null, details: object = {}) {
     await pool.query("INSERT INTO admin_audit_logs(action,target,details) VALUES($1,$2,$3::jsonb)", [action, target, JSON.stringify(details)]);
 }
 
+/*
+ * DOCU: Handle log server failure behavior for this feature.
+ * @param {string} path - path value used by this function
+ * @param {unknown} errorCode - errorCode value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function logServerFailure(path: string, errorCode: unknown) {
     const code = typeof errorCode === "string" && /^[A-Z0-9_]{1,64}$/.test(errorCode) ? errorCode : "UNKNOWN";
     void pool.query("INSERT INTO admin_error_logs(path,error_code) VALUES($1,$2)", [path.slice(0, 160), code]).catch(() => {});
 }
 
 const lastPresenceWrite = new Map<string, number>();
+/*
+ * DOCU: Update presence for this feature.
+ * @param {string} userId - userId value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function updatePresence(userId: string) {
     const now = Date.now();
     if (now - (lastPresenceWrite.get(userId) || 0) < 25000) {
@@ -97,10 +142,30 @@ export function updatePresence(userId: string) {
     }
 }
 
+/*
+ * DOCU: Handle catch route behavior for this feature.
+ * @param {(req: any, res: any) => Promise<void>} fn - fn value used by this function
+ * @returns {RequestHandler} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const catchRoute = (fn: (req: any, res: any) => Promise<void>): RequestHandler => (req, res, next) => {
     Promise.resolve(fn(req, res)).catch(next);
 };
 
+/*
+ * DOCU: Register the protected administration routes.
+ * @param {Express} app - app value used by this function
+ * @param {RequestHandler} adminAuth - adminAuth value used by this function
+ * @param {RequestHandler} playerAuth - playerAuth value used by this function
+ * @param {(ids: string[], type: string) => void} notify - notify value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerAdminConsole(app: Express, adminAuth: RequestHandler, playerAuth: RequestHandler, notify: (ids: string[], type: string) => void) {
     app.get("/api/system/status", catchRoute(async (_req, res) => {
         const settings = await gameSettings();

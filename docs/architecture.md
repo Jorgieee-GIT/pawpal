@@ -60,6 +60,23 @@ app.post("/api/admin/login", handle(async (req, res) => {
 }));
 ```
 
+Document functions with this comment structure. Include `@param`, `@returns`, and `@throws` only when they apply.
+
+```ts
+/*
+ * DOCU: Briefly describe the purpose of the function
+ * @param {dataType} paramName - Short description of the parameter's role
+ * @returns {dataType} - Description of what the function returns (if applicable)
+ * @throws {Exception} - List any possible exceptions (if applicable)
+ *
+ * Last Updated: YYYY-MM-DD
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
+```
+
+Git history is the source of truth for when tracked code was last changed and who made the change. Use `git log -1 --format="%ad %an" --date=short -- path/to/file` for the latest file change, or `git blame path/to/file` for line-level history. Function comment dates are manually maintained and may not match the latest edit unless the editor updates them.
+
 ```sh
 npm run build
 npm run test:routes --prefix server

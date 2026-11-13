@@ -59,6 +59,15 @@ const PLOT_SCATTER = [
     { x: 56, y: 68, mobileX: 51, mobileY: 69 },
     { x: 82, y: 63, mobileX: 80, mobileY: 66 }
 ];
+/*
+ * DOCU: Handle plot position behavior for this feature.
+ * @param {number} index - Position of the item in its collection
+ * @returns {CSSProperties} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const plotPosition = (index: number): CSSProperties => {
     const position = PLOT_SCATTER[index % PLOT_SCATTER.length];
     return {
@@ -71,6 +80,24 @@ const plotPosition = (index: number): CSSProperties => {
 const SEED_PRICE = 40;
 const WATER_PRICE = 10;
 
+/*
+ * DOCU: Render the stock shop interface and provide its feature behavior.
+ * @param {{
+    kind: "seed" | "water";
+    label: string;
+    price: number;
+    quantity: number;
+    onQuantity: (value: number) => void;
+    onBuy: () => void;
+    busy: boolean;
+    pending: boolean;
+    coins: number
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function StockShop({ kind, label, price, quantity, onQuantity, onBuy, busy, pending, coins }: {
     kind: "seed" | "water";
     label: string;
@@ -107,6 +134,14 @@ function StockShop({ kind, label, price, quantity, onQuantity, onBuy, busy, pend
     </div>;
 }
 
+/*
+ * DOCU: Render the garden panel interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: Props) {
     const [seedQuantity, setSeedQuantity] = useState(1);
     const [waterQuantity, setWaterQuantity] = useState(1);
@@ -126,12 +161,39 @@ export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: 
         const timer = window.setTimeout(() => setGardenNotice(""), 2600);
         return () => window.clearTimeout(timer);
     }, [gardenNotice]);
-    const plotAt = (index: number): Plot => garden.plots?.[index] || (index === 0 && garden.planted_at ? {
+        /*
+     * DOCU: Handle plot at behavior for this feature.
+     * @param {number} index - Position of the item in its collection
+     * @returns {Plot} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const plotAt = (index: number): Plot => garden.plots?.[index] || (index === 0 && garden.planted_at ? {
         planted_at: garden.planted_at,
         watered_minutes: garden.watered_minutes || 0
     } : null);
-    const remainingFor = (plot: Plot) => plot ? Math.max(0, GROWTH_TIME - (nowTick - new Date(plot.planted_at).getTime()) - (plot.watered_minutes || 0) * 60000) : 0;
-    const act = async (action: string, plotIndex?: number, quantity?: number) => {
+        /*
+     * DOCU: Handle remaining for behavior for this feature.
+     * @param {Plot} plot - plot value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const remainingFor = (plot: Plot) => plot ? Math.max(0, GROWTH_TIME - (nowTick - new Date(plot.planted_at).getTime()) - (plot.watered_minutes || 0) * 60000) : 0;
+        /*
+     * DOCU: Send a kitchen action to the server and apply the returned kitchen state.
+     * @param {string} action - action value used by this function
+     * @param {number} plotIndex - plotIndex value used by this function
+     * @param {number} quantity - quantity value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const act = async (action: string, plotIndex?: number, quantity?: number) => {
         if (busy || pendingAction) {
             return;
         }
@@ -155,11 +217,27 @@ export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: 
             setPendingAction(null);
         }
     };
-    const openGuide = (which: "collection" | "odds") => {
+        /*
+     * DOCU: Open guide for this feature.
+     * @param {"collection" | "odds"} which - which value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const openGuide = (which: "collection" | "odds") => {
         setGuideTab(which);
         setGuideOpen(true);
     };
-    const handlePlotTap = (index: number) => {
+        /*
+     * DOCU: Handle plot tap for this feature.
+     * @param {number} index - Position of the item in its collection
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const handlePlotTap = (index: number) => {
         const plot = plotAt(index);
         const remaining = remainingFor(plot);
         if (plot && remaining === 0) {
@@ -250,28 +328,14 @@ export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: 
                     const remaining = remainingFor(plot);
                     const progress = plot ? 1 - remaining / GROWTH_TIME : 0;
                     const stage: GardenGrowthStage = !plot ? "empty" : remaining === 0 ? "ready" : progress < .22 ? "seed" : progress < .58 ? "sprout" : "bud";
-                    return <button
-                        key={index}
-                        type="button"
-                        style={plotPosition(index)}
-                        className={`paw-garden-bed stage-${stage}`}
-                        aria-label={`Plot ${index + 1}: ${!plot ? "empty" : remaining === 0 ? "ready to harvest" : "growing"}`}
-                        onClick={() => handlePlotTap(index)}
-                    >
+                    return <button key={index} type="button" style={plotPosition(index)} className={`paw-garden-bed stage-${stage}`} aria-label={`Plot ${index + 1}: ${!plot ? "empty" : remaining === 0 ? "ready to harvest" : "growing"}`} onClick={() => handlePlotTap(index)}>
                         <GardenBedArt stage={stage} />
                         {plot && <span className={`paw-garden-plot-indicator ${remaining === 0 ? "is-ready" : "is-growing"}`} aria-hidden="true">
                             {remaining === 0 ? <Sparkles size={13} /> : <Clock3 size={12} />}
                         </span>}
                     </button>;
                 })}
-                {unlocked < 12 && <button
-                    type="button"
-                    style={plotPosition(unlocked)}
-                    className="paw-garden-bed paw-garden-locked-bed"
-                    aria-label={`Plot ${unlocked + 1}: locked, select to unlock for ${plotPrice} coins`}
-                    disabled={busy}
-                    onClick={() => setUnlockPrompt(true)}
-                >
+                {unlocked < 12 && <button type="button" style={plotPosition(unlocked)} className="paw-garden-bed paw-garden-locked-bed" aria-label={`Plot ${unlocked + 1}: locked, select to unlock for ${plotPrice} coins`} disabled={busy} onClick={() => setUnlockPrompt(true)}>
                     <GardenBedArt stage="locked" />
                     <LockKeyhole className="paw-garden-plot-lock" size={15} aria-hidden="true" />
                 </button>}
@@ -329,12 +393,7 @@ export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: 
             </div>
         </div>
 
-        {guideOpen && <div className="paw-modal-backdrop paw-garden-modal-backdrop" onMouseDown={event => {
-            if (event.currentTarget === event.target) {
-                setGuideOpen(false)
-
-            }
-        }}>
+        {guideOpen && <div className="paw-modal-backdrop paw-garden-modal-backdrop" onMouseDown={event => {if (event.currentTarget ===event.target) {setGuideOpen(false)}}}>
             <section className="paw-modal paw-garden-guide-modal" role="dialog" aria-modal="true" aria-label="Garden flower guide">
                 <div className="paw-modal-top">
                     <div>
@@ -390,18 +449,8 @@ export default function GardenPanel({ garden, coins, busy, nowTick, onAction }: 
             </section>
         </div>}
 
-        {reveal && <div className="paw-modal-backdrop paw-garden-modal-backdrop" onMouseDown={event => {
-            if (event.target === event.currentTarget) {
-                setReveal(null)
-
-            }
-        }}>
-            <section
-                className={`paw-modal paw-garden-reveal rarity-${reveal.rarity.toLowerCase()}`}
-                role="dialog"
-                aria-modal="true"
-                aria-label="Your harvested flower"
-            >
+        {reveal && <div className="paw-modal-backdrop paw-garden-modal-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget) {setReveal(null)}}}>
+            <section className={`paw-modal paw-garden-reveal rarity-${reveal.rarity.toLowerCase()}`} role="dialog" aria-modal="true" aria-label="Your harvested flower">
                 <div className="paw-modal-top paw-garden-reveal-heading">
                     <div>
                         <h2>Flower revealed!</h2>

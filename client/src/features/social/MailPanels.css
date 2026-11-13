@@ -633,8 +633,8 @@
     }
 }
 /* Subtle tint support for collectible PawMail envelopes.
-   Classic letters retain a full color change. Premium backgrounds keep their
-   original themed artwork, with only a soft wash from the sender's color. */
+    Classic letters retain a full color change. Premium backgrounds keep their
+    original themed artwork, with only a soft wash from the sender's color. */
 .paw-envelope:not(.paw-envelope-classic) {
     background-color: var(--envelope-theme-base,#ffe6ef);
     box-shadow: inset 0 0 0 5px #ffffff35,

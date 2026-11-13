@@ -11,6 +11,14 @@ import ArcadeCanvas from "./ArcadeCanvas";
 import { PawIcon } from "../../PawIcons";
 import type { Pet } from "../../types";
 
+/*
+ * DOCU: Render the arcade lives interface and provide its feature behavior.
+ * @param {{ lives: number; maxLives: number }} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function ArcadeLives({ lives, maxLives }: { lives: number; maxLives: number }) {
     return (
         <span className="paw-arcade-hearts" aria-label={`${lives} of ${maxLives} lives remaining`}>
@@ -35,6 +43,19 @@ function ArcadeLives({ lives, maxLives }: { lives: number; maxLives: number }) {
     );
 }
 
+/*
+ * DOCU: Render the mini game interface and provide its feature behavior.
+ * @param {{
+    kind: string;
+    pet: Pet;
+    onQuit: () => void;
+    onFinish: (score: number) => Promise<boolean>;
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function MiniGame({
     kind,
     pet,
@@ -86,7 +107,15 @@ export function MiniGame({
     const palette = PAW_COLOR_PALETTE;
     const [colors, setColors] = useState(() => palette.slice(0, 8));
     const count = Math.min(8, 3 + Math.floor((level - 1) / 5));
-    async function claimRound(replay: boolean) {
+        /*
+     * DOCU: Claim the completed arcade round reward.
+     * @param {boolean} replay - replay value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function claimRound(replay: boolean) {
         if (claimRef.current) {
             return;
         }
@@ -111,14 +140,28 @@ export function MiniGame({
             setClaiming(false);
         }
     }
-    const closeGame = () => {
+        /*
+     * DOCU: Close game for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const closeGame = () => {
         if (phase === "over") {
             void claimRound(false);
         } else {
             onQuit();
         }
     };
-    function reset() {
+        /*
+     * DOCU: Reset the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function reset() {
         setColors(palette.slice(0, 8));
         setScore(0);
         setLevel(1);
@@ -172,7 +215,15 @@ export function MiniGame({
         return () => clearInterval(t);
     }, [phase, kind]);
 
-    function memoryPress(n: number) {
+        /*
+     * DOCU: Handle memory press behavior for this feature.
+     * @param {number} n - n value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function memoryPress(n: number) {
         if (show) {
             return;
         }
@@ -197,7 +248,15 @@ export function MiniGame({
             setInput((x) => x + 1);
         }
     }
-    function colorPress(n: number) {
+        /*
+     * DOCU: Handle color press behavior for this feature.
+     * @param {number} n - n value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function colorPress(n: number) {
         if (n !== heart) {
             setLives((x) => {
                 if (x <= 1) {
@@ -240,14 +299,7 @@ export function MiniGame({
                         </h2>
                         <p className="paw-modal-subtitle">Play with your pet</p>
                     </div>
-                    <button
-                        className="paw-arcade-exit"
-                        type="button"
-                        aria-label="Close game"
-                        title="Close game"
-                        disabled={claiming}
-                        onClick={closeGame}
-                    >
+                    <button className="paw-arcade-exit" type="button" aria-label="Close game" title="Close game" disabled={claiming} onClick={closeGame}>
                         <X size={20} />
                     </button>
                 </header>
@@ -260,8 +312,8 @@ export function MiniGame({
                             {kind === "dino"
                                 ? "Tap or press Space to jump over incoming cacti. Survive as speed increases."
                                 : kind === "runner"
-                                  ? "Swipe left or right, or use arrow keys to dodge obstacles."
-                                  : kind === "memory"
+                                    ? "Swipe left or right, or use arrow keys to dodge obstacles."
+                                    : kind === "memory"
                                     ? "Remember the hearts in order. The sequence gets longer after every round."
                                     : "Match the big heart with the correct paint color."}
                         </p>
@@ -284,18 +336,10 @@ export function MiniGame({
                             </p>
                         )}
                         <div className="actions centered paw-game-over-actions">
-                            <button
-                                className="primary"
-                                disabled={claiming}
-                                onClick={() => void claimRound(true)}
-                            >
+                            <button className="primary" disabled={claiming} onClick={() => void claimRound(true)}>
                                 {claiming ? "Collecting reward..." : "Retry"}
                             </button>
-                            <button
-                                className="secondary"
-                                disabled={claiming}
-                                onClick={() => void claimRound(false)}
-                            >
+                            <button className="secondary" disabled={claiming} onClick={() => void claimRound(false)}>
                                 Collect coins & quit
                             </button>
                         </div>
@@ -325,20 +369,10 @@ export function MiniGame({
                                         ? "Watch the hearts in order!"
                                         : `Your turn! ${input}/${sequence.length}`}
                                 </p>
-                                <div
-                                    className="paw-memory-sequence"
-                                    aria-label={
-                                        show
-                                            ? `Memorize ${sequence.length} colored hearts in order`
-                                            : "Sequence hidden; repeat it using the four hearts below"
-                                    }
-                                >
+                                <div className="paw-memory-sequence" aria-label={show ? `Memorize ${sequence.length} colored hearts in order` : "Sequence hidden; repeat it using the four hearts below"}>
                                     {show ? (
                                         sequence.map((index, position) => (
-                                            <span
-                                                className="paw-memory-sequence-heart"
-                                                key={`${position}-${index}`}
-                                            >
+                                            <span className="paw-memory-sequence-heart" key={`${position}-${index}`}>
                                                 <MemoryHeart index={index} size={34} />
                                             </span>
                                         ))
@@ -350,12 +384,7 @@ export function MiniGame({
                                 </div>
                                 <div className="memory-board paw-memory-board">
                                     {MEMORY_HEARTS.map((entry, i) => (
-                                        <button
-                                            key={i}
-                                            disabled={show}
-                                            onClick={() => memoryPress(i)}
-                                            aria-label={`${entry.label} heart`}
-                                        >
+                                        <button key={i} disabled={show} onClick={() => memoryPress(i)} aria-label={`${entry.label} heart`}>
                                             <MemoryHeart index={i} size={38} />
                                         </button>
                                     ))}
@@ -369,13 +398,7 @@ export function MiniGame({
                                 </div>
                                 <div className="heart-choices paw-palette-choices">
                                     {colors.slice(0, count).map((c, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => colorPress(i)}
-                                            aria-label={`Choose paint palette ${i + 1}`}
-                                            className="paw-palette-choice"
-                                            type="button"
-                                        >
+                                        <button key={i} onClick={() => colorPress(i)} aria-label={`Choose paint palette ${i + 1}`} className="paw-palette-choice" type="button">
                                             <PaintPalette color={c} />
                                         </button>
                                     ))}

@@ -366,6 +366,15 @@ export const readyMealPrices: Record<string, number> = Object.fromEntries(
 );
 
 /** Exact ingredient *types* matter for discovery, but their order and stack sizes do not. */
+/*
+ * DOCU: Find recipe by ingredients for this feature.
+ * @param {string[]} items - items value used by this function
+ * @returns {string | null} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function findRecipeByIngredients(items: string[]): string | null {
     if (new Set(items).size !== items.length) {
         return null;
@@ -379,10 +388,28 @@ export function findRecipeByIngredients(items: string[]): string | null {
     return null;
 }
 
+/*
+ * DOCU: Handle known recipe behavior for this feature.
+ * @param {string} id - Identifier of the record or item being handled
+ * @param {string[]} discovered - discovered value used by this function
+ * @returns {boolean} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function knownRecipe(id: string, discovered: string[]): boolean {
     return starterRecipes.includes(id) || discovered.includes(id);
 }
 
+/*
+ * DOCU: Build the kitchen recipe catalog returned to the client.
+ * @param {string[]} discovered - discovered value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function publicKitchenRecipes(discovered: string[]) {
     return Object.fromEntries(Object.entries(kitchenRecipes).map(([id, recipe]) => [
         id,
@@ -402,6 +429,15 @@ export function publicKitchenRecipes(discovered: string[]) {
     ]));
 }
 
+/*
+ * DOCU: Handle cooking rating behavior for this feature.
+ * @param {number} score - score value used by this function
+ * @returns {"Perfect" | "Great" | "Good" | "Messy"} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function cookingRating(score: number): "Perfect" | "Great" | "Good" | "Messy" {
     return score >= 90 ? "Perfect" : score >= 75 ? "Great" : score >= 50 ? "Good" : "Messy";
 }

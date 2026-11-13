@@ -11,6 +11,14 @@ import {
 import { handle } from "../http.js";
 import { recordMissionEvent } from "../missions.js";
 
+/*
+ * DOCU: Register room routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerRoomRoutes(app: Express) {
     app.get("/api/furniture/catalog", auth, (_req, res) =>
         res.json({
@@ -64,7 +72,15 @@ export function registerRoomRoutes(app: Express) {
                 y: number;
             }> = Array.isArray(layouts[room]) ? layouts[room] : initialLayout(room);
             const owned: string[] = Array.isArray(p.owned_items) ? p.owned_items : [];
-            const isDefault = (id: string) => DEFAULT_ROOM_FURNITURE[room].includes(id);
+                        /*
+             * DOCU: Is default for this feature.
+             * @param {string} id - Identifier of the record or item being handled
+             *
+             * Last Updated: 2026-11-13
+             * Author: Jorge
+             * Last Updated By: Jorge
+             */
+const isDefault = (id: string) => DEFAULT_ROOM_FURNITURE[room].includes(id);
             const price = item ? FURNITURE_BY_ROOM[room][item] : undefined;
             let message = "Furniture updated.";
             if (action === "buy") {

@@ -12,6 +12,14 @@ const species = ["cat", "dog"] as const;
 const localHosts = new Set(["localhost", "127.0.0.1", "::1"]);
 const enableToken = "PAWPAL_ENABLE_SANDBOX_SEED";
 
+/*
+ * DOCU: Handle assert local sandbox target behavior for this feature.
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function assertLocalSandboxTarget() {
     if (process.env[enableToken] !== "YES" || !process.argv.includes("--seed-local-sandbox")) {
         throw new Error(`Refusing to seed. Set ${enableToken}=YES and pass --seed-local-sandbox explicitly.`);
@@ -28,6 +36,14 @@ function assertLocalSandboxTarget() {
     }
 }
 
+/*
+ * DOCU: Start the server and its registered services.
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 async function main() {
     assertLocalSandboxTarget();
     const credentials = sandboxNames.map(username => ({ username, password: randomBytes(18).toString("base64url") }));
@@ -56,16 +72,16 @@ async function main() {
             const passwordHash = await bcrypt.hash(account.password, 12);
             const user = await client.query(
                 `INSERT INTO users(id,username,email,password_hash)
-                 VALUES($1,$2,NULL,$3)
-                 ON CONFLICT(username) DO UPDATE SET password_hash=EXCLUDED.password_hash,auth_version=users.auth_version+1
-                 RETURNING id`,
+                VALUES($1,$2,NULL,$3)
+                ON CONFLICT(username) DO UPDATE SET password_hash=EXCLUDED.password_hash,auth_version=users.auth_version+1
+                RETURNING id`,
                 [userId, account.username, passwordHash]
             );
             const id = String(user.rows[0].id);
             await client.query(
                 `INSERT INTO admin_user_access(user_id,suspended,lucky_games_access,disabled_features)
-                 VALUES($1,false,true,'[]'::jsonb)
-                 ON CONFLICT(user_id) DO UPDATE SET suspended=false,lucky_games_access=true,disabled_features='[]'::jsonb`,
+                VALUES($1,false,true,'[]'::jsonb)
+                ON CONFLICT(user_id) DO UPDATE SET suspended=false,lucky_games_access=true,disabled_features='[]'::jsonb`,
                 [id]
             );
             const petSpecies = species[index];
@@ -82,10 +98,10 @@ async function main() {
                 `INSERT INTO pets(id,owner_id,name,species,breed,color,owned_colors,owned_breeds,owned_cosmetics,
                     owned_items,placed_items,unlocked_rooms,active_room,room_theme,coins,xp,level,food,toys,hunger,happiness,
                     energy,cleanliness,garden)
-                 VALUES($1,$2,$3,$4,'classic','classic',$5::jsonb,$6::jsonb,$7::jsonb,$8::jsonb,
+                VALUES($1,$2,$3,$4,'classic','classic',$5::jsonb,$6::jsonb,$7::jsonb,$8::jsonb,
                     '["basic_sofa"]'::jsonb,'["living","bedroom","studio","sports"]'::jsonb,'living','blush',
                     1000000000,0,50,999,999,100,100,100,100,'{"seeds":999,"flowers":999,"planted_at":null}'::jsonb)
-                 ON CONFLICT(owner_id) WHERE owner_id IS NOT NULL DO UPDATE SET
+                ON CONFLICT(owner_id) WHERE owner_id IS NOT NULL DO UPDATE SET
                     name=EXCLUDED.name,species=EXCLUDED.species,breed='classic',color='classic',
                     owned_colors=EXCLUDED.owned_colors,owned_breeds=EXCLUDED.owned_breeds,
                     owned_cosmetics=EXCLUDED.owned_cosmetics,owned_items=EXCLUDED.owned_items,
@@ -98,8 +114,8 @@ async function main() {
             await client.query(
                 `INSERT INTO pet_kitchens(user_id,ingredients,meals,active_recipe,recipe_step,cooking_started_at,
                     discovered_recipes,recipe_records,step_scores)
-                 VALUES($1,$2::jsonb,$3::jsonb,NULL,0,NULL,$4::jsonb,'{}'::jsonb,'{}'::jsonb)
-                 ON CONFLICT(user_id) DO UPDATE SET ingredients=EXCLUDED.ingredients,meals=EXCLUDED.meals,
+                VALUES($1,$2::jsonb,$3::jsonb,NULL,0,NULL,$4::jsonb,'{}'::jsonb,'{}'::jsonb)
+                ON CONFLICT(user_id) DO UPDATE SET ingredients=EXCLUDED.ingredients,meals=EXCLUDED.meals,
                     active_recipe=NULL,recipe_step=0,cooking_started_at=NULL,
                     discovered_recipes=EXCLUDED.discovered_recipes,recipe_records='{}'::jsonb,step_scores='{}'::jsonb`,
                 [id, JSON.stringify(foodStock), JSON.stringify(mealStock), JSON.stringify(Object.keys(kitchenRecipes))]
@@ -107,19 +123,19 @@ async function main() {
             await client.query("DELETE FROM paw_mail_envelopes WHERE user_id=$1", [id]);
             await client.query(
                 `INSERT INTO paw_mail_envelopes(user_id,design) SELECT $1,UNNEST($2::text[])
-                 ON CONFLICT DO NOTHING`,
+                ON CONFLICT DO NOTHING`,
                 [id, pawMailDesigns]
             );
             await client.query("DELETE FROM mission_events WHERE user_id=$1", [id]);
             await client.query("DELETE FROM mission_claims WHERE user_id=$1", [id]);
             await client.query(
                 `INSERT INTO mission_events(user_id,metric,amount)
-                 SELECT $1,m.metric,100 FROM UNNEST($2::text[]) AS m(metric)`,
+                SELECT $1,m.metric,100 FROM UNNEST($2::text[]) AS m(metric)`,
                 [id, metrics]
             );
             await client.query(
                 `INSERT INTO achievements(user_id,code) VALUES($1,'level_5'),($1,'rich'),($1,'first_friend')
-                 ON CONFLICT DO NOTHING`, [id]
+                ON CONFLICT DO NOTHING`, [id]
             );
             seeded.push({ id, username: account.username });
         }
@@ -129,7 +145,7 @@ async function main() {
         );
         await client.query(
             `INSERT INTO friendships(requester_id,recipient_id,status)
-             VALUES($1,$2,'accepted') ON CONFLICT(requester_id,recipient_id) DO UPDATE SET status='accepted'`,
+            VALUES($1,$2,'accepted') ON CONFLICT(requester_id,recipient_id) DO UPDATE SET status='accepted'`,
             [seeded[0].id, seeded[1].id]
         );
         await client.query("COMMIT");

@@ -219,7 +219,7 @@
 }
 
 /* The native range input remains keyboard- and touch-accessible. Its thumb
-   uses the very same SVG shown in Develop -> Settings art. */
+    uses the very same SVG shown in Develop -> Settings art. */
 .paw-settings-volume .paw-settings-paw-slider {
     display: block;
     width: 100%;

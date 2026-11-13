@@ -405,7 +405,7 @@
     }
 }
 /* Batch 88: allow real mouse/touch events to reach the pet while bathing.
-   The original .wanderer uses pointer-events:none, preventing scrubbing entirely. */
+    The original .wanderer uses pointer-events:none, preventing scrubbing entirely. */
 .living-room .wanderer.own:has(.paw-scrub-target) {
     pointer-events: auto!important;
 }
@@ -471,7 +471,7 @@
     }
 }
 /* Batch 90: Keep Cuddle in the same bottom-left dock as Feed, Play, Sleep, Bath.
-   Batch 89 accidentally used position:relative, pushing it into document flow. */
+    Batch 89 accidentally used position:relative, pushing it into document flow. */
 .living-room button.paw-room-cuddle {
     position: absolute!important;
     left: 218px;

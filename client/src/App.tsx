@@ -62,6 +62,13 @@ const PawClaw = lazy(() => import("./features/arcade/PawClaw"));
 const WhackAMole = lazy(() => import("./features/arcade/WhackAMole"));
 const BubblePop = lazy(() => import("./features/arcade/BubblePop"));
 
+/*
+ * DOCU: Render the loading state while a feature panel is being downloaded.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function PanelLoader() {
     return (
         <section className="panel paw-panel-loading" role="status" aria-live="polite">
@@ -71,6 +78,13 @@ function PanelLoader() {
     );
 }
 
+/*
+ * DOCU: Render the application shell and coordinate shared session, pet, navigation, and overlay state.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function App() {
     const [token, setToken] = useState(() => {
         // Reset links invalidate existing sessions. An explicit login redirect must
@@ -100,7 +114,14 @@ export default function App() {
         }
         setHideVisitingPets(localStorage.getItem(`pawpal-hide-visitors:${user.id}`) === "true");
     }, [user?.id]);
-    const toggleVisitingPets = () => {
+        /*
+     * DOCU: Toggle visiting pets for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const toggleVisitingPets = () => {
         setHideVisitingPets((current) => {
             const next = !current;
             if (user?.id) {
@@ -179,7 +200,14 @@ export default function App() {
 
     useEffect(() => {
         const media = window.matchMedia("(prefers-color-scheme: dark)");
-        const update = () => setSystemDark(media.matches);
+                /*
+         * DOCU: Update the current state for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const update = () => setSystemDark(media.matches);
 
         media.addEventListener("change", update);
         update();
@@ -252,7 +280,14 @@ export default function App() {
     useEffect(() => {
         // Check navigation badges while outside the garden too, without
         // rerendering the entire app every second on other pages.
-        const tick = () => {
+                /*
+         * DOCU: Advance timed gameplay and update the active round state.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const tick = () => {
             if (document.visibilityState === "visible") {
                 setNowTick(Date.now());
             }
@@ -274,9 +309,25 @@ export default function App() {
         setAuthMode("login");
         setNotice("Your session expired. Please log in again.");
     });
-    const notificationId = (item: PawNotification) =>
+        /*
+     * DOCU: Create a stable identifier for a notification.
+     * @param {PawNotification} item - Item being handled
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const notificationId = (item: PawNotification) =>
         `${item.kind}:${item.event_id}:${new Date(item.created_at).getTime()}`;
-    function updateNotificationsFromServer(items: PawNotification[]) {
+        /*
+     * DOCU: Update notifications from server for this feature.
+     * @param {PawNotification[]} items - items value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function updateNotificationsFromServer(items: PawNotification[]) {
         // A polling response may arrive just before the seen acknowledgement.
         // Do not restore a red dot while a mark-seen request is in flight.
         for (const item of items) {
@@ -292,7 +343,15 @@ export default function App() {
             )
         );
     }
-    async function markNotificationsSeen(items: PawNotification[]) {
+        /*
+     * DOCU: Mark notifications seen for this feature.
+     * @param {PawNotification[]} items - items value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function markNotificationsSeen(items: PawNotification[]) {
         const unseen = items.filter(
             (item) => item.unread && !pendingSeenNotifications.current.has(notificationId(item))
         );
@@ -347,7 +406,14 @@ export default function App() {
         let mounted = true;
         let checking = false;
         let interval: ReturnType<typeof window.setInterval> | undefined;
-        async function checkMaintenance() {
+                /*
+         * DOCU: Check maintenance for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+async function checkMaintenance() {
             if (!mounted || document.visibilityState === "hidden" || checking) return;
             checking = true;
             try {
@@ -362,11 +428,25 @@ export default function App() {
                 checking = false;
             }
         }
-        function startPolling() {
+                /*
+         * DOCU: Start polling for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+function startPolling() {
             if (document.visibilityState === "hidden" || interval !== undefined) return;
             interval = window.setInterval(() => void checkMaintenance(), 60000);
         }
-        function syncVisibility() {
+                /*
+         * DOCU: Sync visibility for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+function syncVisibility() {
             if (document.visibilityState === "hidden") {
                 if (interval !== undefined) window.clearInterval(interval);
                 interval = undefined;
@@ -393,7 +473,14 @@ export default function App() {
             return;
         }
         let active = true;
-        async function checkMissions() {
+                /*
+         * DOCU: Check missions for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+async function checkMissions() {
             if (document.visibilityState === "hidden") {
                 return;
             }
@@ -423,7 +510,14 @@ export default function App() {
         };
     }, [token, missionRefreshKey]);
 
-    async function refresh() {
+        /*
+     * DOCU: Refresh the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function refresh() {
         if (!token) {
             return;
         }
@@ -480,7 +574,15 @@ export default function App() {
         lastLiveActivity.current = 0;
         let notificationsInitialized = false;
         const knownNotificationIds = new Set<string>();
-        const syncNotifications = (items: PawNotification[]) => {
+                /*
+         * DOCU: Sync notifications for this feature.
+         * @param {PawNotification[]} items - items value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const syncNotifications = (items: PawNotification[]) => {
             if (!active) {
                 return;
             }
@@ -506,14 +608,30 @@ export default function App() {
             .then(syncNotifications)
             .catch(() => {});
 
-        const refreshEvents = async () => {
+                /*
+         * DOCU: Refresh events for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const refreshEvents = async () => {
             if (!active || document.visibilityState === "hidden") {
                 return;
             }
             const types = new Set(pending);
             pending.clear();
             const requests: Promise<unknown>[] = [];
-            const load = <T,>(path: string, update: (value: T) => void) => {
+                        /*
+             * DOCU: Load the feature data required by the current screen.
+             * @param {string} path - path value used by this function
+             * @param {(value: T) => void} update - update value used by this function
+             *
+             * Last Updated: 2026-11-13
+             * Author: Jorge
+             * Last Updated By: Jorge
+             */
+const load = <T,>(path: string, update: (value: T) => void) => {
                 requests.push(
                     request(path)
                         .then(update)
@@ -573,7 +691,15 @@ export default function App() {
             }
             await Promise.all(requests);
         };
-        const schedule = (type: string) => {
+                /*
+         * DOCU: Handle schedule behavior for this feature.
+         * @param {string} type - type value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const schedule = (type: string) => {
             pending.add(type);
             if (!eventTimer) {
                 eventTimer = setTimeout(() => {
@@ -582,7 +708,14 @@ export default function App() {
                 }, 180);
             }
         };
-        const syncOnReturn = () => {
+                /*
+         * DOCU: Sync on return for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const syncOnReturn = () => {
             if (document.visibilityState !== "visible") {
                 return;
             }
@@ -601,7 +734,15 @@ export default function App() {
         window.addEventListener("focus", syncOnReturn);
         window.addEventListener("online", syncOnReturn);
 
-        async function connect() {
+                /*
+         * DOCU: Connect the current state for this feature.
+         * @throws {Error} - Propagates an error when this operation cannot complete.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+async function connect() {
             controller = new AbortController();
             try {
                 const response = await fetch(API + "/api/live", {
@@ -725,7 +866,14 @@ export default function App() {
             return;
         }
         let alive = true;
-        const syncRoom = async () => {
+                /*
+         * DOCU: Sync room for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const syncRoom = async () => {
             try {
                 const pets: RoomPet[] = await request("/room");
                 if (alive) {
@@ -743,7 +891,14 @@ export default function App() {
                 void syncRoom();
             }
         }, 20000);
-        const onVisible = () => {
+                /*
+         * DOCU: Handle on visible behavior for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onVisible = () => {
             if (
                 document.visibilityState === "visible" &&
                 Date.now() - lastLiveActivity.current > 45000
@@ -765,7 +920,17 @@ export default function App() {
         const t = setInterval(() => setRotation((x) => x + 1), 14000);
         return () => clearInterval(t);
     }, []);
-    async function claimArcadeReward(gameId: string, points: number): Promise<boolean> {
+        /*
+     * DOCU: Validate and grant the completed arcade game reward.
+     * @param {string} gameId - gameId value used by this function
+     * @param {number} points - points value used by this function
+     * @returns {Promise<boolean>} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function claimArcadeReward(gameId: string, points: number): Promise<boolean> {
         // Retry still claims the completed round before a new one begins.
         // Respect the backend's existing 8-second reward interval, rather than
         // silently dropping earned coins if a quick round ends too soon.
@@ -792,7 +957,17 @@ export default function App() {
         setNotice("Could not collect your reward yet. Please retry.");
         return false;
     }
-    async function execute(path: string, body?: unknown, method = "POST") {
+        /*
+     * DOCU: Run a PawPal API action and refresh the affected application state.
+     * @param {string} path - path value used by this function
+     * @param {unknown} body - body value used by this function
+     * @param {unknown} method - method value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function execute(path: string, body?: unknown, method = "POST") {
         setBusy(true);
         try {
             const data = await request(path, method, body);
@@ -877,7 +1052,14 @@ export default function App() {
         return () => window.clearInterval(timer);
     }, [cuddleMode, pet?.id, pet?.happiness]);
     useEffect(() => {
-        const stop = () => {
+                /*
+         * DOCU: Stop the current state for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const stop = () => {
             bathScrubbing.current = false;
             cuddleActive.current = false;
         };
@@ -888,17 +1070,26 @@ export default function App() {
             window.removeEventListener("pointercancel", stop);
         };
     }, []);
-    async function launchGame(id: string, petSpecies: string) {
+        /*
+     * DOCU: Launch game for this feature.
+     * @param {string} id - Identifier of the record or item being handled
+     * @param {string} petSpecies - petSpecies value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function launchGame(id: string, petSpecies: string) {
         if (pet?.garden?._sleeping) {
             setPet((current) =>
                 current
                     ? {
-                          ...current,
-                          garden: {
-                              ...current.garden,
-                              _sleeping: false
-                          }
-                      }
+                            ...current,
+                            garden: {
+                                ...current.garden,
+                                _sleeping: false
+                            }
+                        }
                     : current
             );
             try {
@@ -912,7 +1103,14 @@ export default function App() {
         localStorage.setItem("pawpal-arcade-species", petSpecies);
         setGame(id);
     }
-    async function togglePetSleep() {
+        /*
+     * DOCU: Toggle pet sleep for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function togglePetSleep() {
         if (sleepRequestInFlight.current) {
             return;
         }
@@ -933,7 +1131,14 @@ export default function App() {
             setSleepPending(false);
         }
     }
-    async function authenticate() {
+        /*
+     * DOCU: Authenticate the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function authenticate() {
         setBusy(true);
         try {
             const data = await request(
@@ -941,13 +1146,13 @@ export default function App() {
                 "POST",
                 authMode === "login"
                     ? {
-                          identity: username,
-                          password
-                      }
+                            identity: username,
+                            password
+                        }
                     : {
-                          username,
-                          password
-                      }
+                            username,
+                            password
+                        }
             );
             localStorage.setItem("pawpal-token", data.token);
             setToken(data.token);
@@ -958,7 +1163,14 @@ export default function App() {
             setBusy(false);
         }
     }
-    async function requestForgotPassword() {
+        /*
+     * DOCU: Request forgot password for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function requestForgotPassword() {
         setForgotBusy(true);
         setForgotError("");
         try {
@@ -980,7 +1192,14 @@ export default function App() {
             return;
         }
         let mounted = true;
-        async function checkStatus() {
+                /*
+         * DOCU: Check status for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+async function checkStatus() {
             if (document.visibilityState === "hidden") {
                 return;
             }
@@ -1006,13 +1225,27 @@ export default function App() {
             window.clearInterval(interval);
         };
     }, [authMode, forgotTicket]);
-    function clearForgotRequest() {
+        /*
+     * DOCU: Handle clear forgot request behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function clearForgotRequest() {
         sessionStorage.removeItem("pawpal-forgot-ticket");
         setForgotTicket(null);
         setForgotStatus("pending");
         setForgotError("");
     }
-    function logout() {
+        /*
+     * DOCU: Handle logout behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function logout() {
         localStorage.removeItem("pawpal-token");
         setToken("");
         setUser(null);
@@ -1030,17 +1263,39 @@ export default function App() {
         const t = setTimeout(() => setFriendToast(null), 9000);
         return () => clearTimeout(t);
     }, [friendToast]);
-    const openPawComposer = (friendId = "") => {
+        /*
+     * DOCU: Open paw composer for this feature.
+     * @param {unknown} friendId - friendId value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const openPawComposer = (friendId = "") => {
         setMailTo(friendId);
         setSelectedLetter(null);
         setMailModal("compose");
     };
-    const openPawInbox = () => {
+        /*
+     * DOCU: Open paw inbox for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const openPawInbox = () => {
         setSelectedLetter(null);
         setMailFolder("received");
         setMailModal("inbox");
     };
-    const showSentLetters = async () => {
+        /*
+     * DOCU: Show sent letters for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const showSentLetters = async () => {
         setMailFolder("sent");
         setSelectedLetter(null);
         try {
@@ -1049,7 +1304,15 @@ export default function App() {
             setNotice(error.message);
         }
     };
-    const openPawLetter = async (letter: PawMail) => {
+        /*
+     * DOCU: Open paw letter for this feature.
+     * @param {PawMail} letter - letter value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const openPawLetter = async (letter: PawMail) => {
         setSelectedLetter(letter);
         if (mailFolder === "received" && !letter.read_at) {
             const result = await execute("/mail/" + letter.id + "/read", undefined, "PATCH");
@@ -1058,9 +1321,9 @@ export default function App() {
                     mails.map((m) =>
                         m.id === letter.id
                             ? {
-                                  ...m,
-                                  read_at: new Date().toISOString()
-                              }
+                                    ...m,
+                                    read_at: new Date().toISOString()
+                                }
                             : m
                     )
                 );
@@ -1070,7 +1333,15 @@ export default function App() {
     const accepted = friends.filter((f) => f.status === "accepted");
     const pending = friends.filter((f) => f.status === "pending");
     const incomingRequests = pending.filter((f) => f.recipient_id === user?.id);
-    const requestSeenKey = (friend: Friend) => `${friend.requester_id}:${friend.created_at}`;
+        /*
+     * DOCU: Request seen key for this feature.
+     * @param {Friend} friend - friend value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const requestSeenKey = (friend: Friend) => `${friend.requester_id}:${friend.created_at}`;
     const unseenIncomingRequests = incomingRequests.filter(
         (friend) => !seenFriendRequestIds.includes(requestSeenKey(friend))
     );
@@ -1096,7 +1367,15 @@ export default function App() {
                         (plot.watered_minutes || 0) * 60000
         );
     })();
-    const friendRequestIsUnread = (eventId: string) =>
+        /*
+     * DOCU: Handle friend request is unread behavior for this feature.
+     * @param {string} eventId - eventId value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const friendRequestIsUnread = (eventId: string) =>
         unseenIncomingRequests.some((friend) => friend.requester_id === eventId);
     useEffect(() => {
         if (!user?.id) {
@@ -1145,8 +1424,8 @@ export default function App() {
             hideVisitingPets
                 ? []
                 : others.length <= 8
-                  ? others
-                  : Array.from(
+                    ? others
+                    : Array.from(
                         {
                             length: 8
                         },
@@ -1168,7 +1447,15 @@ export default function App() {
         if (!openRoomNoteId) {
             return;
         }
-        const closeOutside = (event: PointerEvent) => {
+                /*
+         * DOCU: Close outside for this feature.
+         * @param {PointerEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const closeOutside = (event: PointerEvent) => {
             const target = event.target;
             if (
                 target instanceof Element &&
@@ -1177,7 +1464,15 @@ export default function App() {
                 setOpenRoomNoteId(null);
             }
         };
-        const closeEscape = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Close escape for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const closeEscape = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 setOpenRoomNoteId(null);
             }
@@ -1200,29 +1495,7 @@ export default function App() {
                 }}
             />
             {user && <header className="nav">
-                <div
-                    className="logo paw-logo-home"
-                    role="button"
-                    tabIndex={0}
-                    title="Go to Living Room"
-                    onClick={() => {
-                        setTab("home");
-                        setMenuOpen(false);
-                        setNotificationsOpen(false);
-                        window.scrollTo({
-                            top: 0,
-                            behavior: "smooth"
-                        });
-                    }}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            setTab("home");
-                            setMenuOpen(false);
-                            setNotificationsOpen(false);
-                        }
-                    }}
-                >
+                <div className="logo paw-logo-home" role="button" tabIndex={0} title="Go to Living Room" onClick={() => {setTab("home"); setMenuOpen(false); setNotificationsOpen(false); window.scrollTo({top:0,behavior: "smooth"});}} onKeyDown={(e) => {if (e.key === "Enter" || e.key === " ") {e.preventDefault(); setTab("home"); setMenuOpen(false); setNotificationsOpen(false);}}}>
                     <PawPrint size={25} aria-hidden="true" />
                     <div className="paw-logo-copy">
                         <b>PawPal</b>
@@ -1254,19 +1527,11 @@ export default function App() {
                                 ) && <span className="paw-notifications-dot" />}
                             </button>
                             {notificationsOpen && (
-                                <div
-                                    className="paw-notifications-panel"
-                                    role="region"
-                                    aria-label="Latest notifications"
-                                >
+                                <div className="paw-notifications-panel" role="region" aria-label="Latest notifications">
                                     <div className="paw-notifications-heading">
                                         <b>Notifications</b>
                                         <small>Latest 5</small>
-                                        <button
-                                            className="paw-notifications-close"
-                                            onClick={() => setNotificationsOpen(false)}
-                                            aria-label="Close notifications"
-                                        >
+                                        <button className="paw-notifications-close" onClick={() => setNotificationsOpen(false)} aria-label="Close notifications">
                                             ×
                                         </button>
                                     </div>
@@ -1276,17 +1541,7 @@ export default function App() {
                                         </p>
                                     ) : (
                                         notifications.map((n) => (
-                                            <div
-                                                key={n.kind + "-" + n.event_id}
-                                                className={
-                                                    "paw-notification-item " +
-                                                    (n.unread &&
-                                                    (n.kind !== "friend_request" ||
-                                                        friendRequestIsUnread(n.event_id))
-                                                        ? "is-unread"
-                                                        : "")
-                                                }
-                                            >
+                                            <div key={n.kind + "-" + n.event_id} className={ "paw-notification-item " + (n.unread && (n.kind !== "friend_request" || friendRequestIsUnread(n.event_id)) ? "is-unread" : "")}>
                                                 <button
                                                     className="paw-notification-link"
                                                     onClick={() => {
@@ -1340,17 +1595,17 @@ export default function App() {
                                                         {n.kind === "mail"
                                                             ? "sent you PawMail"
                                                             : n.kind === "friend_request"
-                                                              ? "requested to be friends"
-                                                              : n.kind === "multiplayer_challenge"
+                                                                ? "requested to be friends"
+                                                                : n.kind === "multiplayer_challenge"
                                                                 ? "challenged you to a game"
                                                                 : n.kind === "multiplayer_result"
-                                                                  ? "finished a multiplayer match with you"
-                                                                  : n.kind === "duo_invite"
+                                                                    ? "finished a multiplayer match with you"
+                                                                    : n.kind === "duo_invite"
                                                                     ? "invited you to Duo Clash 2v2"
                                                                     : n.kind === "announcement"
-                                                                      ? "published: " +
+                                                                        ? "published: " +
                                                                         (n.title || "a notice")
-                                                                      : "accepted your friend request"}
+                                                                        : "accepted your friend request"}
                                                         <small>
                                                             {new Date(
                                                                 n.created_at
@@ -1422,13 +1677,7 @@ export default function App() {
                                                 )}
                                                 {n.kind === "friend_request" &&
                                                     (notificationDecisions[n.event_id] ? (
-                                                        <div
-                                                            className={
-                                                                "paw-notification-result " +
-                                                                notificationDecisions[n.event_id]
-                                                            }
-                                                            role="status"
-                                                        >
+                                                        <div className={ "paw-notification-result " + notificationDecisions[n.event_id]} role="status">
                                                             You {notificationDecisions[n.event_id]}{" "}
                                                             @{n.actor}'s friend request.
                                                         </div>
@@ -1518,11 +1767,7 @@ export default function App() {
                         <Settings size={21} strokeWidth={1.8} aria-hidden="true" />
                     </button>
                     {user && (
-                        <button
-                            className="paw-header-logout"
-                            onClick={logout}
-                            title="Log out of PawPal"
-                        >
+                        <button className="paw-header-logout" onClick={logout} title="Log out of PawPal">
                             <LogOut size={16} aria-hidden="true" />
                             <span>Log out</span>
                         </button>
@@ -1530,18 +1775,8 @@ export default function App() {
                 </div>
             </header>}
             {announcementOpen && (
-                <div
-                    className="paw-modal-backdrop"
-                    onMouseDown={(event) => {
-                        if (event.target === event.currentTarget) setAnnouncementOpen(null);
-                    }}
-                >
-                    <section
-                        className="paw-modal paw-admin-announcement-modal"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="paw-admin-announcement-title"
-                    >
+                <div className="paw-modal-backdrop" onMouseDown={(event) => {if (event.target ===event.currentTarget) setAnnouncementOpen(null);}}>
+                    <section className="paw-modal paw-admin-announcement-modal" role="dialog" aria-modal="true" aria-labelledby="paw-admin-announcement-title">
                         <div className="paw-modal-top">
                             <div>
                                 <h2 id="paw-admin-announcement-title">
@@ -1551,12 +1786,7 @@ export default function App() {
                                     Posted {new Date(announcementOpen.created_at).toLocaleString()}
                                 </p>
                             </div>
-                            <button
-                                type="button"
-                                className="paw-modal-close"
-                                onClick={() => setAnnouncementOpen(null)}
-                                aria-label="Close announcement"
-                            >
+                            <button type="button" className="paw-modal-close" onClick={() => setAnnouncementOpen(null)} aria-label="Close announcement">
                                 <X size={19} />
                             </button>
                         </div>
@@ -1592,42 +1822,21 @@ export default function App() {
             )}
             <main className="container">
                 {user && mailModal === "inbox" && (
-                    <div
-                        className="paw-modal-backdrop"
-                        onMouseDown={(e) => {
-                            if (e.target === e.currentTarget) {
-                                setMailModal(null);
-                            }
-                        }}
-                    >
-                        <section
-                            className="paw-modal pawmail-window pawmail-inbox-window"
-                            role="dialog"
-                            aria-modal="true"
-                            aria-labelledby="pawmail-inbox-heading"
-                        >
+                    <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setMailModal(null);}}}>
+                        <section className="paw-modal pawmail-window pawmail-inbox-window" role="dialog" aria-modal="true" aria-labelledby="pawmail-inbox-heading">
                             <div className="paw-modal-top">
                                 <div>
                                     <h2 id="pawmail-inbox-heading">PawMail</h2>
                                     <p className="paw-modal-subtitle">Special delivery</p>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="paw-modal-close"
-                                    aria-label="Close PawMail"
-                                    onClick={() => setMailModal(null)}
-                                >
+                                <button type="button" className="paw-modal-close" aria-label="Close PawMail" onClick={() => setMailModal(null)}>
                                     <X size={19} />
                                 </button>
                             </div>
                             {selectedLetter ? (
                                 <>
                                     <div className="pawmail-detail-top">
-                                        <button
-                                            type="button"
-                                            className="pawmail-back"
-                                            onClick={() => setSelectedLetter(null)}
-                                        >
+                                        <button type="button" className="pawmail-back" onClick={() => setSelectedLetter(null)}>
                                             <ArrowLeft size={16} /> All letters
                                         </button>
                                         <span className="pawmail-date">
@@ -1689,11 +1898,7 @@ export default function App() {
                                 </>
                             ) : (
                                 <>
-                                    <div
-                                        className="pawmail-folder-tabs"
-                                        role="tablist"
-                                        aria-label="Mail folders"
-                                    >
+                                    <div className="pawmail-folder-tabs" role="tablist" aria-label="Mail folders">
                                         <button
                                             type="button"
                                             role="tab"
@@ -1711,20 +1916,10 @@ export default function App() {
                                                 </span>
                                             )}
                                         </button>
-                                        <button
-                                            type="button"
-                                            role="tab"
-                                            aria-selected={mailFolder === "sent"}
-                                            className={mailFolder === "sent" ? "active" : ""}
-                                            onClick={() => void showSentLetters()}
-                                        >
+                                        <button type="button" role="tab" aria-selected={mailFolder === "sent"} className={mailFolder === "sent" ? "active" : ""} onClick={() => void showSentLetters()}>
                                             <Send size={16} /> Sent
                                         </button>
-                                        <button
-                                            type="button"
-                                            className="pawmail-folder-compose"
-                                            onClick={() => openPawComposer()}
-                                        >
+                                        <button type="button" className="pawmail-folder-compose" onClick={() => openPawComposer()}>
                                             <MailPlus size={16} /> Write
                                         </button>
                                     </div>
@@ -1803,42 +1998,21 @@ export default function App() {
                     </div>
                 )}
                 {user && mailModal === "compose" && pet && (
-                    <div
-                        className="paw-modal-backdrop"
-                        onMouseDown={(e) => {
-                            if (e.target === e.currentTarget) {
-                                setMailModal(null);
-                            }
-                        }}
-                    >
-                        <section
-                            className="paw-modal pawmail-window pawmail-composer-window"
-                            role="dialog"
-                            aria-modal="true"
-                            aria-labelledby="pawmail-write-heading"
-                        >
+                    <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setMailModal(null);}}}>
+                        <section className="paw-modal pawmail-window pawmail-composer-window" role="dialog" aria-modal="true" aria-labelledby="pawmail-write-heading">
                             <div className="paw-modal-top">
                                 <div>
                                     <h2 id="pawmail-write-heading">Write PawMail</h2>
                                     <p className="paw-modal-subtitle">A little letter</p>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="paw-modal-close"
-                                    aria-label="Close letter"
-                                    onClick={() => setMailModal(null)}
-                                >
+                                <button type="button" className="paw-modal-close" aria-label="Close letter" onClick={() => setMailModal(null)}>
                                     <X size={19} />
                                 </button>
                             </div>
                             <div className="pawmail-compose-layout">
                                 <div className="pawmail-write-side">
                                     <label htmlFor="pawmail-receiver">Send to</label>
-                                    <select
-                                        id="pawmail-receiver"
-                                        value={mailTo}
-                                        onChange={(e) => setMailTo(e.target.value)}
-                                    >
+                                    <select id="pawmail-receiver" value={mailTo} onChange={(e) => setMailTo(e.target.value)}>
                                         <option value="">Choose a friend...</option>
                                         {accepted.map((f) => (
                                             <option key={f.friend_id} value={f.friend_id}>
@@ -1893,11 +2067,7 @@ export default function App() {
                                                     ?.title || "Classic Letter"}
                                             </b>
                                         </span>
-                                        <button
-                                            type="button"
-                                            className="pawmail-collection-launch"
-                                            onClick={() => setMailModal("collection")}
-                                        >
+                                        <button type="button" className="pawmail-collection-launch" onClick={() => setMailModal("collection")}>
                                             Collection <ArrowRight size={15} />
                                         </button>
                                     </div>
@@ -1939,20 +2109,8 @@ export default function App() {
                     </div>
                 )}
                 {user && mailModal === "collection" && pet && (
-                    <div
-                        className="paw-modal-backdrop"
-                        onMouseDown={(e) => {
-                            if (e.target === e.currentTarget) {
-                                setMailModal("compose");
-                            }
-                        }}
-                    >
-                        <section
-                            className="paw-modal pawmail-window pawmail-collection-window"
-                            role="dialog"
-                            aria-modal="true"
-                            aria-labelledby="pawmail-collection-heading"
-                        >
+                    <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setMailModal("compose");}}}>
+                        <section className="paw-modal pawmail-window pawmail-collection-window" role="dialog" aria-modal="true" aria-labelledby="pawmail-collection-heading">
                             <div className="paw-modal-top">
                                 <div>
                                     <h2 id="pawmail-collection-heading">Envelope Collection</h2>
@@ -1960,12 +2118,7 @@ export default function App() {
                                         Discover special letter art as your pet grows.
                                     </p>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="paw-modal-close"
-                                    aria-label="Back to writing"
-                                    onClick={() => setMailModal("compose")}
-                                >
+                                <button type="button" className="paw-modal-close" aria-label="Back to writing" onClick={() => setMailModal("compose")}>
                                     <X size={19} />
                                 </button>
                             </div>
@@ -1989,11 +2142,7 @@ export default function App() {
                                                 (levelLocked ? "level-locked" : "")
                                             }
                                         >
-                                            <div
-                                                className={
-                                                    "pawmail-collection-art paw-envelope-" + d.id
-                                                }
-                                            >
+                                            <div className={ "pawmail-collection-art paw-envelope-" + d.id}>
                                                 <Suspense fallback={null}>
                                                     <EnvelopeArtwork design={d.id} />
                                                 </Suspense>
@@ -2009,8 +2158,8 @@ export default function App() {
                                                     {d.level > 1
                                                         ? `Unlocks at Level ${d.level}`
                                                         : d.id === "classic"
-                                                          ? "Your first letter"
-                                                          : "Available from Level 1"}
+                                                            ? "Your first letter"
+                                                            : "Available from Level 1"}
                                                 </small>
                                             </div>
                                             {owned ? (
@@ -2075,38 +2224,18 @@ export default function App() {
                     </div>
                 )}
                 {user && editingNote && (
-                    <div
-                        className="paw-modal-backdrop"
-                        onMouseDown={(e) => {
-                            if (e.target === e.currentTarget) {
-                                setEditingNote(false);
-                            }
-                        }}
-                    >
-                        <section
-                            className="paw-modal paw-note-modal"
-                            role="dialog"
-                            aria-modal="true"
-                            aria-labelledby="paw-note-title"
-                        >
+                    <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setEditingNote(false);}}}>
+                        <section className="paw-modal paw-note-modal" role="dialog" aria-modal="true" aria-labelledby="paw-note-title">
                             <div className="paw-modal-top">
                                 <div>
                                     <div className="eyebrow">A LITTLE MESSAGE</div>
                                     <h2 id="paw-note-title">Pet Note ♡</h2>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="paw-modal-close"
-                                    aria-label="Close Pet Note"
-                                    onClick={() => setEditingNote(false)}
-                                >
+                                <button type="button" className="paw-modal-close" aria-label="Close Pet Note" onClick={() => setEditingNote(false)}>
                                     <X size={19} strokeWidth={1.8} aria-hidden="true" />
                                 </button>
                             </div>
-                            <div
-                                className="paw-note-preview"
-                                aria-label="Preview of how your note appears"
-                            >
+                            <div className="paw-note-preview" aria-label="Preview of how your note appears">
                                 <div className="paw-note-preview-pet">
                                     <PetArt
                                         species={pet?.species || "cat"}
@@ -2177,11 +2306,7 @@ export default function App() {
                                     >
                                         Remove note
                                     </button>
-                                    <button
-                                        type="submit"
-                                        className="paw-note-save primary"
-                                        disabled={busy || !noteDraft.trim()}
-                                    >
+                                    <button type="submit" className="paw-note-save primary" disabled={busy || !noteDraft.trim()}>
                                         <Check size={17} aria-hidden="true" /> Save note
                                     </button>
                                 </div>
@@ -2203,30 +2328,14 @@ export default function App() {
                         >
                             View request
                         </button>
-                        <button
-                            className="secondary"
-                            aria-label="Dismiss notification"
-                            onClick={() => setFriendToast(null)}
-                        >
+                        <button className="secondary" aria-label="Dismiss notification" onClick={() => setFriendToast(null)}>
                             ×
                         </button>
                     </div>
                 )}
                 {friendDecision && (
-                    <div
-                        className="paw-modal-backdrop"
-                        onMouseDown={(e) => {
-                            if (e.target === e.currentTarget) {
-                                setFriendDecision(null);
-                            }
-                        }}
-                    >
-                        <section
-                            className="paw-modal"
-                            role="dialog"
-                            aria-modal="true"
-                            aria-labelledby="friend-decision-title"
-                        >
+                    <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setFriendDecision(null);}}}>
+                        <section className="paw-modal" role="dialog" aria-modal="true" aria-labelledby="friend-decision-title">
                             <div className="paw-modal-top">
                                 <div>
                                     <h2 id="friend-decision-title">New friend request</h2>
@@ -2234,12 +2343,7 @@ export default function App() {
                                         @{friendDecision.username} wants to be friends!
                                     </p>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="paw-modal-close"
-                                    aria-label="Close friend request"
-                                    onClick={() => setFriendDecision(null)}
-                                >
+                                <button type="button" className="paw-modal-close" aria-label="Close friend request" onClick={() => setFriendDecision(null)}>
                                     <X size={19} />
                                 </button>
                             </div>
@@ -2277,10 +2381,7 @@ export default function App() {
                                 >
                                     Decline
                                 </button>
-                                <button
-                                    className="secondary"
-                                    onClick={() => setFriendDecision(null)}
-                                >
+                                <button className="secondary" onClick={() => setFriendDecision(null)}>
                                     Later
                                 </button>
                             </div>
@@ -2288,20 +2389,8 @@ export default function App() {
                     </div>
                 )}
                 {removeFriend && (
-                    <div
-                        className="paw-modal-backdrop"
-                        onMouseDown={(e) => {
-                            if (e.target === e.currentTarget) {
-                                setRemoveFriend(null);
-                            }
-                        }}
-                    >
-                        <section
-                            className="paw-modal"
-                            role="dialog"
-                            aria-modal="true"
-                            aria-labelledby="unfriend-title"
-                        >
+                    <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setRemoveFriend(null);}}}>
+                        <section className="paw-modal" role="dialog" aria-modal="true" aria-labelledby="unfriend-title">
                             <div className="paw-modal-top">
                                 <div>
                                     <h2 id="unfriend-title">Remove friend?</h2>
@@ -2309,12 +2398,7 @@ export default function App() {
                                         You can reconnect with them later.
                                     </p>
                                 </div>
-                                <button
-                                    type="button"
-                                    className="paw-modal-close"
-                                    aria-label="Close remove friend confirmation"
-                                    onClick={() => setRemoveFriend(null)}
-                                >
+                                <button type="button" className="paw-modal-close" aria-label="Close remove friend confirmation" onClick={() => setRemoveFriend(null)}>
                                     <X size={19} />
                                 </button>
                             </div>
@@ -2398,10 +2482,7 @@ export default function App() {
                                     Welcome home, <em>{pet.name}!</em>
                                 </h1>
                             </div>
-                            <div
-                                className="paw-account-summary"
-                                aria-label="Your account at a glance"
-                            >
+                            <div className="paw-account-summary" aria-label="Your account at a glance">
                                 <div className="paw-account-stat paw-account-coins">
                                     <span className="paw-account-icon">
                                         <Coins size={22} />
@@ -2418,10 +2499,7 @@ export default function App() {
                                     <span className="paw-account-copy">
                                         <small>PET LEVEL</small>
                                         <strong>{pet.level}</strong>
-                                        <span
-                                            className="paw-account-xp"
-                                            title={`${pet.xp} / ${pet.level * 100} XP`}
-                                        >
+                                        <span className="paw-account-xp" title={`${pet.xp} / ${pet.level * 100} XP`}>
                                             <span
                                                 style={{
                                                     width: `${Math.min(100, (100 * pet.xp) / Math.max(1, pet.level * 100))}%`
@@ -2439,13 +2517,7 @@ export default function App() {
                                         <strong>{accepted.length}</strong>
                                     </span>
                                 </div>
-                                <button
-                                    className="mobile-menu-toggle"
-                                    aria-label="Toggle navigation"
-                                    title="Menu"
-                                    aria-expanded={menuOpen}
-                                    onClick={() => setMenuOpen((x) => !x)}
-                                >
+                                <button className="mobile-menu-toggle" aria-label="Toggle navigation" title="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((x) => !x)}>
                                     <span className="paw-menu-icon" aria-hidden="true">
                                         {menuOpen ? (
                                             <X size={20} strokeWidth={2.4} />
@@ -2475,8 +2547,8 @@ export default function App() {
                                             {pet.level < 5
                                                 ? "Baby"
                                                 : pet.level < 30
-                                                  ? "Teen"
-                                                  : "Adult"}
+                                                    ? "Teen"
+                                                    : "Adult"}
                                         </small>
                                         <small>@{user.username}</small>
                                     </div>
@@ -2710,8 +2782,8 @@ export default function App() {
                                                         pet.level < 5
                                                             ? "Baby"
                                                             : pet.level < 30
-                                                              ? "Teen"
-                                                              : "Adult"
+                                                                ? "Teen"
+                                                                : "Adult"
                                                     ]
                                                 ].map(([label, value]) => (
                                                     <div className="stat" key={String(label)}>
@@ -2727,7 +2799,15 @@ export default function App() {
                                                 ["rich", "coins", "Save 500 coins"]
                                             ]
                                                 .sort((a, b) => {
-                                                    const status = (code: string) =>
+                                                                                                        /*
+                                                     * DOCU: Return the current status for the requested operation.
+                                                     * @param {string} code - code value used by this function
+                                                     *
+                                                     * Last Updated: 2026-11-13
+                                                     * Author: Jorge
+                                                     * Last Updated By: Jorge
+                                                     */
+const status = (code: string) =>
                                                         achievements.includes(code)
                                                             ? 2
                                                             : (code === "level_5" &&
@@ -2736,8 +2816,8 @@ export default function App() {
                                                                     pet.coins >= 500) ||
                                                                 (code === "first_friend" &&
                                                                     accepted.length > 0)
-                                                              ? 0
-                                                              : 1;
+                                                                ? 0
+                                                                : 1;
                                                     return status(a[0]) - status(b[0]);
                                                 })
                                                 .map(([code, icon, label]) => (
@@ -2762,8 +2842,8 @@ export default function App() {
                                                                         pet.coins >= 500) ||
                                                                     (code === "first_friend" &&
                                                                         accepted.length > 0)
-                                                                  ? "Claim all ready"
-                                                                  : "In progress"}
+                                                                    ? "Claim all ready"
+                                                                    : "In progress"}
                                                         </button>
                                                     </div>
                                                 ))}
@@ -2777,20 +2857,8 @@ export default function App() {
                 )}
             </main>
             {playPickerOpen && pet && (
-                <div
-                    className="paw-modal-backdrop"
-                    onMouseDown={(e) => {
-                        if (e.target === e.currentTarget) {
-                            setPlayPickerOpen(false);
-                        }
-                    }}
-                >
-                    <section
-                        className="paw-modal paw-play-picker"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="Play with your pet"
-                    >
+                <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setPlayPickerOpen(false);}}}>
+                    <section className="paw-modal paw-play-picker" role="dialog" aria-modal="true" aria-label="Play with your pet">
                         <div className="paw-modal-top">
                             <div>
                                 <h2>Choose a game</h2>
@@ -2798,11 +2866,7 @@ export default function App() {
                                     Playing uses energy and gets your paws a little dirty.
                                 </p>
                             </div>
-                            <button
-                                className="paw-modal-close"
-                                aria-label="Close games"
-                                onClick={() => setPlayPickerOpen(false)}
-                            >
+                            <button className="paw-modal-close" aria-label="Close games" onClick={() => setPlayPickerOpen(false)}>
                                 <X size={19} />
                             </button>
                         </div>

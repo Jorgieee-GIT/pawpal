@@ -13,6 +13,14 @@ type SkillPet = {
     passive?: { name?: string; description?: string };
 };
 
+/*
+ * DOCU: Render the brawl skill guide interface and provide its feature behavior.
+ * @param {{ pets: SkillPet[] }} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function BrawlSkillGuide({ pets }: { pets: SkillPet[] }) {
     return <section className="paw-brawl-skill-guide" aria-label="Breed skill and passive explanations">
         <p className="paw-brawl-skill-intro">Every pet uses its own permanent breed's special skills. Each special consumes Focus and has its own cooldown; passive traits work separately.</p>

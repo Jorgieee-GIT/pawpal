@@ -354,10 +354,10 @@
 .paw-duo-fighter.is-acting:not(.is-lunging) .paw-duo-pet-art { animation:paw-duo-support-cast .95s ease-out both!important; }
 .paw-duo-fighter.is-impacted .paw-duo-pet-art { animation:paw-duo-hit-flinch .55s ease-out both!important; }
 @keyframes paw-duo-refined-lunge {
-  0%,100% { transform:translate3d(0,0,0) scale(1); }
-  14% { transform:translate3d(0,-6px,0) scale(1.05); }
-  48%,57% { transform:translate3d(var(--duo-lunge-x,0px),var(--duo-lunge-y,0px),0) scale(.98); }
-  78% { transform:translate3d(0,-5px,0) scale(1.02); }
+    0%,100% { transform:translate3d(0,0,0) scale(1); }
+    14% { transform:translate3d(0,-6px,0) scale(1.05); }
+    48%,57% { transform:translate3d(var(--duo-lunge-x,0px),var(--duo-lunge-y,0px),0) scale(.98); }
+    78% { transform:translate3d(0,-5px,0) scale(1.02); }
 }
 @keyframes paw-duo-support-cast { 0%,100% { transform:translateY(0) scale(1); } 48% { transform:translateY(-9px) scale(1.09); } }
 .paw-duo-floating { animation:paw-duo-impact-float .72s ease-out both; }

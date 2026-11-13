@@ -1,16 +1,52 @@
 import type { ReactNode } from "react";
 
 /** Artwork shared by the arcade canvas and its on-screen jump instruction. */
+/*
+ * DOCU: Handle arcade sprite src behavior for this feature.
+ * @param {string} document - document value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export const arcadeSpriteSrc = (document: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(document)}`;
 
+/*
+ * DOCU: Handle svg document behavior for this feature.
+ * @param {string} content - content value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const svgDocument = (content: string) =>
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 118" width="100" height="118">${content}</svg>`;
 
+/*
+ * DOCU: Handle cactus stem behavior for this feature.
+ * @param {string} fill - fill value used by this function
+ * @param {number} x - x value used by this function
+ * @param {number} y - y value used by this function
+ * @param {number} width - width value used by this function
+ * @param {number} height - height value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const cactusStem = (fill: string, x: number, y: number, width: number, height: number) => `
     <rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${width / 2}" fill="${fill}" stroke="#548b70" stroke-width="3" />
     <path d="M${x + width * 0.34} ${y + 8}V${y + height - 9}" stroke="#c4e7bd" stroke-width="3" stroke-linecap="round" opacity=".85" />
 `;
 
+/*
+ * DOCU: Handle cactus spikes behavior for this feature.
+ * @param {Array<[number, number, number]>} points - points value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const cactusSpikes = (points: Array<[number, number, number]>) => points.map(([x, y, direction]) => `
     <path d="M${x} ${y}l${direction * 8} -5l${-direction * 3} 10Z" fill="#f6e8bb" stroke="#548b70" stroke-width="1.3" stroke-linejoin="round" />
 `).join("");
@@ -44,6 +80,14 @@ export const CACTUS_ART = [
     `)
 ];
 
+/*
+ * DOCU: Handle vehicle document behavior for this feature.
+ * @param {string} body - body value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const vehicleDocument = (body: string) => svgDocument(`
     <ellipse cx="50" cy="111" rx="36" ry="6" fill="#76657e" opacity=".22" />
     ${body}
@@ -103,6 +147,14 @@ export const VEHICLE_ART = [
     `)
 ];
 
+/*
+ * DOCU: Render the jump guide interface and provide its feature behavior.
+ * @returns {ReactNode} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function JumpGuide(): ReactNode {
     return (
         <svg viewBox="0 0 176 70" className="paw-jump-guide-svg" role="img" aria-label="Jump over the spiky cactus">
@@ -136,6 +188,14 @@ export function JumpGuide(): ReactNode {
 
 
 /** Exact roadside SVG documents used by Paw Run and the administrator art gallery. */
+/*
+ * DOCU: Handle building document behavior for this feature.
+ * @param {string} content - content value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const buildingDocument = (content: string) =>
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 140" width="110" height="140">${content}</svg>`;
 
@@ -228,6 +288,17 @@ export const MEMORY_HEARTS = [
     }
 ] as const;
 
+/*
+ * DOCU: Render the memory heart interface and provide its feature behavior.
+ * @param {{
+    index: number;
+    size?: number
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function MemoryHeart({ index, size = 38 }: {
     index: number;
     size?: number
@@ -241,6 +312,17 @@ export function MemoryHeart({ index, size = 38 }: {
 }
 
 /** The same illustrated paint palette shown for each Heart Color Match answer. */
+/*
+ * DOCU: Render the paint palette interface and provide its feature behavior.
+ * @param {{
+    color: string;
+    size?: number
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function PaintPalette({ color, size = 65 }: {
     color: string;
     size?: number
@@ -263,6 +345,16 @@ export function PaintPalette({ color, size = 65 }: {
     );
 }
 
+/*
+ * DOCU: Render the target heart interface and provide its feature behavior.
+ * @param {{
+    color: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function TargetHeart({ color }: {
     color: string
 }) {
@@ -275,6 +367,13 @@ export function TargetHeart({ color }: {
 
 
 /** Shared actual Paw Claw grabber artwork, including the developer preview. */
+/*
+ * DOCU: Render the claw grabber art interface and provide its feature behavior.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function ClawGrabberArt() {
     return (
         <svg className="paw-claw-grabber" role="img" aria-label="Mechanical claw" viewBox="0 0 90 95">
@@ -292,6 +391,13 @@ export function ClawGrabberArt() {
     );
 }
 
+/*
+ * DOCU: Render the mole game icon interface and provide its feature behavior.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function MoleGameIcon() {
     return <svg viewBox="0 0 36 36" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M6 28c1-5 5-7 12-7s11 2 12 7" />
@@ -305,18 +411,16 @@ export function MoleGameIcon() {
     </svg>;
 }
 
+/*
+ * DOCU: Render the bubble pop icon interface and provide its feature behavior.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function BubblePopIcon() {
     return (
-        <svg
-            viewBox="0 0 36 36"
-            width="34"
-            height="34"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            aria-hidden="true"
-        >
+        <svg viewBox="0 0 36 36" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
             <circle cx="11" cy="23" r="6" />
             <circle cx="25" cy="23" r="6" />
             <circle cx="18" cy="11" r="5" />
@@ -326,6 +430,13 @@ export function BubblePopIcon() {
 }
 
 /** Same Paw Claw SVG used on the player game-selection card. */
+/*
+ * DOCU: Render the claw menu icon interface and provide its feature behavior.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function ClawMenuIcon() {
     return <svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M4 4h26" />

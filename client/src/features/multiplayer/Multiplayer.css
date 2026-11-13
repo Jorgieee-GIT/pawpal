@@ -2952,9 +2952,9 @@ button.paw-multi-game-tile:focus-visible {
     }
 }
 /* Paw Brawl sprite alignment + first-attack fix (shared across all breakpoints).
-   The platform centers are the source of truth for both pets. The new `translate`
-   property centers the actual SVG wrapper independently of animation `transform`,
-   so moving/scaling cannot pull a cat or another species off its platform. */
+    The platform centers are the source of truth for both pets. The new `translate`
+    property centers the actual SVG wrapper independently of animation `transform`,
+    so moving/scaling cannot pull a cat or another species off its platform. */
 .paw-brawl-sprite-player,
 .paw-brawl-sprite-enemy {
     left: 50%;
@@ -3027,7 +3027,7 @@ button.paw-multi-game-tile:focus-visible {
     }
 }
 /* Distant ground plane: a shallow oval with the same center (51.5%) as the enemy SVG.
-   Width is relative to the enemy half, height to the arena. Neither changes its
+    Width is relative to the enemy half, height to the arena. Neither changes its
     anchor or the measured first-round pet-to-pet attack travel. */
 .paw-brawl-combatant-enemy .paw-brawl-platform {
     left: 19%;
@@ -3187,7 +3187,7 @@ button.paw-multi-game-tile:focus-visible {
     }
 }
 /* Multiplayer Meadow: invitation updates are compact notification bars,
-   not a second full-sized inbox section. */
+    not a second full-sized inbox section. */
 .paw-multi-section-heading:has(> span:only-child) {
     margin: 8px 0 10px;
 }
@@ -4382,7 +4382,7 @@ button.paw-multi-game-tile:focus-visible {
     .paw-brawl-action-grid .paw-brawl-special-action b { font-size: 0.73rem; }
 }
 /* Two-row responsive control layout: three basic moves, two paid specials.
-   Avoid a lonely sixth button and keep the actual pet stage unobstructed. */
+    Avoid a lonely sixth button and keep the actual pet stage unobstructed. */
 @media (max-width: 899px) {
     .paw-brawl-action-grid {
         grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -4420,7 +4420,7 @@ button.paw-multi-game-tile:focus-visible {
 }
 
 /* Paw Brawl 2.4: the same live effect badges for BOTH players, kept in the
-   top scoreboard (never over the character illustrations). */
+    top scoreboard (never over the character illustrations). */
 .paw-brawl-status-list {
     display: flex;
     flex-wrap: wrap;
@@ -4522,7 +4522,7 @@ button.paw-multi-game-tile:focus-visible {
 }
 
 /* Allow multiline beginner-friendly skill explanations inside all three
-   existing viewers without changing the site's uniform modal headers. */
+    existing viewers without changing the site's uniform modal headers. */
 .paw-brawl-kit-ability p,
 .paw-brawl-special-guide-entry p,
 .paw-brawl-info-pet p,
@@ -4555,7 +4555,7 @@ button.paw-multi-game-tile:focus-visible {
 }
 
 /* Avoid shrinking the battleground when one pet has many simultaneous effects.
-   Badges remain scrollable within each player's own HUD, on touch and mouse. */
+    Badges remain scrollable within each player's own HUD, on touch and mouse. */
 .paw-brawl-scoreboard .paw-brawl-status-list {
     max-height: 74px;
     overflow-y: auto;
@@ -4575,7 +4575,7 @@ button.paw-multi-game-tile:focus-visible {
 }
 
 /* Paw Brawl 2.5: Moonstone Coliseum. CSS scenery, no raster downloads.
-   Keep each pet's platform, sprite anchor and lunge geometry unchanged. */
+    Keep each pet's platform, sprite anchor and lunge geometry unchanged. */
 .paw-brawl-battlefield {
     background:
         radial-gradient(ellipse at 52% 21%, #fff0f4a6 0%, transparent 34%),
@@ -4701,7 +4701,7 @@ button.paw-multi-game-tile:focus-visible {
 }
 
 /* Server-timed floating battle values. Red damage, violet poison, green
-   healing, blue Shield, gold Focus; counters, stun and overtime distinct. */
+    healing, blue Shield, gold Focus; counters, stun and overtime distinct. */
 .paw-brawl-float-stack {
     position: absolute;
     z-index: 15;
@@ -4816,7 +4816,7 @@ button.paw-multi-game-tile:focus-visible {
 }
 
 /* Fixed-size, single-row effect dock on BOTH players. Numbers are magnitudes;
-   the round number is in a small circular corner label, without verbose text. */
+    the round number is in a small circular corner label, without verbose text. */
 .paw-brawl-scoreboard .paw-brawl-status-list,
 .paw-brawl-scoreboard .paw-brawl-status-list.is-compact {
     display: flex;
@@ -4901,10 +4901,10 @@ button.paw-multi-game-tile:focus-visible {
 .paw-dark .paw-brawl-effect-rounds { background: #fff; color: #4d3b55; }
 
 /* Paw Brawl 2.7: anchor the visible SVG feet, not just the sprite wrappers.
-   The SVG's ground shadow/feet are around y=140 of its 150-unit viewBox.
-   Rotate and scale around the BOTTOM instead of the default center: this keeps
-   the opponent's 0.68x perspective sprite touching the oval at every width.
-   The ground percentage is shared by pet and platform so neither can drift. */
+    The SVG's ground shadow/feet are around y=140 of its 150-unit viewBox.
+    Rotate and scale around the BOTTOM instead of the default center: this keeps
+    the opponent's 0.68x perspective sprite touching the oval at every width.
+    The ground percentage is shared by pet and platform so neither can drift. */
 .paw-brawl-combatant-player {
     --paw-ground: 17.5%;
 }
@@ -4955,8 +4955,8 @@ button.paw-multi-game-tile:focus-visible {
 }
 
 /* Combat numbers appear above the pet who receives them, NOT underneath its
-   platform. Largest hit first; smaller Shield, Focus and status cues cluster
-   tightly nearby instead of building a tall tower of badges. */
+    platform. Largest hit first; smaller Shield, Focus and status cues cluster
+    tightly nearby instead of building a tall tower of badges. */
 .paw-brawl-combatant .paw-brawl-float-stack {
     position: absolute;
     z-index: 25;
@@ -5016,7 +5016,7 @@ button.paw-multi-game-tile:focus-visible {
 }
 
 /* Center the entire special button. Leave its independent (?) control floating
-   in the corner instead of padding the right side of the skill text. */
+    in the corner instead of padding the right side of the skill text. */
 .paw-brawl-action-grid .paw-brawl-special-action > .paw-brawl-special-move {
     padding-left: 10px;
     padding-right: 10px;
@@ -5072,7 +5072,7 @@ button.paw-multi-game-tile:focus-visible {
 }
 
 /* Short landscape screens: protect the non-scrolling battlefield by keeping
-   secondary HUD detail out of the vertical budget, but keep HP/Focus/statuses. */
+    secondary HUD detail out of the vertical budget, but keep HP/Focus/statuses. */
 @media (max-height: 480px) {
     .paw-brawl-modal-header { padding: 3px 10px; }
     .paw-brawl-modal-header h2 { font-size: 15px; }
@@ -5181,7 +5181,7 @@ button.paw-multi-game-tile:focus-visible {
 
 
 /* PawPal 4.4: Paw Brawl modal consistency and phone-size corrections.
-   Battle stays fixed-height; only guide content and short-screen action areas scroll. */
+    Battle stays fixed-height; only guide content and short-screen action areas scroll. */
 .paw-brawl-modal-header.paw-multi-dialog-header {
     display: flex;
     align-items: center;

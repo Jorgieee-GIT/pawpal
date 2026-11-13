@@ -9,6 +9,14 @@ import { publishLive } from "../live.js";
 import { recordMissionEvent } from "../missions.js";
 import { applyPetDecay, clamp, fields, mutate, wakePetForActivity } from "../petState.js";
 
+/*
+ * DOCU: Register pet routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerPetRoutes(app: Express) {
     // UI interactions (including opening a game) use this idempotent wake action.
     app.post("/api/care/wake", auth, handle(async (req, res) => {
@@ -137,7 +145,15 @@ export function registerPetRoutes(app: Express) {
                     error: "Adopt a pet first."
                 });
             }
-            const manilaDay = (date: Date) =>
+                        /*
+             * DOCU: Handle manila day behavior for this feature.
+             * @param {Date} date - date value used by this function
+             *
+             * Last Updated: 2026-11-13
+             * Author: Jorge
+             * Last Updated By: Jorge
+             */
+const manilaDay = (date: Date) =>
                 new Date(date.getTime() + 8 * 3600000).toISOString().slice(0, 10);
             const today = manilaDay(new Date());
             const previous = q.rows[0].daily_claimed_at;

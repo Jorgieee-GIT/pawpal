@@ -43,6 +43,14 @@ const actions: { value: Action; label: string }[] = [
 const TEAM_NAMES = ["Moonpaws", "Starwhiskers"] as const;
 const supportsAlly = new Set(["mend", "cleanse", "aegis", "bulwark", "fortress", "riposte", "rallyguard"]);
 
+/*
+ * DOCU: Render the duo clash interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function DuoClash({ api, token, userId, friends, onUpdate, onToast, petLevel, lobbyOpen, onCloseLobby }: Props) {
     const [room, setRoom] = useState<Room | null>(null);
     const roomSnapshotRef = useRef<Room | null>(null);
@@ -136,7 +144,16 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
         const interval = window.setInterval(() => setNow(Date.now()), 350);
         return () => window.clearInterval(interval);
     }, []);
-    const submit = async (path: string, body: object) => {
+        /*
+     * DOCU: Submit the current state for this feature.
+     * @param {string} path - path value used by this function
+     * @param {object} body - body value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const submit = async (path: string, body: object) => {
         if (busy) { return false; }
         mutationGeneration.current++;
         setBusy(true);
@@ -165,7 +182,14 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
         }
         previousRoomStatus.current = room?.status || null;
     }, [room?.status]);
-    const closeLobbyDialog = () => {
+        /*
+     * DOCU: Close lobby dialog for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const closeLobbyDialog = () => {
         setAutoShowResult(false);
         onCloseLobby();
     };
@@ -224,7 +248,16 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
         setDuoMotion({ key: duoMotionKey, x: Math.round(dx * .70), y: Math.round(dy * .70) });
     }, [duoMotionKey, activeEffect?.actorId, activeEffect?.targetId]);
     const motionReady = !!duoMotionKey && duoMotion?.key === duoMotionKey;
-    const motionStyle = (petId: string): CSSProperties | undefined => motionReady && activeEffect?.actorId === petId ? {
+        /*
+     * DOCU: Handle motion style behavior for this feature.
+     * @param {string} petId - petId value used by this function
+     * @returns {CSSProperties | undefined} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const motionStyle = (petId: string): CSSProperties | undefined => motionReady && activeEffect?.actorId === petId ? {
         "--duo-lunge-x": `${duoMotion.x}px`,
         "--duo-lunge-y": `${duoMotion.y}px`
     } as CSSProperties : undefined;
@@ -232,7 +265,15 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
     const ownSignal = !!battle && battle.teamSignals?.[userId]?.round === battle.round;
     const teamLocked = battle?.teamReady || [];
     const matchTotals: NonNullable<DuoBattle["totals"]> = battle?.totals || {};
-    const matchLeader = (field: "damageDealt" | "coverDamage" | "rescues" | "healing") => {
+        /*
+     * DOCU: Handle match leader behavior for this feature.
+     * @param {"damageDealt" | "coverDamage" | "rescues" | "healing"} field - field value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const matchLeader = (field: "damageDealt" | "coverDamage" | "rescues" | "healing") => {
         const players = battle?.players || [];
         const highest = Math.max(0, ...players.map(p => matchTotals[p.userId]?.[field] || 0));
         return highest > 0 ? players.find(p => (matchTotals[p.userId]?.[field] || 0) === highest) : undefined;
@@ -278,7 +319,15 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
     }, [room?.id, room?.status, battle?.round, finishingPlayback]);
     useEffect(() => {
         if (!room || room.status !== "active") { return; }
-        const onEscape = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Handle on escape behavior for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onEscape = (event: KeyboardEvent) => {
             if (event.key !== "Escape") { return; }
             if (skillHelp !== null) { setSkillHelp(null); }
             else if (skillsInfoOpen) { setSkillsInfoOpen(false); }
@@ -293,7 +342,15 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
     useEffect(() => {
         if (!(lobbyOpen || autoShowResult) || room?.status === "active") { return; }
         dialogCloseRef.current?.focus();
-        const onEscape = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Handle on escape behavior for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onEscape = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 event.stopImmediatePropagation();
                 closeLobbyDialog();
@@ -303,12 +360,17 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
         return () => window.removeEventListener("keydown", onEscape);
     }, [lobbyOpen, autoShowResult, room?.status, onCloseLobby]);
 
-    const renderLobbyDialog = (title: string, subtitle: string, contents: ReactNode) => <div
-        className="paw-multi-dialog-backdrop paw-duo-modal-backdrop"
-        onMouseDown={event => {
-            if (event.target === event.currentTarget) { closeLobbyDialog(); }
-        }}
-    >
+        /*
+     * DOCU: Render lobby dialog for this feature.
+     * @param {string} title - title value used by this function
+     * @param {string} subtitle - subtitle value used by this function
+     * @param {ReactNode} contents - contents value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const renderLobbyDialog = (title: string, subtitle: string, contents: ReactNode) => <div className="paw-multi-dialog-backdrop paw-duo-modal-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget) {closeLobbyDialog();}}}>
         <section className="paw-multi-dialog paw-duo-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="paw-duo-modal-title">
             <div className="paw-multi-dialog-header">
                 <div>
@@ -323,18 +385,40 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
         </section>
     </div>;
 
-    const chooseAction = (value: Action) => { setAction(value); setTargetId(""); };
+        /*
+     * DOCU: Choose action for this feature.
+     * @param {Action} value - value value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const chooseAction = (value: Action) => { setAction(value); setTargetId(""); };
     useEffect(() => {
         // Start each new round on a usable basic move, not an unaffordable
         // special or Cover with an active cooldown left from the previous turn.
         setAction("strike");
         setTargetId("");
     }, [room?.id, battle?.round]);
-    const suggestEnemy = () => {
+        /*
+     * DOCU: Handle suggest enemy behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const suggestEnemy = () => {
         if (!room || !selectedTarget || selectedTarget.team === me?.team || ownSignal || busy) { return; }
         void submit(`/${room.id}/signal`, { targetId: selectedTarget.userId });
     };
-    const move = () => {
+        /*
+     * DOCU: Move the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const move = () => {
         if (!room || !canAct) { return; }
         const key = `${room.id}:${battle?.round ?? 0}`;
         setLocallyLockedMove(key);
@@ -388,18 +472,10 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
                     </>}
                     <div className="paw-duo-foot"><button onClick={() => setBattleHistory(true)}>Battle history</button><span>{battle.paused ? "Reconnect grace: 45 seconds" : "All four moves resolve together; faster pets act first."}</span><button onClick={() => room.status === "finished" ? setFinishingPlayback(false) : setConfirmQuit(true)}>{room.status === "finished" ? "View results" : "Forfeit"}</button></div>
                 </div>
-                {statsInfoOpen && <BrawlGuideModal
-                    title="Combat Effects"
-                    subtitle="Poison, Counter, Dodge, Stun, Shield and other statuses"
-                    onClose={() => setStatsInfoOpen(false)}
-                >
+                {statsInfoOpen && <BrawlGuideModal title="Combat Effects" subtitle="Poison, Counter, Dodge, Stun, Shield and other statuses" onClose={() => setStatsInfoOpen(false)}>
                     <BrawlStatGuide />
                 </BrawlGuideModal>}
-                {skillsInfoOpen && <BrawlGuideModal
-                    title="Breed Skills & Passives"
-                    subtitle="Each teammate's and opponent's skills"
-                    onClose={() => setSkillsInfoOpen(false)}
-                >
+                {skillsInfoOpen && <BrawlGuideModal title="Breed Skills & Passives" subtitle="Each teammate's and opponent's skills" onClose={() => setSkillsInfoOpen(false)}>
                     <BrawlSkillGuide pets={battle.players} />
                 </BrawlGuideModal>}
                 {battleHistory && <div className="paw-duo-overlay" onClick={e => { if (e.target === e.currentTarget) { setBattleHistory(false); } }}><section className="paw-duo-overlay-panel paw-duo-details-dialog" role="dialog" aria-label="Battle history"><div className="paw-duo-overlay-head paw-multi-dialog-header"><h3>Round history</h3><button className="paw-multi-dialog-close" onClick={() => setBattleHistory(false)} aria-label="Close"><X size={18}/></button></div><div className="paw-duo-log paw-duo-overlay-body">{battle.log.slice().reverse().map((line, i) => <p key={i}>{line}</p>)}</div></section></div>}
@@ -478,21 +554,24 @@ export default function DuoClash({ api, token, userId, friends, onUpdate, onToas
     </section>;
 }
 
+/*
+ * DOCU: Render the duo fighter interface and provide its feature behavior.
+ * @param {{
+    pet: DuoPlayer; mine: boolean; round: number; changes?: {kind:string; amount:number}[];
+    selectable?: boolean; selected?: boolean; onChoose?: () => void;
+    acting?: boolean; attacking?: boolean; motionStyle?: CSSProperties; motionKey?: string; impacted?: boolean; suggested?: boolean; ready?: boolean; onInfo?: () => void;
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function DuoFighter({ pet, mine, round, changes, selectable = false, selected = false, onChoose, onInfo, acting = false, attacking = false, motionStyle, motionKey = "idle", impacted = false, suggested = false, ready = false }: {
     pet: DuoPlayer; mine: boolean; round: number; changes?: {kind:string; amount:number}[];
     selectable?: boolean; selected?: boolean; onChoose?: () => void;
     acting?: boolean; attacking?: boolean; motionStyle?: CSSProperties; motionKey?: string; impacted?: boolean; suggested?: boolean; ready?: boolean; onInfo?: () => void;
 }) {
-    return <div
-        data-duo-pet={pet.userId}
-        className={`paw-duo-fighter ${attacking ? "is-lunging" : ""} ${mine ? "is-mine" : ""} ${pet.hp <= 0 ? "is-downed" : ""} ${selectable ? "is-targetable" : ""} ${selected ? "is-selected-target" : ""} ${acting ? "is-acting" : ""} ${impacted ? "is-impacted" : ""}`}
-        role={selectable ? "button" : undefined}
-        tabIndex={selectable ? 0 : undefined}
-        aria-label={selectable ? `Target ${pet.petName}, ${pet.hp} HP` : undefined}
-        aria-pressed={selectable ? selected : undefined}
-        onClick={selectable ? onChoose : undefined}
-        onKeyDown={selectable ? event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onChoose?.(); } } : undefined}
-    >
+    return <div data-duo-pet={pet.userId} className={`paw-duo-fighter ${attacking ? "is-lunging" : ""} ${mine ? "is-mine" : ""} ${pet.hp <= 0 ? "is-downed" : ""} ${selectable ? "is-targetable" : ""} ${selected ? "is-selected-target" : ""} ${acting ? "is-acting" : ""} ${impacted ? "is-impacted" : ""}`} role={selectable ? "button" : undefined} tabIndex={selectable ? 0 : undefined} aria-label={selectable ? `Target ${pet.petName}, ${pet.hp} HP` : undefined} aria-pressed={selectable ? selected : undefined} onClick={selectable ? onChoose : undefined} onKeyDown={selectable ? event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onChoose?.(); } } : undefined}>
         <div className="paw-duo-fighter-hud"><div><b>{pet.petName}</b><small>@{pet.username}{mine ? " · YOU" : ""}</small></div><small>HP {pet.hp}/{pet.maxHp}</small><div className="paw-duo-health"><i style={{ width: `${Math.max(0, 100 * pet.hp / pet.maxHp)}%` }}/></div><div className="paw-duo-ministats">{pet.shield} Shield · {pet.focus}/8 Focus · SPD {pet.speed}</div><div className="paw-duo-status-with-help"><BrawlStatusBadges player={pet} round={round} compact/><button type="button" className="paw-duo-hud-help" title="Explain Poison, Counter and other effects" aria-label={`Explain ${pet.petName}'s combat effects`} onClick={event => { event.stopPropagation(); onInfo?.(); }} onKeyDown={event => event.stopPropagation()}><CircleHelp size={12}/></button></div></div>
         <div key={motionKey} className="paw-duo-pet-art" style={motionStyle}><PetArt species={pet.species} breed={pet.breed} color={pet.color} cosmetic="none"/></div><div className="paw-duo-platform" aria-hidden="true"/>
         {selected && <span className="paw-duo-fighter-marker">TARGET</span>}

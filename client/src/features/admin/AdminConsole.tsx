@@ -38,9 +38,33 @@ const configNames: Record<string, { name: string; description: string }> = {
     feature_pawclaw: { name: "Paw Claw", description: "Temporarily disable claw entries" },
     feature_shop: { name: "Shop & Furniture", description: "Pause store purchases and furniture changes" }
 };
+/*
+ * DOCU: Human date for this feature.
+ * @param {string | null | undefined} v - v value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const humanDate = (v: string | null | undefined) => v ? new Date(v).toLocaleString() : "Never";
+/*
+ * DOCU: Number the current state for this feature.
+ * @param {unknown} v - v value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const number = (v: unknown) => Number(v || 0).toLocaleString();
 
+/*
+ * DOCU: Render the admin console interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function AdminConsole({ token, section, profileId, onCloseProfile, showMessage, showError }: Props) {
     const [data, setData] = useState<Json>({});
     const [settings, setSettings] = useState<Record<string, boolean | number>>({});
@@ -53,7 +77,18 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
     const [announcement, setAnnouncement] = useState({ title: "", body: "", audience: "all", usernames: "", hours: "72", publishAt: "" });
     const [reportTab, setReportTab] = useState<"reports" | "audit" | "errors">("reports");
 
-    async function request(path: string, method = "GET", body?: object) {
+        /*
+     * DOCU: Send an authenticated request to the PawPal API.
+     * @param {string} path - path value used by this function
+     * @param {unknown} method - method value used by this function
+     * @param {object} body - body value used by this function
+     * @throws {Error} - Propagates an error when this operation cannot complete.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function request(path: string, method = "GET", body?: object) {
         if (import.meta.env.PROD && !API) {
             throw Error("The API URL is missing. Set VITE_API_URL to your Render backend URL in Vercel, then redeploy the frontend.");
         }
@@ -96,7 +131,15 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
         reports: "reports",
         settings: "settings"
     };
-    async function reload(active = section) {
+        /*
+     * DOCU: Handle reload behavior for this feature.
+     * @param {unknown} active - active value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function reload(active = section) {
         if (active === "players") {
             return;
         }
@@ -133,7 +176,16 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
         void request("players/" + profileId + "/profile").then(setProfile).catch(error => showError(error.message));
     }, [profileId, token]);
 
-    async function updateSetting(key: string, value: boolean | number) {
+        /*
+     * DOCU: Update setting for this feature.
+     * @param {string} key - key value used by this function
+     * @param {boolean | number} value - value value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function updateSetting(key: string, value: boolean | number) {
         setBusy(true);
         try {
             const response = await request("settings", "PATCH", { key, value });
@@ -145,7 +197,15 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
             setBusy(false);
         }
     }
-    async function updateAccess(access: { suspended: boolean; lucky_games_access: boolean; disabled_features: string[] }) {
+        /*
+     * DOCU: Update access for this feature.
+     * @param {{ suspended: boolean; lucky_games_access: boolean; disabled_features: string[] }} access - access value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function updateAccess(access: { suspended: boolean; lucky_games_access: boolean; disabled_features: string[] }) {
         if (!profileId) return;
         setBusy(true);
         try {
@@ -161,7 +221,14 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
             setBusy(false);
         }
     }
-    async function adjustCoins() {
+        /*
+     * DOCU: Adjust coins for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function adjustCoins() {
         if (!profileId || !Number.isInteger(Number(coinValue))) {
             showError("Enter a valid whole-coin amount.");
             return;
@@ -180,7 +247,15 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
             setBusy(false);
         }
     }
-    async function sendAnnouncement(event: React.FormEvent) {
+        /*
+     * DOCU: Send announcement for this feature.
+     * @param {React.FormEvent} event - User or browser event that triggered this operation
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function sendAnnouncement(event: React.FormEvent) {
         event.preventDefault();
         setBusy(true);
         try {
@@ -199,7 +274,15 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
             setBusy(false);
         }
     }
-    async function archiveAnnouncement(id: string) {
+        /*
+     * DOCU: Archive announcement for this feature.
+     * @param {string} id - Identifier of the record or item being handled
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function archiveAnnouncement(id: string) {
         setBusy(true);
         try {
             await request("announcements/" + id + "/archive", "POST");
@@ -211,7 +294,16 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
             setBusy(false);
         }
     }
-    async function setReportStatus(id: string, status: string) {
+        /*
+     * DOCU: Set report status for this feature.
+     * @param {string} id - Identifier of the record or item being handled
+     * @param {string} status - status value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function setReportStatus(id: string, status: string) {
         setBusy(true);
         try {
             await request("reports/" + id, "PATCH", { status });
@@ -223,7 +315,16 @@ export default function AdminConsole({ token, section, profileId, onCloseProfile
             setBusy(false);
         }
     }
-    function title(name: string, subtitle: string) {
+        /*
+     * DOCU: Title the current state for this feature.
+     * @param {string} name - name value used by this function
+     * @param {string} subtitle - subtitle value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function title(name: string, subtitle: string) {
         return <div className="admin-console-heading"><div><h2>{name}</h2><p>{subtitle}</p></div><button type="button" onClick={() => void reload()} disabled={loading}><RefreshCw size={16} /> Refresh</button></div>;
     }
 

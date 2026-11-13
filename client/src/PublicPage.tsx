@@ -2,6 +2,14 @@ import { X } from "lucide-react";
 import "./PublicPage.css";
 
 type Page = "privacy" | "terms";
+/*
+ * DOCU: Render the public page interface and provide its feature behavior.
+ * @param {{ page: Page; onClose?: () => void; onSwitch?: (page: Page) => void; modal?: boolean }} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function PublicPage({ page, onClose, onSwitch, modal = false }: { page: Page; onClose?: () => void; onSwitch?: (page: Page) => void; modal?: boolean }) {
     return <div className={modal ? "paw-modal-backdrop paw-policy-backdrop" : "paw-public-page"} onMouseDown={e => { if (e.target === e.currentTarget) onClose?.(); }}>
     <main className={modal ? "paw-modal paw-policy-modal" : "paw-public-page"} role={modal ? "dialog" : undefined} aria-modal={modal || undefined} aria-labelledby={modal ? "paw-policy-title" : undefined}>

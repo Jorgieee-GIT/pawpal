@@ -170,8 +170,23 @@ type BrawlCatalog = {
 const ACCESSORIES = Object.entries(COSMETIC_SLOTS);
 const GARDEN_VARIANTS = [0, 1, 2, 3] as const;
 const PET_COLORS = ["classic", "pink", "cream", "gray", "orange", "black", "lavender", "mint"] as const;
+/*
+ * DOCU: Format an identifier as a readable title.
+ * @param {string} value - value value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const titleCase = (value: string) => value.replaceAll("_", " ").replace(/\b\w/g, letter => letter.toUpperCase());
 
+/*
+ * DOCU: Render the develop interface and provide its feature behavior.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function Develop() {
     const [token, setToken] = useState(() => sessionStorage.getItem("pawpal-admin-token") || "");
     const [authorized, setAuthorized] = useState(false);
@@ -255,7 +270,14 @@ export default function Develop() {
         if (!gallery) {
             return;
         }
-        const runCheck = () => {
+                /*
+         * DOCU: Run check for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const runCheck = () => {
             let checked = 0;
             let issues = 0;
             gallery.querySelectorAll<HTMLElement>(
@@ -349,7 +371,16 @@ export default function Develop() {
         };
     }, [token]);
 
-    async function signIn(event: React.FormEvent) {
+        /*
+     * DOCU: Handle sign in behavior for this feature.
+     * @param {React.FormEvent} event - User or browser event that triggered this operation
+     * @throws {Error} - Propagates an error when this operation cannot complete.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function signIn(event: React.FormEvent) {
         event.preventDefault();
         setBusy(true);
         setError("");
@@ -378,7 +409,14 @@ export default function Develop() {
         }
     }
 
-    function signOut() {
+        /*
+     * DOCU: Handle sign out behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function signOut() {
         sessionStorage.removeItem("pawpal-admin-token");
         setToken("");
         setAuthorized(false);
@@ -695,12 +733,7 @@ export default function Develop() {
                             </select>
                         </label>
                     </div>
-                    <div className={"develop-room-scene living-room paw-themed-room paw-theme-" + atmosphereTheme + " paw-room-" + atmosphereRoom}
-                        style={{
-                            "--wall": ROOM_THEMES[atmosphereTheme][0],
-                            "--floor": ROOM_THEMES[atmosphereTheme][1],
-                            "--room-accent": ROOM_THEMES[atmosphereTheme][2]
-                        } as React.CSSProperties}>
+                    <div className={"develop-room-scene living-room paw-themed-room paw-theme-" + atmosphereTheme + " paw-room-" + atmosphereRoom} style={{ "--wall":ROOM_THEMES[atmosphereTheme][0], "--floor":ROOM_THEMES[atmosphereTheme][1], "--room-accent":ROOM_THEMES[atmosphereTheme][2]} as React.CSSProperties}>
                         <div className="window" aria-hidden="true" />
                         <div className="wall-art" aria-hidden="true">♡</div>
                         <RoomArchitecture room={atmosphereRoom} />

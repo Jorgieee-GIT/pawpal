@@ -30,14 +30,37 @@ const resetCompletionLimit = createRateLimiter({
     message: "Too many password reset attempts. Try again in a few minutes."
 });
 
+/*
+ * DOCU: Handle hash behavior for this feature.
+ * @param {string} value - value value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function hash(value: string) {
     return createHash("sha256").update(value).digest("hex");
 }
 
+/*
+ * DOCU: Generate secret for this feature.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function generateSecret() {
     return randomBytes(32).toString("hex");
 }
 
+/*
+ * DOCU: Reset links for this feature.
+ * @param {string} rawToken - rawToken value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function resetLinks(rawToken: string) {
     // Both addresses use the same one-time token. Consuming either invalidates both.
     // URL fragments are not sent to the web host in the HTTP request.
@@ -48,6 +71,16 @@ function resetLinks(rawToken: string) {
     };
 }
 
+/*
+ * DOCU: Issue link for this feature.
+ * @param {any} client - client value used by this function
+ * @param {string} userId - userId value used by this function
+ * @param {string | null} requestId - requestId value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 async function issueLink(client: any, userId: string, requestId: string | null = null) {
     // Replacing a link immediately revokes older unused links for this account.
     await client.query(
@@ -57,7 +90,7 @@ async function issueLink(client: any, userId: string, requestId: string | null =
     const secret = generateSecret();
     await client.query(
         `INSERT INTO password_reset_tokens (id,user_id,request_id,token_hash,expires_at)
-         VALUES($1,$2,$3,$4,NOW() + INTERVAL '5 minutes')`,
+        VALUES($1,$2,$3,$4,NOW() + INTERVAL '5 minutes')`,
         [randomUUID(), userId, requestId, hash(secret)]
     );
     return {
@@ -66,6 +99,15 @@ async function issueLink(client: any, userId: string, requestId: string | null =
     };
 }
 
+/*
+ * DOCU: Register password recovery API routes.
+ * @param {Express} app - app value used by this function
+ * @param {any} adminAuth - adminAuth value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerPasswordRecovery(app: Express, adminAuth: any) {
     // This endpoint is always generic: usernames must not be enumerable.
     app.post("/api/auth/password-reset/request", resetRequestLimit, async (req, res) => {
@@ -89,7 +131,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
                 // Cooldown and one pending request per user keep the admin inbox manageable.
                 const recent = await pool.query(
                     `SELECT id FROM password_reset_requests WHERE user_id=$1
-                     AND created_at > NOW() - INTERVAL '2 minutes' LIMIT 1`,
+                    AND created_at > NOW() - INTERVAL '2 minutes' LIMIT 1`,
                     [id]
                 );
                 if (!recent.rowCount) {
@@ -99,7 +141,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
                     );
                     await pool.query(
                         `INSERT INTO password_reset_requests (id,user_id,request_key_hash)
-                         VALUES($1,$2,$3)`,
+                        VALUES($1,$2,$3)`,
                         [requestId, id, hash(requestSecret)]
                     );
                 }
@@ -122,7 +164,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
         try {
             const result = await pool.query(
                 `SELECT status,created_at FROM password_reset_requests
-                 WHERE id=$1 AND request_key_hash=$2`,
+                WHERE id=$1 AND request_key_hash=$2`,
                 [id.data, hash(key.data)]
             );
             const row = result.rows[0];
@@ -144,8 +186,8 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
         try {
             const result = await pool.query(
                 `SELECT u.username FROM password_reset_tokens t
-                 JOIN users u ON u.id=t.user_id
-                 WHERE t.token_hash=$1 AND t.consumed_at IS NULL AND t.expires_at>NOW()`,
+                JOIN users u ON u.id=t.user_id
+                WHERE t.token_hash=$1 AND t.consumed_at IS NULL AND t.expires_at>NOW()`,
                 [hash(parsed.data)]
             );
             res.json({ valid: Boolean(result.rowCount), username: result.rows[0]?.username || null });
@@ -169,7 +211,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
             // The lock makes a concurrent second use wait until the first has consumed the link.
             const result = await client.query(
                 `SELECT user_id FROM password_reset_tokens
-                 WHERE token_hash=$1 AND consumed_at IS NULL AND expires_at>NOW() FOR UPDATE`,
+                WHERE token_hash=$1 AND consumed_at IS NULL AND expires_at>NOW() FOR UPDATE`,
                 [hash(parsedToken.data)]
             );
             if (!result.rowCount) {
@@ -188,7 +230,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
             );
             await client.query(
                 `UPDATE password_reset_requests SET status='completed',decided_at=NOW()
-                 WHERE user_id=$1 AND status IN ('pending','approved')`,
+                WHERE user_id=$1 AND status IN ('pending','approved')`,
                 [userId]
             );
             await client.query("COMMIT");
@@ -208,10 +250,10 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
             const result = await pool.query(
                 `SELECT r.id,r.status,r.created_at,r.decided_at,u.username,
                         (SELECT t.expires_at FROM password_reset_tokens t
-                         WHERE t.request_id=r.id ORDER BY t.created_at DESC LIMIT 1) AS link_expires_at
-                 FROM password_reset_requests r JOIN users u ON u.id=r.user_id
-                 ORDER BY CASE WHEN r.status='pending' AND r.created_at > NOW()-INTERVAL '24 hours' THEN 0 ELSE 1 END,
-                          r.created_at DESC LIMIT 100`
+                        WHERE t.request_id=r.id ORDER BY t.created_at DESC LIMIT 1) AS link_expires_at
+                FROM password_reset_requests r JOIN users u ON u.id=r.user_id
+                ORDER BY CASE WHEN r.status='pending' AND r.created_at > NOW()-INTERVAL '24 hours' THEN 0 ELSE 1 END,
+                            r.created_at DESC LIMIT 100`
             );
             res.json({ requests: result.rows.map((row: any) => ({
                 ...row,
@@ -237,7 +279,7 @@ export function registerPasswordRecovery(app: Express, adminAuth: any) {
             await client.query("BEGIN");
             const q = await client.query(
                 `SELECT user_id,status,created_at FROM password_reset_requests
-                 WHERE id=$1 FOR UPDATE`,
+                WHERE id=$1 FOR UPDATE`,
                 [id.data]
             );
             const row = q.rows[0];

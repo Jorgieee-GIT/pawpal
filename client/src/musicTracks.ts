@@ -50,6 +50,14 @@ export const DEFAULT_AUDIO_PREFERENCES: AudioPreferences = {
     musicVolume: 0
 };
 
+/*
+ * DOCU: Read audio preferences for this feature.
+ * @returns {AudioPreferences} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function readAudioPreferences(): AudioPreferences {
     try {
         const saved = JSON.parse(localStorage.getItem("pawpal-audio-preferences") || "null");
@@ -72,6 +80,16 @@ export function readAudioPreferences(): AudioPreferences {
     }
 }
 
+/*
+ * DOCU: Handle music zone for tab behavior for this feature.
+ * @param {string} tab - tab value used by this function
+ * @param {string | null} game - game value used by this function
+ * @returns {MusicZone} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function musicZoneForTab(tab: string, game: string | null): MusicZone {
     if (game) {
         return "arcade";

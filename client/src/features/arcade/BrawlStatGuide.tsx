@@ -31,6 +31,13 @@ const effects = [
     { icon: CheckCircle2, name: "No effects", sample: "Clear", description: "There are currently no temporary status effects on this pet." }
 ];
 
+/*
+ * DOCU: Render the brawl stat guide interface and provide its feature behavior.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function BrawlStatGuide() {
     return <section className="paw-brawl-stat-guide" aria-label="Combat status effect explanations">
         <p className="paw-brawl-effects-intro">These are the status icons beside each pet's HP, Shield and Focus. The small number in a badge's corner shows how many rounds remain; the larger number shows damage, protection or a bonus.</p>

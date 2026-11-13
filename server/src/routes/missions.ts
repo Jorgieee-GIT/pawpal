@@ -6,6 +6,14 @@ import { handle } from "../http.js";
 import { publishLive } from "../live.js";
 import { missionView } from "../missions.js";
 
+/*
+ * DOCU: Register mission routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerMissionRoutes(app: Express) {
     app.get("/api/missions", auth, handle(async (req, res) => {
         res.json(await missionView(pool, req.userId));

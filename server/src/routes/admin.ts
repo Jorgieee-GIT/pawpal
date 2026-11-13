@@ -14,6 +14,14 @@ const adminLoginLimit = createRateLimiter({
     message: "Too many sign-in attempts. Try again in 15 minutes."
 });
 
+/*
+ * DOCU: Register admin routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerAdminRoutes(app: Express) {
     app.post("/api/admin/login", adminLoginLimit, handle(async (req, res) => {
         const configuredName = process.env.ADMIN_USERNAME;
@@ -78,9 +86,9 @@ export function registerAdminRoutes(app: Express) {
         );
         const q = await pool.query(
             `SELECT u.id,u.username,u.created_at,p.id AS pet_id,p.name AS pet_name,p.species,p.level,p.coins
-   FROM users u LEFT JOIN pets p ON p.owner_id=u.id
-   WHERE ($1='' OR u.username ILIKE '%'||$1||'%')
-   ORDER BY u.created_at DESC LIMIT 25 OFFSET $2`,
+    FROM users u LEFT JOIN pets p ON p.owner_id=u.id
+    WHERE ($1='' OR u.username ILIKE '%'||$1||'%')
+    ORDER BY u.created_at DESC LIMIT 25 OFFSET $2`,
             [search, (page - 1) * 25]
         );
         res.json({

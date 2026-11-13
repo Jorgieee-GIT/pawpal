@@ -22,6 +22,16 @@ export const EXTRA_KITCHEN_ART_IDS = [
 
 export type ExtraKitchenArtId = typeof EXTRA_KITCHEN_ART_IDS[number];
 
+/*
+ * DOCU: Render the kitchen extra art interface and provide its feature behavior.
+ * @param {{
+    id: ExtraKitchenArtId
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function KitchenExtraArt({ id }: {
     id: ExtraKitchenArtId
 }) {
@@ -171,13 +181,7 @@ export function KitchenExtraArt({ id }: {
     };
 
     return (
-        <svg
-            role="img"
-            aria-label={id.replaceAll("_", " ")}
-            viewBox="0 0 96 96"
-            width="100%"
-            height="100%"
-        >
+        <svg role="img" aria-label={id.replaceAll("_", " ")} viewBox="0 0 96 96" width="100%" height="100%">
             <ellipse cx="48" cy="88" rx="34" ry="4" fill="#806475" opacity=".1" />
             {artwork[id]}
         </svg>

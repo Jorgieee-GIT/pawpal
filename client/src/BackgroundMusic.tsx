@@ -17,6 +17,14 @@ type BackgroundMusicProps = {
 
 const FADE_DURATION = 800;
 
+/*
+ * DOCU: Render the background music interface and provide its feature behavior.
+ * @param {BackgroundMusicProps} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function BackgroundMusic({ zone, preferences }: BackgroundMusicProps) {
     const activeRef = useRef<Channel | null>(null);
     const allChannelsRef = useRef<Set<Channel>>(new Set());
@@ -24,7 +32,15 @@ export default function BackgroundMusic({ zone, preferences }: BackgroundMusicPr
 
     preferencesRef.current = preferences;
 
-    function applyVolume(channel: Channel) {
+        /*
+     * DOCU: Apply volume for this feature.
+     * @param {Channel} channel - channel value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function applyVolume(channel: Channel) {
         const prefs = preferencesRef.current;
         const hidden = document.visibilityState === "hidden";
         const level = prefs.musicVolume > 0 && !hidden ? channel.mix : 0;
@@ -32,7 +48,15 @@ export default function BackgroundMusic({ zone, preferences }: BackgroundMusicPr
         channel.audio.volume = Math.min(1, Math.max(0, level * prefs.musicVolume / 100 * channel.gain));
     }
 
-    function dispose(channel: Channel) {
+        /*
+     * DOCU: Dispose the current state for this feature.
+     * @param {Channel} channel - channel value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function dispose(channel: Channel) {
         if (channel.frame !== null) {
             cancelAnimationFrame(channel.frame);
             channel.frame = null;
@@ -48,7 +72,17 @@ export default function BackgroundMusic({ zone, preferences }: BackgroundMusicPr
         }
     }
 
-    function fade(channel: Channel, destination: number, done?: () => void) {
+        /*
+     * DOCU: Fade the current state for this feature.
+     * @param {Channel} channel - channel value used by this function
+     * @param {number} destination - destination value used by this function
+     * @param {() => void} done - done value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function fade(channel: Channel, destination: number, done?: () => void) {
         if (channel.frame !== null) {
             cancelAnimationFrame(channel.frame);
             channel.frame = null;
@@ -57,7 +91,15 @@ export default function BackgroundMusic({ zone, preferences }: BackgroundMusicPr
         const startingMix = channel.mix;
         const startingTime = performance.now();
 
-        function update(time: number) {
+                /*
+         * DOCU: Update the current state for this feature.
+         * @param {number} time - time value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+function update(time: number) {
             const progress = Math.min(1, (time - startingTime) / FADE_DURATION);
             const eased = progress * progress * (3 - 2 * progress);
 
@@ -75,7 +117,15 @@ export default function BackgroundMusic({ zone, preferences }: BackgroundMusicPr
         channel.frame = requestAnimationFrame(update);
     }
 
-    function startPlayback(channel: Channel) {
+        /*
+     * DOCU: Start playback for this feature.
+     * @param {Channel} channel - channel value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function startPlayback(channel: Channel) {
         if (!allChannelsRef.current.has(channel) || preferencesRef.current.musicVolume <= 0) {
             return;
         }
@@ -150,7 +200,14 @@ export default function BackgroundMusic({ zone, preferences }: BackgroundMusicPr
     }, [zone, preferences.musicVolume > 0]);
 
     useEffect(() => {
-        function syncVisibility() {
+                /*
+         * DOCU: Sync visibility for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+function syncVisibility() {
             const hidden = document.visibilityState === "hidden";
 
             for (const channel of allChannelsRef.current) {
@@ -164,7 +221,14 @@ export default function BackgroundMusic({ zone, preferences }: BackgroundMusicPr
             }
         }
 
-        function resumeOnGesture() {
+                /*
+         * DOCU: Resume on gesture for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+function resumeOnGesture() {
             if (preferencesRef.current.musicVolume <= 0) {
                 return;
             }

@@ -4,6 +4,14 @@ import PetArt from "../../PetArt";
 import type { RoomPet } from "../../types";
 
 // Batch 11: status artwork is driven by saved pet stats, including friends' pets.
+/*
+ * DOCU: Render the pet condition interface and provide its feature behavior.
+ * @param {{ pet: RoomPet }} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function PetCondition({ pet }: { pet: RoomPet }) {
     const dirty = pet.cleanliness < 35,
         sad = pet.happiness < 35,
@@ -13,17 +21,7 @@ function PetCondition({ pet }: { pet: RoomPet }) {
         return null;
     }
     return (
-        <div
-            className="paw-condition-overlay"
-            aria-label={[
-                dirty ? "Needs a bath" : null,
-                sad ? "Feeling sad" : null,
-                sleepy ? "Sleepy" : null,
-                hungry ? "Hungry" : null
-            ]
-                .filter(Boolean)
-                .join(", ")}
-        >
+        <div className="paw-condition-overlay" aria-label={[dirty ? "Needs a bath" :null,sad ? "Feeling sad" :null,sleepy ? "Sleepy" :null,hungry ? "Hungry" :null] .filter(Boolean) .join(", ")}>
             {dirty && (
                 <svg className="paw-condition-dirt" viewBox="0 0 100 100" aria-hidden="true">
                     <ellipse cx="26" cy="64" rx="10" ry="6" fill="#b19b87" opacity=".55" />
@@ -60,6 +58,25 @@ function PetCondition({ pet }: { pet: RoomPet }) {
     );
 }
 
+/*
+ * DOCU: Render the wanderer interface and provide its feature behavior.
+ * @param {{
+    pet: RoomPet;
+    own: boolean;
+    index: number;
+    sleeping?: boolean;
+    bathing?: boolean;
+    cuddling?: boolean;
+    onScrub?: () => void;
+    onPet?: () => void;
+    onToggleNote?: (petId: string) => void;
+    noteOpen?: boolean;
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function Wanderer({
     pet,
     own,
@@ -92,7 +109,15 @@ export function Wanderer({
         pet.note_expires_at &&
         new Date(pet.note_expires_at).getTime() > Date.now()
     );
-    const moveSponge = (e: React.PointerEvent<HTMLDivElement>) => {
+        /*
+     * DOCU: Move sponge for this feature.
+     * @param {React.PointerEvent<HTMLDivElement>} e - e value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const moveSponge = (e: React.PointerEvent<HTMLDivElement>) => {
         if (!bathing || !own || !spongeRef.current) {
             return;
         }
@@ -108,7 +133,14 @@ export function Wanderer({
             setPose("nap");
             return;
         }
-        const wander = () => {
+                /*
+         * DOCU: Handle wander behavior for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const wander = () => {
             if (document.visibilityState !== "visible") {
                 return;
             }
@@ -123,14 +155,7 @@ export function Wanderer({
         return () => window.clearInterval(timer);
     }, [index, sleeping]);
     return (
-        <div
-            className={"wanderer " + (own ? "own" : "") + (sleeping ? " paw-is-sleeping" : "")}
-            style={{
-                left: `${x}%`,
-                bottom: `${8 + (index % 3) * 7}%`,
-                zIndex: 10 + index
-            }}
-        >
+        <div className={"wanderer " + (own ? "own" : "") + (sleeping ? " paw-is-sleeping" : "")} style={{left: `${x}%`,bottom: `${8 + (index % 3) * 7}%`,zIndex:10 + index}}>
             <div className={"nameplate" + (hasActiveNote ? " paw-nameplate-has-note" : "")}>
                 <div className="paw-nameplate-title">
                     <b>{pet.name}</b>
@@ -162,59 +187,8 @@ export function Wanderer({
                     {own ? " · YOU" : ""}
                 </small>
             </div>
-            <div
-                className={
-                    "pet-body " +
-                    (sleeping || pose === "nap" ? "nap" : "") +
-                    ((bathing || cuddling) && own ? " paw-scrub-target" : "") +
-                    (cuddling && own ? " paw-cuddle-target" : "")
-                }
-                onPointerDown={(e) => {
-                    moveSponge(e);
-                    if ((bathing || cuddling) && own) {
-                        e.preventDefault();
-                        e.currentTarget.setPointerCapture(e.pointerId);
-                        if (bathing) {
-                            onScrub?.();
-                        } else {
-                            onPet?.();
-                        }
-                    }
-                }}
-                onPointerMove={(e) => {
-                    moveSponge(e);
-                    if (
-                        (bathing || cuddling) &&
-                        own &&
-                        (e.buttons === 1 ||
-                            (e.pointerType === "touch" &&
-                                e.currentTarget.hasPointerCapture(e.pointerId)))
-                    ) {
-                        if (bathing) {
-                            onScrub?.();
-                        } else {
-                            onPet?.();
-                        }
-                    }
-                }}
-                onPointerLeave={() => spongeRef.current?.classList.remove("is-visible")}
-                onPointerUp={(e) => {
-                    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-                        e.currentTarget.releasePointerCapture(e.pointerId);
-                    }
-                }}
-                onPointerCancel={(e) => {
-                    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-                        e.currentTarget.releasePointerCapture(e.pointerId);
-                    }
-                }}
-            >
-                <div
-                    className="paw-pet-art-transform"
-                    style={{
-                        transform: `scaleX(${flip ? -1 : 1}) scale(${pet.level < 5 ? 0.7 : pet.level < 30 ? 1 : 1.3})`
-                    }}
-                >
+            <div className={ "pet-body " + (sleeping || pose === "nap" ? "nap" : "") + ((bathing || cuddling) && own ? " paw-scrub-target" : "") + (cuddling && own ? " paw-cuddle-target" : "")} onPointerDown={(e) => {moveSponge(e); if ((bathing || cuddling) && own) {e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); if (bathing) {onScrub?.();} else {onPet?.();}}}} onPointerMove={(e) => {moveSponge(e); if ((bathing || cuddling) && own && (e.buttons ===1 || (e.pointerType === "touch" && e.currentTarget.hasPointerCapture(e.pointerId)))) {if (bathing) {onScrub?.();} else {onPet?.();}}}} onPointerLeave={() => spongeRef.current?.classList.remove("is-visible")} onPointerUp={(e) => {if (e.currentTarget.hasPointerCapture(e.pointerId)) {e.currentTarget.releasePointerCapture(e.pointerId);}}} onPointerCancel={(e) => {if (e.currentTarget.hasPointerCapture(e.pointerId)) {e.currentTarget.releasePointerCapture(e.pointerId);}}}>
+                <div className="paw-pet-art-transform" style={{transform: `scaleX(${flip ? -1 : 1}) scale(${pet.level < 5 ? 0.7 : pet.level < 30 ? 1 : 1.3})`}}>
                     <PetArt
                         species={pet.species}
                         color={pet.color}
@@ -235,12 +209,7 @@ export function Wanderer({
                         }}
                         aria-hidden="true"
                     >
-                        <svg
-                            viewBox="0 0 64 64"
-                            width="54"
-                            height="54"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
+                        <svg viewBox="0 0 64 64" width="54" height="54" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M11 20 Q13 8 28 9 L47 13 Q57 15 54 29 L49 47 Q46 56 33 53 L15 48 Q7 45 9 34 Z"
                                 fill="#ffe3a0"

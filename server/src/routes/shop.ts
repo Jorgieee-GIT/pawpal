@@ -11,6 +11,14 @@ import {
 } from "../petCatalog.js";
 import { mutate } from "../petState.js";
 
+/*
+ * DOCU: Register shop routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerShopRoutes(app: Express) {
     app.post("/api/item", auth, handle(async (req, res) => mutate(req, res, (p) => {
         const { item, mode } = req.body || {};
@@ -40,8 +48,8 @@ export function registerShopRoutes(app: Express) {
             product.type === "cosmetic"
                 ? p.owned_cosmetics
                 : product.type === "color"
-                  ? p.owned_colors
-                  : product.type === "breed"
+                    ? p.owned_colors
+                    : product.type === "breed"
                     ? p.owned_breeds
                     : p.owned_items;
         if (mode === "buy") {

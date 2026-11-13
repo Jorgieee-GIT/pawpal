@@ -43,6 +43,14 @@ const APPEARANCE_OPTIONS: Array<{
     }
 ];
 
+/*
+ * DOCU: Render the settings modal interface and provide its feature behavior.
+ * @param {SettingsModalProps} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function SettingsModal({
     open,
     onClose,
@@ -58,7 +66,15 @@ export default function SettingsModal({
     const [reportDescription, setReportDescription] = useState("");
     const [reportBusy, setReportBusy] = useState(false);
     const [reportMessage, setReportMessage] = useState("");
-    async function submitReport(event: React.FormEvent) {
+        /*
+     * DOCU: Submit report for this feature.
+     * @param {React.FormEvent} event - User or browser event that triggered this operation
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function submitReport(event: React.FormEvent) {
         event.preventDefault();
         setReportBusy(true);
         setReportMessage("");
@@ -80,7 +96,15 @@ export default function SettingsModal({
         const priorOverflow = document.body.style.overflow;
         document.body.style.overflow = "hidden";
 
-        function handleEscape(event: KeyboardEvent) {
+                /*
+         * DOCU: Handle escape for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+function handleEscape(event: KeyboardEvent) {
             if (event.key === "Escape") {
                 event.preventDefault();
                 onClose();
@@ -100,14 +124,7 @@ export default function SettingsModal({
     }
 
     return (
-        <div
-            className="paw-modal-backdrop paw-settings-backdrop"
-            onMouseDown={event => {
-                if (event.target === event.currentTarget) {
-                    onClose();
-                }
-            }}
-        >
+        <div className="paw-modal-backdrop paw-settings-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget) {onClose();}}}>
             <section className="paw-modal paw-settings-modal" role="dialog" aria-modal="true" aria-labelledby="paw-settings-title">
                 <div className="paw-modal-top paw-settings-header">
                     <div className="paw-settings-heading">
@@ -132,13 +149,7 @@ export default function SettingsModal({
                     </div>
                     <div className="paw-settings-appearance-grid" role="group" aria-label="Appearance theme">
                         {APPEARANCE_OPTIONS.map(option => (
-                            <button
-                                key={option.key}
-                                type="button"
-                                className={`paw-settings-appearance ${appearance === option.key ? "is-selected" : ""}`}
-                                onClick={() => onAppearanceChange(option.key)}
-                                aria-pressed={appearance === option.key}
-                            >
+                            <button key={option.key} type="button" className={`paw-settings-appearance ${appearance === option.key ? "is-selected" : ""}`} onClick={() => onAppearanceChange(option.key)} aria-pressed={appearance === option.key}>
                                 <span className="paw-settings-appearance-art">
                                     <SettingsArtwork choice={option.key} />
                                 </span>

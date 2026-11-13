@@ -608,6 +608,16 @@ export type FurniturePlacement = {
     y: number
 };
 const POSITIONS = [[70, 61], [28, 60], [48, 78], [88, 38], [13, 45]];
+/*
+ * DOCU: Handle furniture layout behavior for this feature.
+ * @param {string} room - room value used by this function
+ * @param {Record<string, FurniturePlacement[]>} layouts - layouts value used by this function
+ * @returns {FurniturePlacement[]} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function furnitureLayout(room: string, layouts?: Record<string, FurniturePlacement[]>): FurniturePlacement[] {
     return Array.isArray(layouts?.[room]) ? layouts![room] : DEFAULTS[room].map((id, i) => ({
         id,
@@ -660,6 +670,16 @@ const EXTRA_FURNITURE_IDS = new Set([
     "kettlebell_set",
     "sports_trophy"
 ]);
+/*
+ * DOCU: Render the extra furniture interface and provide its feature behavior.
+ * @param {{
+    id: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function ExtraFurniture({ id }: {
     id: string
 }) {
@@ -667,9 +687,43 @@ function ExtraFurniture({ id }: {
     const colors = [mint, pink, lav, gold, wood];
     const n = Array.from(id).reduce((a, c) => a + c.charCodeAt(0), 0);
     const c = colors[n % 5], c2 = colors[(n + 2) % 5];
-    const r = (x: number, y: number, w: number, h: number, fill = c, rx = 6) => <rect x={x} y={y} width={w} height={h} rx={rx} fill={fill} stroke={ink} strokeWidth="3" />;
-    const line = (d: string, color = ink, w = 4) => <path d={d} stroke={color} strokeWidth={w} fill="none" strokeLinecap="round" strokeLinejoin="round" />;
-    const circ = (x: number, y: number, rad: number, fill = c) => <circle cx={x} cy={y} r={rad} fill={fill} stroke={ink} strokeWidth="2" />;
+        /*
+     * DOCU: Handle r behavior for this feature.
+     * @param {number} x - x value used by this function
+     * @param {number} y - y value used by this function
+     * @param {number} w - w value used by this function
+     * @param {number} h - h value used by this function
+     * @param {unknown} fill - fill value used by this function
+     * @param {unknown} rx - rx value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const r = (x: number, y: number, w: number, h: number, fill = c, rx = 6) => <rect x={x} y={y} width={w} height={h} rx={rx} fill={fill} stroke={ink} strokeWidth="3" />;
+        /*
+     * DOCU: Handle line behavior for this feature.
+     * @param {string} d - d value used by this function
+     * @param {unknown} color - color value used by this function
+     * @param {unknown} w - w value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const line = (d: string, color = ink, w = 4) => <path d={d} stroke={color} strokeWidth={w} fill="none" strokeLinecap="round" strokeLinejoin="round" />;
+        /*
+     * DOCU: Handle circ behavior for this feature.
+     * @param {number} x - x value used by this function
+     * @param {number} y - y value used by this function
+     * @param {number} rad - rad value used by this function
+     * @param {unknown} fill - fill value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const circ = (x: number, y: number, rad: number, fill = c) => <circle cx={x} cy={y} r={rad} fill={fill} stroke={ink} strokeWidth="2" />;
     if (id.includes("painting") || id.includes("canvas")) {
         return <>
             {r(12, 8, 96, 94, wood, 2)}
@@ -875,6 +929,16 @@ function ExtraFurniture({ id }: {
     </>;
 }
 
+/*
+ * DOCU: Render the custom furniture interface and provide its feature behavior.
+ * @param {{
+    id: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function CustomFurniture({ id }: {
     id: string
 }) {
@@ -882,9 +946,43 @@ function CustomFurniture({ id }: {
         return <ExtraFurniture id={id} />;
     }
     const wood = "#b88d83", pink = "#edb3c9", light = "#fff0e8", mint = "#9dcebb", lav = "#b3a2d5", dark = "#786e8e", gold = "#f2cb79";
-    const rect = (x: number, y: number, w: number, h: number, fill: string, rx = 5) => <rect x={x} y={y} width={w} height={h} rx={rx} fill={fill} stroke={dark} strokeWidth="2.5" />;
-    const line = (d: string, color = dark, width = 4) => <path d={d} stroke={color} strokeWidth={width} fill="none" strokeLinecap="round" strokeLinejoin="round" />;
-    const circle = (x: number, y: number, r: number, fill: string) => <circle cx={x} cy={y} r={r} fill={fill} stroke={dark} strokeWidth="2" />;
+        /*
+     * DOCU: Handle rect behavior for this feature.
+     * @param {number} x - x value used by this function
+     * @param {number} y - y value used by this function
+     * @param {number} w - w value used by this function
+     * @param {number} h - h value used by this function
+     * @param {string} fill - fill value used by this function
+     * @param {unknown} rx - rx value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const rect = (x: number, y: number, w: number, h: number, fill: string, rx = 5) => <rect x={x} y={y} width={w} height={h} rx={rx} fill={fill} stroke={dark} strokeWidth="2.5" />;
+        /*
+     * DOCU: Handle line behavior for this feature.
+     * @param {string} d - d value used by this function
+     * @param {unknown} color - color value used by this function
+     * @param {unknown} width - width value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const line = (d: string, color = dark, width = 4) => <path d={d} stroke={color} strokeWidth={width} fill="none" strokeLinecap="round" strokeLinejoin="round" />;
+        /*
+     * DOCU: Handle circle behavior for this feature.
+     * @param {number} x - x value used by this function
+     * @param {number} y - y value used by this function
+     * @param {number} r - r value used by this function
+     * @param {string} fill - fill value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const circle = (x: number, y: number, r: number, fill: string) => <circle cx={x} cy={y} r={r} fill={fill} stroke={dark} strokeWidth="2" />;
     switch (id) {
         case "cloud_sofa": return <>
             {rect(8, 45, 104, 47, lav, 19)}
@@ -1103,6 +1201,17 @@ function CustomFurniture({ id }: {
     }
 }
 
+/*
+ * DOCU: Render the furniture art base interface and provide its feature behavior.
+ * @param {{
+    kind: string;
+    itemId?: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function FurnitureArtBase({ kind, itemId }: {
     kind: string;
     itemId?: string
@@ -1176,6 +1285,21 @@ function FurnitureArtBase({ kind, itemId }: {
         </> : null}
     </svg>;
 }
+/*
+ * DOCU: Render the room furniture interface and provide its feature behavior.
+ * @param {{
+    room: string,
+    layout: FurniturePlacement[],
+    editing: boolean,
+    onMove: (id: string, x: number, y: number) => void,
+    onSelect: (id: string) => void,
+    selected: string | null
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function RoomFurniture({ room, layout, editing, onMove, onSelect, selected }: {
     room: string,
     layout: FurniturePlacement[],
@@ -1192,45 +1316,7 @@ export function RoomFurniture({ room, layout, editing, onMove, onSelect, selecte
     return <div className={"room-furniture-layer " + (editing ? "editing" : "")}>
         {layout.filter(f => FURNITURE[f.id]?.room === room).map(f => {
             const current = drag?.id === f.id ? drag : f;
-            return <div
-                key={f.id}
-                className={"room-furniture-piece " + (selected === f.id ? "selected" : "")}
-                style={{
-                    left: current.x + "%",
-                    top: current.y + "%"
-                }}
-                title={FURNITURE[f.id].name}
-                onPointerDown={e => {
-                    if (!editing) {
-                        return;
-
-                    } e.preventDefault();
-                    e.currentTarget.setPointerCapture(e.pointerId);
-                    onSelect(f.id);
-                    setDrag({
-                        id: f.id,
-                        x: f.x,
-                        y: f.y
-                    })
-                }}
-                onPointerMove={e => {
-                    if (!editing || drag?.id !== f.id) {
-                        return;
-
-                    } const bounds = e.currentTarget.parentElement!.getBoundingClientRect();
-                    setDrag({
-                        id: f.id,
-                        x: Math.min(95, Math.max(5, (e.clientX - bounds.left) / bounds.width * 100)),
-                        y: Math.min(85, Math.max(20, (e.clientY - bounds.top) / bounds.height * 100))
-                    })
-                }}
-                onPointerUp={() => {
-                    if (drag?.id === f.id) {
-                        onMove(f.id, Math.round(drag.x), Math.round(drag.y));
-                        setDrag(null)
-                    }
-                }}
-            >
+            return <div key={f.id} className={"room-furniture-piece " + (selected ===f.id ? "selected" : "")} style={{left:current.x + "%",top:current.y + "%"}} title={FURNITURE[f.id].name} onPointerDown={e => {if (!editing) {return;} e.preventDefault(); e.currentTarget.setPointerCapture(e.pointerId); onSelect(f.id); setDrag({id:f.id,x:f.x,y:f.y})}} onPointerMove={e => {if (!editing || drag?.id !==f.id) {return;} const bounds =e.currentTarget.parentElement!.getBoundingClientRect(); setDrag({id:f.id,x:Math.min(95,Math.max(5,(e.clientX - bounds.left) / bounds.width * 100)),y:Math.min(85,Math.max(20,(e.clientY - bounds.top) / bounds.height * 100))})}} onPointerUp={() => {if (drag?.id ===f.id) {onMove(f.id,Math.round(drag.x),Math.round(drag.y)); setDrag(null)}}}>
                 <FurnitureArt kind={FURNITURE[f.id].kind} itemId={f.id} />
                 {editing && <small>
                     {FURNITURE[f.id].name}

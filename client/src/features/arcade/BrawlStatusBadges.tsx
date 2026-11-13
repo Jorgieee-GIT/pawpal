@@ -47,6 +47,14 @@ type EffectBadge = {
     description: string;
 };
 
+/*
+ * DOCU: Render the brawl status badges interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function BrawlStatusBadges({ player, round, compact = false }: Props) {
     const effects: EffectBadge[] = [];
     const remainingShieldRounds = player.shield > 0 && player.shieldExpiresRound
@@ -137,22 +145,13 @@ export default function BrawlStatusBadges({ player, round, compact = false }: Pr
         });
     }
 
-    return <div
-        className={`paw-brawl-status-list ${compact ? "is-compact" : ""}`}
-        aria-label="Active battle effects. Icons show the effect amount and a small circle shows rounds remaining."
-    >
+    return <div className={`paw-brawl-status-list ${compact ? "is-compact" : ""}`} aria-label="Active battle effects. Icons show the effect amount and a small circle shows rounds remaining.">
         {effects.length === 0 && <span className="paw-brawl-status-idle" title="No active effects" aria-label="No active effects">
             <CheckCircle2 size={15} aria-hidden="true" />
         </span>}
         {effects.map(effect => {
             const Icon = effect.icon;
-            return <span
-                className={`paw-brawl-effect is-${effect.id}`}
-                key={effect.id}
-                title={effect.description}
-                aria-label={effect.description}
-                tabIndex={0}
-            >
+            return <span className={`paw-brawl-effect is-${effect.id}`} key={effect.id} title={effect.description} aria-label={effect.description} tabIndex={0}>
                 <Icon size={15} aria-hidden="true" />
                 {effect.amount !== undefined && <b className="paw-brawl-effect-amount">{effect.amount}</b>}
                 {effect.rounds !== undefined && <small className="paw-brawl-effect-rounds" aria-label={`${effect.rounds} rounds left`}>{effect.rounds}</small>}

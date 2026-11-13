@@ -58,8 +58,24 @@ type Props = {
     onClose: () => void;
 };
 
+/*
+ * DOCU: Handle label behavior for this feature.
+ * @param {string} value - value value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const label = (value: string) => value.replaceAll("_", " ").replace(/\b\w/g, character => character.toUpperCase());
 
+/*
+ * DOCU: Render the brawl catalog modal interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function BrawlCatalogModal({ open, api, onClose }: Props) {
     const [catalog, setCatalog] = useState<CombatCatalog | null>(null);
     const [error, setError] = useState("");
@@ -75,7 +91,15 @@ export default function BrawlCatalogModal({ open, api, onClose }: Props) {
         }
         const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         closeRef.current?.focus();
-        const onEscape = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Handle on escape behavior for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onEscape = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 event.preventDefault();
                 closeCallback.current();
@@ -135,11 +159,7 @@ export default function BrawlCatalogModal({ open, api, onClose }: Props) {
         .filter(group => group.breeds.length > 0) : [];
     const totalBreeds = catalog ? Object.values(catalog.kits).reduce((count, group) => count + Object.keys(group).length, 0) : 0;
 
-    return <div className="paw-multi-dialog-backdrop paw-brawl-catalog-backdrop" onMouseDown={event => {
-        if (event.target === event.currentTarget) {
-            closeCallback.current();
-        }
-    }}>
+    return <div className="paw-multi-dialog-backdrop paw-brawl-catalog-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget) {closeCallback.current();}}}>
         <section className="paw-multi-dialog paw-brawl-catalog-dialog" role="dialog" aria-modal="true" aria-labelledby="paw-brawl-catalog-title" aria-describedby="paw-brawl-catalog-subtitle">
             <div className="paw-multi-dialog-header">
                 <div>

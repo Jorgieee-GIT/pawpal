@@ -11,6 +11,14 @@ type Props = {
 };
 
 /** One consistent multiplayer information modal for Classic and Duo Clash. */
+/*
+ * DOCU: Render the brawl guide modal interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function BrawlGuideModal({ title, subtitle, children, onClose }: Props) {
     const headingId = useId();
     const closeRef = useRef<HTMLButtonElement | null>(null);
@@ -26,14 +34,7 @@ export default function BrawlGuideModal({ title, subtitle, children, onClose }: 
         };
     }, []);
 
-    return <div
-        className="paw-brawl-guide-overlay"
-        onMouseDown={event => {
-            if (event.target === event.currentTarget) {
-                onClose();
-            }
-        }}
-    >
+    return <div className="paw-brawl-guide-overlay" onMouseDown={event => {if (event.target ===event.currentTarget) {onClose();}}}>
         <section
             className="paw-multi-dialog paw-brawl-guide-dialog"
             role="dialog"
@@ -52,13 +53,7 @@ export default function BrawlGuideModal({ title, subtitle, children, onClose }: 
                     <h3 id={headingId}>{title}</h3>
                     {subtitle && <p className="paw-modal-subtitle">{subtitle}</p>}
                 </div>
-                <button
-                    ref={closeRef}
-                    type="button"
-                    className="paw-multi-dialog-close"
-                    aria-label={`Close ${title.toLowerCase()}`}
-                    onClick={onClose}
-                >
+                <button ref={closeRef} type="button" className="paw-multi-dialog-close" aria-label={`Close ${title.toLowerCase()}`} onClick={onClose}>
                     <X size={19}/>
                 </button>
             </div>

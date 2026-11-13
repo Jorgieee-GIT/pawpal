@@ -9,6 +9,15 @@ if (process.env.NODE_ENV === "production" && !process.env.JWT_SECRET) {
     throw Error("Set JWT_SECRET in production");
 }
 
+/*
+ * DOCU: Handle token behavior for this feature.
+ * @param {string} id - Identifier of the record or item being handled
+ * @param {unknown} version - version value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export const token = (id: string, version = 0) =>
     jwt.sign(
         {
@@ -22,6 +31,17 @@ export const token = (id: string, version = 0) =>
     );
 
 // Check the session version so password resets invalidate all old logins.
+/*
+ * DOCU: Handle auth behavior for this feature.
+ * @param {any} req - Express request containing route input and session data
+ * @param {any} res - Express response used to send the route result
+ * @param {any} next - Express callback used to pass control or errors onward
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function auth(req: any, res: any, next: any) {
     try {
         const raw = String(req.headers.authorization || "").replace(/^Bearer /, "");
@@ -52,17 +72,17 @@ export async function auth(req: any, res: any, next: any) {
             action.startsWith("/api/multiplayer") || action.startsWith("/api/duo")
                 ? "multiplayer"
                 : action.startsWith("/api/garden")
-                  ? "garden"
-                  : action.startsWith("/api/kitchen")
+                    ? "garden"
+                    : action.startsWith("/api/kitchen")
                     ? "kitchen"
                     : action.startsWith("/api/claw")
-                      ? "pawclaw"
-                      : action === "/api/game"
+                        ? "pawclaw"
+                        : action === "/api/game"
                         ? "arcade"
                         : action.startsWith("/api/missions") ||
                             action.startsWith("/api/achievement")
-                          ? "missions"
-                          : action.startsWith("/api/furniture") || action === "/api/item"
+                            ? "missions"
+                            : action.startsWith("/api/furniture") || action === "/api/item"
                             ? "shop"
                             : "";
         if (
@@ -92,6 +112,17 @@ export const register = z.object({
 // Set ADMIN_USERNAME and ADMIN_PASSWORD_HASH in the server environment.
 export const adminSecret = secret + ":pawpal-admin-v1";
 
+/*
+ * DOCU: Admin auth for this feature.
+ * @param {any} req - Express request containing route input and session data
+ * @param {any} res - Express response used to send the route result
+ * @param {any} next - Express callback used to pass control or errors onward
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function adminAuth(req: any, res: any, next: any) {
     try {
         const raw = String(req.headers.authorization || "").replace(/^Bearer /, "");

@@ -26,6 +26,14 @@ type Props = {
     roomPets: RoomPet[];
 };
 
+/*
+ * DOCU: Render the friends panel interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function FriendsPanel({
     mail,
     openPawInbox,
@@ -66,22 +74,10 @@ export default function FriendsPanel({
                         <Mail size={21} strokeWidth={1.8} />
                         {mail.some((m) => !m.read_at) && <span className="paw-inbox-alert" />}
                     </button>
-                    <button
-                        type="button"
-                        className="paw-requests-launch paw-friends-compose-action"
-                        onClick={() => openPawComposer()}
-                        aria-label="Write PawMail"
-                        title="Write PawMail"
-                    >
+                    <button type="button" className="paw-requests-launch paw-friends-compose-action" onClick={() => openPawComposer()} aria-label="Write PawMail" title="Write PawMail">
                         <MailPlus size={21} strokeWidth={1.8} />
                     </button>
-                    <button
-                        type="button"
-                        className="paw-requests-launch"
-                        onClick={() => setRequestsOpen(true)}
-                        aria-label={`Add friends and view friend requests (${unseenIncomingRequests.length} new)`}
-                        title="Add friends & requests"
-                    >
+                    <button type="button" className="paw-requests-launch" onClick={() => setRequestsOpen(true)} aria-label={`Add friends and view friend requests (${unseenIncomingRequests.length} new)`} title="Add friends & requests">
                         <UserRoundPlus size={21} strokeWidth={1.8} aria-hidden="true" />
                         {unseenIncomingRequests.length > 0 && (
                             <span className="paw-requests-count">
@@ -92,20 +88,8 @@ export default function FriendsPanel({
                 </div>
             </div>
             {requestsOpen && (
-                <div
-                    className="paw-modal-backdrop"
-                    onMouseDown={(e) => {
-                        if (e.target === e.currentTarget) {
-                            setRequestsOpen(false);
-                        }
-                    }}
-                >
-                    <section
-                        className="paw-modal paw-requests-modal"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="paw-requests-modal-title"
-                    >
+                <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setRequestsOpen(false);}}}>
+                    <section className="paw-modal paw-requests-modal" role="dialog" aria-modal="true" aria-labelledby="paw-requests-modal-title">
                         <div className="paw-modal-top">
                             <div>
                                 <h2 id="paw-requests-modal-title">
@@ -116,11 +100,7 @@ export default function FriendsPanel({
                                 </h2>
                                 <p className="paw-modal-subtitle">Your little community</p>
                             </div>
-                            <button
-                                className="paw-modal-close"
-                                aria-label="Close friend requests"
-                                onClick={() => setRequestsOpen(false)}
-                            >
+                            <button className="paw-modal-close" aria-label="Close friend requests" onClick={() => setRequestsOpen(false)}>
                                 <X size={19} strokeWidth={1.8} aria-hidden="true" />
                             </button>
                         </div>
@@ -195,10 +175,7 @@ export default function FriendsPanel({
                                         ) : (
                                             <small>Request sent</small>
                                         )}{" "}
-                                        <button
-                                            className="secondary"
-                                            onClick={() => setRemoveFriend(f)}
-                                        >
+                                        <button className="secondary" onClick={() => setRemoveFriend(f)}>
                                             Remove
                                         </button>
                                     </div>
@@ -244,13 +221,7 @@ export default function FriendsPanel({
                         </span>
                     </div>
                     <div className="paw-friend-actions paw-friend-icon-actions">
-                        <button
-                            type="button"
-                            className="paw-friend-icon-button paw-friend-mail"
-                            title="Send PawMail"
-                            aria-label={`Send PawMail to @${f.username}`}
-                            onClick={() => openPawComposer(f.friend_id)}
-                        >
+                        <button type="button" className="paw-friend-icon-button paw-friend-mail" title="Send PawMail" aria-label={`Send PawMail to @${f.username}`} onClick={() => openPawComposer(f.friend_id)}>
                             <MailPlus size={25} strokeWidth={1.9} aria-hidden="true" />
                         </button>
                         <button
@@ -267,13 +238,7 @@ export default function FriendsPanel({
                         >
                             <Gift size={25} strokeWidth={1.9} aria-hidden="true" />
                         </button>
-                        <button
-                            type="button"
-                            className="paw-friend-icon-button paw-friend-unfriend"
-                            title="Unfriend"
-                            aria-label={`Unfriend @${f.username}`}
-                            onClick={() => setRemoveFriend(f)}
-                        >
+                        <button type="button" className="paw-friend-icon-button paw-friend-unfriend" title="Unfriend" aria-label={`Unfriend @${f.username}`} onClick={() => setRemoveFriend(f)}>
                             <UserRoundMinus size={25} strokeWidth={1.9} aria-hidden="true" />
                         </button>
                     </div>

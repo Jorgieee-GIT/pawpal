@@ -12,6 +12,18 @@ import {
 } from "../../shopCatalog";
 import type { Pet } from "../../types";
 
+/*
+ * DOCU: Render the outfit wardrobe interface and provide its feature behavior.
+ * @param {{
+    pet: Pet;
+    execute: (path: string, body?: unknown, method?: string) => Promise<any>;
+    busy: boolean;
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function OutfitWardrobe({
     pet,
     execute,
@@ -29,8 +41,8 @@ export function OutfitWardrobe({
         ...current,
         ...(tryOn
             ? {
-                  [COSMETIC_SLOTS[tryOn]]: tryOn
-              }
+                    [COSMETIC_SLOTS[tryOn]]: tryOn
+                }
             : {})
     };
     const previewedAccessories = SLOT_NAMES.flatMap((accessorySlot) =>
@@ -57,8 +69,25 @@ export function OutfitWardrobe({
                 (ITEM_LEVEL_REQUIREMENTS[a.id] || 1) - (ITEM_LEVEL_REQUIREMENTS[b.id] || 1) ||
                 a.price - b.price
         );
-    const own = (id: string) => pet.owned_cosmetics.includes(id);
-    const change = (id: string, mode: string) => {
+        /*
+     * DOCU: Handle own behavior for this feature.
+     * @param {string} id - Identifier of the record or item being handled
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const own = (id: string) => pet.owned_cosmetics.includes(id);
+        /*
+     * DOCU: Change the current state for this feature.
+     * @param {string} id - Identifier of the record or item being handled
+     * @param {string} mode - mode value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const change = (id: string, mode: string) => {
         setTryOn(null);
         void execute("/item", {
             item: id,
@@ -123,10 +152,7 @@ export function OutfitWardrobe({
                     >
                         Owned
                     </button>
-                    <button
-                        className={section === "shop" ? "selected" : ""}
-                        onClick={() => setSection("shop")}
-                    >
+                    <button className={section === "shop" ? "selected" : ""} onClick={() => setSection("shop")}>
                         Shop
                     </button>
                 </div>
@@ -194,11 +220,7 @@ export function OutfitWardrobe({
                         )}
                     </div>
                     {current[slot] && (
-                        <button
-                            className="secondary"
-                            disabled={busy}
-                            onClick={() => change(current[slot]!, "unequip")}
-                        >
+                        <button className="secondary" disabled={busy} onClick={() => change(current[slot]!, "unequip")}>
                             Remove {slot} accessory
                         </button>
                     )}
@@ -210,17 +232,7 @@ export function OutfitWardrobe({
                         {available
                             .filter((x) => !own(x.id))
                             .map((x) => (
-                                <div
-                                    className={
-                                        "v8-item " +
-                                        (current[slot] === x.id ? "paw-cosmetic-equipped " : "") +
-                                        (!own(x.id) &&
-                                        pet.level < (ITEM_LEVEL_REQUIREMENTS[x.id] || 0)
-                                            ? "paw-level-locked"
-                                            : "")
-                                    }
-                                    key={x.id}
-                                >
+                                <div className={ "v8-item " + (current[slot] ===x.id ? "paw-cosmetic-equipped " : "") + (!own(x.id) && pet.level < (ITEM_LEVEL_REQUIREMENTS[x.id] || 0) ? "paw-level-locked" : "")} key={x.id}>
                                     <div className="v8-item-art">
                                         <PetArt
                                             species={pet.species}
@@ -264,11 +276,7 @@ export function OutfitWardrobe({
                                             </div>
                                         )}
                                     <div className="v8-actions">
-                                        <button
-                                            className="secondary"
-                                            disabled={busy}
-                                            onClick={() => setTryOn(x.id)}
-                                        >
+                                        <button className="secondary" disabled={busy} onClick={() => setTryOn(x.id)}>
                                             Try on
                                         </button>
                                         <button

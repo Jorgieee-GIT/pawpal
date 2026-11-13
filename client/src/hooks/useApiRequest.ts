@@ -2,12 +2,30 @@ import { useRef } from "react";
 import { API } from "../api";
 import type { ApiRequest } from "../types";
 
+/*
+ * DOCU: Provide authenticated API request state and actions to a screen.
+ * @param {string} token - Authentication token used for the request
+ * @param {() => void} onSessionExpired - onSessionExpired value used by this function
+ * @returns {ApiRequest} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function useApiRequest(token: string, onSessionExpired: () => void): ApiRequest {
     // Share identical GET requests while they are in flight. Mutations are never cached.
     const pendingGetRequests = useRef(new Map<string, Promise<any>>());
 
     return async function request(path: string, method = "GET", body?: unknown) {
-        const fetchData = async () => {
+                /*
+         * DOCU: Fetch data for this feature.
+         * @throws {Error} - Propagates an error when this operation cannot complete.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const fetchData = async () => {
             const response = await fetch(API + "/api" + path, {
                 method,
                 headers: {

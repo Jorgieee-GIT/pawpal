@@ -22,6 +22,14 @@ const loginInput = z.object({
     password: z.string().min(1).max(100)
 });
 
+/*
+ * DOCU: Register auth routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerAuthRoutes(app: Express) {
     app.post("/api/auth/register", registrationLimit, handle(async (req, res) => {
         const v = register.safeParse(req.body);

@@ -69,6 +69,14 @@ type Props = {
     mealData: MealData | null;
 };
 
+/*
+ * DOCU: Render the room panel interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function RoomPanel({
     pet,
     roomMenuOpen,
@@ -128,10 +136,7 @@ export default function RoomPanel({
                             ["Cleanliness", pet.cleanliness, "#79c7d5"]
                         ] as [string, number, string][]
                     ).map(([label, value, color]) => (
-                        <div
-                            className={"paw-hud-stat" + (value < 25 ? " paw-hud-low" : "")}
-                            key={label}
-                        >
+                        <div className={"paw-hud-stat" + (value < 25 ? " paw-hud-low" : "")} key={label}>
                             <div className="paw-hud-label">
                                 <span>{label}</span>
                                 <b>{value}%</b>
@@ -151,11 +156,7 @@ export default function RoomPanel({
             <section className="room-card">
                 <div className="paw-room-toolbar">
                     <div className="paw-room-dropdown">
-                        <button
-                            className="paw-room-dropdown-trigger"
-                            aria-expanded={roomMenuOpen}
-                            onClick={() => setRoomMenuOpen((v) => !v)}
-                        >
+                        <button className="paw-room-dropdown-trigger" aria-expanded={roomMenuOpen} onClick={() => setRoomMenuOpen((v) => !v)}>
                             ☰{" "}
                             {
                                 (
@@ -217,19 +218,8 @@ export default function RoomPanel({
                         )}
                     </div>
                     <div className="paw-room-tools">
-                        <button
-                            type="button"
-                            className="paw-room-theme-trigger"
-                            onClick={() => setThemeModal(true)}
-                            aria-label="Change room atmosphere"
-                            title="Room atmosphere"
-                        >
-                            <svg
-                                className="paw-room-theme-svg"
-                                viewBox="0 0 76 42"
-                                preserveAspectRatio="none"
-                                aria-hidden="true"
-                            >
+                        <button type="button" className="paw-room-theme-trigger" onClick={() => setThemeModal(true)} aria-label="Change room atmosphere" title="Room atmosphere">
+                            <svg className="paw-room-theme-svg" viewBox="0 0 76 42" preserveAspectRatio="none" aria-hidden="true">
                                 <rect width="76" height="42" fill={roomColors[0]} />
                                 <path d="M0 25H76V42H0Z" fill={roomColors[1]} />
                                 <circle cx="45" cy="17" r="10" fill={roomColors[2]} opacity=".72" />
@@ -277,30 +267,14 @@ export default function RoomPanel({
                     </div>
                 </div>
                 {themeModal && (
-                    <div
-                        className="paw-modal-backdrop"
-                        onMouseDown={(e) => {
-                            if (e.target === e.currentTarget) {
-                                setThemeModal(false);
-                            }
-                        }}
-                    >
-                        <section
-                            className="paw-modal paw-theme-modal"
-                            role="dialog"
-                            aria-modal="true"
-                            aria-labelledby="paw-theme-title"
-                        >
+                    <div className="paw-modal-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setThemeModal(false);}}}>
+                        <section className="paw-modal paw-theme-modal" role="dialog" aria-modal="true" aria-labelledby="paw-theme-title">
                             <div className="paw-modal-top">
                                 <div>
                                     <h2 id="paw-theme-title">Room atmosphere</h2>
                                     <p className="paw-modal-subtitle">Make it yours</p>
                                 </div>
-                                <button
-                                    className="paw-modal-close"
-                                    aria-label="Close atmosphere selector"
-                                    onClick={() => setThemeModal(false)}
-                                >
+                                <button className="paw-modal-close" aria-label="Close atmosphere selector" onClick={() => setThemeModal(false)}>
                                     <X size={19} strokeWidth={1.8} aria-hidden="true" />
                                 </button>
                             </div>
@@ -330,8 +304,8 @@ export default function RoomPanel({
                                                         (active
                                                             ? "active "
                                                             : owned
-                                                              ? "owned "
-                                                              : "") +
+                                                                ? "owned "
+                                                                : "") +
                                                         (!owned ? "unowned " : "") +
                                                         (!unlocked && !owned ? "level-locked" : "")
                                                     }
@@ -342,8 +316,8 @@ export default function RoomPanel({
                                                         active
                                                             ? "Currently applied"
                                                             : owned
-                                                              ? "Apply this atmosphere"
-                                                              : !unlocked
+                                                                ? "Apply this atmosphere"
+                                                                : !unlocked
                                                                 ? `Unlocks at Level ${required}`
                                                                 : `Buy for ${price.toLocaleString()} Paw Coins`
                                                     }
@@ -378,8 +352,8 @@ export default function RoomPanel({
                                                             (active
                                                                 ? "is-selected"
                                                                 : owned
-                                                                  ? "can-apply"
-                                                                  : unlocked
+                                                                    ? "can-apply"
+                                                                    : unlocked
                                                                     ? "can-buy"
                                                                     : "is-locked")
                                                         }
@@ -420,23 +394,7 @@ export default function RoomPanel({
                         </section>
                     </div>
                 )}
-                <div
-                    className={
-                        "living-room paw-themed-room " +
-                        (pet.garden?._sleeping ? "paw-room-sleeping " : "") +
-                        "paw-theme-" +
-                        (pet.room_theme || "blush") +
-                        " paw-room-" +
-                        (pet.active_room || "living")
-                    }
-                    style={
-                        {
-                            "--wall": roomColors[0],
-                            "--floor": roomColors[1],
-                            "--room-accent": roomColors[2]
-                        } as React.CSSProperties
-                    }
-                >
+                <div className={ "living-room paw-themed-room " + (pet.garden?._sleeping ? "paw-room-sleeping " : "") + "paw-theme-" + (pet.room_theme || "blush") + " paw-room-" + (pet.active_room || "living")} style={{ "--wall":roomColors[0], "--floor":roomColors[1], "--room-accent":roomColors[2]} as React.CSSProperties}>
                     {pet.garden?._sleeping && (
                         <div className="paw-room-night-overlay" aria-hidden="true" />
                     )}
@@ -471,13 +429,7 @@ export default function RoomPanel({
                     >
                         <Utensils size={21} strokeWidth={2} aria-hidden="true" />
                     </button>
-                    <button
-                        type="button"
-                        className="paw-room-action paw-room-play"
-                        aria-label="Play games"
-                        title="Play games"
-                        onClick={() => setPlayPickerOpen(true)}
-                    >
+                    <button type="button" className="paw-room-action paw-room-play" aria-label="Play games" title="Play games" onClick={() => setPlayPickerOpen(true)}>
                         <Gamepad2 size={21} />
                     </button>
                     <button
@@ -600,24 +552,13 @@ export default function RoomPanel({
                         />
                     ))}
                     {openedRoomNote && (
-                        <aside
-                            id="paw-room-note-popover"
-                            className="paw-room-note-popover"
-                            role="region"
-                            aria-label={`${openedRoomNote.name}'s Pet Note`}
-                            onClick={(event) => event.stopPropagation()}
-                        >
+                        <aside id="paw-room-note-popover" className="paw-room-note-popover" role="region" aria-label={`${openedRoomNote.name}'s Pet Note`} onClick={(event) => event.stopPropagation()}>
                             <div className="paw-room-note-popover-header">
                                 <span className="paw-room-note-popover-from">
                                     <Mail size={15} aria-hidden="true" /> {openedRoomNote.name}'s
                                     note
                                 </span>
-                                <button
-                                    type="button"
-                                    className="paw-room-note-popover-close"
-                                    aria-label="Close Pet Note"
-                                    onClick={() => setOpenRoomNoteId(null)}
-                                >
+                                <button type="button" className="paw-room-note-popover-close" aria-label="Close Pet Note" onClick={() => setOpenRoomNoteId(null)}>
                                     <X size={15} aria-hidden="true" />
                                 </button>
                             </div>
@@ -644,11 +585,7 @@ export default function RoomPanel({
                             <div className="paw-furniture-placed">
                                 {furnitureLayout(pet.active_room || "living", pet.room_layouts).map(
                                     (f) => (
-                                        <button
-                                            className={selectedFurniture === f.id ? "active" : ""}
-                                            key={f.id}
-                                            onClick={() => setSelectedFurniture(f.id)}
-                                        >
+                                        <button className={selectedFurniture === f.id ? "active" : ""} key={f.id} onClick={() => setSelectedFurniture(f.id)}>
                                             {FURNITURE[f.id]?.name || f.id}
                                         </button>
                                     )
@@ -718,40 +655,23 @@ export default function RoomPanel({
                 </div>
             </section>
             {mealModal && (
-                <div
-                    className="paw-meals-backdrop"
-                    onMouseDown={(e) => {
-                        if (e.target === e.currentTarget) {
-                            setMealModal(false);
-                        }
-                    }}
-                >
-                    <section
-                        className="paw-meals-modal"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label="Feed your pet"
-                    >
+                <div className="paw-meals-backdrop" onMouseDown={(e) => {if (e.target ===e.currentTarget) {setMealModal(false);}}}>
+                    <section className="paw-meals-modal" role="dialog" aria-modal="true" aria-label="Feed your pet">
                         <div className="paw-meals-header">
                             <div>
                                 <h3>Feed your pet</h3>
                                 <p className="paw-modal-subtitle">From your Kitchen</p>
                             </div>
-                            <button
-                                type="button"
-                                className="paw-modal-close"
-                                aria-label="Close meals"
-                                onClick={() => setMealModal(false)}
-                            >
+                            <button type="button" className="paw-modal-close" aria-label="Close meals" onClick={() => setMealModal(false)}>
                                 <X size={19} />
                             </button>
                         </div>
                         {mealBusy ? (
                             <p>Loading meals…</p>
                         ) : !mealData ||
-                          !Object.entries(mealData.meals).some(
-                              ([id, n]) => n > 0 && mealData.recipes[id]
-                          ) ? (
+                            !Object.entries(mealData.meals).some(
+                                ([id, n]) => n > 0 && mealData.recipes[id]
+                            ) ? (
                             <p className="paw-meals-empty">
                                 No cooked meals yet. Visit the Kitchen to cook something!
                             </p>
@@ -813,11 +733,11 @@ export default function RoomPanel({
                                                             setMealData((prev) =>
                                                                 prev
                                                                     ? {
-                                                                          ...prev,
-                                                                          meals:
-                                                                              data.kitchen?.meals ||
-                                                                              {}
-                                                                      }
+                                                                            ...prev,
+                                                                            meals:
+                                                                                data.kitchen?.meals ||
+                                                                                {}
+                                                                        }
                                                                     : prev
                                                             );
                                                             setNotice(

@@ -8,6 +8,15 @@ export const liveClients = new Map<string, Set<any>>();
 
 const liveInstanceId = randomUUID();
 
+/*
+ * DOCU: Handle write live behavior for this feature.
+ * @param {string} userId - userId value used by this function
+ * @param {string} type - type value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function writeLive(userId: string, type: string) {
     for (const res of liveClients.get(userId) || []) {
         if (!res.writableEnded && !res.destroyed) {
@@ -20,6 +29,15 @@ function writeLive(userId: string, type: string) {
     }
 }
 
+/*
+ * DOCU: Publish a live event to the relevant connected clients.
+ * @param {string[]} userIds - userIds value used by this function
+ * @param {string} type - type value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function publishLive(userIds: string[], type: string) {
     const unique = [...new Set(userIds.filter(Boolean))];
     for (const id of unique) {
@@ -41,6 +59,15 @@ export function publishLive(userIds: string[], type: string) {
 // Avoid notifying friends on every scrub stroke, while keeping appearance and sleep immediate.
 const lastFriendPetBroadcast = new Map<string, number>();
 
+/*
+ * DOCU: Publish pet to friends for this feature.
+ * @param {string} userId - userId value used by this function
+ * @param {unknown} immediate - immediate value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function publishPetToFriends(userId: string, immediate = false) {
     const now = Date.now();
     if (!immediate && now - (lastFriendPetBroadcast.get(userId) || 0) < 2500) {
@@ -57,6 +84,13 @@ export async function publishPetToFriends(userId: string, immediate = false) {
     );
 }
 
+/*
+ * DOCU: Handle subscribe live behavior for this feature.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function subscribeLive() {
     const client = await pool.connect();
     client.on("notification", (message) => {
@@ -85,6 +119,13 @@ export async function subscribeLive() {
     await client.query("LISTEN pawpal_live");
 }
 
+/*
+ * DOCU: Start live updates for this feature.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function startLiveUpdates() {
     void subscribeLive().catch((e) => {
         logSafeError("Live listener unavailable", e);

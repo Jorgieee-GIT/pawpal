@@ -11,6 +11,14 @@ type Props = {
     records: { game: string; best: number }[];
 };
 
+/*
+ * DOCU: Render the arcade panel interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function ArcadePanel({ launchGame, pet, records }: Props) {
     return (
         <section className="panel">

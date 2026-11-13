@@ -17,13 +17,43 @@ export type KitchenChallenge = {
 };
 
 /** All targets are visible and solvable; only the challenge changes, not meal rewards. */
+/*
+ * DOCU: Handle random challenge behavior for this feature.
+ * @param {KitchenChallenge} previous - previous value used by this function
+ * @param {() => number} random - random value used by this function
+ * @returns {KitchenChallenge} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function randomChallenge(previous?: KitchenChallenge, random: () => number = Math.random): KitchenChallenge {
-    const pick = (options: number[], previousValue?: number): number => {
+        /*
+     * DOCU: Pick the current state for this feature.
+     * @param {number[]} options - options value used by this function
+     * @param {number} previousValue - previousValue value used by this function
+     * @returns {number} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const pick = (options: number[], previousValue?: number): number => {
         const choices = options.filter(value => value !== previousValue);
         const pool = choices.length ? choices : options;
         return pool[Math.min(pool.length - 1, Math.max(0, Math.floor(random() * pool.length)))];
     };
-    const range = (first: number, last: number, step: number) =>
+        /*
+     * DOCU: Handle range behavior for this feature.
+     * @param {number} first - first value used by this function
+     * @param {number} last - last value used by this function
+     * @param {number} step - step value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const range = (first: number, last: number, step: number) =>
         Array.from({
             length: Math.floor((last - first) / step) + 1
         }, (_, index) => first + index * step);
@@ -32,7 +62,18 @@ export function randomChallenge(previous?: KitchenChallenge, random: () => numbe
     for (let index = 0; index < 3; index++) {
         chopTargets.push(pick(targets, index === 0 ? previous?.chopTargets[0] : chopTargets[index - 1]));
     }
-    const sequence = (minLength: number, maxLength: number, previousOrder?: number[]): number[] => {
+        /*
+     * DOCU: Handle sequence behavior for this feature.
+     * @param {number} minLength - minLength value used by this function
+     * @param {number} maxLength - maxLength value used by this function
+     * @param {number[]} previousOrder - previousOrder value used by this function
+     * @returns {number[]} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const sequence = (minLength: number, maxLength: number, previousOrder?: number[]): number[] => {
         const length = pick(range(minLength, maxLength, 1), previousOrder?.length);
         const result: number[] = [];
         for (let index = 0; index < length; index++) {

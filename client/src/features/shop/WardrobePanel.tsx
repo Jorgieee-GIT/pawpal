@@ -17,6 +17,14 @@ type Props = {
     busy: boolean;
 };
 
+/*
+ * DOCU: Render the wardrobe panel interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function WardrobePanel({ pet, execute, busy }: Props) {
     return (
         <section className="panel">
@@ -33,16 +41,7 @@ export default function WardrobePanel({ pet, execute, busy }: Props) {
                                 (ITEM_LEVEL_REQUIREMENTS[b[0]] || 1) || a[3] - b[3]
                     )
                     .map(([id, , , price]) => (
-                        <div
-                            className={
-                                "product " +
-                                (!pet.owned_breeds.includes(id) &&
-                                pet.level < (ITEM_LEVEL_REQUIREMENTS[id] || 0)
-                                    ? "paw-level-locked"
-                                    : "")
-                            }
-                            key={id}
-                        >
+                        <div className={ "product " + (!pet.owned_breeds.includes(id) && pet.level < (ITEM_LEVEL_REQUIREMENTS[id] || 0) ? "paw-level-locked" : "")} key={id}>
                             <span>
                                 <PetArt species={pet.species} breed={id} cosmetic="none" />
                             </span>
@@ -64,8 +63,8 @@ export default function WardrobePanel({ pet, execute, busy }: Props) {
                                 {pet.owned_breeds.includes(id)
                                     ? "Unlocked ✓"
                                     : pet.level < (ITEM_LEVEL_REQUIREMENTS[id] || 0)
-                                      ? `Unlocks at Level ${ITEM_LEVEL_REQUIREMENTS[id]}`
-                                      : `${price} coins`}
+                                        ? `Unlocks at Level ${ITEM_LEVEL_REQUIREMENTS[id]}`
+                                        : `${price} coins`}
                             </small>
                             {!pet.owned_breeds.includes(id) &&
                                 pet.level < (ITEM_LEVEL_REQUIREMENTS[id] || 0) && (
@@ -94,8 +93,8 @@ export default function WardrobePanel({ pet, execute, busy }: Props) {
                                 {pet.breed === id
                                     ? "Use default"
                                     : pet.owned_breeds.includes(id)
-                                      ? "Equip"
-                                      : `Buy · ${price}  coins`}
+                                        ? "Equip"
+                                        : `Buy · ${price}  coins`}
                             </button>
                         </div>
                     ))}

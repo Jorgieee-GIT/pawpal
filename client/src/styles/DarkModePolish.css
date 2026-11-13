@@ -1,5 +1,5 @@
 /* Dark mode contrast pass. Keep the existing plum and rose palette, while
-   lifting small labels and giving disabled states enough separation. */
+    lifting small labels and giving disabled states enough separation. */
 .paw-dark {
     --paw-dark-text: #fff4fa;
     --paw-dark-muted: #e1cfdd;
@@ -109,7 +109,7 @@
 }
 
 /* Pet nameplates sit over the room illustration, so give them their own dark
-   translucent surface instead of inheriting pale foreground text. */
+    translucent surface instead of inheriting pale foreground text. */
 .paw-dark .living-room .nameplate {
     background: rgba(45, 34, 49, .94) !important;
     color: #fff4fa !important;

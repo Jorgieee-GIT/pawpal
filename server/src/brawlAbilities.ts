@@ -235,6 +235,16 @@ export type PassiveKind = "comeback" | "guardboost" | "focusheal" | "stride" | "
 export type BattleRole = "first" | "last";
 export type RoleBonus = "quickhit" | "critical" | "breaker" | "spark" | "evasion" | "revenge" | "fortify" | "renew" | "counter" | "adaptive" | "refund" | "shieldstrike";
 export type SkillTrigger = "faster" | "enemy_healthy" | "enemy_shielded" | "wounded" | "low_shield" | "low_focus" | "has_shield" | "shield_created";
+/*
+ * DOCU: Get combat order role for this feature.
+ * @param {number} actorSpeed - actorSpeed value used by this function
+ * @param {number} targetSpeed - targetSpeed value used by this function
+ * @returns {BattleRole | "tied"} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function getCombatOrderRole(actorSpeed: number, targetSpeed: number): BattleRole | "tied" {
     return actorSpeed > targetSpeed ? "first" : actorSpeed < targetSpeed ? "last" : "tied";
 }
@@ -454,7 +464,24 @@ const PASSIVE_TITLES: Record<PassiveKind, string> = {
     steady: "Fortitude",
     resolve: "Resolve"
 };
+/*
+ * DOCU: Handle pretty behavior for this feature.
+ * @param {string} name - name value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const pretty = (name: string) => name.replace(/_/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+/*
+ * DOCU: Get style for this feature.
+ * @param {string} breed - breed value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function getStyle(breed: string): number {
     let hash = 0;
     for (const char of breed) {
@@ -464,6 +491,16 @@ export function getStyle(breed: string): number {
 }
 // Use the same breed order as the shop's level gates: Classic at 0, then level 5, 10, ... 50.
 // Later ranks have a noticeable but limited advantage; counterplay and move decisions still matter.
+/*
+ * DOCU: Get breed progression for this feature.
+ * @param {string} species - species value used by this function
+ * @param {string} breed - breed value used by this function
+ * @returns {BreedProgression} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function getBreedProgression(species: string, breed: string): BreedProgression {
     const breeds = BREED_LIST[species] || BREED_LIST.cat;
     const rank = Math.max(0, breeds.indexOf(breed));
@@ -495,6 +532,16 @@ export function getBreedProgression(species: string, breed: string): BreedProgre
         }
     };
 }
+/*
+ * DOCU: Get combat kit for this feature.
+ * @param {string} species - species value used by this function
+ * @param {string} breed - breed value used by this function
+ * @returns {BattleKit} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function getCombatKit(species: string, breed: string): BattleKit {
     const speciesIds = Object.keys(BREED_LIST);
     const speciesIndex = Math.max(0, speciesIds.indexOf(species));
@@ -555,6 +602,15 @@ export function getCombatKit(species: string, breed: string): BattleKit {
 // Friendly explanations are served by the API and reused everywhere: the
 // battle buttons, the live help window, the complete roster and Develop tab.
 // Keep numbers tied to the same strength values used by the combat resolver.
+/*
+ * DOCU: Describe special for this feature.
+ * @param {BattleSpecial} skill - skill value used by this function
+ * @returns {string} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function describeSpecial(skill: BattleSpecial): string {
     const n = skill.strength;
     const effects: Record<SpecialKind, string> = {
@@ -611,6 +667,15 @@ function describeSpecial(skill: BattleSpecial): string {
     };
     return `NORMAL EFFECT: ${effects[skill.kind]}\nEXTRA BONUS: If ${conditions[skill.trigger]}, ${bonuses[skill.bonus]}. Otherwise the normal effect still works.`;
 }
+/*
+ * DOCU: Describe passive for this feature.
+ * @param {BattlePassive} passive - passive value used by this function
+ * @returns {string} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function describePassive(passive: BattlePassive): string {
     const n = passive.strength;
     const descriptions: Record<PassiveKind, string> = {
@@ -652,6 +717,16 @@ export const BRAWL_RULES = {
     pressureGrowth: 3
 };
 
+/*
+ * DOCU: Guard shield for streak for this feature.
+ * @param {number} streak - streak value used by this function
+ * @param {BattlePassive} passive - passive value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function guardShieldForStreak(streak: number, passive?: BattlePassive): number {
     const bonus = passive?.kind === "guardboost" ? passive.strength + 2 : 0;
     if (streak >= 2) {
@@ -662,6 +737,13 @@ export function guardShieldForStreak(streak: number, passive?: BattlePassive): n
     }
     return BRAWL_RULES.guardShield + bonus;
 }
+/*
+ * DOCU: Get public combat catalog for this feature.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function getPublicCombatCatalog() {
     const kits: Record<string, Record<string, BattleKit>> = {};
     for (const [species, breeds] of Object.entries(BREED_LIST)) {

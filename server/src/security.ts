@@ -23,6 +23,14 @@ const MAX_BUCKETS = 50000;
 
 // Render routes public traffic through Cloudflare, which supplies this header.
 // Fall back to Express's IP for local development and non-Cloudflare hosts.
+/*
+ * DOCU: Handle client ip behavior for this feature.
+ * @param {RequestLike} req - Express request containing route input and session data
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function clientIp(req: RequestLike) {
     const forwardedIp = req.headers["cf-connecting-ip"];
     const cloudflareIp = Array.isArray(forwardedIp) ? forwardedIp[0] : forwardedIp;
@@ -33,6 +41,14 @@ export function clientIp(req: RequestLike) {
     return req.ip || req.socket?.remoteAddress || "unknown";
 }
 
+/*
+ * DOCU: Create rate limiter for this feature.
+ * @param {RateLimitOptions} options - options value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function createRateLimiter(options: RateLimitOptions) {
     const buckets = new Map<string, Bucket>();
     let lastCleanup = 0;
@@ -76,6 +92,15 @@ export function createRateLimiter(options: RateLimitOptions) {
     };
 }
 
+/*
+ * DOCU: Handle log safe error behavior for this feature.
+ * @param {string} label - label value used by this function
+ * @param {unknown} error - Error details to handle or display
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function logSafeError(label: string, error: unknown) {
     const code = (error as { code?: unknown } | null)?.code;
     const safeCode = typeof code === "string" && /^[A-Z0-9_]{1,64}$/.test(code) ? code : "UNKNOWN";

@@ -128,6 +128,17 @@ export const pawMailCatalog = [
 ] as const;
 export const pawMailDesigns = pawMailCatalog.map(design => design.id);
 
+/*
+ * DOCU: Can purchase envelope for this feature.
+ * @param {string} designId - designId value used by this function
+ * @param {number} level - level value used by this function
+ * @param {number} coins - coins value used by this function
+ * @param {string[]} owned - owned value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function canPurchaseEnvelope(designId: string, level: number, coins: number, owned: string[] = []) {
     const design = pawMailCatalog.find(item => item.id === designId);
     return Boolean(design && design.id !== "classic" && level >= design.level && coins >= design.price && !owned.includes(designId));

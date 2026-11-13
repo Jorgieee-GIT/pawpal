@@ -158,6 +158,14 @@ const DEFAULT_POSITIONS: [
     [13, 45]
 ];
 
+/*
+ * DOCU: Initial layout for this feature.
+ * @param {string} room - room value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function initialLayout(room: string) {
     return DEFAULT_ROOM_FURNITURE[room].map((id, i) => ({
         id,

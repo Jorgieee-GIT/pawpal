@@ -272,7 +272,7 @@
     color: #f0afce;
 }
 /* Old Kitchen tab CSS styled *every* span like a white number badge.
-   Only the Pantry quantity should receive a capsule background. */
+    Only the Pantry quantity should receive a capsule background. */
 .paw-kitchen.kitchen-revamp .kitchen-shelf-tabs.k3-tabs button .k3-tab-label {
     display: block;
     min-width: 0;

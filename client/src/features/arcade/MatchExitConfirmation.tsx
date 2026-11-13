@@ -12,6 +12,14 @@ type MatchExitConfirmationProps = {
 };
 
 /** Reusable exit guard for an active multiplayer match. The server determines the result. */
+/*
+ * DOCU: Render the match exit confirmation interface and provide its feature behavior.
+ * @param {MatchExitConfirmationProps} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function MatchExitConfirmation({
     gameName,
     description,
@@ -24,34 +32,14 @@ export default function MatchExitConfirmation({
     useEffect(() => { confirmRef.current?.focus(); }, []);
     // Portal escapes the fixed-height battle window and its clipping/stacking context.
     return createPortal(
-        <div
-            className="paw-brawl-confirm-backdrop"
-            role="presentation"
-            onMouseDown={event => {
-                if (event.target === event.currentTarget && !busy) {
-                    onCancel();
-                }
-            }}
-        >
-            <section
-                className="paw-brawl-confirm-dialog"
-                role="alertdialog"
-                aria-modal="true"
-                aria-labelledby="paw-match-exit-title"
-                aria-describedby="paw-match-exit-description"
-            >
+        <div className="paw-brawl-confirm-backdrop" role="presentation" onMouseDown={event => {if (event.target ===event.currentTarget && !busy) {onCancel();}}}>
+            <section className="paw-brawl-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="paw-match-exit-title" aria-describedby="paw-match-exit-description">
                 <div className="paw-modal-top paw-match-confirm-heading">
                     <div>
                         <h3 id="paw-match-exit-title">Forfeit {gameName}?</h3>
                         <p className="paw-modal-subtitle">This will immediately end your match.</p>
                     </div>
-                    <button
-                        type="button"
-                        className="paw-modal-close"
-                        aria-label="Keep playing"
-                        onClick={onCancel}
-                        disabled={busy}
-                    >
+                    <button type="button" className="paw-modal-close" aria-label="Keep playing" onClick={onCancel} disabled={busy}>
                         <X size={19} />
                     </button>
                 </div>

@@ -8,11 +8,27 @@ import { logSafeError } from "./security.js";
 export const fields =
     "id,owner_id,name,species,breed,color,owned_colors,owned_breeds,hunger,happiness,energy,cleanliness,coins,xp,level,food,toys,owned_cosmetics,equipped_cosmetic,equipped_outfit,room_theme,active_room,unlocked_rooms,room_layouts,owned_items,placed_items,garden,last_daily,daily_claimed_at,last_game_at,created_at,updated_at";
 
+/*
+ * DOCU: Keep a numeric value within its allowed minimum and maximum.
+ * @param {number} n - n value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
 
 // Keep the decay clock separate from updated_at: purchases, care actions and
 // profile refreshes must not restart the countdown. Store fractional progress
 // in the existing garden JSON so no database migration is necessary.
+/*
+ * DOCU: Apply offline stat decay to a pet based on elapsed time.
+ * @param {any} p - p value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function applyPetDecay(p: any) {
     const now = Date.now();
     const stored = Number(p.garden?._decay_at);
@@ -26,7 +42,16 @@ export function applyPetDecay(p: any) {
     const carry = {
         ...(p.garden?._decay_carry || {})
     };
-    const take = (name: string, amount: number) => {
+        /*
+     * DOCU: Handle take behavior for this feature.
+     * @param {string} name - name value used by this function
+     * @param {number} amount - amount value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const take = (name: string, amount: number) => {
         const total = Math.max(0, Number(carry[name] || 0)) + amount;
         const whole = Math.floor(total);
         carry[name] = total - whole;
@@ -56,6 +81,15 @@ export function applyPetDecay(p: any) {
 
 // Waking is idempotent. Complete elapsed sleep recovery first, then stop it.
 // The row lock makes concurrent activities and sleep toggles consistent.
+/*
+ * DOCU: Wake a sleeping pet before an activity that requires it.
+ * @param {string} userId - userId value used by this function
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function wakePetForActivity(userId: string) {
     const client = await pool.connect();
     let changed = false;
@@ -101,6 +135,16 @@ export async function wakePetForActivity(userId: string) {
 
 // Browsing, shopping, changing outfits, decorating, social actions, and claiming rewards
 // do not interrupt naps. Only activities that require an awake pet wake it.
+/*
+ * DOCU: Is wake activity for this feature.
+ * @param {string} path - path value used by this function
+ * @param {any} body - body value used by this function
+ * @param {string} method - method value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function isWakeActivity(path: string, body: any, method: string) {
     if (!["POST", "PUT", "PATCH", "DELETE"].includes(method)) {
         return false;
@@ -125,6 +169,17 @@ export function isWakeActivity(path: string, body: any, method: string) {
     return false;
 }
 
+/*
+ * DOCU: Apply a pet mutation inside a database transaction.
+ * @param {any} req - Express request containing route input and session data
+ * @param {any} res - Express response used to send the route result
+ * @param {(p: any) => string | Promise<string>} fn - fn value used by this function
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function mutate(req: any, res: any, fn: (p: any) => string | Promise<string>) {
     const c = await pool.connect();
     try {
@@ -147,20 +202,20 @@ export async function mutate(req: any, res: any, fn: (p: any) => string | Promis
         const metric =
             req.path === "/api/care"
                 ? (
-                      {
-                          feed: "feed",
-                          play: "play",
-                          sleep: "sleep",
-                          bathe: "bathe",
-                          scrub: "bathe",
-                          pet_stroke: "cuddle",
-                          cuddle: "cuddle",
-                          food: "buy",
-                          toy: "buy"
-                      } as Record<string, string>
-                  )[action]
+                        {
+                            feed: "feed",
+                            play: "play",
+                            sleep: "sleep",
+                            bathe: "bathe",
+                            scrub: "bathe",
+                            pet_stroke: "cuddle",
+                            cuddle: "cuddle",
+                            food: "buy",
+                            toy: "buy"
+                        } as Record<string, string>
+                    )[action]
                 : req.path === "/api/garden"
-                  ? (
+                    ? (
                         {
                             plant: "plant",
                             harvest: "harvest",
@@ -169,13 +224,13 @@ export async function mutate(req: any, res: any, fn: (p: any) => string | Promis
                             buy_water: "buy"
                         } as Record<string, string>
                     )[action]
-                  : req.path === "/api/item" && req.body?.mode === "buy"
+                    : req.path === "/api/item" && req.body?.mode === "buy"
                     ? "buy"
                     : req.path === "/api/item" &&
                         req.body?.mode === "equip" &&
                         catalog[req.body?.item]?.type === "theme"
-                      ? "atmosphere"
-                      : req.path === "/api/item" && req.body?.mode === "equip"
+                        ? "atmosphere"
+                        : req.path === "/api/item" && req.body?.mode === "equip"
                         ? "outfit"
                         : null;
         const failed =
@@ -260,8 +315,8 @@ export async function mutate(req: any, res: any, fn: (p: any) => string | Promis
             message,
             ...(req.gardenReveal
                 ? {
-                      gardenReveal: req.gardenReveal
-                  }
+                        gardenReveal: req.gardenReveal
+                    }
                 : {})
         });
     } catch (e) {

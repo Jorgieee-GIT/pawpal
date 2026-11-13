@@ -6,6 +6,14 @@ type SettingsArtworkProps = SVGProps<SVGSVGElement> & {
     choice: AppearanceChoice;
 };
 
+/*
+ * DOCU: Render the settings artwork interface and provide its feature behavior.
+ * @param {SettingsArtworkProps} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function SettingsArtwork({ choice, ...props }: SettingsArtworkProps) {
     const isNight = choice === "dark";
     const isSystem = choice === "system";

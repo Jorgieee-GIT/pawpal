@@ -12,6 +12,14 @@ type Props = {
     execute: (path: string, body?: unknown, method?: string) => Promise<any>;
 };
 
+/*
+ * DOCU: Render the market panel interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function MarketPanel({ marketRoom, setMarketRoom, pet, busy, execute }: Props) {
     return (
         <section className="panel">
@@ -19,12 +27,7 @@ export default function MarketPanel({ marketRoom, setMarketRoom, pet, busy, exec
             <SectionHeading title="Market" Icon={ShoppingBag} />
             <div className="paw-market-furniture">
                 <h3>Furniture Shop</h3>
-                <div
-                    className="paw-market-tabs-scroll"
-                    role="region"
-                    aria-label="Furniture rooms"
-                    tabIndex={0}
-                >
+                <div className="paw-market-tabs-scroll" role="region" aria-label="Furniture rooms" tabIndex={0}>
                     <div className="paw-market-tabs">
                         {(
                             [
@@ -71,10 +74,7 @@ export default function MarketPanel({ marketRoom, setMarketRoom, pet, busy, exec
                             const requiredLevel = FURNITURE_UNLOCK_LEVELS[id] || 1;
                             const locked = !owned && pet.level < requiredLevel;
                             return (
-                                <div
-                                    className={"product " + (locked ? "paw-level-locked" : "")}
-                                    key={id}
-                                >
+                                <div className={"product " + (locked ? "paw-level-locked" : "")} key={id}>
                                     <span className="paw-furniture-market-art">
                                         <FurnitureArt kind={f.kind} itemId={id} />
                                     </span>
@@ -83,8 +83,8 @@ export default function MarketPanel({ marketRoom, setMarketRoom, pet, busy, exec
                                         {owned
                                             ? "Owned ✓"
                                             : locked
-                                              ? `Unlocks at Level ${requiredLevel}`
-                                              : f.price.toLocaleString() + " coins"}
+                                                ? `Unlocks at Level ${requiredLevel}`
+                                                : f.price.toLocaleString() + " coins"}
                                     </small>
                                     {locked && (
                                         <div className="paw-level-overlay">
@@ -111,8 +111,8 @@ export default function MarketPanel({ marketRoom, setMarketRoom, pet, busy, exec
                                                 ? "Store"
                                                 : "Place in room"
                                             : locked
-                                              ? "Locked"
-                                              : "Buy · " + f.price.toLocaleString() + " coins"}
+                                                ? "Locked"
+                                                : "Buy · " + f.price.toLocaleString() + " coins"}
                                     </button>
                                 </div>
                             );

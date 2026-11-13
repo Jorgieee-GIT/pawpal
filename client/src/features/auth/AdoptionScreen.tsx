@@ -14,6 +14,14 @@ type Props = {
     busy: boolean;
 };
 
+/*
+ * DOCU: Render the adoption screen interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function AdoptionScreen({
     oldPetId,
     execute,
@@ -47,11 +55,7 @@ export default function AdoptionScreen({
             )}
             <div className="species-grid">
                 {species.map((s) => (
-                    <button
-                        key={s}
-                        className={choice === s ? "chosen" : ""}
-                        onClick={() => setChoice(s)}
-                    >
+                    <button key={s} className={choice === s ? "chosen" : ""} onClick={() => setChoice(s)}>
                         <span className="paw-adoption-pet-art">
                             <PetArt species={s} />
                         </span>

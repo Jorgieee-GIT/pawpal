@@ -1,8 +1,8 @@
 /**
- * Server-route smoke tests using a tiny transactional PostgreSQL stand-in.
- * Verify the actual create/join and forfeit HTTP handlers. These do NOT replace
- * live Neon tests, but catch regressions like using input.data after z.parse().
- */
+* Server-route smoke tests using a tiny transactional PostgreSQL stand-in.
+* Verify the actual create/join and forfeit HTTP handlers. These do NOT replace
+* live Neon tests, but catch regressions like using input.data after z.parse().
+*/
 import assert from "node:assert/strict";
 import express from "express";
 

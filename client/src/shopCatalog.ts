@@ -375,6 +375,15 @@ export const wildSpeciesStore = [
     ["ambystoma_dumerilii", "paw", "breed", 41825]
 ] as const;
 
+/*
+ * DOCU: Handle breed for behavior for this feature.
+ * @param {string} species - species value used by this function
+ * @param {string} breed - breed value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export const breedFor = (species: string, breed: string) =>
     [...(breedsBySpecies[species] || []), ...(addedBreedsBySpecies[species] || [])].includes(
         breed

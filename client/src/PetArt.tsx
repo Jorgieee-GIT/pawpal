@@ -21,6 +21,16 @@ const palette: Record<string, [string, string, string]> = {
     penguin: ["#505866", "#fff8ef", "#f0aa5b"],
     axolotl: ["#f2afc6", "#ffe4ef", "#d78aa8"]
 };
+/*
+ * DOCU: Handle fur behavior for this feature.
+ * @param {string} sp - sp value used by this function
+ * @param {string} b - b value used by this function
+ * @returns {[string, string, string]} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const fur = (sp: string, b: string): [string, string, string] => {
     const wildColors: Record<string, [string, string, string]> = {
         eurasian_lynx: ["#bd986e", "#f6dfbc", "#604c43"],
@@ -200,6 +210,16 @@ const breedSignatures: Record<string, [string, string, string]> = {
     "ambystoma_dumerilii": ["spots", "#bba09a", "#514e59"],
 };
 
+/*
+ * DOCU: Render the breed signature interface and provide its feature behavior.
+ * @param {{
+    breed: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function BreedSignature({ breed }: {
     breed: string
 }) {
@@ -363,6 +383,14 @@ function BreedSignature({ breed }: {
     }
 }
 
+/*
+ * DOCU: Render the pet art interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function PetArt({ species: sp, breed = "classic", cosmetic = "none", outfit, sleeping = false }: Props) {
     const [main, secondary, accent] = fur(sp, breed);
     const line = {
@@ -370,7 +398,19 @@ function PetArt({ species: sp, breed = "classic", cosmetic = "none", outfit, sle
         strokeWidth: 2.7,
         strokeLinejoin: "round" as const
     };
-    const ear = (x: number, y: number, rx: number, ry: number, fill = main) => <ellipse cx={x} cy={y} rx={rx} ry={ry} fill={fill} {...line} />;
+        /*
+     * DOCU: Handle ear behavior for this feature.
+     * @param {number} x - x value used by this function
+     * @param {number} y - y value used by this function
+     * @param {number} rx - rx value used by this function
+     * @param {number} ry - ry value used by this function
+     * @param {unknown} fill - fill value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const ear = (x: number, y: number, rx: number, ry: number, fill = main) => <ellipse cx={x} cy={y} rx={rx} ry={ry} fill={fill} {...line} />;
     const isRed = sp === "panda" && (breed === "red_panda" || breed === "red_panda_cub");
     let ears: ReactNode = null;
     if (sp === "cat" || isRed) {
@@ -650,12 +690,7 @@ function PetArt({ species: sp, breed = "classic", cosmetic = "none", outfit, sle
             <path d="M66 23l19 3" stroke="#fff6df" strokeWidth="4" />
         </g>
     };
-    return <svg
-        viewBox="0 0 150 150"
-        className="pet-svg"
-        role="img"
-        aria-label={`${breed === "classic" ? "classic" : breed.replaceAll("_", " ")} ${sp} wearing ${cosmetic === "none" ? "no accessory" : cosmetic}`}
-    >
+    return <svg viewBox="0 0 150 150" className="pet-svg" role="img" aria-label={`${breed === "classic" ? "classic" : breed.replaceAll("_", " ")} ${sp} wearing ${cosmetic === "none" ? "no accessory" : cosmetic}`}>
         <ellipse cx="75" cy="140" rx="43" ry="6" fill="#78525f" opacity=".12" />
         {sp === "fox" ? <g>
             <path d="M105 119Q151 123 141 60Q131 85 110 91Q137 85 129 105Z" fill={main} {...line} />
@@ -693,6 +728,18 @@ function PetArt({ species: sp, breed = "classic", cosmetic = "none", outfit, sle
 }
 
 
+/*
+ * DOCU: Render the outfit artwork interface and provide its feature behavior.
+ * @param {{
+    outfit: Outfit;
+    legacy: Record<string, ReactNode>;
+    layer: "body" | "front"
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function OutfitArtwork({ outfit, legacy, layer }: {
     outfit: Outfit;
     legacy: Record<string, ReactNode>;
@@ -703,7 +750,17 @@ function OutfitArtwork({ outfit, legacy, layer }: {
         strokeWidth: 2.3,
         strokeLinejoin: "round" as const
     };
-    const item = (id: string | null, slot: string): ReactNode => {
+        /*
+     * DOCU: Handle item behavior for this feature.
+     * @param {string | null} id - Identifier of the record or item being handled
+     * @param {string} slot - slot value used by this function
+     * @returns {ReactNode} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const item = (id: string | null, slot: string): ReactNode => {
         if (!id) {
             return null;
         }

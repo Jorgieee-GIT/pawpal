@@ -1,17 +1,22 @@
 /** A tiny garden diorama. All unrevealed flowers share the same growing stages. */
 export type GardenGrowthStage = "empty" | "seed" | "sprout" | "bud" | "ready" | "locked";
 
+/*
+ * DOCU: Render the garden bed art interface and provide its feature behavior.
+ * @param {{
+    stage: GardenGrowthStage
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function GardenBedArt({ stage }: {
     stage: GardenGrowthStage
 }) {
     const growing = stage !== "empty" && stage !== "locked";
     return (
-        <svg
-            className={`paw-garden-bed-svg stage-${stage}`}
-            viewBox="50 0 150 120"
-            role="img"
-            aria-label={stage === "ready" ? "A mystery flower ready to reveal" : stage === "locked" ? "A fenced, locked soil spot" : stage === "empty" ? "An empty garden soil spot" : "A growing mystery flower"}
-        >
+        <svg className={`paw-garden-bed-svg stage-${stage}`} viewBox="50 0 150 120" role="img" aria-label={stage === "ready" ? "A mystery flower ready to reveal" : stage === "locked" ? "A fenced, locked soil spot" : stage === "empty" ? "An empty garden soil spot" : "A growing mystery flower"}>
             {stage === "empty" && <g>
                 <path d="M94 109q26-12 54-3M106 115q22-8 45-2" stroke="#bd9279" strokeWidth="3" strokeLinecap="round" fill="none" />
                 <path d="M120 96l5-9 5 9" stroke="#d4ae8a" strokeWidth="2" fill="none" />

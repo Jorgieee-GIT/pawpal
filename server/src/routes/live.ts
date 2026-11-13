@@ -3,6 +3,14 @@ import { updatePresence } from "../adminConsole.js";
 import { auth } from "../auth.js";
 import { liveClients } from "../live.js";
 
+/*
+ * DOCU: Register live routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerLiveRoutes(app: Express) {
     app.get("/api/live", auth, (req: any, res: any) => {
         const userId = String(req.userId);

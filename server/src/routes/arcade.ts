@@ -8,6 +8,14 @@ import { recordMissionEvent } from "../missions.js";
 import { addedBreedsBySpecies, breedsBySpecies, catalog } from "../petCatalog.js";
 import { clamp, mutate } from "../petState.js";
 
+/*
+ * DOCU: Register arcade routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerArcadeRoutes(app: Express) {
     // Paw Claw: prize selection is always server-side, never trusted from the browser.
     app.post("/api/claw/play", auth, handle(async (req, res) => {

@@ -1,11 +1,11 @@
 /**
- * Paw Run's shared perspective geometry.
- *
- * The vehicle's front bumper is anchored to its lane at its current road depth.
- * Side-lane cars use manually tuned ±2-degree angles while retaining their
- * three-lane road positions and perspective growth.
- * Cars continue beyond the bottom of the canvas before they are discarded.
- */
+* Paw Run's shared perspective geometry.
+*
+* The vehicle's front bumper is anchored to its lane at its current road depth.
+* Side-lane cars use manually tuned ±2-degree angles while retaining their
+* three-lane road positions and perspective growth.
+* Cars continue beyond the bottom of the canvas before they are discarded.
+*/
 export const ROAD_HORIZON = 93;
 export const ROAD_BOTTOM = 340;
 export const ROAD_CENTER = 320;
@@ -19,6 +19,15 @@ const PROJECTION_POWER = 1.75;
 // Keep the original perspective curve; scale each vehicle equally at every depth.
 export const VEHICLE_SIZE_MULTIPLIER = 1.75;
 
+/*
+ * DOCU: Handle road half width behavior for this feature.
+ * @param {number} y - y value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function roadHalfWidth(y: number): number {
     // Deliberately don't clamp at the lower canvas edge. A vehicle must be able
     // to drive *past* the player and leave the scene, not freeze at y=340.
@@ -26,10 +35,29 @@ export function roadHalfWidth(y: number): number {
     return ROAD_FAR_HALF_WIDTH + progress * (ROAD_NEAR_HALF_WIDTH - ROAD_FAR_HALF_WIDTH);
 }
 
+/*
+ * DOCU: Handle lane x behavior for this feature.
+ * @param {number} lane - lane value used by this function
+ * @param {number} y - y value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function laneX(lane: number, y: number): number {
     return ROAD_CENTER + (lane - 1) * roadHalfWidth(y) * (2 / 3);
 }
 
+/*
+ * DOCU: Handle road y behavior for this feature.
+ * @param {number} depth - depth value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function roadY(depth: number): number {
     return ROAD_HORIZON + Math.pow(Math.max(0, depth), PROJECTION_POWER) * ROAD_HEIGHT;
 }
@@ -39,6 +67,15 @@ export const PLAYER_PASS_DEPTH = Math.pow(
     1 / PROJECTION_POWER
 );
 
+/*
+ * DOCU: Handle traffic projection behavior for this feature.
+ * @param {number} lane - lane value used by this function
+ * @param {number} depth - depth value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function trafficProjection(lane: number, depth: number) {
     const y = roadY(depth);
     const laneWidth = roadHalfWidth(y) * (2 / 3);
@@ -61,6 +98,16 @@ export function trafficProjection(lane: number, depth: number) {
     };
 }
 
+/*
+ * DOCU: Handle traffic is visible behavior for this feature.
+ * @param {number} lane - lane value used by this function
+ * @param {number} depth - depth value used by this function
+ * @returns {boolean} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function trafficIsVisible(lane: number, depth: number): boolean {
     const vehicle = trafficProjection(lane, depth);
     // Once even the rotated roof is below the screen, safely remove the car.
@@ -70,9 +117,18 @@ export function trafficIsVisible(lane: number, depth: number): boolean {
 }
 
 /**
- * Build one row of Paw Run traffic. A double-car row always occupies exactly
- * two different lanes, leaving the third lane available for a safe dodge.
- * Pass a seeded random function during tests; gameplay uses Math.random.
+* Build one row of Paw Run traffic. A double-car row always occupies exactly
+* two different lanes, leaving the third lane available for a safe dodge.
+* Pass a seeded random function during tests; gameplay uses Math.random.
+*/
+/*
+ * DOCU: Handle traffic row lanes behavior for this feature.
+ * @param {() => number} random - random value used by this function
+ * @returns {number[]} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
  */
 export function trafficRowLanes(random: () => number = Math.random): number[] {
     const firstLane = Math.min(2, Math.floor(random() * 3));

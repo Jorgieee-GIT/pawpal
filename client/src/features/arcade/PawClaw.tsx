@@ -21,6 +21,20 @@ const odds = [
 const toys = ["cat", "bunny", "dog", "fox", "hamster", "panda", "penguin", "axolotl"];
 const positions = [9, 22, 35, 48, 61, 74, 86, 95];
 
+/*
+ * DOCU: Render the paw claw interface and provide its feature behavior.
+ * @param {{
+    pet: Pet;
+    onQuit: () => void;
+    onPlay: () => Promise<{
+        message?: string
+    } | undefined>;
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function PawClaw({
     pet,
     onQuit,
@@ -69,7 +83,15 @@ export default function PawClaw({
             return;
         }
         let startTime: number | null = null;
-        const animate = (timestamp: number) => {
+                /*
+         * DOCU: Animate the current state for this feature.
+         * @param {number} timestamp - timestamp value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const animate = (timestamp: number) => {
             if (startTime === null) {
                 startTime = timestamp;
             }
@@ -88,7 +110,15 @@ export default function PawClaw({
         };
     }, [phase, round]);
 
-    const sleep = (milliseconds: number) => new Promise<void>(resolve => {
+        /*
+     * DOCU: Handle sleep behavior for this feature.
+     * @param {number} milliseconds - milliseconds value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const sleep = (milliseconds: number) => new Promise<void>(resolve => {
         const timeout = window.setTimeout(() => {
             timersRef.current = timersRef.current.filter(timer => timer !== timeout);
             resolve();
@@ -96,7 +126,14 @@ export default function PawClaw({
         timersRef.current.push(timeout);
     });
 
-    const start = () => {
+        /*
+     * DOCU: Start the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const start = () => {
         if (busy || Date.now() < cooldownUntil) {
             return;
         }
@@ -109,7 +146,14 @@ export default function PawClaw({
         setPhase("moving");
     };
 
-    async function drop() {
+        /*
+     * DOCU: Drop the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function drop() {
         if (phase !== "moving" || busy || Date.now() < cooldownUntil) {
             return;
         }
@@ -168,7 +212,14 @@ export default function PawClaw({
         setBusy(false);
     }
 
-    const restart = () => {
+        /*
+     * DOCU: Restart the current state for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const restart = () => {
         if (Date.now() < cooldownUntil) {
             return;
         }
@@ -191,21 +242,13 @@ export default function PawClaw({
                         <X size={20} />
                     </button>
                 </header>
-                <div className="paw-claw-machine" style={{
-                    "--claw-x": "50%"
-                } as CSSProperties}>
+                <div className="paw-claw-machine" style={{ "--claw-x": "50%"} as CSSProperties}>
                     <div className="paw-claw-top">
                         <span>PAW PAL</span>
                         <span>♡ CLAW ♡</span>
                     </div>
                     <div className="paw-claw-glass">
-                        <button
-                            className="paw-arcade-info paw-claw-info-button"
-                            type="button"
-                            onClick={() => setOddsOpen(true)}
-                            aria-label="Prize possibilities and chances"
-                            title="Prize possibilities and chances"
-                        >!</button>
+                        <button className="paw-arcade-info paw-claw-info-button" type="button" onClick={() => setOddsOpen(true)} aria-label="Prize possibilities and chances" title="Prize possibilities and chances">!</button>
                         <div className="paw-claw-rail" />
                         <div ref={armRef} className={`paw-claw-arm ${phase === "dropping" ? "dropping" : phase === "lifting" ? "lifting" : ""}`}>
                             <div className="paw-claw-wire" />
@@ -218,13 +261,7 @@ export default function PawClaw({
                         </div>
                         <div className="paw-claw-pile" key={round}>
                             {toys.map((species, index) => (
-                                <div
-                                    className={`paw-claw-plush paw-claw-plush-${index}${grabbed === index && phase === "lifting" ? " caught" : ""}`}
-                                    key={species}
-                                    style={{
-                                        "--tilt": `${index % 2 === 0 ? -10 : 12}deg`
-                                    } as CSSProperties}
-                                >
+                                <div className={`paw-claw-plush paw-claw-plush-${index}${grabbed === index && phase === "lifting" ? " caught" : ""}`} key={species} style={{ "--tilt": `${index % 2 === 0 ? -10 : 12}deg`} as CSSProperties}>
                                     <PetArt species={species} />
                                 </div>
                             ))}
@@ -267,11 +304,7 @@ export default function PawClaw({
                 </div>
                 <small className="paw-claw-footnote">15-second reward cooldown</small>
                 {oddsOpen && (
-                    <div className="paw-modal-backdrop" onMouseDown={event => {
-                        if (event.target === event.currentTarget) {
-                            setOddsOpen(false);
-                        }
-                    }}>
+                    <div className="paw-modal-backdrop" onMouseDown={event => {if (event.target ===event.currentTarget) {setOddsOpen(false);}}}>
                         <section className="paw-modal" role="dialog" aria-modal="true" aria-label="Paw Claw prize chances">
                             <div className="paw-modal-top">
                                 <div>

@@ -23,6 +23,18 @@ type AdminUser = {
     level: number | null;
     coins: number | null
 };
+/*
+ * DOCU: Admin request for this feature.
+ * @param {string} path - path value used by this function
+ * @param {string} token - Authentication token used for the request
+ * @param {unknown} method - method value used by this function
+ * @param {object} body - body value used by this function
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 async function adminRequest(path: string, token: string, method = "GET", body?: object) {
     if (import.meta.env.PROD && !API) {
         throw Error("The API URL is missing. Set VITE_API_URL to your Render backend URL in Vercel, then redeploy the frontend.");
@@ -59,6 +71,13 @@ async function adminRequest(path: string, token: string, method = "GET", body?: 
     }
     return data;
 }
+/*
+ * DOCU: Render the admin interface and provide its feature behavior.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function Admin() {
     const [token, setToken] = useState(() => sessionStorage.getItem("pawpal-admin-token") || "");
     const [section, setSection] = useState<AdminSection>("overview");
@@ -74,7 +93,14 @@ export default function Admin() {
     const [shareLink, setShareLink] = useState<ResetLink | null>(null);
     const [resetId, setResetId] = useState<string | null>(null), [newPassword, setNewPassword] = useState("");
     const [busy, setBusy] = useState(false), [message, setMessage] = useState(""), [error, setError] = useState("");
-    const logout = () => {
+        /*
+     * DOCU: Handle logout behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const logout = () => {
         sessionStorage.removeItem("pawpal-admin-token");
         setToken("");
         setUsers([]);
@@ -83,7 +109,17 @@ export default function Admin() {
         setShareLink(null);
         setResetRequests([])
     };
-    async function load(t = token, q = search, p = page) {
+        /*
+     * DOCU: Load the feature data required by the current screen.
+     * @param {unknown} t - t value used by this function
+     * @param {unknown} q - q value used by this function
+     * @param {unknown} p - p value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function load(t = token, q = search, p = page) {
         try {
             const [u, o] = await Promise.all([adminRequest("/users?search=" + encodeURIComponent(q) + "&page=" + p, t), adminRequest("/overview", t)]);
             setUsers(u.users);
@@ -96,7 +132,15 @@ export default function Admin() {
             } setError((e as Error).message)
         }
     }
-    async function loadResetRequests(t = token) {
+        /*
+     * DOCU: Load reset requests for this feature.
+     * @param {unknown} t - t value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function loadResetRequests(t = token) {
         try {
             const result = await adminRequest("/password-reset/requests", t);
             setResetRequests(result.requests || []);
@@ -122,7 +166,15 @@ export default function Admin() {
         return () => window.clearInterval(refresh);
     }, [token]);
 
-    async function login(e: React.FormEvent) {
+        /*
+     * DOCU: Handle login behavior for this feature.
+     * @param {React.FormEvent} e - e value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function login(e: React.FormEvent) {
         e.preventDefault();
         setBusy(true);
         setError("");
@@ -140,7 +192,15 @@ export default function Admin() {
             setBusy(false)
         }
     }
-    async function reset(e: React.FormEvent) {
+        /*
+     * DOCU: Reset the current state for this feature.
+     * @param {React.FormEvent} e - e value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function reset(e: React.FormEvent) {
         e.preventDefault();
         if (!resetId) {
             return;
@@ -161,7 +221,15 @@ export default function Admin() {
             setBusy(false)
         }
     }
-    async function createLink(account: AdminUser) {
+        /*
+     * DOCU: Create link for this feature.
+     * @param {AdminUser} account - account value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function createLink(account: AdminUser) {
         setBusy(true);
         setError("");
         try {
@@ -174,7 +242,16 @@ export default function Admin() {
             setBusy(false);
         }
     }
-    async function decideRequest(id: string, decision: "approve" | "reject") {
+        /*
+     * DOCU: Decide request for this feature.
+     * @param {string} id - Identifier of the record or item being handled
+     * @param {"approve" | "reject"} decision - decision value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function decideRequest(id: string, decision: "approve" | "reject") {
         setBusy(true);
         setError("");
         try {
@@ -191,7 +268,15 @@ export default function Admin() {
             setBusy(false);
         }
     }
-    async function copyLink(destination: "local" | "production") {
+        /*
+     * DOCU: Copy link for this feature.
+     * @param {"local" | "production"} destination - destination value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function copyLink(destination: "local" | "production") {
         if (!shareLink) {
             return;
         }
@@ -209,7 +294,15 @@ export default function Admin() {
             setError("Copy was blocked. Select the link below and copy it manually.");
         }
     }
-    function viewRequests(username = "") {
+        /*
+     * DOCU: Handle view requests behavior for this feature.
+     * @param {unknown} username - username value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function viewRequests(username = "") {
         setSection("players");
         setRequestFilter(username);
         document.getElementById("admin-reset-inbox")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -256,8 +349,7 @@ export default function Admin() {
                     <nav className="admin-section-nav" aria-label="Admin sections">
                         {ADMIN_SECTIONS.map(item => {
                             const Icon = item.icon;
-                            return <button key={item.key} type="button" className={section === item.key ? "is-active" : ""}
-                                aria-current={section === item.key ? "page" : undefined} onClick={() => setSection(item.key)}>
+                            return <button key={item.key} type="button" className={section === item.key ? "is-active" : ""} aria-current={section === item.key ? "page" : undefined} onClick={() => setSection(item.key)}>
                                 <Icon size={16} />{item.label}{item.key === "players" && pendingRequests.length > 0 ? " (" + pendingRequests.length + ")" : ""}
                             </button>;
                         })}
@@ -409,11 +501,7 @@ export default function Admin() {
                 {message}
                 <button onClick={() => setMessage("")}>×</button>
             </div>}
-            {shareLink && <div className="admin-backdrop" onMouseDown={e => {
-                if (e.target === e.currentTarget) {
-                    setShareLink(null);
-                }
-            }}>
+            {shareLink && <div className="admin-backdrop" onMouseDown={e => {if (e.target ===e.currentTarget) {setShareLink(null);}}}>
                 <section className="admin-dialog admin-share-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-share-title">
                     <div className="paw-modal-top admin-reset-header">
                         <div>
@@ -448,12 +536,7 @@ export default function Admin() {
                     </div>
                 </section>
             </div>}
-            {resetId && <div className="admin-backdrop" onMouseDown={e => {
-                if (e.target === e.currentTarget) {
-                    setResetId(null)
-
-                }
-            }}>
+            {resetId && <div className="admin-backdrop" onMouseDown={e => {if (e.target ===e.currentTarget) {setResetId(null)}}}>
                 <form className="admin-dialog" onSubmit={reset}>
                     <div className="paw-modal-top admin-reset-header">
                         <div>

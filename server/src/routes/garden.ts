@@ -13,6 +13,14 @@ import {
 import { handle } from "../http.js";
 import { clamp, mutate } from "../petState.js";
 
+/*
+ * DOCU: Register garden routes for this feature.
+ * @param {Express} app - app value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerGardenRoutes(app: Express) {
     // Each plot has its own server-timed growth and its own saved rarity.
 
@@ -20,7 +28,15 @@ export function registerGardenRoutes(app: Express) {
 
     // Flower chances and rewards are defined in gardenRules.ts.
 
-    function gardenState(raw: any) {
+        /*
+     * DOCU: Handle garden state behavior for this feature.
+     * @param {any} raw - raw value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function gardenState(raw: any) {
         const g = raw || {};
         g.seeds = Number(g.seeds) || 0;
         g.flowers = Number(g.flowers) || 0;

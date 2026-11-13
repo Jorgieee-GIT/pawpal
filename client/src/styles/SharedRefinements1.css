@@ -1,5 +1,5 @@
 /* Batch 18: one compact button system across the site.
-   Deliberately exclude game boards, pet selectors, icon-only controls, and artwork tiles. */
+    Deliberately exclude game boards, pet selectors, icon-only controls, and artwork tiles. */
 :root {
     --paw-button-font: 12px;
     --paw-button-py: 8px;
@@ -1249,8 +1249,8 @@ html,body,button,a,input,textarea,select,[role="button"],[tabindex] {
     }
 }
 /* Batch 48: the old mobile `.nav-right span{display:none}` rule was also
-   hiding every notification's message, icon, and timestamp. Scope the fix
-   to the dropdown so its content is visible on small screens. */
+    hiding every notification's message, icon, and timestamp. Scope the fix
+    to the dropdown so its content is visible on small screens. */
 @media (max-width: 600px) {
     .nav .nav-right .paw-notifications-panel span {
         display: inline !important;

@@ -18,6 +18,14 @@ type Props = {
     onComplete: (score: number) => void;
 };
 
+/*
+ * DOCU: Render the rolling game interface and provide its feature behavior.
+ * @param {Omit<Props, "game">} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function RollingGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
     const [ridges, setRidges] = useState<number[]>([...challenge.rolling.ridges]);
     const [selected, setSelected] = useState(0);
@@ -30,7 +38,15 @@ function RollingGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
     const rollerRef = useRef<HTMLDivElement | null>(null);
     const completed = useRef(false);
 
-    function rollLane(lane: number) {
+        /*
+     * DOCU: Roll lane for this feature.
+     * @param {number} lane - lane value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function rollLane(lane: number) {
         if (disabled || completed.current || ridgesRef.current[lane] <= 0) {
             return;
         }
@@ -47,7 +63,15 @@ function RollingGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
         }
     }
 
-    function pointerDown(event: PointerEvent<HTMLDivElement>) {
+        /*
+     * DOCU: Handle pointer down behavior for this feature.
+     * @param {PointerEvent<HTMLDivElement>} event - User or browser event that triggered this operation
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function pointerDown(event: PointerEvent<HTMLDivElement>) {
         if (disabled) {
             return;
         }
@@ -59,7 +83,15 @@ function RollingGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
         pointerMove(event);
     }
 
-    function pointerMove(event: PointerEvent<HTMLDivElement>) {
+        /*
+     * DOCU: Handle pointer move behavior for this feature.
+     * @param {PointerEvent<HTMLDivElement>} event - User or browser event that triggered this operation
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function pointerMove(event: PointerEvent<HTMLDivElement>) {
         if (disabled) {
             return;
         }
@@ -88,27 +120,12 @@ function RollingGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
 
     return (
         <div className="k4-game">
-            <div
-                className="k4-rolling-board"
-                role="group"
-                aria-label="Roll each dough ridge smooth by dragging the rolling pin"
-                onPointerDown={pointerDown}
-                onPointerMove={pointerMove}
-                onPointerUp={() => {
-                    lastPoint.current = null;
-                }}
-                onPointerCancel={() => {
-                    lastPoint.current = null;
-                }}
-            >
+            <div className="k4-rolling-board" role="group" aria-label="Roll each dough ridge smooth by dragging the rolling pin" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={() => {lastPoint.current =null;}} onPointerCancel={() => {lastPoint.current =null;}}>
                 <span className="k4-board-flour">
                     <KitchenExtraArt id="rolling_flour" />
                 </span>
                 {ridges.map((ridge, index) => (
-                    <div
-                        className={`k4-dough-lane ${ridge === 0 ? "smooth" : ""} ${selected === index ? "selected" : ""}`}
-                        key={index}
-                    >
+                    <div className={`k4-dough-lane ${ridge === 0 ? "smooth" : ""} ${selected === index ? "selected" : ""}`} key={index}>
                         <div className="k4-dough-rise" style={{
                             height: `${8 + ridge * 4}px`
                         }} />
@@ -128,12 +145,7 @@ function RollingGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
             </div>
             <div className="k4-lane-buttons" aria-label="Accessible alternatives to dragging the rolling pin">
                 {ridges.map((ridge, index) => (
-                    <button
-                        type="button"
-                        key={index}
-                        disabled={disabled || ridge === 0}
-                        onClick={() => rollLane(index)}
-                    >
+                    <button type="button" key={index} disabled={disabled || ridge === 0} onClick={() => rollLane(index)}>
                         {ridge === 0 ? <Check size={15} /> : `Roll ${index + 1}`}
                     </button>
                 ))}
@@ -142,6 +154,14 @@ function RollingGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
     );
 }
 
+/*
+ * DOCU: Render the catch game interface and provide its feature behavior.
+ * @param {Omit<Props, "game">} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function CatchGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
     const [index, setIndex] = useState(0);
     const [caught, setCaught] = useState(0);
@@ -157,7 +177,15 @@ function CatchGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
     const finished = useRef(false);
     const drop = challenge.catch.drops[index];
 
-    function moveBasket(percent: number) {
+        /*
+     * DOCU: Move basket for this feature.
+     * @param {number} percent - percent value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function moveBasket(percent: number) {
         basketPosition.current = Math.max(12, Math.min(88, percent));
         if (basketRef.current) {
             basketRef.current.style.left = `${basketPosition.current}%`;
@@ -170,7 +198,15 @@ function CatchGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
         }
         let animation = 0;
         let started = 0;
-        const animate = (now: number) => {
+                /*
+         * DOCU: Animate the current state for this feature.
+         * @param {number} now - now value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const animate = (now: number) => {
             if (started === 0) {
                 started = now;
             }
@@ -208,7 +244,15 @@ function CatchGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
         if (disabled) {
             return;
         }
-        const onKey = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Handle on key behavior for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onKey = (event: KeyboardEvent) => {
             if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
                 event.preventDefault();
                 moveBasket(basketPosition.current + (event.key === "ArrowLeft" ? -11 : 11));
@@ -220,21 +264,7 @@ function CatchGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
 
     return (
         <div className="k4-game">
-            <div
-                className="k4-catch-stage"
-                ref={stageRef}
-                role="group"
-                aria-label="Move the basket under falling fresh ingredients, avoiding spoiled ingredients"
-                onPointerMove={event => {
-                    const rect = event.currentTarget.getBoundingClientRect();
-                    moveBasket((event.clientX - rect.left) / rect.width * 100);
-                }}
-                onPointerDown={event => {
-                    event.currentTarget.setPointerCapture(event.pointerId);
-                    const rect = event.currentTarget.getBoundingClientRect();
-                    moveBasket((event.clientX - rect.left) / rect.width * 100);
-                }}
-            >
+            <div className="k4-catch-stage" ref={stageRef} role="group" aria-label="Move the basket under falling fresh ingredients, avoiding spoiled ingredients" onPointerMove={event => {const rect =event.currentTarget.getBoundingClientRect(); moveBasket((event.clientX - rect.left) / rect.width * 100);}} onPointerDown={event => {event.currentTarget.setPointerCapture(event.pointerId); const rect =event.currentTarget.getBoundingClientRect(); moveBasket((event.clientX - rect.left) / rect.width * 100);}}>
                 <div className="k4-catch-guide">
                     <span>
                         <KitchenExtraArt id="fresh_ingredient" /> Catch fresh</span>
@@ -242,9 +272,7 @@ function CatchGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
                         <KitchenExtraArt id="spoiled_ingredient" /> Avoid spoiled</span>
                 </div>
                 {drop && (
-                    <div className="k4-falling-item" key={index} ref={itemRef} style={{
-                        left: `${drop.x}%`
-                    }}>
+                    <div className="k4-falling-item" key={index} ref={itemRef} style={{left: `${drop.x}%`}}>
                         <KitchenExtraArt id={drop.kind === "good" ? "fresh_ingredient" : "spoiled_ingredient"} />
                     </div>
                 )}
@@ -266,6 +294,14 @@ function CatchGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
     );
 }
 
+/*
+ * DOCU: Render the stove game interface and provide its feature behavior.
+ * @param {Omit<Props, "game">} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function StoveGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
     const [finished, setFinished] = useState<boolean[]>([false, false, false]);
     const finishedRef = useRef([false, false, false]);
@@ -274,7 +310,16 @@ function StoveGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
     const started = useRef(0);
     const completeRef = useRef(false);
 
-    function finishPan(index: number, progress: number) {
+        /*
+     * DOCU: Finish pan for this feature.
+     * @param {number} index - Position of the item in its collection
+     * @param {number} progress - progress value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function finishPan(index: number, progress: number) {
         if (finishedRef.current[index] || completeRef.current || disabled || progress < 0) {
             return;
         }
@@ -293,7 +338,15 @@ function StoveGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
             return;
         }
         let animation = 0;
-        const draw = (now: number) => {
+                /*
+         * DOCU: Draw the current state for this feature.
+         * @param {number} now - now value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const draw = (now: number) => {
             if (!started.current) {
                 started.current = now;
             }
@@ -366,13 +419,30 @@ const flavorNames = ["Sweet", "Salty", "Zesty"] as const;
 const flavorArts = ["sweet_shaker", "salty_shaker", "zesty_shaker"] as const;
 const flavorClues = ["None", "Light", "Balanced", "Bold", "Extra bold"] as const;
 
+/*
+ * DOCU: Render the seasoning game interface and provide its feature behavior.
+ * @param {Omit<Props, "game">} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function SeasoningGame({ challenge, disabled, onComplete }: Omit<Props, "game">) {
     const [values, setValues] = useState([...challenge.seasoning.starting]);
     const [shaking, setShaking] = useState<number | null>(null);
     const [submitted, setSubmitted] = useState(false);
     const targets = challenge.seasoning.targets;
 
-    function adjust(index: number, change: number) {
+        /*
+     * DOCU: Adjust the current state for this feature.
+     * @param {number} index - Position of the item in its collection
+     * @param {number} change - change value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function adjust(index: number, change: number) {
         if (disabled || submitted) {
             return;
         }
@@ -433,6 +503,14 @@ function SeasoningGame({ challenge, disabled, onComplete }: Omit<Props, "game">)
     );
 }
 
+/*
+ * DOCU: Render the kitchen extra game interface and provide its feature behavior.
+ * @param {Props} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function KitchenExtraGame({ game, challenge, disabled, onComplete }: Props) {
     if (game === "roll") {
         return <RollingGame challenge={challenge} disabled={disabled} onComplete={onComplete} />;

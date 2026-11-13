@@ -1,6 +1,16 @@
 import { memo } from "react";
 
 /** Large permanent architectural illustrations shared by gameplay and /develop. */
+/*
+ * DOCU: Render the room architecture interface and provide its feature behavior.
+ * @param {{
+    room: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function RoomArchitecture({ room }: {
     room: string
 }) {

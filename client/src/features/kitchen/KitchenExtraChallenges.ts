@@ -21,15 +21,47 @@ export type ExtraKitchenChallenge = {
     };
 };
 
+/*
+ * DOCU: Handle random integer behavior for this feature.
+ * @param {number} min - min value used by this function
+ * @param {number} max - max value used by this function
+ * @param {() => number} random - random value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function randomInteger(min: number, max: number, random: () => number): number {
     return min + Math.min(max - min, Math.floor(random() * (max - min + 1)));
 }
 
+/*
+ * DOCU: Handle new extra kitchen challenge behavior for this feature.
+ * @param {ExtraKitchenChallenge} previous - previous value used by this function
+ * @param {() => number} random - random value used by this function
+ * @returns {ExtraKitchenChallenge} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function newExtraKitchenChallenge(
     previous?: ExtraKitchenChallenge,
     random: () => number = Math.random
 ): ExtraKitchenChallenge {
-    const different = (min: number, max: number, old?: number): number => {
+        /*
+     * DOCU: Handle different behavior for this feature.
+     * @param {number} min - min value used by this function
+     * @param {number} max - max value used by this function
+     * @param {number} old - old value used by this function
+     * @returns {number} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const different = (min: number, max: number, old?: number): number => {
         const options = Array.from({
             length: max - min + 1
         }, (_, index) => min + index)
@@ -89,19 +121,59 @@ export function newExtraKitchenChallenge(
     };
 }
 
+/*
+ * DOCU: Handle rolling result behavior for this feature.
+ * @param {number[]} ridges - ridges value used by this function
+ * @param {number} strokes - strokes value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function rollingResult(ridges: number[], strokes: number): number {
     const remaining = ridges.reduce((sum, ridge) => sum + Math.max(0, ridge), 0);
     return Math.max(45, Math.min(100, Math.round(100 - remaining * 10 - Math.max(0, strokes - 22) * 0.6)));
 }
 
+/*
+ * DOCU: Handle catch result behavior for this feature.
+ * @param {number} goodCaught - goodCaught value used by this function
+ * @param {number} missed - missed value used by this function
+ * @param {number} badCaught - badCaught value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function catchResult(goodCaught: number, missed: number, badCaught: number): number {
     return Math.max(45, Math.min(100, 65 + goodCaught * 7 - missed * 9 - badCaught * 14));
 }
 
+/*
+ * DOCU: Handle stove result behavior for this feature.
+ * @param {number[]} scores - scores value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function stoveResult(scores: number[]): number {
     return Math.max(45, Math.min(100, Math.round(scores.reduce((sum, value) => sum + value, 0) / Math.max(1, scores.length))));
 }
 
+/*
+ * DOCU: Handle seasoning result behavior for this feature.
+ * @param {number[]} values - values value used by this function
+ * @param {number[]} targets - targets value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function seasoningResult(values: number[], targets: number[]): number {
     const misses = targets.reduce((sum, target, index) => sum + Math.abs(target - values[index]), 0);
     return Math.max(45, 100 - misses * 13);

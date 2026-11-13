@@ -1019,7 +1019,7 @@
     }
 }
 /* Batch 73: recipe book is a horizontal LIST, not a vertical tile.
-   Artwork remains at left; details, bonuses, and action stack at right. */
+    Artwork remains at left; details, bonuses, and action stack at right. */
 .paw-kitchen .kitchen-recipe-card,
 .paw-kitchen .kitchen-recipe-card:has(.kitchen-boosts) {
     display: grid;
@@ -1179,7 +1179,7 @@
 }
 @media(max-width:680px) {
     /* Keep the original order: quantity selector on the LEFT, Buy on the RIGHT.
-     The toolbar gets its own row so the + control cannot escape the card. */
+    The toolbar gets its own row so the + control cannot escape the card. */
     .paw-kitchen .kitchen-ingredient-item {
         display: grid;
         grid-template-columns: 34px minmax(0,1fr);
@@ -1264,7 +1264,7 @@
     }
 }
 /* Batch 75: one coherent two-column desktop list and single-column mobile list.
-   Ingredient art is the full-height left rail; info + controls stay on the right. */
+    Ingredient art is the full-height left rail; info + controls stay on the right. */
 .paw-kitchen .kitchen-grid {
     display: grid;
     grid-template-columns: repeat(2,minmax(0,1fr));

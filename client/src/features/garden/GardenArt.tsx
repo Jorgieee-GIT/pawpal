@@ -4,6 +4,14 @@ export type GardenIconProps = {
     variant?: number;
     stage?: number
 };
+/*
+ * DOCU: Render the garden icon interface and provide its feature behavior.
+ * @param {GardenIconProps} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function GardenIcon({ kind, rarity = "Common", variant = 0, stage = 0 }: GardenIconProps) {
     if (kind === "seed") {
         return <svg viewBox="0 0 100 100" aria-label="Seed packet" role="img">

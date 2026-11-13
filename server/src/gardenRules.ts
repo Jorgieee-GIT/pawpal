@@ -43,6 +43,15 @@ export const GARDEN_SEED_PRICE = 40;
 export const GARDEN_WATER_PRICE = 10;
 export const GARDEN_GROWTH_MS = 5 * 60 * 1000;
 
+/*
+ * DOCU: Roll flower for this feature.
+ * @param {unknown} roll - roll value used by this function
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function rollFlower(roll = randomInt(100)) {
     if (!Number.isInteger(roll) || roll < 0 || roll >= 100) {
         throw new RangeError("Garden roll must be 0–99.");
@@ -57,6 +66,14 @@ export function rollFlower(roll = randomInt(100)) {
     throw new Error("Garden rarity weights must sum to 100.");
 }
 
+/*
+ * DOCU: Create garden flower for this feature.
+ * @param {unknown} now - now value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function createGardenFlower(now = new Date()) {
     const flower = rollFlower();
     return {
@@ -68,6 +85,18 @@ export function createGardenFlower(now = new Date()) {
     };
 }
 
+/*
+ * DOCU: Handle garden harvest ready behavior for this feature.
+ * @param {{
+    planted_at: string;
+    watered_minutes?: number
+}} plot - plot value used by this function
+ * @param {unknown} at - at value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function gardenHarvestReady(plot: {
     planted_at: string;
     watered_minutes?: number
@@ -77,6 +106,15 @@ export function gardenHarvestReady(plot: {
 }
 
 // Unrevealed flower attributes must not be sent to browsers via any pet endpoint.
+/*
+ * DOCU: Build the safe garden data returned to a player.
+ * @param {T} pet - pet value used by this function
+ * @returns {T} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function publicPetGarden<T extends {
     garden?: any
 } | null>(pet: T): T {
@@ -106,6 +144,17 @@ export type GardenDiscovery = {
     best_reward: number
 };
 
+/*
+ * DOCU: Record a flower discovery and its reward.
+ * @param {any} garden - garden value used by this function
+ * @param {string} rarity - rarity value used by this function
+ * @param {number} reward - reward value used by this function
+ * @param {unknown} now - now value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function recordFlowerDiscovery(garden: any, rarity: string, reward: number, now = new Date()) {
     if (!FLOWER_RULES.some(flower => flower.rarity === rarity)) {
         return false;

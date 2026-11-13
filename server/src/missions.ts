@@ -136,8 +136,8 @@ for (const metric of weeklyMetrics) {
         )
             ? [1, 3, 5][i]
             : metric === "daily_surprise"
-              ? [1, 3, 5][i]
-              : [3, 7, 12][i];
+                ? [1, 3, 5][i]
+                : [3, 7, 12][i];
         missionDefs.push({
             id: `w_${metric}_${i + 1}`,
             kind: "weekly",
@@ -150,6 +150,14 @@ for (const metric of weeklyMetrics) {
     }
 }
 
+/*
+ * DOCU: Handle manila day behavior for this feature.
+ * @param {unknown} d - d value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function manilaDay(d = new Date()) {
     return new Intl.DateTimeFormat("en-CA", {
         timeZone: "Asia/Manila",
@@ -159,6 +167,14 @@ function manilaDay(d = new Date()) {
     }).format(d);
 }
 
+/*
+ * DOCU: Handle manila week behavior for this feature.
+ * @param {unknown} d - d value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function manilaWeek(d = new Date()) {
     const day = manilaDay(d);
     const utc = new Date(day + "T00:00:00Z");
@@ -167,6 +183,17 @@ function manilaWeek(d = new Date()) {
     return utc.toISOString().slice(0, 10);
 }
 
+/*
+ * DOCU: Select the missions available for the current schedule.
+ * @param {MissionKind} kind - kind value used by this function
+ * @param {string} userId - userId value used by this function
+ * @param {string} period - period value used by this function
+ * @param {number} count - count value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function pickMissions(kind: MissionKind, userId: string, period: string, count: number) {
     const choices = missionDefs.filter((m) => m.kind === kind);
     let seed = 2166136261;
@@ -182,16 +209,27 @@ function pickMissions(kind: MissionKind, userId: string, period: string, count: 
     return result.slice(0, count);
 }
 
+/*
+ * DOCU: Update mission progress for a recorded player action.
+ * @param {any} client - client value used by this function
+ * @param {string} userId - userId value used by this function
+ * @param {string} metric - metric value used by this function
+ * @param {unknown} amount - amount value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function recordMissionEvent(client: any, userId: string, metric: string, amount = 1) {
     // Cosmetic changes and room visits should not be farmed by tapping a toggle repeatedly.
     // Once per Manila day is also attainable for the corresponding daily and weekly goals.
     if (["room", "outfit", "atmosphere", "furniture", "note"].includes(metric)) {
         await client.query(
             `INSERT INTO mission_events(user_id,metric,amount)
-   SELECT $1,$2,$3 WHERE NOT EXISTS(
+    SELECT $1,$2,$3 WHERE NOT EXISTS(
     SELECT 1 FROM mission_events WHERE user_id=$1 AND metric=$2
     AND (created_at AT TIME ZONE 'Asia/Manila')::date=(NOW() AT TIME ZONE 'Asia/Manila')::date
-   )`,
+    )`,
             [userId, metric, amount]
         );
     } else {
@@ -203,6 +241,15 @@ export async function recordMissionEvent(client: any, userId: string, metric: st
     }
 }
 
+/*
+ * DOCU: Handle mission view behavior for this feature.
+ * @param {any} client - client value used by this function
+ * @param {string} userId - userId value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function missionView(client: any, userId: string) {
     const today = manilaDay(),
         week = manilaWeek();

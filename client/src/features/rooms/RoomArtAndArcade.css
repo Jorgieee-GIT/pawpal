@@ -57,7 +57,7 @@
     gap: 5px;
 }
 /* Premium atmospheres retain a clearly separated wall and floor.
-   The old diagonal gradient blended both surfaces into one background. */
+    The old diagonal gradient blended both surfaces into one background. */
 .paw-themed-room:is(
 .paw-theme-aurora_prism,
 .paw-theme-cosmic_nebula,
@@ -76,13 +76,13 @@
             color-mix(in srgb, var(--floor) 80%, var(--room-accent)) 100%) !important;
 }
 /* Bedroom, Creative Studio and Sports Room have a 66% wall/floor split.
-   Premium atmosphere gradients use that same boundary, rather than 53%. */
+    Premium atmosphere gradients use that same boundary, rather than 53%. */
 .paw-themed-room:is(.paw-room-bedroom, .paw-room-studio, .paw-room-sports) {
     --room-wall-edge: 65.6%;
     --room-floor-start: 66.4%;
 }
 /* Shared actual-game and developer room surfaces. The same selectors and
-   theme variables render both, preventing the preview from masking bugs. */
+    theme variables render both, preventing the preview from masking bugs. */
 .living-room.paw-themed-room,
 .develop-room-scene.living-room.paw-themed-room {
     --room-split: 53%;
@@ -123,8 +123,8 @@
     pointer-events: none;
 }
 /* Premium atmosphere illustration system. Shared by gameplay and /develop.
-   Flat pastel wall/floor surfaces with crisp boundaries, not full-room gradients.
-   Each theme has its own subtle illustrated wallpaper motif. */
+    Flat pastel wall/floor surfaces with crisp boundaries, not full-room gradients.
+    Each theme has its own subtle illustrated wallpaper motif. */
 .living-room.paw-themed-room:is(
 .paw-theme-aurora_prism, .paw-theme-cosmic_nebula,
 .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal
@@ -217,7 +217,7 @@
     opacity: 1 !important;
 }
 /* Room parity: every room uses the Living Room's spacious 53/47 wall/floor split.
-   Applied after all earlier room-specific rules, for gameplay AND developer previews. */
+    Applied after all earlier room-specific rules, for gameplay AND developer previews. */
 .living-room.paw-themed-room,
 .develop-room-scene.living-room.paw-themed-room,
 .living-room.paw-themed-room:is(.paw-room-bedroom, .paw-room-studio, .paw-room-sports),
@@ -232,7 +232,7 @@
     top: 52.6%;
 }
 /* Premium rooms: bespoke SVG architectural features rather than another wallpaper.
-   A single illustrated wall layer, a flat wall, and a subtly patterned floor. */
+    A single illustrated wall layer, a flat wall, and a subtly patterned floor. */
 .living-room.paw-themed-room:is(.paw-theme-aurora_prism, .paw-theme-cosmic_nebula, .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal),
 .develop-room-scene.living-room.paw-themed-room:is(.paw-theme-aurora_prism, .paw-theme-cosmic_nebula, .paw-theme-crystal_lagoon, .paw-theme-solar_eclipse, .paw-theme-celestial_opal) {
     background-image: linear-gradient(to bottom, var(--wall) 0 53%, var(--floor) 53% 100%) !important;
@@ -302,7 +302,7 @@
     background-repeat: no-repeat;
 }
 /* Permanent architectural features shared by real rooms and /develop.
-   Overlay never captures pointer events or blocks furniture interactions. */
+    Overlay never captures pointer events or blocks furniture interactions. */
 .living-room.paw-themed-room,
 .develop-room-scene.living-room.paw-themed-room {
     position: relative;
@@ -546,7 +546,7 @@
     color: #875a79;
 }
 /* Consistent dark-mode surfaces; preserve the actual SVGs and atmosphere colors.
-   Room artwork must not be dimmed by a filter or it stops matching /develop. */
+    Room artwork must not be dimmed by a filter or it stops matching /develop. */
 .paw-dark {
     --paw-dark-base: #251e2b;
     --paw-dark-surface: #382c3c;

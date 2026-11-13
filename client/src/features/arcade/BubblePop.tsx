@@ -29,6 +29,15 @@ type LevelGoal =
 type BubbleLevel = { number: number; moves: number; goal: LevelGoal };
 const GOAL_PATTERN: GoalKind[] = ["score", "collect", "score", "powers", "collect", "score", "chain", "collect", "powers", "score", "collect", "chain"];
 
+/*
+ * DOCU: Handle make level behavior for this feature.
+ * @param {number} number - number value used by this function
+ * @returns {BubbleLevel} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function makeLevel(number: number): BubbleLevel {
     const kind = GOAL_PATTERN[(number - 1) % GOAL_PATTERN.length];
     const moves = Math.max(23, 32 - Math.floor((number - 1) / 16));
@@ -46,6 +55,14 @@ function makeLevel(number: number): BubbleLevel {
 
 const LEVELS = Array.from({ length: LEVEL_COUNT }, (_, index) => makeLevel(index + 1));
 
+/*
+ * DOCU: Read unlocked level for this feature.
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function readUnlockedLevel(): number {
     try {
         const saved = Number(window.localStorage.getItem(PROGRESS_KEY));
@@ -55,6 +72,15 @@ function readUnlockedLevel(): number {
     }
 }
 
+/*
+ * DOCU: Handle goal label behavior for this feature.
+ * @param {LevelGoal} goal - goal value used by this function
+ * @returns {string} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function goalLabel(goal: LevelGoal): string {
     if (goal.kind === "score") return `Score ${goal.target.toLocaleString()} points`;
     if (goal.kind === "collect") return `Collect ${goal.target} ${BUBBLE_COLOR_NAMES[goal.color]} bubbles`;
@@ -62,6 +88,19 @@ function goalLabel(goal: LevelGoal): string {
     return `Make a ${goal.target}-wave chain`;
 }
 
+/*
+ * DOCU: Handle goal progress behavior for this feature.
+ * @param {LevelGoal} goal - goal value used by this function
+ * @param {number} score - score value used by this function
+ * @param {number} collected - collected value used by this function
+ * @param {number} powers - powers value used by this function
+ * @param {number} chain - chain value used by this function
+ * @returns {number} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function goalProgress(goal: LevelGoal, score: number, collected: number, powers: number, chain: number): number {
     if (goal.kind === "score") return score;
     if (goal.kind === "collect") return collected;
@@ -69,18 +108,56 @@ function goalProgress(goal: LevelGoal, score: number, collected: number, powers:
     return chain;
 }
 
+/*
+ * DOCU: Handle goal complete behavior for this feature.
+ * @param {LevelGoal} goal - goal value used by this function
+ * @param {number} score - score value used by this function
+ * @param {number} collected - collected value used by this function
+ * @param {number} powers - powers value used by this function
+ * @param {number} chain - chain value used by this function
+ * @returns {boolean} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function goalComplete(goal: LevelGoal, score: number, collected: number, powers: number, chain: number): boolean {
     return goalProgress(goal, score, collected, powers, chain) >= goal.target;
 }
 
+/*
+ * DOCU: Wait the current state for this feature.
+ * @param {number} ms - ms value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const wait = (ms: number) => new Promise<void>((resolve) =>
     window.setTimeout(resolve, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : ms)
 );
 
+/*
+ * DOCU: Empty board for this feature.
+ * @returns {Array<Candy | null>} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function emptyBoard(): Array<Candy | null> {
     return Array(SIDE * SIDE).fill(null);
 }
 
+/*
+ * DOCU: Get runs for this feature.
+ * @param {Array<Candy | null>} board - board value used by this function
+ * @returns {MatchRun[]} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function getRuns(board: Array<Candy | null>): MatchRun[] {
     const runs: MatchRun[] = [];
     for (let row = 0; row < SIDE; row++) {
@@ -110,12 +187,32 @@ function getRuns(board: Array<Candy | null>): MatchRun[] {
     return runs;
 }
 
+/*
+ * DOCU: Handle swap behavior for this feature.
+ * @param {T[]} items - items value used by this function
+ * @param {number} a - a value used by this function
+ * @param {number} b - b value used by this function
+ * @returns {T[]} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function swap<T>(items: T[], a: number, b: number): T[] {
     const swapped = [...items];
     [swapped[a], swapped[b]] = [swapped[b], swapped[a]];
     return swapped;
 }
 
+/*
+ * DOCU: Has possible move for this feature.
+ * @param {Array<Candy | null>} board - board value used by this function
+ * @returns {boolean} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function hasPossibleMove(board: Array<Candy | null>): boolean {
     for (let index = 0; index < board.length; index++) {
         const row = Math.floor(index / SIDE);
@@ -130,6 +227,16 @@ function hasPossibleMove(board: Array<Candy | null>): boolean {
     return false;
 }
 
+/*
+ * DOCU: Choose formation for this feature.
+ * @param {MatchRun[]} runs - runs value used by this function
+ * @param {Array<Candy | null>} board - board value used by this function
+ * @param {number} preferred - preferred value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function chooseFormation(runs: MatchRun[], board: Array<Candy | null>, preferred?: number) {
     const horizontal = new Set(runs.filter((run) => run.direction === "h").flatMap((run) => run.cells));
     const vertical = new Set(runs.filter((run) => run.direction === "v").flatMap((run) => run.cells));
@@ -149,6 +256,15 @@ function chooseFormation(runs: MatchRun[], board: Array<Candy | null>, preferred
     return { pivot, power };
 }
 
+/*
+ * DOCU: Get color bomb color for this feature.
+ * @param {Array<Candy | null>} board - board value used by this function
+ * @returns {CandyColor} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function getColorBombColor(board: Array<Candy | null>): CandyColor {
     const counts = new Map<CandyColor, number>();
     board.forEach((candy) => {
@@ -161,6 +277,17 @@ type PowerCombo = { board: Array<Candy | null>; clear: Set<number>; consumed: Se
 type PowerEffect = { kind: "row" | "column" | "burst" | "prism" | "spark"; cell: number; origin: number; span: number };
 type PowerDisplay = { effects: PowerEffect[]; swallowed: Map<number, number> };
 
+/*
+ * DOCU: Handle combine powers behavior for this feature.
+ * @param {Array<Candy | null>} board - board value used by this function
+ * @param {number} from - from value used by this function
+ * @param {number} to - to value used by this function
+ * @returns {PowerCombo | null} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function combinePowers(board: Array<Candy | null>, from: number, to: number): PowerCombo | null {
     const first = board[from], second = board[to];
     if (!first || !second) return null;
@@ -202,6 +329,17 @@ function combinePowers(board: Array<Candy | null>, from: number, to: number): Po
     return { board, clear, consumed, converted: false };
 }
 
+/*
+ * DOCU: Render the bubble pop interface and provide its feature behavior.
+ * @param {{
+    onQuit: () => void;
+    onFinish: (score: number) => Promise<boolean>;
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function BubblePop({ onQuit, onFinish }: {
     onQuit: () => void;
     onFinish: (score: number) => Promise<boolean>;
@@ -231,7 +369,17 @@ export default function BubblePop({ onQuit, onFinish }: {
     const collectedRef = useRef(0);
     const powersActivatedRef = useRef(0);
     const comboRef = useRef(0);
-    const makeCandy = (color?: CandyColor, power?: Power): Candy => {
+        /*
+     * DOCU: Handle make candy behavior for this feature.
+     * @param {CandyColor} color - color value used by this function
+     * @param {Power} power - power value used by this function
+     * @returns {Candy} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const makeCandy = (color?: CandyColor, power?: Power): Candy => {
         return { id: ++idCounter.current, color: color ?? COLORS[Math.floor(Math.random() * COLORS.length)], power };
     };
     const busy = useRef(false);
@@ -239,7 +387,15 @@ export default function BubblePop({ onQuit, onFinish }: {
     const dragRef = useRef<{ from: number; pointerId: number; startX: number; startY: number } | null>(null);
     const boardRef = useRef<HTMLDivElement>(null);
 
-    function makeStartingBoard(): Array<Candy | null> {
+        /*
+     * DOCU: Handle make starting board behavior for this feature.
+     * @returns {Array<Candy | null>} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function makeStartingBoard(): Array<Candy | null> {
         for (let attempt = 0; attempt < 300; attempt++) {
             const candidate = emptyBoard();
             for (let index = 0; index < candidate.length; index++) {
@@ -258,7 +414,15 @@ export default function BubblePop({ onQuit, onFinish }: {
         return emptyBoard().map(() => makeCandy());
     }
 
-    function finishRound(didWin: boolean) {
+        /*
+     * DOCU: Finish the current round and save its result.
+     * @param {boolean} didWin - didWin value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function finishRound(didWin: boolean) {
         if (didWin && currentLevel < LEVEL_COUNT && currentLevel >= unlockedLevel) {
             const nextUnlocked = currentLevel + 1;
             setUnlockedLevel(nextUnlocked);
@@ -270,7 +434,15 @@ export default function BubblePop({ onQuit, onFinish }: {
 
     useEffect(() => () => { busy.current = false; }, []);
 
-    function start(levelNumber = currentLevel) {
+        /*
+     * DOCU: Start the current state for this feature.
+     * @param {unknown} levelNumber - levelNumber value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function start(levelNumber = currentLevel) {
         const selectedLevel = LEVELS[levelNumber - 1];
         setCurrentLevel(levelNumber);
         scoreRef.current = 0;
@@ -296,7 +468,15 @@ export default function BubblePop({ onQuit, onFinish }: {
         setPhase("playing");
     }
 
-    function gravityAndRefill(current: Array<Candy | null>) {
+        /*
+     * DOCU: Apply gravity and refill empty Bubble Pop board positions.
+     * @param {Array<Candy | null>} current - current value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function gravityAndRefill(current: Array<Candy | null>) {
         const next = emptyBoard();
         const fallOffsets = new Map<number, number>();
         for (let column = 0; column < SIDE; column++) {
@@ -319,7 +499,18 @@ export default function BubblePop({ onQuit, onFinish }: {
         return { board: next, fallOffsets };
     }
 
-    async function resolveBoard(initial: Array<Candy | null>, from: number, to: number, combo: PowerCombo | null) {
+        /*
+     * DOCU: Resolve matches, chained power effects, and gravity on the Bubble Pop board.
+     * @param {Array<Candy | null>} initial - initial value used by this function
+     * @param {number} from - from value used by this function
+     * @param {number} to - to value used by this function
+     * @param {PowerCombo | null} combo - combo value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function resolveBoard(initial: Array<Candy | null>, from: number, to: number, combo: PowerCombo | null) {
         let working = initial;
         const activeGoal = LEVELS[currentLevel - 1].goal;
         let cascadeCount = 0;
@@ -337,7 +528,18 @@ export default function BubblePop({ onQuit, onFinish }: {
             const queue = [...clear];
             const activated = new Set(openingCombo?.consumed);
             const effects = new Map<string, PowerEffect>();
-            function showEffect(kind: PowerEffect["kind"], cell: number, span = 1, origin = cell) {
+                        /*
+             * DOCU: Show effect for this feature.
+             * @param {PowerEffect["kind"]} kind - kind value used by this function
+             * @param {number} cell - cell value used by this function
+             * @param {unknown} span - span value used by this function
+             * @param {unknown} origin - origin value used by this function
+             *
+             * Last Updated: 2026-11-13
+             * Author: Jorge
+             * Last Updated By: Jorge
+             */
+function showEffect(kind: PowerEffect["kind"], cell: number, span = 1, origin = cell) {
                 if (kind === "row") cell -= cell % SIDE;
                 if (kind === "column") cell %= SIDE;
                 effects.set(`${kind}-${cell}`, { kind, cell, origin, span });
@@ -370,7 +572,15 @@ export default function BubblePop({ onQuit, onFinish }: {
                 activated.add(index);
                 const candy = working[index];
                 if (!candy?.power || (formation && index === formation.pivot)) continue;
-                const add = (cell: number) => {
+                                /*
+                 * DOCU: Handle add behavior for this feature.
+                 * @param {number} cell - cell value used by this function
+                 *
+                 * Last Updated: 2026-11-13
+                 * Author: Jorge
+                 * Last Updated By: Jorge
+                 */
+const add = (cell: number) => {
                     if (cell >= 0 && cell < working.length && cell !== formation?.pivot && working[cell] && !clear.has(cell)) {
                         clear.add(cell);
                         queue.push(cell);
@@ -457,7 +667,16 @@ export default function BubblePop({ onQuit, onFinish }: {
         setFallOffsets(new Map());
     }
 
-    async function makeMove(from: number, to: number) {
+        /*
+     * DOCU: Apply a valid swipe to the Bubble Pop board and resolve its effects.
+     * @param {number} from - from value used by this function
+     * @param {number} to - to value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function makeMove(from: number, to: number) {
         if (busy.current || phase !== "playing") return;
         busy.current = true;
         const moved = swap(board, from, to);
@@ -485,7 +704,16 @@ export default function BubblePop({ onQuit, onFinish }: {
         }
     }
 
-    function beginDrag(index: number, event: ReactPointerEvent<HTMLButtonElement>) {
+        /*
+     * DOCU: Handle begin drag behavior for this feature.
+     * @param {number} index - Position of the item in its collection
+     * @param {ReactPointerEvent<HTMLButtonElement>} event - User or browser event that triggered this operation
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function beginDrag(index: number, event: ReactPointerEvent<HTMLButtonElement>) {
         if (phase !== "playing" || busy.current || event.button !== 0) return;
         event.preventDefault();
         dragRef.current = {
@@ -497,7 +725,15 @@ export default function BubblePop({ onQuit, onFinish }: {
         boardRef.current?.setPointerCapture(event.pointerId);
     }
 
-    function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
+        /*
+     * DOCU: Handle end drag behavior for this feature.
+     * @param {ReactPointerEvent<HTMLDivElement>} event - User or browser event that triggered this operation
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
         const active = dragRef.current;
         if (!active || active.pointerId !== event.pointerId) return;
         const dx = event.clientX - active.startX;
@@ -518,11 +754,27 @@ export default function BubblePop({ onQuit, onFinish }: {
         if (target >= 0) void makeMove(active.from, target);
     }
 
-    function cancelDrag() {
+        /*
+     * DOCU: Handle cancel drag behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function cancelDrag() {
         dragRef.current = null;
     }
 
-    function keyMove(index: number, event: ReactKeyboardEvent<HTMLButtonElement>) {
+        /*
+     * DOCU: Handle key move behavior for this feature.
+     * @param {number} index - Position of the item in its collection
+     * @param {ReactKeyboardEvent<HTMLButtonElement>} event - User or browser event that triggered this operation
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function keyMove(index: number, event: ReactKeyboardEvent<HTMLButtonElement>) {
         if (phase !== "playing" || busy.current) return;
         const row = Math.floor(index / SIDE), column = index % SIDE;
         const target = event.key === "ArrowUp" && row > 0 ? index - SIDE
@@ -536,7 +788,16 @@ export default function BubblePop({ onQuit, onFinish }: {
         }
     }
 
-    function remix(source: Array<Candy | null>): Array<Candy | null> {
+        /*
+     * DOCU: Handle remix behavior for this feature.
+     * @param {Array<Candy | null>} source - source value used by this function
+     * @returns {Array<Candy | null>} - Result returned by this function.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function remix(source: Array<Candy | null>): Array<Candy | null> {
         const occupied = source.map((candy, index) => candy ? index : -1).filter((index) => index >= 0);
         const candies = source.filter((candy): candy is Candy => Boolean(candy));
         for (let attempt = 0; attempt < 100; attempt++) {
@@ -552,7 +813,14 @@ export default function BubblePop({ onQuit, onFinish }: {
         return source;
     }
 
-    function shuffleBoard() {
+        /*
+     * DOCU: Handle shuffle board behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function shuffleBoard() {
         if (busy.current || phase !== "playing") return;
         if (shuffleUsed) return;
         setBoard(remix(board));
@@ -560,7 +828,15 @@ export default function BubblePop({ onQuit, onFinish }: {
         setMessage("Board shuffled! Find a fresh match.");
     }
 
-    async function claimRound(action: "retry" | "next" | "quit") {
+        /*
+     * DOCU: Claim the completed arcade round reward.
+     * @param {"retry" | "next" | "quit"} action - action value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function claimRound(action: "retry" | "next" | "quit") {
         if (claimRef.current) return;
         claimRef.current = true;
         setClaiming(true);
@@ -579,7 +855,14 @@ export default function BubblePop({ onQuit, onFinish }: {
         }
     }
 
-    function closeGame() {
+        /*
+     * DOCU: Close game for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function closeGame() {
         if (phase === "over") void claimRound("quit");
         else if (!busy.current) onQuit();
     }
@@ -655,15 +938,7 @@ export default function BubblePop({ onQuit, onFinish }: {
                 </div>
                 <p className="bubble-level-goal">{goalLabel(activeLevel.goal)}</p>
                 <div className="bubble-pop-progress" aria-label={`${progress}% of level goal`}><span style={{ width: `${progress}%` }} /></div>
-                <div
-                    ref={boardRef}
-                    className="bubble-match-board"
-                    style={{ "--bubble-move-duration": `${fallOffsets.size ? FALL_MS : SWAP_MS}ms` } as CSSProperties}
-                    role="grid"
-                    aria-label="9 by 9 bubble board. Swipe from a bubble toward a neighbor to swap."
-                    onPointerUp={endDrag}
-                    onPointerCancel={cancelDrag}
-                >
+                <div ref={boardRef} className="bubble-match-board" style={{ "--bubble-move-duration": `${fallOffsets.size ? FALL_MS : SWAP_MS}ms` } as CSSProperties} role="grid" aria-label="9 by 9 bubble board. Swipe from a bubble toward a neighbor to swap." onPointerUp={endDrag} onPointerCancel={cancelDrag}>
                     {tiles.map(({ candy, index }) => {
                         const row = Math.floor(index / SIDE), column = index % SIDE;
                         const entryRows = fallOffsets.get(candy.id);

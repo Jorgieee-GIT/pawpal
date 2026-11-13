@@ -28,6 +28,13 @@ import { registerRoomRoutes } from "./routes/rooms.js";
 import { registerShopRoutes } from "./routes/shop.js";
 import { logSafeError } from "./security.js";
 
+/*
+ * DOCU: Create app for this feature.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function createApp() {
     const app = express();
     app.disable("x-powered-by");

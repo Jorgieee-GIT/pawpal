@@ -59,17 +59,43 @@ export const FOOD_ART_IDS = [
     "cocoa_brownies"
 ] as const;
 
+/*
+ * DOCU: Render the food art interface and provide its feature behavior.
+ * @param {{
+    id: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function FoodArt({ id }: {
     id: string
 }) {
     const stroke = "#976c75";
     const leaf = <path d="M48 24Q34 10 28 22Q36 32 48 24Q58 9 68 20Q60 32 48 24" fill="#79ba8c" stroke="#57936f" strokeWidth="1.5" />;
-    const bowl = (inside: React.ReactNode) => <>
+        /*
+     * DOCU: Handle bowl behavior for this feature.
+     * @param {React.ReactNode} inside - inside value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const bowl = (inside: React.ReactNode) => <>
         <path d="M15 48Q18 77 48 78Q78 77 81 48Z" fill="#fff4ec" stroke={stroke} strokeWidth="2.5" />
         <ellipse cx="48" cy="48" rx="33" ry="12" fill="#fffaf4" stroke={stroke} strokeWidth="2.5" />
         {inside}
     </>;
-    const plate = (inside: React.ReactNode) => <>
+        /*
+     * DOCU: Handle plate behavior for this feature.
+     * @param {React.ReactNode} inside - inside value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const plate = (inside: React.ReactNode) => <>
         <ellipse cx="48" cy="62" rx="39" ry="16" fill="#f7e6de" />
         <ellipse cx="48" cy="57" rx="36" ry="17" fill="#fffdf9" stroke="#dcb7ae" strokeWidth="2" />
         {inside}
@@ -386,6 +412,16 @@ export const KITCHEN_PREP_IDS = [
 ] as const;
 export const KITCHEN_EFFECT_IDS = ["steam", "bubbles", "twinkle", "flour_dust", "frosting_drop"] as const;
 
+/*
+ * DOCU: Render the kitchen tool art interface and provide its feature behavior.
+ * @param {{
+    id: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function KitchenToolArt({ id }: {
     id: string
 }) {
@@ -456,6 +492,16 @@ export function KitchenToolArt({ id }: {
     </svg>;
 }
 
+/*
+ * DOCU: Render the kitchen prep art interface and provide its feature behavior.
+ * @param {{
+    id: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function KitchenPrepArt({ id }: {
     id: string
 }) {
@@ -534,6 +580,16 @@ export function KitchenPrepArt({ id }: {
     </svg>;
 }
 
+/*
+ * DOCU: Render the kitchen effect art interface and provide its feature behavior.
+ * @param {{
+    id: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function KitchenEffectArt({ id }: {
     id: string
 }) {

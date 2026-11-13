@@ -79,6 +79,15 @@ const families: Record<string, string> = {
     daily_surprise: "Pet care"
 };
 
+/*
+ * DOCU: Format reset for this feature.
+ * @param {number} until - until value used by this function
+ * @param {number} now - now value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function formatReset(until: number, now: number) {
     const seconds = Math.max(0, Math.ceil((until - now) / 1000));
     const days = Math.floor(seconds / 86400);
@@ -88,6 +97,20 @@ function formatReset(until: number, now: number) {
     return `${days ? `${days}d ` : ""}${String(hours).padStart(2, "0")}h ${String(minutes).padStart(2, "0")}m ${String(secs).padStart(2, "0")}s`;
 }
 
+/*
+ * DOCU: Render the mission center interface and provide its feature behavior.
+ * @param {{
+    token: string;
+    api: string;
+    onPetChange: () => Promise<unknown> | void;
+    onToast: (message: string) => void;
+    onReadyChange?: (ready: boolean) => void;
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function MissionCenter({ token, api, onPetChange, onToast, onReadyChange }: {
     token: string;
     api: string;
@@ -142,7 +165,15 @@ export default function MissionCenter({ token, api, onPetChange, onToast, onRead
 
     const selected = useMemo(() => (data?.missions || []).filter(mission => mission.kind === kind)
         .sort((a, b) => {
-            const rank = (mission: Mission) => mission.claimed ? 2 : mission.progress >= mission.target ? 0 : 1;
+                        /*
+             * DOCU: Handle rank behavior for this feature.
+             * @param {Mission} mission - mission value used by this function
+             *
+             * Last Updated: 2026-11-13
+             * Author: Jorge
+             * Last Updated By: Jorge
+             */
+const rank = (mission: Mission) => mission.claimed ? 2 : mission.progress >= mission.target ? 0 : 1;
             return rank(a) - rank(b) || a.target - b.target || a.title.localeCompare(b.title);
         }), [data, kind]);
     const ready = selected.filter(mission => !mission.claimed && mission.progress >= mission.target);
@@ -152,7 +183,16 @@ export default function MissionCenter({ token, api, onPetChange, onToast, onRead
     const count = kind === "milestone" ? Math.min(shown, visible.length) : visible.length;
     const displayed = visible.slice(0, count);
 
-    async function claim(id: string) {
+        /*
+     * DOCU: Claim the current state for this feature.
+     * @param {string} id - Identifier of the record or item being handled
+     * @throws {Error} - Propagates an error when this operation cannot complete.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function claim(id: string) {
         if (busy) {
             return;
         }
@@ -177,7 +217,15 @@ export default function MissionCenter({ token, api, onPetChange, onToast, onRead
         }
     }
 
-    async function claimAll() {
+        /*
+     * DOCU: Claim all for this feature.
+     * @throws {Error} - Propagates an error when this operation cannot complete.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function claimAll() {
         if (busy || !ready.length) {
             return;
         }
@@ -278,14 +326,7 @@ export default function MissionCenter({ token, api, onPetChange, onToast, onRead
                             {mission.progress}/{mission.target}
                         </span>
                     </div>
-                    <div
-                        className="mission-track"
-                        role="progressbar"
-                        aria-label={`${mission.title} progress`}
-                        aria-valuenow={mission.progress}
-                        aria-valuemin={0}
-                        aria-valuemax={mission.target}
-                    >
+                    <div className="mission-track" role="progressbar" aria-label={`${mission.title} progress`} aria-valuenow={mission.progress} aria-valuemin={0} aria-valuemax={mission.target}>
                         <span style={{
                             width: `${Math.min(100, mission.progress / mission.target * 100)}%`
                         }} />
@@ -293,12 +334,7 @@ export default function MissionCenter({ token, api, onPetChange, onToast, onRead
                     <div className="mission-footer">
                         <small className="mission-rewards">
                             <Coins size={15} /> {mission.coins} coins <Sparkles size={15} /> {mission.xp} EXP</small>
-                        <button
-                            type="button"
-                            className={`mission-claim-button ${mission.claimed ? "is-claimed" : done ? "is-ready" : "is-pending"}`}
-                            disabled={!!busy || mission.claimed || !done}
-                            onClick={() => void claim(mission.id)}
-                        >
+                        <button type="button" className={`mission-claim-button ${mission.claimed ? "is-claimed" : done ? "is-ready" : "is-pending"}`} disabled={!!busy || mission.claimed || !done} onClick={() => void claim(mission.id)}>
                             {mission.claimed ? "Claimed" : busy === mission.id ? "Claiming..." : done ? "Claim" : "In progress"}
                         </button>
                     </div>

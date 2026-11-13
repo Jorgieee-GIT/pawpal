@@ -1,5 +1,15 @@
 import type { ReactNode } from "react";
 
+/*
+ * DOCU: Render the envelope artwork interface and provide its feature behavior.
+ * @param {{
+    design: string
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function EnvelopeArtwork({ design }: {
     design: string
 }) {
@@ -161,17 +171,7 @@ export function EnvelopeArtwork({ design }: {
             <circle cx="80" cy="54" r="9" />
         </>
     };
-    return <svg
-        className="paw-envelope-art-svg"
-        viewBox="0 0 160 110"
-        role="img"
-        aria-label={`${design.replaceAll("_", " ")} envelope artwork`}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-    >
+    return <svg className="paw-envelope-art-svg" viewBox="0 0 160 110" role="img" aria-label={`${design.replaceAll("_", " ")} envelope artwork`} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         {motifs[design] || motifs.classic}
     </svg>
 }

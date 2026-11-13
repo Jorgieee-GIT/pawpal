@@ -101,13 +101,45 @@ const actionInput = z.object({
     action: z.enum(["strike", "guard", "focus", "special", "special2"])
 });
 const validId = z.string().uuid();
+/*
+ * DOCU: Alive the current state for this feature.
+ * @param {Battle} battle - battle value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const alive = (battle: Battle) => battle.players.every(player => player.hp > 0);
 const TURN_MS = 30000;
+/*
+ * DOCU: Handle dodge chance behavior for this feature.
+ * @param {number} speed - speed value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const dodgeChance = (speed: number) => Math.min(0.15, Math.max(0.03, speed * 0.006));
 // Abilities are defined in one authoritative catalog, shared through the public rules API.
+/*
+ * DOCU: Handle kit for behavior for this feature.
+ * @param {Player} player - player value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function kitFor(player: Player) {
     return getCombatKit(player.species, player.breed);
 }
+/*
+ * DOCU: Normalize player for this feature.
+ * @param {Player} player - player value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function normalizePlayer(player: Player) {
     const kit = kitFor(player);
     player.special = kit.special;
@@ -133,14 +165,41 @@ function normalizePlayer(player: Player) {
     player.weakenedRounds ??= 0;
     player.counterDamage ??= 0;
 }
+/*
+ * DOCU: Get passive for this feature.
+ * @param {Player} player - player value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function getPassive(player: Player) {
     return kitFor(player).passive;
 }
+/*
+ * DOCU: Get dodge for this feature.
+ * @param {Player} player - player value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function getDodge(player: Player) {
     const passive = getPassive(player);
     const bonus = passive.kind === "lightfoot" ? (passive.strength + 2) / 100 : 0;
     return Math.min(0.35, dodgeChance(player.speed) + bonus + (player.evadeCharges ? 0.20 : 0));
 }
+/*
+ * DOCU: Handle make player behavior for this feature.
+ * @param {string} userId - userId value used by this function
+ * @param {string} username - username value used by this function
+ * @param {any} pet - pet value used by this function
+ * @returns {Player} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function makePlayer(userId: string, username: string, pet: any): Player {
     const kit = getCombatKit(pet.species, pet.breed);
     return {
@@ -184,13 +243,43 @@ export function makePlayer(userId: string, username: string, pet: any): Player {
 }
 
 type BattleAction = "strike" | "guard" | "focus" | "special" | "special2";
+/*
+ * DOCU: Is special for this feature.
+ * @param {BattleAction | undefined} action - action value used by this function
+ * @returns {action is "special" | "special2"} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function isSpecial(action: BattleAction | undefined): action is "special" | "special2" {
     return action === "special" || action === "special2";
 }
+/*
+ * DOCU: Handle special for behavior for this feature.
+ * @param {Player} player - player value used by this function
+ * @param {"special" | "special2"} action - action value used by this function
+ * @returns {BattleSpecial} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function specialFor(player: Player, action: "special" | "special2"): BattleSpecial {
     return kitFor(player).specials[action === "special" ? 0 : 1];
 }
 // Conditional specials care about their actual game state, never skill slot.
+/*
+ * DOCU: Handle trigger met behavior for this feature.
+ * @param {BattleSpecial} skill - skill value used by this function
+ * @param {Player} actor - actor value used by this function
+ * @param {Player} target - target value used by this function
+ * @returns {boolean} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function triggerMet(skill: BattleSpecial, actor: Player, target: Player): boolean {
     switch (skill.trigger) {
         case "faster": return actor.speed > target.speed;
@@ -203,12 +292,31 @@ function triggerMet(skill: BattleSpecial, actor: Player, target: Player): boolea
         case "shield_created": return true; // Refund arms only if Shield is gained below.
     }
 }
+/*
+ * DOCU: Mark new shield for this feature.
+ * @param {Player} pet - pet value used by this function
+ * @param {number} round - round value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function markNewShield(pet: Player, round: number) {
     if (pet.shield > 0) {
         // Count creation round + the next two rounds; expire at the end of round 3.
         pet.shieldExpiresRound = round + BRAWL_RULES.shieldDurationRounds - 1;
     }
 }
+/*
+ * DOCU: Handle reward broken shield behavior for this feature.
+ * @param {Player} pet - pet value used by this function
+ * @param {number} before - before value used by this function
+ * @param {string[]} notes - notes value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function rewardBrokenShield(pet: Player, before: number, notes: string[]) {
     if (before > 0 && pet.shield === 0 && (pet.shieldBreakRefund || 0) > 0) {
         const gained = Math.min(FOCUS_CAP - pet.focus, pet.shieldBreakRefund || 0);
@@ -219,6 +327,18 @@ function rewardBrokenShield(pet: Player, before: number, notes: string[]) {
 }
 // Single-source combat resolver; only the server applies damage, shields, status
 // effects and resource changes. This deliberately favors choices over breed tier.
+/*
+ * DOCU: Apply move for this feature.
+ * @param {Battle} battle - battle value used by this function
+ * @param {Player} actor - actor value used by this function
+ * @param {Player} target - target value used by this function
+ * @param {BattleAction} action - action value used by this function
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function applyMove(battle: Battle, actor: Player, target: Player, action: BattleAction) {
     normalizePlayer(actor);
     normalizePlayer(target);
@@ -570,6 +690,16 @@ export function applyMove(battle: Battle, actor: Player, target: Player, action:
 
 // A round stays private until both players choose or the shared timer expires.
 // Missing moves are skipped, never replaced with an automatic attack.
+/*
+ * DOCU: Resolve player actions and effects for the current battle round.
+ * @param {DbClient} client - client value used by this function
+ * @param {any} row - row value used by this function
+ * @param {Battle} battle - battle value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export async function resolveRound(client: DbClient, row: any, battle: Battle) {
     const pending = battle.pendingMoves || {};
     battle.roundStartMoves = { ...pending };
@@ -725,6 +855,15 @@ export async function resolveRound(client: DbClient, row: any, battle: Battle) {
     return "active";
 }
 
+/*
+ * DOCU: Handle public challenge behavior for this feature.
+ * @param {any} row - row value used by this function
+ * @param {string} viewerId - viewerId value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function publicChallenge(row: any, viewerId: string) {
     // Never send the opponent's queued move to the browser before round resolution.
     const battle = row.battle ? {
@@ -765,6 +904,14 @@ const challengeSelect = `SELECT c.*, a.username AS challenger_username, b.userna
     FROM multiplayer_challenges c
     JOIN users a ON a.id=c.challenger_id JOIN users b ON b.id=c.challenged_id`;
 
+/*
+ * DOCU: Handle cleanup expired behavior for this feature.
+ * @throws {Error} - Propagates an error when this operation cannot complete.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 async function cleanupExpired() {
     const client = await pool.connect();
     const affected: string[] = [];
@@ -774,7 +921,7 @@ async function cleanupExpired() {
         const expired = await client.query(`SELECT id, challenger_id, challenged_id, wager, status
             FROM multiplayer_challenges
             WHERE (status='pending' AND expires_at<NOW())
-               OR (status='active' AND updated_at<NOW()-INTERVAL '15 minutes')
+                OR (status='active' AND updated_at<NOW()-INTERVAL '15 minutes')
             FOR UPDATE SKIP LOCKED LIMIT 100`);
         for (const row of expired.rows) {
             const status = row.status === "pending" ? "expired" : "cancelled";
@@ -795,8 +942,26 @@ async function cleanupExpired() {
     return affected;
 }
 
+/*
+ * DOCU: Register multiplayer API routes and actions.
+ * @param {Express} app - app value used by this function
+ * @param {any} auth - auth value used by this function
+ * @param {(users: string[], type: string) => void} publishLive - publishLive value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export function registerMultiplayer(app: Express, auth: any, publishLive: (users: string[], type: string) => void) {
-    const handle = (fn: (req: any, res: any) => Promise<void>) => (req: any, res: any) => {
+        /*
+     * DOCU: Handle the current state for this feature.
+     * @param {(req: any, res: any) => Promise<void>} fn - fn value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const handle = (fn: (req: any, res: any) => Promise<void>) => (req: any, res: any) => {
         Promise.resolve(fn(req, res)).catch(error => {
             logSafeError("Multiplayer request failed", error);
             if (!res.headersSent) {
@@ -809,7 +974,15 @@ export function registerMultiplayer(app: Express, auth: any, publishLive: (users
             }
         });
     };
-    const notify = (users: string[]) => publishLive(users, "multiplayer_updated");
+        /*
+     * DOCU: Notify the current state for this feature.
+     * @param {string[]} users - users value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const notify = (users: string[]) => publishLive(users, "multiplayer_updated");
 
     // Server-owned and public: the Develop gallery reads the same live rules as battles.
     app.get("/api/multiplayer/rules", (_req, res) => res.json(getPublicCombatCatalog()));
@@ -861,15 +1034,25 @@ export function registerMultiplayer(app: Express, auth: any, publishLive: (users
     // If the hosting instance was sleeping when the periodic timeout tick should
     // have fired, the first returning player can still advance an expired round.
     // FOR UPDATE SKIP LOCKED prevents racing the regular timer or another request.
-    async function catchUpExpiredRound(userId: string): Promise<string[]> {
+        /*
+     * DOCU: Handle catch up expired round behavior for this feature.
+     * @param {string} userId - userId value used by this function
+     * @returns {Promise<string[]>} - Result returned by this function.
+     * @throws {Error} - Propagates an error when this operation cannot complete.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function catchUpExpiredRound(userId: string): Promise<string[]> {
         const client = await pool.connect();
         const affected: string[] = [];
         try {
             await client.query("BEGIN");
             const q = await client.query(`SELECT * FROM multiplayer_challenges
                 WHERE status='active' AND (challenger_id=$1 OR challenged_id=$1)
-                  AND (battle->>'turnExpiresAt') IS NOT NULL
-                  AND (battle->>'turnExpiresAt')::timestamptz <= NOW()
+                    AND (battle->>'turnExpiresAt') IS NOT NULL
+                    AND (battle->>'turnExpiresAt')::timestamptz <= NOW()
                 FOR UPDATE SKIP LOCKED`, [userId]);
             for (const row of q.rows) {
                 if (row.battle && alive(row.battle as Battle)) {
@@ -895,7 +1078,7 @@ export function registerMultiplayer(app: Express, auth: any, publishLive: (users
         const query = await pool.query(`${challengeSelect}
             WHERE c.challenger_id=$1 OR c.challenged_id=$1
             ORDER BY CASE WHEN c.status IN ('pending','active') THEN 0 ELSE 1 END,
-                     c.created_at DESC LIMIT 30`, [req.userId]);
+                    c.created_at DESC LIMIT 30`, [req.userId]);
         res.json(query.rows.map((row: any) => publicChallenge(row, req.userId)));
     }));
 

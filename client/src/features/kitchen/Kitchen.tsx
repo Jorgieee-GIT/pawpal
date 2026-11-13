@@ -168,6 +168,15 @@ const gameAssets: Record<Game, {
         instruction: "Use the clues to adjust Sweet, Salty and Zesty. The ideal balance changes each time."
     }
 };
+/*
+ * DOCU: Handle game for step behavior for this feature.
+ * @param {string} step - step value used by this function
+ * @returns {Game} - Result returned by this function.
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 function gameForStep(step: string): Game {
     if (step === "roll" || step === "catch" || step === "stove" || step === "season") {
         return step;
@@ -198,10 +207,49 @@ function gameForStep(step: string): Game {
     }
     return "rhythm";
 }
+/*
+ * DOCU: Format an identifier as a readable title.
+ * @param {string} value - value value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const titleCase = (value: string) => value.replaceAll("_", " ").replace(/\b\w/g, c => c.toUpperCase());
+/*
+ * DOCU: Keep a numeric value within its allowed minimum and maximum.
+ * @param {number} value - value value used by this function
+ * @param {number} min - min value used by this function
+ * @param {number} max - max value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+/*
+ * DOCU: Format rating for this feature.
+ * @param {number} score - score value used by this function
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 const formatRating = (score: number) => score >= 90 ? "Perfect!" : score >= 75 ? "Great!" : score >= 50 ? "Good" : "Messy, but edible!";
 
+/*
+ * DOCU: Render the kitchen interface and provide its feature behavior.
+ * @param {{
+    token: string;
+    api: string;
+    onPetChange: () => Promise<void>;
+    onToast: (message: string) => void
+}} props - Properties supplied to the component or operation
+ *
+ * Last Updated: 2026-11-13
+ * Author: Jorge
+ * Last Updated By: Jorge
+ */
 export default function Kitchen({ token, api, onPetChange, onToast }: {
     token: string;
     api: string;
@@ -281,12 +329,28 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
     const step = current?.steps[kitchen?.recipe_step || 0] || "mix";
     const game: Game = gameForStep(step);
     const assets = gameAssets[game];
-    const timingPhase = (at: number) => {
+        /*
+     * DOCU: Handle timing phase behavior for this feature.
+     * @param {number} at - at value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const timingPhase = (at: number) => {
         const duration = game === "flip" ? challenge.flipSpeed : game === "boil" ? challenge.boilSpeed : challenge.chopSpeed;
         const elapsed = Math.max(0, at - timingStarted.current);
         return kitchenMarkerPhase(elapsed, duration);
     };
-    const progressScore = (target: number) => {
+        /*
+     * DOCU: Handle progress score behavior for this feature.
+     * @param {number} target - target value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+const progressScore = (target: number) => {
         // Read the same time source used to draw the marker rather than a stale
         // React render (which previously lagged a tap by up to 100 ms).
         const phase = timingPhase(performance.now());
@@ -294,7 +358,14 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
     };
     const pantryCount = Object.values(kitchen?.meals || {}).reduce((sum, value) => sum + (Number(value) || 0), 0);
 
-    function resetGame() {
+        /*
+     * DOCU: Reset local cooking game state before a new step begins.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function resetGame() {
         gameStarted.current = Date.now();
         timingStarted.current = performance.now();
         gameTick.current = 0;
@@ -320,7 +391,19 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         pending.current = false;
     }
 
-    async function act(action: string, item: string, quantity = 1, extras: Record<string, unknown> = {}) {
+        /*
+     * DOCU: Send a kitchen action to the server and apply the returned kitchen state.
+     * @param {string} action - action value used by this function
+     * @param {string} item - Item being handled
+     * @param {unknown} quantity - quantity value used by this function
+     * @param {Record<string, unknown>} extras - extras value used by this function
+     * @throws {Error} - Propagates an error when this operation cannot complete.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+async function act(action: string, item: string, quantity = 1, extras: Record<string, unknown> = {}) {
         if (busy) {
             return;
         }
@@ -380,13 +463,28 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         }
     }
 
-    function finishStep(score: number) {
+        /*
+     * DOCU: Submit the cooking score and advance or finish the recipe step.
+     * @param {number} score - score value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function finishStep(score: number) {
         if (pending.current || busy || !active || !gameOpen) {
             return;
         }
         pending.current = true;
         const elapsed = Date.now() - gameStarted.current;
-        const submit = () => {
+                /*
+         * DOCU: Submit the current state for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const submit = () => {
             void act("step", step, 1, {
                 score: clamp(Math.round(score), 0, 100)
             });
@@ -415,7 +513,15 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         if (track) {
             observer?.observe(track);
         }
-        const animate = (now: number) => {
+                /*
+         * DOCU: Animate the current state for this feature.
+         * @param {number} now - now value used by this function
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const animate = (now: number) => {
             // Transform is composited on the GPU; no layout or React re-render
             // is needed for each animation frame, even on slower phones.
             if (pointer && !pending.current && !busy) {
@@ -462,7 +568,14 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         return () => clearInterval(timer);
     }, [active, gameOpen, busy, game, kitchen?.recipe_step]);
 
-    function hit() {
+        /*
+     * DOCU: Handle hit behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function hit() {
         if (busy || pending.current) {
             return;
         }
@@ -475,7 +588,17 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
             finishStep(clamp(totalTimingScore.current / 3 - mistakeCount.current * 3, 40, 100));
         }
     }
-    function tapSequence(index: number, expected: number[], label: string) {
+        /*
+     * DOCU: Tap sequence for this feature.
+     * @param {number} index - Position of the item in its collection
+     * @param {number[]} expected - expected value used by this function
+     * @param {string} label - label value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function tapSequence(index: number, expected: number[], label: string) {
         if (busy || pending.current) {
             return;
         }
@@ -506,7 +629,15 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         const expected = game === "rhythm" ? challenge.rhythm : challenge.wash;
         const label = game === "rhythm" ? "Whisk" : "Rinse";
 
-        const onKeyDown = (event: KeyboardEvent) => {
+                /*
+         * DOCU: Handle on key down behavior for this feature.
+         * @param {KeyboardEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onKeyDown = (event: KeyboardEvent) => {
             const direction = rhythmKeyDirection(event.key);
             if (direction === null) {
                 return;
@@ -517,7 +648,15 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
             }
             tapSequence(direction, expected, label);
         };
-        const onTouchStart = (event: TouchEvent) => {
+                /*
+         * DOCU: Handle on touch start behavior for this feature.
+         * @param {TouchEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onTouchStart = (event: TouchEvent) => {
             if (event.touches.length !== 1 || pending.current) {
                 touchStart = null;
                 return;
@@ -529,7 +668,15 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                 y: touch.clientY
             };
         };
-        const onTouchMove = (event: TouchEvent) => {
+                /*
+         * DOCU: Handle on touch move behavior for this feature.
+         * @param {TouchEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onTouchMove = (event: TouchEvent) => {
             if (!touchStart || pending.current) {
                 return;
             }
@@ -542,7 +689,15 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                 event.preventDefault();
             }
         };
-        const onTouchEnd = (event: TouchEvent) => {
+                /*
+         * DOCU: Handle on touch end behavior for this feature.
+         * @param {TouchEvent} event - User or browser event that triggered this operation
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onTouchEnd = (event: TouchEvent) => {
             if (!touchStart || pending.current) {
                 touchStart = null;
                 return;
@@ -560,7 +715,14 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                 tapSequence(direction, expected, label);
             }
         };
-        const onTouchCancel = () => {
+                /*
+         * DOCU: Handle on touch cancel behavior for this feature.
+         *
+         * Last Updated: 2026-11-13
+         * Author: Jorge
+         * Last Updated By: Jorge
+         */
+const onTouchCancel = () => {
             touchStart = null;
         };
 
@@ -584,7 +746,14 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         };
     }, [active, gameOpen, game, busy, challenge.rhythm, challenge.wash, kitchen?.recipe_step]);
 
-    function releasePour() {
+        /*
+     * DOCU: Handle release pour behavior for this feature.
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function releasePour() {
         if (!holdRef.current || busy || pending.current) {
             return;
         }
@@ -600,7 +769,15 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         setFeedback(distance <= 9 ? "Perfect pour!" : "Nice try!");
         finishStep(clamp(100 - distance * 1.3, 45, 100));
     }
-    function changeHeat(delta: number) {
+        /*
+     * DOCU: Change heat for this feature.
+     * @param {number} delta - delta value used by this function
+     *
+     * Last Updated: 2026-11-13
+     * Author: Jorge
+     * Last Updated By: Jorge
+     */
+function changeHeat(delta: number) {
         heatRef.current = clamp(heatRef.current + delta, 110, 240);
         setHeat(heatRef.current);
     }
@@ -663,11 +840,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                         </div>
                         {recipe.discovered ? <>
                             <div className="k3-ingredients-list">
-                                {Object.entries(recipe.ingredients).map(([ingredient, needed]) => <span
-                                    key={ingredient}
-                                    className={(kitchen?.ingredients[ingredient] || 0) >= needed ? "available" : "missing"}
-                                    title={`${titleCase(ingredient)}: ${kitchen?.ingredients[ingredient] || 0}/${needed}`}
-                                >
+                                {Object.entries(recipe.ingredients).map(([ingredient, needed]) => <span key={ingredient} className={(kitchen?.ingredients[ingredient] || 0) >= needed ? "available" : "missing"} title={`${titleCase(ingredient)}: ${kitchen?.ingredients[ingredient] || 0}/${needed}`}>
                                     <span>
                                         <FoodArt id={ingredient} />
                                     </span>
@@ -692,12 +865,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                         </small>}
                         <div className="k3-recipe-buttons">
                             {recipe.discovered ? <>
-                                <button
-                                    type="button"
-                                    className="primary"
-                                    disabled={busy || !!active || !kitchen || Object.entries(recipe.ingredients).some(([ing, n]) => (kitchen.ingredients[ing] || 0) < n)}
-                                    onClick={() => void act("start", id)}
-                                >
+                                <button type="button" className="primary" disabled={busy || !!active || !kitchen || Object.entries(recipe.ingredients).some(([ing, n]) => (kitchen.ingredients[ing] || 0) < n)} onClick={() => void act("start", id)}>
                                     <ChefHat size={15} /> Cook</button>
                                 <button type="button" className="secondary" disabled={busy} onClick={() => void act("buy_meal", id)}>Buy · {(mealPrices[id] || 0).toLocaleString()}
                                 </button>
@@ -744,14 +912,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                 <div className="k3-experiment-pantry">
                     <h4>Pick your ingredients</h4>
                     <div className="k3-ingredient-choices">
-                        {Object.keys(prices).map(id => <button
-                            type="button"
-                            key={id}
-                            aria-pressed={selected.includes(id)}
-                            className={selected.includes(id) ? "selected" : ""}
-                            disabled={busy || ((kitchen?.ingredients[id] || 0) < 1 && !selected.includes(id)) || (!selected.includes(id) && selected.length >= 4)}
-                            onClick={() => setSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id])}
-                        >
+                        {Object.keys(prices).map(id => <button type="button" key={id} aria-pressed={selected.includes(id)} className={selected.includes(id) ? "selected" : ""} disabled={busy || ((kitchen?.ingredients[id] || 0) < 1 && !selected.includes(id)) || (!selected.includes(id) && selected.length >= 4)} onClick={() => setSelected(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id])}>
                             <span className="k3-choice-art">
                                 <FoodArt id={id} />
                             </span>
@@ -853,12 +1014,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         </>}
         </KitchenStationDialog>}
 
-        {active && current && gameOpen && <div className="kitchen-game-overlay" onMouseDown={event => {
-            if (game !== "rhythm" && game !== "wash" && event.target === event.currentTarget) {
-                setGameOpen(false)
-
-            }
-        }}>
+        {active && current && gameOpen && <div className="kitchen-game-overlay" onMouseDown={event => {if (game !== "rhythm" && game !== "wash" && event.target ===event.currentTarget) {setGameOpen(false)}}}>
             <div className="kitchen-game-modal k3-game-modal" role="dialog" aria-modal="true" aria-label={`Cooking ${current.name}`}>
                 <div className="kitchen-game-head">
                     <div className="kitchen-game-art">
@@ -877,11 +1033,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                     </button>
                 </div>
                 <div className="kitchen-game-steps">
-                    {current.steps.map((name, i) => <span
-                        key={i}
-                        title={stepNames[name] || name}
-                        className={i < (kitchen?.recipe_step || 0) ? "done" : i === (kitchen?.recipe_step || 0) ? "current" : ""}
-                    >
+                    {current.steps.map((name, i) => <span key={i} title={stepNames[name] || name} className={i < (kitchen?.recipe_step || 0) ? "done" : i === (kitchen?.recipe_step || 0) ? "current" : ""}>
                         {i + 1}
                     </span>)}
                 </div>
@@ -1016,11 +1168,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                         </div>}
                         {game === "rhythm" && <div className="k3-rhythm" aria-label="Rhythm mixing arrow sequence">
                             <div className="k3-rhythm-sequence" aria-live="off">
-                                {challenge.rhythm.map((index, i) => <span
-                                    key={i}
-                                    className={"k3-rhythm-arrow " + (i < hits ? "completed" : i === hits ? "next" : "")}
-                                    aria-label={`${i + 1}: ${KITCHEN_ARROW_DIRECTIONS[index]}`}
-                                >
+                                {challenge.rhythm.map((index, i) => <span key={i} className={"k3-rhythm-arrow " + (i < hits ? "completed" : i === hits ? "next" : "")} aria-label={`${i + 1}: ${KITCHEN_ARROW_DIRECTIONS[index]}`}>
                                     <KitchenDirectionArt direction={index} />
                                 </span>)}
                             </div>
@@ -1031,11 +1179,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                         </div>}
                         {game === "wash" && <div className="k3-wash-pattern">
                             <div className="k3-rhythm-sequence" aria-label="Random rinse direction sequence">
-                                {challenge.wash.map((index, i) => <span
-                                    key={i}
-                                    className={"k3-rhythm-arrow " + (i < hits ? "completed" : i === hits ? "next" : "")}
-                                    aria-label={`${i + 1}: ${KITCHEN_ARROW_DIRECTIONS[index]}`}
-                                >
+                                {challenge.wash.map((index, i) => <span key={i} className={"k3-rhythm-arrow " + (i < hits ? "completed" : i === hits ? "next" : "")} aria-label={`${i + 1}: ${KITCHEN_ARROW_DIRECTIONS[index]}`}>
                                     <KitchenDirectionArt direction={index} />
                                 </span>)}
                             </div>
@@ -1044,13 +1188,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                             <p className="k3-rhythm-touch-hint">Swipe anywhere to rinse · {hits}/{challenge.wash.length}
                             </p>
                             <div className="k3-wash-fallback" aria-label="On-screen rinse direction buttons">
-                                {[0, 1, 2, 3].map(index => <button
-                                    type="button"
-                                    key={index}
-                                    aria-label={`Rinse ${KITCHEN_ARROW_DIRECTIONS[index]}`}
-                                    disabled={busy || pending.current}
-                                    onClick={() => tapSequence(index, challenge.wash, "Rinse")}
-                                >
+                                {[0, 1, 2, 3].map(index => <button type="button" key={index} aria-label={`Rinse ${KITCHEN_ARROW_DIRECTIONS[index]}`} disabled={busy || pending.current} onClick={() => tapSequence(index, challenge.wash, "Rinse")}>
                                     <KitchenDirectionArt direction={index} />
                                 </button>)}
                             </div>
@@ -1067,11 +1205,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
             </div>
         </div>}
         {guideOpen && (
-            <div className="kitchen-game-overlay" onMouseDown={event => {
-                if (event.target === event.currentTarget) {
-                    setGuideOpen(false);
-                }
-            }}>
+            <div className="kitchen-game-overlay" onMouseDown={event => {if (event.target ===event.currentTarget) {setGuideOpen(false);}}}>
                 <section className="k4-info-modal" role="dialog" aria-modal="true" aria-label="Kitchen minigame information">
                     <header className="k4-info-heading">
                         <div>
