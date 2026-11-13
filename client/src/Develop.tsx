@@ -44,12 +44,14 @@ import {
     PaintPalette,
     TargetHeart,
     PAW_COLOR_PALETTE,
+    BubblePopIcon,
     MoleGameIcon,
     ClawMenuIcon,
     arcadeSpriteSrc
 } from "./features/arcade/ArcadeArt";
 import "./Develop.css";
 import "./features/admin/AdminShared.css";
+import "./features/arcade/BubblePop.css";
 
 const API = import.meta.env.VITE_API_URL || "";
 const SPECIES = ["cat", "dog", "bunny", "fox", "hamster", "panda", "penguin", "axolotl"];
@@ -243,7 +245,7 @@ export default function Develop() {
     }, [authorized, section, brawlRulesRefresh]);
 
     // Read-only DOM sanity test of the *actual rendered* gallery illustrations.
-    // Helps catch missing SVG markup, zero-size elements and failed SVG image loads.
+    // Checks SVG artwork. CSS previews declare their format and are excluded.
     // This is not a pixel-by-pixel visual test: inspect artwork with your eyes too.
     useEffect(() => {
         if (!authorized) {
@@ -257,7 +259,7 @@ export default function Develop() {
             let checked = 0;
             let issues = 0;
             gallery.querySelectorAll<HTMLElement>(
-                ".develop-pet-art, .develop-furniture-art, .develop-combat-art, .develop-garden-art, .develop-mail-art"
+                ".develop-pet-art, .develop-furniture-art:not([data-art-format='css']), .develop-combat-art, .develop-garden-art, .develop-mail-art"
             ).forEach(holder => {
                 checked++;
                 const svg = holder.querySelector("svg");
@@ -1012,12 +1014,12 @@ export default function Develop() {
                     <p className="develop-hint">These previews reuse the exact artwork from gameplay. Paw Run draws the same vehicle and building SVG documents onto its canvas, and the other icons share their in-game React components.</p>
                     <h2 className="develop-art-subheading">Mini-game menu icons</h2>
                     <div className="develop-grid develop-furniture">
-                        {(["memory", "dino", "runner", "pattern", "mole", "claw"] as const).map(game =>
+                        {(["memory", "dino", "runner", "pattern", "bubble", "mole", "claw"] as const).map(game =>
                             <article key={game} className="develop-tile">
                                 <div className="develop-furniture-art develop-arcade-art">
                                     {game === "memory" ? <BrainCircuit size={34} /> : game === "dino" ? <Sprout size={34} /> :
                                         game === "runner" ? <Rabbit size={34} /> : game === "pattern" ? <Heart size={34} /> :
-                                            game === "mole" ? <MoleGameIcon /> : <ClawMenuIcon />}
+                                            game === "bubble" ? <BubblePopIcon /> : game === "mole" ? <MoleGameIcon /> : <ClawMenuIcon />}
                                 </div>
                                 <b>
                                     {({
@@ -1025,6 +1027,7 @@ export default function Develop() {
                                         dino: "Cactus Jump",
                                         runner: "Paw Run",
                                         pattern: "Heart Color Match",
+                                        bubble: "Bubble Pop",
                                         mole: "Whack-a-Mole",
                                         claw: "Paw Claw"
                                     } as const)[game]}
@@ -1032,6 +1035,27 @@ export default function Develop() {
                                 <small>Same SVG used on the game-selection card</small>
                             </article>
                         )}
+                    </div>
+                    <h2 className="develop-art-subheading">Bubble Pop · Bubbles and powers</h2>
+                    <div className="develop-grid develop-furniture">
+                        {[
+                            ["Pink bubble", "bubble-pink"],
+                            ["Green bubble", "bubble-mint"],
+                            ["Purple bubble", "bubble-lilac"],
+                            ["Blue bubble", "bubble-sky"],
+                            ["Gold bubble", "bubble-gold"],
+                            ["Horizontal stripe", "bubble-sky bubble-power-stripe-h"],
+                            ["Vertical stripe", "bubble-mint bubble-power-stripe-v"],
+                            ["Wrapped bomb", "bubble-pink bubble-power-wrapped"],
+                            ["Color bomb", "bubble-power-color"]
+                        ].map(([label, appearance]) => (
+                            <article key={label} className="develop-tile">
+                                <div className="develop-furniture-art develop-arcade-art develop-bubble-preview" data-art-format="css">
+                                    <span className={`bubble-match-tile ${appearance}`} aria-hidden="true" />
+                                </div>
+                                <b>{label}</b>
+                            </article>
+                        ))}
                     </div>
                     <h2 className="develop-art-subheading">Paw Run · Five vehicles</h2>
                     <div className="develop-grid develop-furniture">

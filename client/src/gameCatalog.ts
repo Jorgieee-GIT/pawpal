@@ -5,6 +5,7 @@ export const PAW_GAMES: Array<[string, string, string]> = [
     ["dino", "cactus", "Cactus Jump"],
     ["runner", "runner", "Paw Run"],
     ["pattern", "heart", "Heart Color Match"],
+    ["bubble", "bubble", "Bubble Pop"],
     ["mole", "mole", "Whack-a-Mole"],
     ["claw", "plush", "Paw Claw"]
 ];

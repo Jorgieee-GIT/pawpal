@@ -37,7 +37,6 @@ export type Pet = {
     happiness: number;
     energy: number;
     cleanliness: number;
-    affection: number;
     food: number;
     toys: number;
     owned_cosmetics: string[];
@@ -120,7 +119,6 @@ export type RoomPet = {
     happiness: number;
     energy: number;
     cleanliness: number;
-    affection: number;
     equipped_cosmetic: string;
     equipped_outfit: Outfit;
     username: string;

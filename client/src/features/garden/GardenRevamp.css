@@ -1130,47 +1130,10 @@
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
-    .paw-account-summary {
-        grid-template-columns: repeat(3, minmax(0, 1fr)) 40px;
-    }
-    .paw-account-summary .mobile-menu-toggle {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 40px;
-        min-width: 40px;
-        height: 40px;
-        min-height: 40px;
-        margin: auto 0;
-        padding: 0;
-        border: 0 !important;
-        background: transparent !important;
-        color: inherit !important;
-        box-shadow: none !important;
-    }
 }
 @media (max-width: 700px) {
     .sidebar nav {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .heading.paw-dashboard-heading {
-        position: relative;
-    }
-    .paw-dashboard-greeting {
-        padding-right: 43px;
-    }
-    .paw-account-summary {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-    .paw-account-summary .mobile-menu-toggle {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 0;
-        width: 38px;
-        min-width: 38px;
-        height: 38px;
-        min-height: 38px;
     }
 }
 /* All four stock counters stay together in one compact mobile / small-tablet row. */

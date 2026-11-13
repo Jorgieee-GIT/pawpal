@@ -117,6 +117,13 @@
     justify-content: center;
     align-items: center;
 }
+.develop-bubble-preview .bubble-match-tile {
+    position: relative;
+    width: 58px;
+    height: 58px;
+    cursor: default;
+}
+
 .develop-furniture-art svg {
     max-width: 100%;
     max-height: 100%;

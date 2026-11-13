@@ -6,7 +6,7 @@ import { catalog } from "./petCatalog.js";
 import { logSafeError } from "./security.js";
 
 export const fields =
-    "id,owner_id,name,species,breed,color,owned_colors,owned_breeds,hunger,happiness,energy,cleanliness,affection,coins,xp,level,food,toys,owned_cosmetics,equipped_cosmetic,equipped_outfit,room_theme,active_room,unlocked_rooms,room_layouts,owned_items,placed_items,garden,last_daily,daily_claimed_at,last_game_at,created_at,updated_at";
+    "id,owner_id,name,species,breed,color,owned_colors,owned_breeds,hunger,happiness,energy,cleanliness,coins,xp,level,food,toys,owned_cosmetics,equipped_cosmetic,equipped_outfit,room_theme,active_room,unlocked_rooms,room_layouts,owned_items,placed_items,garden,last_daily,daily_claimed_at,last_game_at,created_at,updated_at";
 
 export const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
 
@@ -191,14 +191,13 @@ export async function mutate(req: any, res: any, fn: (p: any) => string | Promis
             p.coins += 60;
         }
         const out = await c.query(
-            `UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,affection=$6,coins=$7,xp=$8,level=$9,food=$10,toys=$11,owned_cosmetics=$12::jsonb,equipped_cosmetic=$13,owned_colors=$14::jsonb,color=$15,owned_breeds=$16::jsonb,breed=$17,room_theme=$18,owned_items=$19::jsonb,placed_items=$20::jsonb,garden=$21::jsonb,last_daily=$22,last_game_at=$23,equipped_outfit=$24::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,
+            `UPDATE pets SET hunger=$2,happiness=$3,energy=$4,cleanliness=$5,coins=$6,xp=$7,level=$8,food=$9,toys=$10,owned_cosmetics=$11::jsonb,equipped_cosmetic=$12,owned_colors=$13::jsonb,color=$14,owned_breeds=$15::jsonb,breed=$16,room_theme=$17,owned_items=$18::jsonb,placed_items=$19::jsonb,garden=$20::jsonb,last_daily=$21,last_game_at=$22,equipped_outfit=$23::jsonb,updated_at=NOW() WHERE id=$1 RETURNING ${fields}`,
             [
                 p.id,
                 p.hunger,
                 p.happiness,
                 p.energy,
                 p.cleanliness,
-                p.affection,
                 p.coins,
                 p.xp,
                 p.level,

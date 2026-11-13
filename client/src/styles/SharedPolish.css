@@ -48,6 +48,7 @@
 .paw-modal .paw-modal-close,
 .paw-meals-modal .paw-modal-close,
 .paw-garden-reveal .paw-modal-close,
+.kitchen-station-dialog .paw-modal-close,
 .kitchen-revamp .kitchen-game-close,
 .kitchen-revamp .k4-info-heading button,
 .game-modal .paw-arcade-exit {
@@ -74,6 +75,7 @@
 
 .paw-modal .paw-modal-close:hover,
 .paw-meals-modal .paw-modal-close:hover,
+.kitchen-station-dialog .paw-modal-close:hover,
 .kitchen-revamp .kitchen-game-close:hover,
 .kitchen-revamp .k4-info-heading button:hover,
 .game-modal .paw-arcade-exit:hover:not(:disabled) {
@@ -85,6 +87,7 @@
 
 .paw-dark .paw-modal .paw-modal-close,
 .paw-dark .paw-meals-modal .paw-modal-close,
+.paw-dark .kitchen-station-dialog .paw-modal-close,
 .paw-dark .kitchen-revamp .kitchen-game-close,
 .paw-dark .kitchen-revamp .k4-info-heading button {
     border-color: #80647c !important;
@@ -131,6 +134,7 @@
 @media (max-width: 520px) {
     .paw-modal .paw-modal-close,
     .paw-meals-modal .paw-modal-close,
+    .kitchen-station-dialog .paw-modal-close,
     .kitchen-revamp .kitchen-game-close,
     .kitchen-revamp .k4-info-heading button {
         flex-basis: 34px !important;

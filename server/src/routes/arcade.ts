@@ -92,7 +92,7 @@ export function registerArcadeRoutes(app: Express) {
     app.post("/api/game", auth, handle(async (req, res) => {
         const v = z
             .object({
-                game: z.enum(["memory", "dino", "runner", "pattern", "mole"]),
+                game: z.enum(["memory", "dino", "runner", "pattern", "mole", "bubble"]),
                 score: z.number().int().min(0).max(100000)
             })
             .safeParse(req.body);

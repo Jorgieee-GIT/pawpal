@@ -687,7 +687,7 @@
     font-size: 13px;
     line-height: 1.3;
     text-align: left;
-    color: #95617f;
+    color: var(--arcade-ink, #95617f);
 }
 .games-grid > button > small {
     display: block;
@@ -699,11 +699,15 @@
     color: #a28a9a;
 }
 .games-grid > button > strong {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     align-self: stretch;
     padding: 12px 11px 14px;
     font-size: 11px;
-    color: #c17b9f;
+    color: var(--arcade-ink, #c17b9f);
+    font-weight: 850;
+    letter-spacing: .035em;
 }
 .paw-dark .games-grid > button {
     background: #473645;
@@ -759,35 +763,47 @@
     color: var(--arcade-ink);
     background: var(--arcade-bg);
 }
-.games-grid > button:nth-child(1) {
+.games-grid > button.paw-game-card-memory {
     --arcade-bg: #dff4ec;
     --arcade-ink: #3e8c76;
     --arcade-frame: #b6dfcf;
+    --arcade-icon-bg: #d1eee3;
 }
-.games-grid > button:nth-child(2) {
+.games-grid > button.paw-game-card-dino {
     --arcade-bg: #fff0cf;
     --arcade-ink: #b47a30;
     --arcade-frame: #eed5a0;
+    --arcade-icon-bg: #ffebc0;
 }
-.games-grid > button:nth-child(3) {
+.games-grid > button.paw-game-card-runner {
     --arcade-bg: #dceeff;
     --arcade-ink: #4e86b8;
     --arcade-frame: #b7d8f1;
+    --arcade-icon-bg: #c9e3fa;
 }
-.games-grid > button:nth-child(4) {
+.games-grid > button.paw-game-card-pattern {
     --arcade-bg: #ffe1db;
     --arcade-ink: #bf716b;
     --arcade-frame: #f0bdb6;
+    --arcade-icon-bg: #ffd2ca;
 }
-.games-grid > button:nth-child(5) {
+.games-grid > button.paw-game-card-bubble {
     --arcade-bg: #e8e4ff;
     --arcade-ink: #8171bd;
     --arcade-frame: #cfc5f1;
+    --arcade-icon-bg: #ded8fb;
 }
-.games-grid > button:nth-child(6) {
+.games-grid > button.paw-game-card-mole {
     --arcade-bg: #e4f3ce;
     --arcade-ink: #789b45;
     --arcade-frame: #c9e2a7;
+    --arcade-icon-bg: #d7edb9;
+}
+.games-grid > button.paw-game-card-claw {
+    --arcade-bg: #f3e8d7;
+    --arcade-ink: #96734f;
+    --arcade-frame: #dfc6a5;
+    --arcade-icon-bg: #ecdbc1;
 }
 .games-grid > button > .paw-game-art > svg,
 .games-grid > button > .paw-game-art > .paw-svg-icon,
@@ -800,7 +816,7 @@
     padding: 10px;
     border: 2px solid var(--arcade-frame);
     border-radius: 16px;
-    background: #fffdfa;
+    background: var(--arcade-icon-bg, #fffdfa);
     color: var(--arcade-ink);
     box-shadow: 4px 5px 0 var(--arcade-frame);
     box-sizing: border-box;

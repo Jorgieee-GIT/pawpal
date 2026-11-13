@@ -1,3 +1,6 @@
+-- PawPal complete database setup. Fresh installs can run this one file with psql
+-- or use `npm run db:init --prefix server`; the Node initializer executes this file.
+-- This checked-in file represents the current database structure.
 CREATE TABLE IF NOT EXISTS pets (
     id UUID PRIMARY KEY,
     name VARCHAR(32) NOT NULL,
@@ -29,7 +32,7 @@ ALTER TABLE pets ADD COLUMN IF NOT EXISTS breed TEXT NOT NULL DEFAULT 'classic';
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS color TEXT NOT NULL DEFAULT 'classic';
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS owned_colors JSONB NOT NULL DEFAULT '["classic"]';
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS owned_breeds JSONB NOT NULL DEFAULT '["classic"]';
-ALTER TABLE pets ADD COLUMN IF NOT EXISTS affection INTEGER NOT NULL DEFAULT 70;
+ALTER TABLE pets DROP COLUMN IF EXISTS affection;
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS room_theme TEXT NOT NULL DEFAULT 'blush';
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS owned_items JSONB NOT NULL DEFAULT '["basic_sofa"]';
 ALTER TABLE pets ADD COLUMN IF NOT EXISTS placed_items JSONB NOT NULL DEFAULT '["basic_sofa"]';
@@ -85,7 +88,7 @@ CREATE TABLE IF NOT EXISTS paw_mail_envelopes (user_id UUID NOT NULL REFERENCES 
 
 -- Multiplayer: reusable challenge envelope, initially Paw Brawl.
 -- PawPal multiplayer challenges, escrow, and server-authoritative turn-based battles.
--- Run with: psql "$DATABASE_URL" -f database/migrations/012_multiplayer.sql
+-- Included here so a fresh database can be initialized from this file.
 CREATE TABLE IF NOT EXISTS multiplayer_challenges (
     id UUID PRIMARY KEY,
     game_id TEXT NOT NULL,
@@ -172,3 +175,159 @@ CREATE TABLE IF NOT EXISTS arena_fee_ledger (
     CHECK (gross_pool = fee_amount + winning_players * payout_per_winner)
 );
 CREATE INDEX IF NOT EXISTS arena_fee_ledger_created_idx ON arena_fee_ledger(created_at DESC);
+
+-- Mission center (migration 011).
+CREATE TABLE IF NOT EXISTS mission_events (
+    id BIGSERIAL PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    metric TEXT NOT NULL,
+    amount INTEGER NOT NULL DEFAULT 1 CHECK(amount>0),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS mission_events_user_time ON mission_events(user_id,created_at DESC);
+CREATE INDEX IF NOT EXISTS mission_events_user_metric ON mission_events(user_id,metric);
+CREATE TABLE IF NOT EXISTS mission_claims (
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    mission_id TEXT NOT NULL,
+    period TEXT NOT NULL,
+    claimed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY(user_id,mission_id,period)
+);
+
+-- Admin-assisted password recovery (migration 016).
+ALTER TABLE users ADD COLUMN IF NOT EXISTS auth_version INTEGER NOT NULL DEFAULT 0;
+CREATE TABLE IF NOT EXISTS password_reset_requests (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    request_key_hash CHAR(64) NOT NULL UNIQUE,
+    status TEXT NOT NULL DEFAULT 'pending'
+        CHECK (status IN ('pending','approved','rejected','expired','completed')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    decided_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS password_reset_requests_user_time_idx
+    ON password_reset_requests(user_id,created_at DESC);
+CREATE INDEX IF NOT EXISTS password_reset_requests_status_idx
+    ON password_reset_requests(status,created_at DESC);
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    request_id UUID REFERENCES password_reset_requests(id) ON DELETE SET NULL,
+    token_hash CHAR(64) NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL,
+    consumed_at TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS password_reset_tokens_user_idx
+    ON password_reset_tokens(user_id,expires_at DESC);
+
+-- Admin console (migration 017).
+CREATE TABLE IF NOT EXISTS admin_game_settings (
+    key TEXT PRIMARY KEY,
+    value JSONB NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+INSERT INTO admin_game_settings(key,value) VALUES
+('maintenance_mode','false'::jsonb),
+('feature_arcade','true'::jsonb),
+('feature_garden','true'::jsonb),
+('feature_kitchen','true'::jsonb),
+('feature_multiplayer','true'::jsonb),
+('feature_missions','true'::jsonb),
+('feature_pawclaw','true'::jsonb),
+('feature_shop','true'::jsonb),
+('arcade_reward_percent','100'::jsonb),
+('garden_reward_percent','100'::jsonb),
+('arcade_cooldown_seconds','8'::jsonb),
+('claw_cooldown_seconds','15'::jsonb)
+ON CONFLICT (key) DO NOTHING;
+CREATE TABLE IF NOT EXISTS admin_audit_logs (
+    id BIGSERIAL PRIMARY KEY,
+    action TEXT NOT NULL,
+    target TEXT,
+    details JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS admin_audit_recent_idx ON admin_audit_logs(created_at DESC);
+CREATE TABLE IF NOT EXISTS admin_announcements (
+    id UUID PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    body VARCHAR(1200) NOT NULL,
+    audience TEXT NOT NULL CHECK (audience IN ('all','selected')),
+    recipients JSONB NOT NULL DEFAULT '[]'::jsonb,
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','archived')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    publish_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX IF NOT EXISTS admin_announcements_recent_idx ON admin_announcements(created_at DESC);
+CREATE TABLE IF NOT EXISTS admin_announcement_reads (
+    announcement_id UUID NOT NULL REFERENCES admin_announcements(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    read_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (announcement_id,user_id)
+);
+CREATE TABLE IF NOT EXISTS player_reports (
+    id UUID PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    category TEXT NOT NULL CHECK (category IN ('bug','player','feedback','other')),
+    description VARCHAR(1000) NOT NULL,
+    status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open','reviewing','resolved')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS player_reports_recent_idx ON player_reports(created_at DESC);
+CREATE TABLE IF NOT EXISTS admin_error_logs (
+    id BIGSERIAL PRIMARY KEY,
+    path TEXT NOT NULL,
+    error_code VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS admin_error_recent_idx ON admin_error_logs(created_at DESC);
+CREATE TABLE IF NOT EXISTS admin_player_presence (
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS admin_presence_recent_idx ON admin_player_presence(last_seen_at DESC);
+CREATE TABLE IF NOT EXISTS admin_coin_events (
+    id BIGSERIAL PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    change_amount INTEGER NOT NULL,
+    source TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS admin_coin_events_recent_idx ON admin_coin_events(created_at DESC);
+CREATE TABLE IF NOT EXISTS admin_user_access (
+    user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    suspended BOOLEAN NOT NULL DEFAULT FALSE,
+    lucky_games_access BOOLEAN NOT NULL DEFAULT FALSE,
+    disabled_features JSONB NOT NULL DEFAULT '[]'::jsonb,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Notification read-state across devices (migration 018).
+CREATE TABLE IF NOT EXISTS player_notification_seen (
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    kind VARCHAR(50) NOT NULL,
+    event_id VARCHAR(100) NOT NULL,
+    event_created_at TIMESTAMPTZ NOT NULL,
+    seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (user_id, kind, event_id, event_created_at)
+);
+CREATE INDEX IF NOT EXISTS player_notification_seen_time_idx
+    ON player_notification_seen(user_id, seen_at DESC);
+
+-- Recipe discovery and mastery. Preserve legacy unlocks on first setup (migration 019).
+CREATE TABLE IF NOT EXISTS pawpal_migration_log (
+    migration_id TEXT PRIMARY KEY,
+    applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pawpal_migration_log WHERE migration_id = '013_kitchen_discovery') THEN
+        UPDATE pet_kitchens
+        SET discovered_recipes = '["berry_parfait","cloud_pancakes","cozy_soup","moon_cookies","honey_toast","starry_omelet","peach_smoothie","pumpkin_pie","garden_salad","cheesy_pasta","starlight_cake","moonlight_ramen"]'::jsonb
+        WHERE discovered_recipes = '[]'::jsonb;
+        INSERT INTO pawpal_migration_log (migration_id) VALUES ('013_kitchen_discovery');
+    END IF;
+END $$;

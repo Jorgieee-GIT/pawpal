@@ -803,7 +803,7 @@ export function registerMultiplayer(app: Express, auth: any, publishLive: (users
                 const migrationMissing = error?.code === "42P01" && String(error?.message || "").includes("arena_fee_ledger");
                 res.status(500).json({
                     error: migrationMissing
-                        ? "Paw Brawl's Arena Fee table is missing. Run database/migrations/014_paw_brawl_arena_fee.sql in Neon, then try again. No coins were transferred."
+                        ? "Paw Brawl's Arena Fee table is missing. Run database/schema.sql against the API database, then try again. No coins were transferred."
                         : "The server couldn't finish this multiplayer request. No incomplete wager payout was committed. Please retry or check the Render logs."
                 });
             }

@@ -14,7 +14,7 @@
 
 .paw-settings-header {
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
 }
 
 .paw-settings-heading {
@@ -40,18 +40,12 @@
     font-size: 25px;
 }
 
-.paw-settings-heading p {
-    margin: 5px 0 0;
-    color: #9a7387;
-    font-size: 13px;
-}
-
 .paw-settings-section {
-    padding: 17px;
-    margin-top: 13px;
+    padding: 14px;
+    margin-top: 10px;
     background: #fff;
     border: 1px solid #f0d6e3;
-    border-radius: 20px;
+    border-radius: 16px;
 }
 
 .paw-settings-section-heading {
@@ -59,7 +53,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     color: #9c6f92;
 }
 
@@ -69,17 +63,10 @@
     color: #744b66;
 }
 
-.paw-settings-section-heading span {
-    display: block;
-    margin-top: 4px;
-    font-size: 12px;
-    color: #a68b99;
-}
-
 .paw-settings-appearance-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
+    gap: 8px;
 }
 
 .paw-settings-appearance {
@@ -112,7 +99,7 @@
     overflow: hidden;
     width: 100%;
     border-radius: 10px;
-    aspect-ratio: 184 / 112;
+    aspect-ratio: 184 / 100;
 }
 
 .paw-settings-appearance-art svg {
@@ -126,23 +113,9 @@
     align-items: center;
     justify-content: space-between;
     gap: 4px;
-    margin: 9px 3px 0;
+    margin: 7px 3px 1px;
     font-size: 13px;
     font-weight: 800;
-}
-
-.paw-settings-appearance-caption {
-    display: block;
-    margin: 3px 3px 4px;
-    font-size: 11px;
-    color: #a17f90;
-}
-
-.paw-settings-hint {
-    margin: 12px 2px 0;
-    font-size: 11px;
-    line-height: 1.5;
-    color: #96758b;
 }
 
 .paw-settings-switch-row {
@@ -165,33 +138,19 @@
     min-width: 0;
 }
 
-.paw-settings-setting-label strong,
-.paw-settings-now-playing strong {
+.paw-settings-setting-label strong {
     display: block;
     color: #6e4962;
     font-size: 13px;
     font-weight: 800;
 }
 
-.paw-settings-setting-label small,
-.paw-settings-now-playing small {
+.paw-settings-setting-label small {
     display: block;
     margin-top: 4px;
     color: #9e8190;
     font-size: 11px;
     line-height: 1.4;
-}
-
-.paw-settings-round-icon {
-    display: inline-grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
-    border: 1px solid #edd0e1;
-    border-radius: 13px;
-    color: #b36f9b;
-    background: #fcecf4;
 }
 
 .paw-settings-switch {
@@ -235,7 +194,7 @@
 }
 
 .paw-settings-volume {
-    padding: 13px 0 8px;
+    padding: 10px 0 5px;
     border-block: 1px solid #f6e5ed;
 }
 
@@ -244,7 +203,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 11px;
+    margin-bottom: 8px;
     font-size: 13px;
     font-weight: 700;
 }
@@ -301,9 +260,9 @@
 }
 
 .paw-settings-paw-slider::-webkit-slider-thumb {
-    width: 36px;
-    height: 36px;
-    margin-top: -14px;
+    width: 28px;
+    height: 28px;
+    margin-top: -10px;
     border: 0;
     border-radius: 0;
     appearance: none;
@@ -313,8 +272,8 @@
 }
 
 .paw-settings-paw-slider::-moz-range-thumb {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border: 0;
     border-radius: 0;
     background: url("/paw-volume-thumb.svg") center / contain no-repeat;
@@ -339,34 +298,12 @@
     margin-block: 14px;
 }
 
-.paw-settings-now-playing {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 11px;
-    border: 1px dashed #e9cadd;
-    border-radius: 14px;
-    background: #fff8fb;
-}
-
-.paw-settings-now-playing > span:nth-child(2) {
-    flex: 1;
-    min-width: 0;
-}
-
-.paw-settings-track-status {
-    flex: 0 0 auto;
-    color: #936b86;
-    font-weight: 700;
-    font-size: 11px;
-}
-
 .paw-settings-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    padding: 18px 2px 0;
+    padding: 14px 2px 0;
 }
 
 .paw-settings-footer > span {
@@ -388,8 +325,7 @@
     border-color: #77607c;
 }
 
-.paw-dark .paw-settings-section,
-.paw-dark .paw-settings-now-playing {
+.paw-dark .paw-settings-section {
     background: #403347;
     border-color: #755c77;
 }
@@ -408,17 +344,11 @@
 .paw-dark .paw-settings-heading h2,
 .paw-dark .paw-settings-section-heading h3,
 .paw-dark .paw-settings-setting-label strong,
-.paw-dark .paw-settings-now-playing strong,
 .paw-dark .paw-settings-volume-top {
     color: #f9e8f5;
 }
 
-.paw-dark .paw-settings-hint,
-.paw-dark .paw-settings-heading p,
-.paw-dark .paw-settings-section-heading span,
 .paw-dark .paw-settings-setting-label small,
-.paw-dark .paw-settings-now-playing small,
-.paw-dark .paw-settings-appearance-caption,
 .paw-dark .paw-settings-footer > span {
     color: #d6bfd0;
 }
@@ -436,10 +366,6 @@
 
     .paw-settings-heading h2 {
         font-size: 21px;
-    }
-
-    .paw-settings-heading p {
-        font-size: 11px;
     }
 
     .paw-settings-heading-icon {
@@ -471,10 +397,6 @@
         font-size: 12px;
     }
 
-    .paw-settings-appearance-caption {
-        font-size: 9px;
-    }
-
     .paw-settings-footer {
         align-items: stretch;
     }
@@ -491,16 +413,16 @@
 /* Clean volume control: the complete draggable track sits inside an inset well. */
 .paw-settings-volume {
     margin-top: 12px;
-    padding: 15px 17px 17px;
+    padding: 10px 9px 8px;
     border: 1px solid #f1dce7;
     border-radius: 15px;
     background: #fff8fb;
 }
 
 .paw-settings-volume .paw-settings-paw-slider {
-    width: calc(100% - 32px);
-    max-width: calc(100% - 32px);
-    margin: 0 16px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
     box-sizing: border-box;
     border: 0;
     outline-offset: 6px;
@@ -536,7 +458,7 @@
 
 @media (max-width: 540px) {
     .paw-settings-volume {
-        padding: 13px 10px 14px;
+        padding: 9px 8px 7px;
     }
 }
 

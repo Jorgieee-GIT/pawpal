@@ -1,5 +1,5 @@
-import { Gamepad2 } from "lucide-react";
-import { ClawMenuIcon, MoleGameIcon } from "./ArcadeArt";
+import { ArrowRight, Gamepad2 } from "lucide-react";
+import { BubblePopIcon, ClawMenuIcon, MoleGameIcon } from "./ArcadeArt";
 import { PAW_GAMES } from "../../gameCatalog";
 import { PawIcon } from "../../PawIcons";
 import SectionHeading from "../../SectionHeading";
@@ -20,12 +20,15 @@ export default function ArcadePanel({ launchGame, pet, records }: Props) {
                 {PAW_GAMES.map(([id, icon, label]) => (
                     <button
                         key={id}
+                        className={`paw-game-card paw-game-card-${id}`}
                         onClick={() => {
                             void launchGame(id, pet.species);
                         }}
                     >
                         <span className={"paw-game-art paw-game-art-" + id}>
-                            {id === "mole" ? (
+                            {id === "bubble" ? (
+                                <BubblePopIcon />
+                            ) : id === "mole" ? (
                                 <MoleGameIcon />
                             ) : id === "claw" ? (
                                 <ClawMenuIcon />
@@ -39,7 +42,7 @@ export default function ArcadePanel({ launchGame, pet, records }: Props) {
                                 ? "Prize machine · 15s cooldown"
                                 : `Personal best: ${records.find((r) => r.game === id)?.best || 0}`}
                         </small>
-                        <strong>PLAY →</strong>
+                        <strong><span>PLAY</span><ArrowRight size={13} strokeWidth={2.9} aria-hidden="true" /></strong>
                     </button>
                 ))}
             </div>

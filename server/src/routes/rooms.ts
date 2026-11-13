@@ -251,7 +251,7 @@ export function registerRoomRoutes(app: Express) {
 
     app.get("/api/room", auth, handle(async (req, res) => {
         const q = await pool.query(
-            `SELECT p.id,p.name,p.species,p.color,p.breed,p.level,p.hunger,p.happiness,p.energy,p.cleanliness,p.affection,p.equipped_cosmetic,p.equipped_outfit,u.username,u.id AS user_id,CASE WHEN u.note_expires_at>NOW() THEN u.pet_note ELSE NULL END AS pet_note,u.note_expires_at,COALESCE((p.garden->>'_sleeping')::boolean,false) AS sleeping FROM pets p JOIN users u ON u.id=p.owner_id WHERE p.owner_id=$1 OR EXISTS(SELECT 1 FROM friendships f WHERE f.status='accepted' AND ((f.requester_id=$1 AND f.recipient_id=p.owner_id) OR (f.recipient_id=$1 AND f.requester_id=p.owner_id)))`,
+            `SELECT p.id,p.name,p.species,p.color,p.breed,p.level,p.hunger,p.happiness,p.energy,p.cleanliness,p.equipped_cosmetic,p.equipped_outfit,u.username,u.id AS user_id,CASE WHEN u.note_expires_at>NOW() THEN u.pet_note ELSE NULL END AS pet_note,u.note_expires_at,COALESCE((p.garden->>'_sleeping')::boolean,false) AS sleeping FROM pets p JOIN users u ON u.id=p.owner_id WHERE p.owner_id=$1 OR EXISTS(SELECT 1 FROM friendships f WHERE f.status='accepted' AND ((f.requester_id=$1 AND f.recipient_id=p.owner_id) OR (f.recipient_id=$1 AND f.requester_id=p.owner_id)))`,
             [req.userId]
         );
         res.json(q.rows);

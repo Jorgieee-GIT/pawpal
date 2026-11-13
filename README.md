@@ -39,12 +39,14 @@ These instructions are for the owner and invited collaborators. You will need No
    JWT_SECRET=replace-this-with-a-long-random-secret
    ```
 
-3. Initialize the database, then start the client and server:
+3. Initialize the database from the consolidated `database/schema.sql`, then start the client and server:
 
    ```sh
    npm run db:init --prefix server
    npm run dev
    ```
+
+   `database/schema.sql` is the checked-in SQL source for setting up the current database structure. The local migration folder is excluded from Git.
 
 4. Open [http://localhost:5173](http://localhost:5173).
 
@@ -52,6 +54,6 @@ For a hosted deployment, configure the frontend's `VITE_API_URL` to point to the
 
 ## Project
 
-PawPal is built with React, TypeScript, Vite, Express, and PostgreSQL. The frontend is in `client/`, the API is in `server/`, and database setup and migrations are in `database/`.
+PawPal is built with React, TypeScript, Vite, Express, and PostgreSQL. The frontend is in `client/`, the API is in `server/`, and the database setup is in `database/schema.sql`.
 
 The [architecture guide](docs/architecture.md) describes the source layout and development checks.

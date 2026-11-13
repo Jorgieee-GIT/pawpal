@@ -293,17 +293,7 @@ export function ClawGrabberArt() {
 }
 
 export function MoleGameIcon() {
-    return <svg
-        viewBox="0 0 36 36"
-        width="34"
-        height="34"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-    >
+    return <svg viewBox="0 0 36 36" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M6 28c1-5 5-7 12-7s11 2 12 7" />
         <path d="M8 28h20" />
         <path d="M11 21v-4c0-6 3-9 7-9s7 3 7 9v4" />
@@ -312,23 +302,38 @@ export function MoleGameIcon() {
         <circle cx="21.5" cy="15" r=".9" fill="currentColor" stroke="none" />
         <path d="m16 19 2 1 2-1" />
         <path d="M4 21 2 19M32 21l2-2" />
-    </svg>
+    </svg>;
+}
+
+export function BubblePopIcon() {
+    return (
+        <svg
+            viewBox="0 0 36 36"
+            width="34"
+            height="34"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            aria-hidden="true"
+        >
+            <circle cx="11" cy="23" r="6" />
+            <circle cx="25" cy="23" r="6" />
+            <circle cx="18" cy="11" r="5" />
+            <path d="M8.5 20.5a3.5 3.5 0 0 1 2.7-1.8M22.5 20.5a3.5 3.5 0 0 1 2.7-1.8M16 9a2.8 2.8 0 0 1 2-1.2" strokeWidth="1.4" />
+        </svg>
+    );
 }
 
 /** Same Paw Claw SVG used on the player game-selection card. */
 export function ClawMenuIcon() {
-    return <svg
-        width="34"
-        height="34"
-        viewBox="0 0 34 34"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.1"
-        strokeLinecap="round"
-        role="img"
-        aria-label="Paw Claw menu icon"
-    >
-        <path d="M4 4h26M17 4v11m-7 0 3 9 4-4 4 4 3-9" />
-        <path d="M7 29h20M9 25v4m16-4v4" />
+    return <svg width="34" height="34" viewBox="0 0 34 34" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M4 4h26" />
+        <rect x="14" y="4" width="6" height="4" rx="1.5" />
+        <path d="M17 8v4" />
+        <circle cx="17" cy="14" r="2" />
+        <path d="M16 15c-3 1-6 4-6 7 0 3 2 5 5 5l3-4m1-8c3 1 6 4 6 7 0 3-2 5-5 5l-3-4" />
+        <path d="M17 16v4c0 3 1 5 3 7" />
+        <path d="m12 25 3 2m7-2-3 2m0-2 1 3" />
     </svg>;
 }

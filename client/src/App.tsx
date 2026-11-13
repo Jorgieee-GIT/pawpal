@@ -60,6 +60,7 @@ const MissionCenter = lazy(() => import("./features/missions/MissionCenter"));
 const MiniGame = lazy(() => import("./features/arcade/MiniGame").then((module) => ({ default: module.MiniGame })));
 const PawClaw = lazy(() => import("./features/arcade/PawClaw"));
 const WhackAMole = lazy(() => import("./features/arcade/WhackAMole"));
+const BubblePop = lazy(() => import("./features/arcade/BubblePop"));
 
 function PanelLoader() {
     return (
@@ -854,7 +855,7 @@ export default function App() {
                 !cuddleActive.current ||
                 Date.now() - cuddleLastMove.current > 1100 ||
                 cuddleRequest.current ||
-                pet.affection >= 100
+                pet.happiness >= 100
             ) {
                 return;
             }
@@ -874,7 +875,7 @@ export default function App() {
             }
         }, 1000);
         return () => window.clearInterval(timer);
-    }, [cuddleMode, pet?.id, pet?.affection]);
+    }, [cuddleMode, pet?.id, pet?.happiness]);
     useEffect(() => {
         const stop = () => {
             bathScrubbing.current = false;
@@ -1572,7 +1573,6 @@ export default function App() {
                         onAppearanceChange={setAppearance}
                         audio={audioPreferences}
                         onAudioChange={setAudioPreferences}
-                        zone={musicZone}
                         canReport={Boolean(user)}
                         onSendReport={async (category, description) => {
                             await request("/support/report", "POST", { category, description });
@@ -2844,6 +2844,11 @@ export default function App() {
                         />
                     ) : game === "mole" ? (
                         <WhackAMole
+                            onQuit={() => setGame(null)}
+                            onFinish={(score) => claimArcadeReward(game, score)}
+                        />
+                    ) : game === "bubble" ? (
+                        <BubblePop
                             onQuit={() => setGame(null)}
                             onFinish={(score) => claimArcadeReward(game, score)}
                         />

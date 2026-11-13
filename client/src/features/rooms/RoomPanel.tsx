@@ -125,8 +125,7 @@ export default function RoomPanel({
                             ["Fullness", pet.hunger, "#eeb06d"],
                             ["Happiness", pet.happiness, "#ed91b3"],
                             ["Energy", pet.energy, "#9b9fe7"],
-                            ["Cleanliness", pet.cleanliness, "#79c7d5"],
-                            ["Affection", pet.affection, "#b69ce3"]
+                            ["Cleanliness", pet.cleanliness, "#79c7d5"]
                         ] as [string, number, string][]
                     ).map(([label, value, color]) => (
                         <div
@@ -526,7 +525,7 @@ export default function RoomPanel({
                     </button>
                     {cuddleMode && (
                         <div className="paw-cuddle-hint" role="status">
-                            <Heart size={14} /> Gently stroke your pet · +4 affection/sec
+                            <Heart size={14} /> Gently stroke your pet · +2 happiness/sec
                         </div>
                     )}
                     {bathMode && (

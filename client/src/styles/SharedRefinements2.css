@@ -355,35 +355,36 @@
 }
 /* Account dashboard: Paw Coins, Level and Friends are the primary account indicators. */
 .heading.paw-dashboard-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(420px, 495px);
     align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-bottom: 23px;
+    gap: 20px;
+    margin-bottom: 20px;
 }
 .paw-dashboard-greeting {
     min-width: 0;
-    flex: 1 1 260px;
 }
 .paw-dashboard-greeting h1 {
     margin-bottom: 0;
     overflow-wrap: anywhere;
+    line-height: 1.15;
 }
 .paw-account-summary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 9px;
-    flex: 0 1 495px;
-    min-width: min(100%, 440px);
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
 }
 .paw-account-stat {
     display: flex;
     align-items: center;
     gap: 10px;
     min-width: 0;
-    min-height: 78px;
-    padding: 12px;
+    min-height: 74px;
+    padding: 10px 12px;
     border: 2px solid transparent;
-    border-radius: 19px;
+    border-radius: 16px;
     box-shadow: 0 4px 0 #c3a0b523, 0 8px 20px #96768b11;
 }
 .paw-account-coins {
@@ -404,10 +405,10 @@
 .paw-account-icon {
     display: grid;
     place-items: center;
-    flex: 0 0 38px;
-    width: 38px;
-    height: 38px;
-    border-radius: 13px;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
     background: #ffffffb5;
     box-shadow: inset 0 1px 0 #fff8;
 }
@@ -467,23 +468,63 @@
 .paw-dark .paw-account-icon {
     background: #ffffff17;
 }
+@media (max-width: 1100px) {
+    .paw-account-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) 40px;
+    }
+    .paw-account-summary .mobile-menu-toggle {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        min-height: 40px;
+        margin: auto 0;
+        padding: 0;
+        border: 0 !important;
+        background: transparent !important;
+        color: inherit !important;
+        box-shadow: none !important;
+    }
+}
 @media (max-width: 850px) {
     .heading.paw-dashboard-heading {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
         align-items: stretch;
+        margin-bottom: 18px;
     }
     .paw-dashboard-greeting {
-        flex-basis: 100%;
+        width: 100%;
+    }
+}
+@media (max-width: 700px) {
+    .heading.paw-dashboard-heading {
+        position: relative;
+    }
+    .paw-dashboard-greeting {
+        padding-right: 43px;
     }
     .paw-account-summary {
-        width: 100%;
-        flex: 1 1 100%;
-        min-width: 0;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .paw-account-summary .mobile-menu-toggle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+        min-height: 38px;
     }
 }
 @media (max-width: 600px) {
     .heading.paw-dashboard-heading {
         position: relative;
-        gap: 12px;
+        gap: 10px;
+        margin-bottom: 16px;
     }
     .paw-dashboard-greeting {
         padding-right: 43px;
@@ -492,25 +533,32 @@
         font-size: clamp(23px, 6vw, 32px);
     }
     .paw-account-summary {
-        gap: 6px;
+        gap: 7px;
     }
     .paw-account-stat {
-        min-height: 70px;
-        gap: 5px;
-        padding: 9px 7px;
-        border-radius: 13px;
+        min-height: 60px;
+        gap: 2px;
+        padding: 7px 4px;
+        border: 1px solid #f0e3eb;
+        border-radius: 12px;
+        box-shadow: none;
         flex-direction: column;
         text-align: center;
     }
-    .paw-account-icon {
-        flex: 0 0 26px;
-        height: 26px;
-        width: 26px;
-        border-radius: 9px;
+    .paw-account-coins {
+        background: #fff9ed;
+        border-color: #f2e5c5;
     }
-    .paw-account-icon svg {
-        width: 17px;
-        height: 17px;
+    .paw-account-level {
+        background: #f8f5ff;
+        border-color: #e9e1f4;
+    }
+    .paw-account-friends {
+        background: #fff6fa;
+        border-color: #f0dfe9;
+    }
+    .paw-account-icon {
+        display: none;
     }
     .paw-account-copy {
         width: 100%;
@@ -518,11 +566,11 @@
         gap: 3px;
     }
     .paw-account-copy small {
-        font-size: 9px;
-        letter-spacing: .1px;
+        font-size: 8px;
+        letter-spacing: .25px;
     }
     .paw-account-copy strong {
-        font-size: clamp(16px, 5.2vw, 22px);
+        font-size: clamp(16px, 4.7vw, 19px);
     }
     .paw-account-xp {
         width: 85%;
@@ -542,7 +590,7 @@
 }
 @media (max-width: 360px) {
     .paw-account-stat {
-        padding-inline: 4px;
+        padding-inline: 3px;
     }
     .paw-account-copy small {
         font-size: 8px;
@@ -1457,6 +1505,31 @@
     background: #4a3546;
     border-color: #84627a;
 }
+/* Keep both wardrobe navigation rows on the same dark-theme control system. */
+.paw-dark .paw-wardrobe-toolbar .v8-tabs button,
+.paw-dark .paw-wardrobe-toolbar .v8-slots button {
+    color: #fff4fa;
+    border: 1px solid #80647b;
+    background: #382c3c;
+    transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+}
+.paw-dark .paw-wardrobe-toolbar .v8-tabs button:hover,
+.paw-dark .paw-wardrobe-toolbar .v8-slots button:hover {
+    background: #49364a;
+    border-color: #b27f9a;
+}
+.paw-dark .paw-wardrobe-toolbar .v8-tabs button.selected,
+.paw-dark .paw-wardrobe-toolbar .v8-slots button.selected {
+    color: #fff5fa !important;
+    background: #925b78 !important;
+    border-color: #d79ab8 !important;
+    box-shadow: 0 2px 7px #1d101c55;
+}
+.paw-dark .paw-wardrobe-toolbar .v8-tabs button:focus-visible,
+.paw-dark .paw-wardrobe-toolbar .v8-slots button:focus-visible {
+    outline: 2px solid #f0bdd5;
+    outline-offset: 2px;
+}
 @media(max-width:680px) {
     .paw-wardrobe-toolbar {
         gap: 9px!important;
@@ -2186,4 +2259,324 @@
         right: 9px;
         max-width: min(215px, calc(100% - 18px));
     }
+}
+/* Keep wardrobe navigation in one compact row so the collection starts higher. */
+.paw-wardrobe-toolbar {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+.paw-wardrobe-toolbar .v8-tabs {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    gap: 3px !important;
+    padding: 3px !important;
+}
+.paw-wardrobe-toolbar .v8-tabs button {
+    width: auto !important;
+    min-width: 68px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 5px 10px !important;
+}
+.paw-wardrobe-toolbar .v8-slots {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 5px !important;
+}
+.paw-wardrobe-toolbar .v8-slots button {
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 4px 5px !important;
+}
+.paw-wardrobe-toolbar .v8-slots button b {
+    flex-direction: row !important;
+    gap: 5px !important;
+    white-space: nowrap;
+}
+@media(max-width:680px) {
+    .paw-wardrobe-toolbar {
+        flex-wrap: nowrap !important;
+        gap: 5px !important;
+    }
+    .paw-wardrobe-toolbar .v8-tabs {
+        flex: 0 0 108px !important;
+        width: 108px !important;
+    }
+    .paw-wardrobe-toolbar .v8-tabs button {
+        min-width: 0 !important;
+        flex: 1 1 0;
+        padding: 4px 3px !important;
+        font-size: 10px !important;
+    }
+    .paw-wardrobe-toolbar .v8-slots {
+        flex: 1 1 0 !important;
+        gap: 3px !important;
+    }
+    .paw-wardrobe-toolbar .v8-slots button {
+        min-width: 0 !important;
+        padding: 4px 2px !important;
+    }
+}
+@media(max-width:520px) {
+    .paw-wardrobe-toolbar .v8-slots button b {
+        font-size: 0 !important;
+    }
+    .paw-wardrobe-toolbar .v8-slot-label {
+        display: none;
+    }
+    .paw-wardrobe-toolbar .v8-slots button svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+}
+.v8-preview-copy {
+    display: grid;
+    align-content: center;
+    gap: 12px;
+}
+.v8-preview-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.v8-preview-eyebrow {
+    display: block;
+    margin-bottom: 4px;
+    color: #a35f83;
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: .12em;
+}
+.v8-preview-heading h3 {
+    margin: 0;
+}
+.v8-preview-count {
+    flex: 0 0 auto;
+    padding: 6px 9px;
+    border: 1px solid #e8c4d5;
+    border-radius: 999px;
+    background: #fff8fb;
+    color: #83536c;
+    font-size: 11px;
+    font-weight: 750;
+}
+.v8-preview-outfit {
+    display: grid;
+    gap: 8px;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid #edcfdd;
+    border-radius: 14px;
+    background: #fff9fc;
+}
+.v8-preview-outfit-title {
+    color: #93617b;
+    font-size: 11px;
+    font-weight: 800;
+}
+.v8-preview-accessories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.v8-preview-accessory {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    padding: 5px 8px;
+    border: 1px solid #efd5e1;
+    border-radius: 9px;
+    background: #fff;
+    color: #553b4d;
+    font-size: 11px;
+}
+.v8-preview-accessory small {
+    color: #9b7189;
+    font-size: 9px;
+    text-transform: capitalize;
+}
+.v8-preview-accessory b {
+    overflow-wrap: anywhere;
+    text-transform: capitalize;
+}
+.v8-preview-outfit p {
+    color: #826d7a;
+    font-size: 12px;
+    line-height: 1.4;
+}
+.paw-dark .v8-preview-eyebrow {
+    color: #f0bdd5;
+}
+.paw-dark .v8-preview-count,
+.paw-dark .v8-preview-outfit {
+    border-color: #80647b;
+    background: #302634;
+    color: #fff1f8;
+}
+.paw-dark .v8-preview-outfit-title {
+    color: #edc1d7;
+}
+.paw-dark .v8-preview-accessory {
+    border-color: #73596f;
+    background: #49364a;
+    color: #fff1f8;
+}
+.paw-dark .v8-preview-accessory small,
+.paw-dark .v8-preview-outfit p {
+    color: #dfc8d8;
+}
+@media(max-width:560px) {
+    .v8-preview {
+        display: grid;
+        grid-template-columns: clamp(95px, 32vw, 130px) minmax(0, 1fr);
+        align-items: center;
+        gap: 8px 12px;
+    }
+    .v8-preview>.v8-pet {
+        grid-column: 1;
+        grid-row: 1;
+        width: 100%;
+        height: auto;
+    }
+    .v8-preview-copy {
+        display: contents;
+    }
+    .v8-preview-heading {
+        grid-column: 2;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 0;
+    }
+    .v8-preview-heading h3 {
+        overflow-wrap: anywhere;
+    }
+    .v8-preview-outfit {
+        grid-column: 1 / -1;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .v8-preview-accessories {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .v8-preview-accessory {
+        min-width: 0;
+        justify-content: flex-start;
+    }
+    .v8-preview-accessory b {
+        min-width: 0;
+    }
+    .v8-preview-copy {
+        gap: 8px;
+    }
+    .v8-preview-count {
+        padding: 4px 7px;
+        font-size: 10px;
+    }
+    .v8-preview-outfit {
+        padding: 8px;
+        gap: 6px;
+    }
+    .v8-preview-accessories {
+        gap: 4px;
+    }
+    .v8-preview-accessory {
+        padding: 4px 6px;
+        gap: 4px;
+        font-size: 10px;
+    }
+}
+/* Mission cards: clarify progress, rewards, and claim state. */
+.paw-missions-refreshed .mission-grid { align-items: stretch; gap: 12px; }
+.paw-missions-refreshed .mission-card {
+    position: relative;
+    border: 1px solid #e8ccda;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #fffafd, #fff5f9);
+    box-shadow: 0 3px 0 #e8cfdd70;
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+.paw-missions-refreshed .mission-card:hover {
+    border-color: #d5a2bd;
+    box-shadow: 0 5px 12px #93627f1c;
+    transform: translateY(-1px);
+}
+.paw-mission-category { min-height: 21px; }
+.paw-mission-category > svg { flex: 0 0 auto; }
+.paw-mission-category > span {
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: #f4e6ee;
+    color: #81556e;
+    font-size: 9px;
+    white-space: nowrap;
+}
+.paw-missions-refreshed .mission-top { align-items: flex-start; }
+.paw-missions-refreshed .mission-top b { line-height: 1.35; }
+.paw-missions-refreshed .mission-top > span {
+    flex: 0 0 auto;
+    padding: 4px 7px;
+    border: 1px solid #edd8e3;
+    border-radius: 999px;
+    background: #fff;
+    color: #81556e;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+}
+.paw-missions-refreshed .mission-track { height: 8px; background: #f0e4eb; }
+.paw-missions-refreshed .mission-footer {
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid #f0e1e9;
+}
+.paw-missions-refreshed .mission-rewards {
+    color: #795b70;
+    font-size: 11px;
+    font-weight: 750;
+}
+.paw-missions-refreshed .mission-rewards svg { flex: 0 0 auto; color: #b37996; }
+.paw-missions-refreshed .mission-claim-button { border-radius: 10px; font-weight: 850; }
+.paw-dark .paw-missions-refreshed .mission-card {
+    border-color: #70566c;
+    background: linear-gradient(145deg, #403345, #382d3d);
+    box-shadow: 0 3px 0 #21192355;
+}
+.paw-dark .paw-missions-refreshed .mission-card:hover {
+    border-color: #b687a2;
+    box-shadow: 0 5px 12px #1d101c66;
+}
+.paw-dark .paw-mission-category > span { background: #59445a; color: #f6d8e8; }
+.paw-dark .paw-missions-refreshed .mission-top > span {
+    border-color: #725b73;
+    background: #49394e;
+    color: #ffe8f3;
+}
+.paw-dark .paw-missions-refreshed .mission-track { background: #5a485d; }
+.paw-dark .paw-missions-refreshed .mission-footer { border-color: #5d485b; }
+.paw-dark .paw-missions-refreshed .mission-rewards { color: #e6d2e0; }
+@media(max-width:680px) {
+    .paw-missions-refreshed .mission-grid { gap: 9px; }
+    .paw-missions-refreshed .mission-card { gap: 7px; padding: 10px; }
+    .paw-missions-kinds { margin-top: 12px; }
+    .paw-missions-toolbar { padding: 7px 8px; }
+}
+@media(max-width:390px) {
+    .paw-missions-kinds button { min-height: 48px; gap: 2px; }
+    .paw-missions-kinds button span { font-size: 11px; }
+    .paw-missions-kinds button small { font-size: 9px; }
+    .paw-missions-reset { gap: 5px; font-size: 9px; }
+    .paw-missions-claim-all { min-height: 31px; padding: 6px 8px; }
+    .paw-missions-refreshed .mission-footer { gap: 7px; }
+    .paw-missions-refreshed .mission-rewards { font-size: 10px; }
+}
+@media(prefers-reduced-motion:reduce) {
+    .paw-missions-refreshed .mission-card { transition: none; }
+    .paw-missions-refreshed .mission-card:hover { transform: none; }
 }

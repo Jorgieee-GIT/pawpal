@@ -10,7 +10,7 @@ import {
     X
 } from "lucide-react";
 import { SettingsArtwork, type AppearanceChoice } from "./SettingsArt";
-import { MUSIC_TRACKS, type AudioPreferences, type MusicZone } from "./musicTracks";
+import type { AudioPreferences } from "./musicTracks";
 import "./SettingsModal.css";
 
 type SettingsModalProps = {
@@ -20,7 +20,6 @@ type SettingsModalProps = {
     onAppearanceChange: (value: AppearanceChoice) => void;
     audio: AudioPreferences;
     onAudioChange: (value: AudioPreferences) => void;
-    zone: MusicZone;
     canReport: boolean;
     onSendReport: (category: "bug" | "player" | "feedback" | "other", description: string) => Promise<void>;
     onOpenPolicy: (page: "privacy" | "terms") => void;
@@ -29,22 +28,18 @@ type SettingsModalProps = {
 const APPEARANCE_OPTIONS: Array<{
     key: AppearanceChoice;
     title: string;
-    description: string;
 }> = [
     {
         key: "light",
-        title: "Light",
-        description: "Soft & sunny"
+        title: "Light"
     },
     {
         key: "dark",
-        title: "Dark",
-        description: "Cozy evenings"
+        title: "Dark"
     },
     {
         key: "system",
-        title: "System",
-        description: "Follow device"
+        title: "System"
     }
 ];
 
@@ -55,7 +50,6 @@ export default function SettingsModal({
     onAppearanceChange,
     audio,
     onAudioChange,
-    zone,
     onSendReport,
     canReport,
     onOpenPolicy
@@ -105,8 +99,6 @@ export default function SettingsModal({
         return null;
     }
 
-    const readyTracks = Object.values(MUSIC_TRACKS).filter(track => Boolean(track.source)).length;
-
     return (
         <div
             className="paw-modal-backdrop paw-settings-backdrop"
@@ -124,7 +116,6 @@ export default function SettingsModal({
                         </span>
                         <div>
                             <h2 id="paw-settings-title">Settings</h2>
-                            <p>Make PawPal feel like your own little world.</p>
                         </div>
                     </div>
                     <button type="button" className="paw-modal-close" onClick={onClose} aria-label="Close Settings">
@@ -136,7 +127,6 @@ export default function SettingsModal({
                     <div className="paw-settings-section-heading">
                         <div>
                             <h3 id="paw-settings-appearance-heading">Appearance</h3>
-                            <span>Choose your favorite look.</span>
                         </div>
                         {appearance === "light" ? <Sun size={20} aria-hidden="true" /> : appearance === "dark" ? <Moon size={20} aria-hidden="true" /> : <Monitor size={20} aria-hidden="true" />}
                     </div>
@@ -156,18 +146,15 @@ export default function SettingsModal({
                                     <strong>{option.title}</strong>
                                     {appearance === option.key && <Check size={15} strokeWidth={2.5} aria-hidden="true" />}
                                 </span>
-                                <span className="paw-settings-appearance-caption">{option.description}</span>
                             </button>
                         ))}
                     </div>
-                    <p className="paw-settings-hint">Appearance changes the website UI. Your pet's room atmosphere stays separate.</p>
                 </section>
 
                 <section className="paw-settings-section" aria-labelledby="paw-settings-music-heading">
                     <div className="paw-settings-section-heading">
                         <div>
                             <h3 id="paw-settings-music-heading">Background music</h3>
-                            <span>Slide the paw to adjust the music. At 0%, music is off.</span>
                         </div>
                         <Music2 size={21} aria-hidden="true" />
                     </div>
@@ -194,22 +181,10 @@ export default function SettingsModal({
                             })}
                         />
                     </div>
-                    <div className="paw-settings-now-playing">
-                        <span className="paw-settings-round-icon" aria-hidden="true"><Music2 size={19} /></span>
-                        <span>
-                            <strong>{MUSIC_TRACKS[zone].title}</strong>
-                            <small>{readyTracks === 0 ? "Music ready" : MUSIC_TRACKS[zone].source ? "Music for this area" : "Music unavailable"}</small>
-                        </span>
-                        <span className="paw-settings-track-status">{readyTracks}/5 tracks</span>
-                    </div>
-                    <p className="paw-settings-hint">Music pauses automatically when you leave this browser tab. All five tracks share one volume setting.</p>
                 </section>
                 {canReport && <section className="paw-settings-section" aria-labelledby="paw-settings-report-heading">
                     <div className="paw-settings-section-heading">
-                        <div>
-                            <h3 id="paw-settings-report-heading">Report an issue</h3>
-                            <span>Send bugs, player concerns or suggestions to the admin.</span>
-                        </div>
+                        <div><h3 id="paw-settings-report-heading">Report an issue</h3></div>
                     </div>
                     <form className="paw-settings-report" onSubmit={submitReport}>
                         <label>Category
@@ -222,7 +197,7 @@ export default function SettingsModal({
                         </label>
                         <label>Describe what happened
                             <textarea minLength={15} maxLength={1000} required rows={3} value={reportDescription}
-                                onChange={e => setReportDescription(e.target.value)} placeholder="Include the game, steps, and what went wrong." />
+                                onChange={e => setReportDescription(e.target.value)} placeholder="What went wrong?" />
                         </label>
                         {reportMessage && <p role="status" className="paw-settings-report-message">{reportMessage}</p>}
                         <button type="submit" disabled={reportBusy || reportDescription.trim().length < 15}>

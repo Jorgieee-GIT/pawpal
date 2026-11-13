@@ -1,0 +1,294 @@
+.kitchen-room-shell {
+    min-width: 0;
+    container-type: inline-size;
+}
+.kitchen-room {
+    --room-wall: #fbe5de;
+    --room-tile: #f3c9cb;
+    --room-floor: #dfad98;
+    --room-cupboard: #c98f97;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 205px;
+    aspect-ratio: 2.45;
+    border: 1px solid #d8a6ae;
+    border-radius: 24px;
+    background:
+        repeating-linear-gradient(90deg, transparent 0 35px, #fff5 35px 36px),
+        repeating-linear-gradient(0deg, transparent 0 35px, #fff5 35px 36px),
+        linear-gradient(var(--room-wall) 36%, var(--room-tile) 36%);
+}
+.kitchen-room-window {
+    position: absolute;
+    top: 8%;
+    left: 28%;
+    width: 29%;
+    height: 39%;
+    border: clamp(4px, 1vw, 9px) solid #a67883;
+    border-radius: 50% 50% 10px 10px / 46% 46% 10px 10px;
+    background:
+        linear-gradient(90deg, transparent 48%, #b18490 48% 52%, transparent 52%),
+        linear-gradient(transparent 52%, #b18490 52% 57%, transparent 57%),
+        radial-gradient(circle at 71% 32%, #ffedbb 0 11%, transparent 12%),
+        linear-gradient(#b5d9db 68%, #a9c7aa 68%);
+    box-shadow: 0 5px 0 #f9d9c7, 0 7px 0 #a67883;
+}
+.kitchen-room-utensils {
+    position: absolute;
+    top: 12%;
+    left: 7%;
+    width: 17%;
+    height: 27%;
+}
+.kitchen-room-floor {
+    position: absolute;
+    inset: 78% 0 0;
+    border-top: 3px solid #a87380;
+    background: repeating-linear-gradient(104deg, transparent 0 52px, #a8738040 52px 54px),
+        var(--room-floor);
+}
+.kitchen-room-counter {
+    position: absolute;
+    z-index: 1;
+    inset: 66% 27% 8% 3%;
+    border: 2px solid #a87380;
+    border-top: clamp(7px, 1.3vw, 13px) solid #f5d1b6;
+    border-radius: 7px 7px 11px 11px;
+    box-shadow: 0 5px 0 #79546428;
+    background: repeating-linear-gradient(90deg, transparent 0 calc(33.33% - 2px),
+        #a87380 calc(33.33% - 2px) 33.33%), var(--room-cupboard);
+}
+.kitchen-room-counter::after {
+    position: absolute;
+    inset: 22% 0 auto;
+    height: 4px;
+    content: "";
+    background: radial-gradient(ellipse at center, #795464 0 18%, transparent 20%) 0 0 / 33.33% 100% repeat-x;
+}
+.kitchen-room-island {
+    display: none;
+}
+.kitchen-revamp .kitchen-room .kitchen-room-station {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    width: 22%;
+    bottom: 18%;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    box-shadow: none;
+    color: #58374b;
+    cursor: pointer;
+}
+.kitchen-revamp .kitchen-room .kitchen-room-station--recipes { left: 4%; bottom: 24%; }
+.kitchen-revamp .kitchen-room .kitchen-room-station--experiment { left: 27%; bottom: 24%; }
+.kitchen-room-station--ingredients { left: 50%; }
+.kitchen-revamp .kitchen-room .kitchen-room-station--pantry {
+    right: 2%;
+    width: 23%;
+    bottom: 6%;
+}
+.kitchen-room-station svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 150ms ease;
+}
+.kitchen-room-station--pantry svg {
+    width: min(100%, 31vh);
+    max-height: clamp(116px, 27vw, 360px);
+}
+@media (hover: hover) {
+    .kitchen-room-station:hover svg { transform: translateY(-4px); }
+}
+.kitchen-room-station:active svg { transform: translateY(2px); }
+.kitchen-room-station:focus-visible { outline: 3px solid #985078; outline-offset: 3px; }
+.kitchen-room-station span {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 5px;
+    border: 1px solid #bc8799;
+    border-radius: 9px;
+    background: #fff5ef;
+    font-size: clamp(10px, 2.5vw, 13px);
+    font-weight: 800;
+    line-height: 1.2;
+    max-width: 100%;
+    text-align: center;
+}
+.kitchen-room-station small {
+    max-width: 4ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #874869;
+}
+.paw-dark .kitchen-room {
+    --room-wall: #594356;
+    --room-tile: #755467;
+    --room-floor: #785b63;
+    --room-cupboard: #936476;
+}
+.kitchen-revamp .kitchen-station-dialog {
+    width: min(940px, calc(100% - 24px));
+    max-width: none;
+    max-height: calc(100dvh - 24px);
+    padding: 0;
+    border: 1px solid #e5c4d4;
+    border-radius: 20px;
+    background: #fff8fc;
+    color: #583c50;
+    box-shadow: 0 18px 60px #37213250;
+    overflow: hidden;
+}
+.kitchen-station-dialog::backdrop { background: #35253699; }
+.kitchen-station-dialog-frame {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 26px);
+}
+.kitchen-station-dialog-header {
+    flex: 0 0 auto;
+    padding: 14px clamp(12px, 3vw, 24px) 0;
+}
+.kitchen-station-dialog-header h2 {
+    font-size: clamp(18px, 4.5vw, 24px);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+.kitchen-station-dialog-content {
+    min-height: 0;
+    min-width: 0;
+    padding: 14px clamp(12px, 3vw, 24px) 20px;
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+.kitchen-station-dialog .k3-search input {
+    flex: 1;
+    width: 0;
+}
+.kitchen-station-dialog .k3-filter-buttons {
+    flex-wrap: wrap;
+}
+@container (max-width: 440px) {
+    .kitchen-room {
+        min-height: 0;
+        width: 100%;
+        aspect-ratio: 1.16;
+        border-radius: 16px;
+    }
+    .kitchen-room-window {
+        top: 7%;
+        left: 23%;
+        width: 36%;
+        height: 26%;
+    }
+    .kitchen-room-utensils {
+        top: 14%;
+        left: 4%;
+        height: 15%;
+    }
+    .kitchen-room-counter {
+        inset: 49% 33% 31% 3%;
+    }
+    .kitchen-room-floor {
+        inset-block-start: 68%;
+    }
+    .kitchen-room-island {
+        display: block;
+        position: absolute;
+        z-index: 1;
+        inset: 79% 36% 4% 9%;
+        border: 2px solid #a87380;
+        border-top: 8px solid #f5d1b6;
+        border-radius: 8px 8px 11px 11px;
+        background: var(--room-cupboard);
+        box-shadow: 0 4px 0 #79546428;
+    }
+    .kitchen-revamp .kitchen-room .kitchen-room-station {
+        width: 30%;
+        bottom: 36%;
+        min-height: 44px;
+        gap: 0;
+    }
+    .kitchen-revamp .kitchen-room .kitchen-room-station--recipes {
+        left: 4%;
+        bottom: 42%;
+    }
+    .kitchen-revamp .kitchen-room .kitchen-room-station--experiment {
+        left: 35%;
+        bottom: 42%;
+    }
+    .kitchen-revamp .kitchen-room .kitchen-room-station--ingredients {
+        left: 20%;
+        width: 32%;
+        bottom: 8%;
+    }
+    .kitchen-revamp .kitchen-room .kitchen-room-station--pantry {
+        right: 2%;
+        width: 29%;
+        bottom: 8%;
+    }
+    .kitchen-room-station--pantry svg {
+        width: 100%;
+        max-height: 164px;
+    }
+    .kitchen-room-station span {
+        font-size: 10px;
+        padding: 2px 4px;
+    }
+}
+@media (max-width: 560px) {
+    .kitchen-revamp .kitchen-station-dialog {
+        box-sizing: border-box;
+        width: calc(100% - 16px);
+        max-height: calc(100dvh - 16px);
+        border-radius: 14px;
+    }
+    .kitchen-station-dialog-frame {
+        max-height: calc(100dvh - 18px);
+    }
+    .kitchen-station-dialog-header {
+        padding: 12px 12px 0;
+    }
+    .kitchen-station-dialog-content {
+        padding: 12px;
+    }
+    .kitchen-revamp .kitchen-station-dialog :is(.k3-recipe-grid, .k3-market-grid, .k3-pantry-grid, .k3-experiment-layout) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .kitchen-revamp .kitchen-station-dialog .k3-recipe {
+        flex-direction: column;
+        min-height: 0;
+    }
+    .kitchen-revamp .kitchen-station-dialog .k3-recipe-art {
+        flex: none;
+        width: 100%;
+        height: 130px;
+        min-height: 0;
+    }
+    .kitchen-revamp .kitchen-station-dialog .k3-market-buy {
+        flex-wrap: wrap;
+    }
+    .kitchen-revamp .kitchen-station-dialog .k3-market-buy > .primary {
+        flex: 1 1 70px;
+        white-space: normal;
+    }
+    .kitchen-revamp .kitchen-station-dialog :is(.k3-pantry-card, .k3-market-copy) {
+        overflow-wrap: anywhere;
+    }
+}
+.paw-dark .kitchen-revamp .kitchen-station-dialog {
+    border-color: #80647b;
+    background: #362c3b;
+    color: #fff2f9;
+}
+@media (prefers-reduced-motion: reduce) {
+    .kitchen-room-station svg { transition: none; }
+    .kitchen-room-station:is(:hover, :active) svg { transform: none; }
+}

@@ -8,9 +8,8 @@ function PetCondition({ pet }: { pet: RoomPet }) {
     const dirty = pet.cleanliness < 35,
         sad = pet.happiness < 35,
         sleepy = pet.energy < 30,
-        hungry = pet.hunger < 30,
-        lonely = pet.affection < 30;
-    if (!dirty && !sad && !sleepy && !hungry && !lonely) {
+        hungry = pet.hunger < 30;
+    if (!dirty && !sad && !sleepy && !hungry) {
         return null;
     }
     return (
@@ -20,8 +19,7 @@ function PetCondition({ pet }: { pet: RoomPet }) {
                 dirty ? "Needs a bath" : null,
                 sad ? "Feeling sad" : null,
                 sleepy ? "Sleepy" : null,
-                hungry ? "Hungry" : null,
-                lonely ? "Lonely" : null
+                hungry ? "Hungry" : null
             ]
                 .filter(Boolean)
                 .join(", ")}
@@ -33,7 +31,7 @@ function PetCondition({ pet }: { pet: RoomPet }) {
                     <circle cx="43" cy="78" r="4" fill="#aa917d" opacity=".45" />
                 </svg>
             )}
-            {(sad || hungry || lonely) && (
+            {(sad || hungry) && (
                 <svg className="paw-condition-face" viewBox="0 0 100 100" aria-hidden="true">
                     <path
                         d="M43 70 Q50 63 57 70"
@@ -56,11 +54,6 @@ function PetCondition({ pet }: { pet: RoomPet }) {
             {sleepy && (
                 <span className="paw-condition-sleep" aria-hidden="true">
                     z<sup>z</sup>
-                </span>
-            )}
-            {lonely && (
-                <span className="paw-condition-heart" aria-hidden="true">
-                    ♡
                 </span>
             )}
         </div>

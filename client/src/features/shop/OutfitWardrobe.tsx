@@ -33,6 +33,11 @@ export function OutfitWardrobe({
               }
             : {})
     };
+    const previewedAccessories = SLOT_NAMES.flatMap((accessorySlot) =>
+        preview[accessorySlot]
+            ? [{ slot: accessorySlot, id: preview[accessorySlot]! }]
+            : []
+    );
     const base = [...store, ...addedCosmeticStore]
         .filter((item) => item[2] === "cosmetic")
         .map(([id, , , price]) => ({
@@ -73,13 +78,38 @@ export function OutfitWardrobe({
                         cosmetic="none"
                     />
                 </div>
-                <div>
-                    <h3>{pet.name}'s outfit</h3>
-                    {tryOn && (
-                        <span className="v8-try">
-                            Previewing {tryOn.replaceAll("_", " ")} · not equipped
+                <div className="v8-preview-copy">
+                    <div className="v8-preview-heading">
+                        <div>
+                            <span className="v8-preview-eyebrow">WARDROBE PREVIEW</span>
+                            <h3>{pet.name}'s look</h3>
+                            {tryOn && (
+                                <span className="v8-try">
+                                    Previewing {tryOn.replaceAll("_", " ")} · not equipped
+                                </span>
+                            )}
+                        </div>
+                        <span className="v8-preview-count">
+                            {previewedAccessories.length}/4 slots
                         </span>
-                    )}
+                    </div>
+                    <div className="v8-preview-outfit">
+                        <span className="v8-preview-outfit-title">
+                            {tryOn ? "Preview outfit" : "Equipped accessories"}
+                        </span>
+                        {previewedAccessories.length ? (
+                            <div className="v8-preview-accessories">
+                                {previewedAccessories.map(({ slot: accessorySlot, id }) => (
+                                    <span className="v8-preview-accessory" key={accessorySlot}>
+                                        <small>{accessorySlot}</small>
+                                        <b>{id.replaceAll("_", " ")}</b>
+                                    </span>
+                                ))}
+                            </div>
+                        ) : (
+                            <p>Choose an accessory below to start {pet.name}'s look.</p>
+                        )}
+                    </div>
                 </div>
             </div>
             <div className="paw-wardrobe-toolbar">
@@ -104,6 +134,7 @@ export function OutfitWardrobe({
                     {SLOT_NAMES.map((s) => (
                         <button
                             key={s}
+                            aria-label={`Show ${s} accessories`}
                             className={slot === s ? "selected" : ""}
                             onClick={() => {
                                 setSlot(s);
@@ -111,7 +142,7 @@ export function OutfitWardrobe({
                             }}
                         >
                             <b>
-                                {<PawSlotIcon slot={s} />} {s}
+                                <PawSlotIcon slot={s} /> <span className="v8-slot-label">{s}</span>
                             </b>
                         </button>
                     ))}

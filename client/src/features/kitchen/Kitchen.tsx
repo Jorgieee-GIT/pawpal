@@ -14,7 +14,6 @@ import {
     Plus,
     Minus,
     Search,
-    ShoppingBasket,
     Sparkles,
     Star,
     UtensilsCrossed,
@@ -30,6 +29,7 @@ import { FoodArt, KitchenToolArt, KitchenPrepArt, KitchenEffectArt } from "./Kit
 import KitchenExtraGame, { type ExtraKitchenGame } from "./KitchenExtraGames";
 import { KitchenExtraArt } from "./KitchenExtraArt";
 import { newExtraKitchenChallenge } from "./KitchenExtraChallenges";
+import { KitchenRoom, KitchenStationDialog, type KitchenStation } from "./KitchenRoom";
 export { FoodArt, FOOD_ART_IDS } from "./KitchenArt";
 
 type Recipe = {
@@ -213,7 +213,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
     const [prices, setPrices] = useState<Record<string, number>>({});
     const [mealPrices, setMealPrices] = useState<Record<string, number>>({});
     const [busy, setBusy] = useState(false);
-    const [shelf, setShelf] = useState<"recipes" | "experiment" | "ingredients" | "pantry">("recipes");
+    const [shelf, setShelf] = useState<KitchenStation | null>(null);
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState<"all" | "discovered" | "mystery">("all");
     const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -628,29 +628,11 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                 setGameOpen(true)
             }}>Continue cooking</button>
         </div>}
-        <div className="kitchen-shelf-tabs k3-tabs" role="tablist" aria-label="Kitchen sections">
-            {([
-                ["recipes", "Recipe Book", BookOpen],
-                ["experiment", "Experiment", FlaskConical],
-                ["ingredients", "Market", ShoppingBasket],
-                ["pantry", "Pantry", PackageOpen]
-            ] as const).map(([id, label, Icon]) => <button type="button" role="tab" key={id} aria-selected={shelf === id} className={shelf === id ? "active" : ""} onClick={() => setShelf(id)}>
-                <Icon size={18} />
-                <span className="k3-tab-label">
-                    {label}
-                </span>
-                {id === "pantry" && pantryCount > 0 && <span className="k3-tab-count">
-                    {pantryCount}
-                </span>}
-            </button>)}
-        </div>
+        <KitchenRoom onOpen={setShelf} pantryCount={pantryCount} />
 
+        {shelf && !gameOpen && !result && !guideOpen &&
+        <KitchenStationDialog station={shelf} onDismiss={() => setShelf(null)}>
         {shelf === "recipes" && <>
-            <div className="k3-section-heading">
-                <div>
-                    <h3>Recipe Book</h3>
-                </div>
-            </div>
             <div className="k3-filters">
                 <div className="k3-search">
                     <Search size={17} />
@@ -728,11 +710,6 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         </>}
 
         {shelf === "experiment" && <>
-            <div className="k3-section-heading">
-                <div>
-                    <h3>Experiment Station</h3>
-                </div>
-            </div>
             <div className="k3-experiment-layout">
                 <div className="k3-experiment-bench">
                     <div className="k3-bench-art">
@@ -803,11 +780,6 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         </>}
 
         {shelf === "ingredients" && <>
-            <div className="k3-section-heading">
-                <div>
-                    <h3>Ingredient Market</h3>
-                </div>
-            </div>
             <div className="k3-market-grid">
                 {Object.entries(prices).map(([id, price]) => <article className="k3-market-card" key={id}>
                     <div className="k3-market-art">
@@ -856,11 +828,6 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
         </>}
 
         {shelf === "pantry" && <>
-            <div className="k3-section-heading">
-                <div>
-                    <h3>Ready-to-serve meals</h3>
-                </div>
-            </div>
             <div className="k3-pantry-grid">
                 {Object.entries(kitchen?.meals || {}).filter(([, quantity]) => quantity > 0).map(([id, quantity]) => <article className="k3-pantry-card" key={id}>
                     <div className="k3-pantry-art">
@@ -884,6 +851,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
                 <button type="button" className="secondary" onClick={() => setShelf("recipes")}>Browse recipes</button>
             </div>}
         </>}
+        </KitchenStationDialog>}
 
         {active && current && gameOpen && <div className="kitchen-game-overlay" onMouseDown={event => {
             if (game !== "rhythm" && game !== "wash" && event.target === event.currentTarget) {

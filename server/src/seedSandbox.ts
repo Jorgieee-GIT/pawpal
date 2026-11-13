@@ -81,17 +81,17 @@ async function main() {
             await client.query(
                 `INSERT INTO pets(id,owner_id,name,species,breed,color,owned_colors,owned_breeds,owned_cosmetics,
                     owned_items,placed_items,unlocked_rooms,active_room,room_theme,coins,xp,level,food,toys,hunger,happiness,
-                    energy,cleanliness,affection,garden)
+                    energy,cleanliness,garden)
                  VALUES($1,$2,$3,$4,'classic','classic',$5::jsonb,$6::jsonb,$7::jsonb,$8::jsonb,
                     '["basic_sofa"]'::jsonb,'["living","bedroom","studio","sports"]'::jsonb,'living','blush',
-                    1000000000,0,50,999,999,100,100,100,100,100,'{"seeds":999,"flowers":999,"planted_at":null}'::jsonb)
+                    1000000000,0,50,999,999,100,100,100,100,'{"seeds":999,"flowers":999,"planted_at":null}'::jsonb)
                  ON CONFLICT(owner_id) WHERE owner_id IS NOT NULL DO UPDATE SET
                     name=EXCLUDED.name,species=EXCLUDED.species,breed='classic',color='classic',
                     owned_colors=EXCLUDED.owned_colors,owned_breeds=EXCLUDED.owned_breeds,
                     owned_cosmetics=EXCLUDED.owned_cosmetics,owned_items=EXCLUDED.owned_items,
                     unlocked_rooms=EXCLUDED.unlocked_rooms,active_room='living',room_theme='blush',
                     coins=1000000000,xp=0,level=50,food=999,toys=999,hunger=100,happiness=100,
-                    energy=100,cleanliness=100,affection=100,garden=EXCLUDED.garden,updated_at=NOW()`,
+                    energy=100,cleanliness=100,garden=EXCLUDED.garden,updated_at=NOW()`,
                 [petId, id, `Test Pet ${index + 1}`, petSpecies, JSON.stringify(ownedColors), JSON.stringify(petBreeds),
                     JSON.stringify(ownedCosmetics), JSON.stringify(ownedItems)]
             );

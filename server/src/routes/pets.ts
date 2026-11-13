@@ -194,7 +194,6 @@ export function registerPetRoutes(app: Express) {
                 }
                 p.energy = clamp(p.energy - 12);
                 p.happiness = clamp(p.happiness + 24);
-                p.affection = clamp(p.affection + 8);
                 p.coins += 12;
                 p.xp += 18;
                 msg = "Playtime! +12 coins";
@@ -245,21 +244,15 @@ export function registerPetRoutes(app: Express) {
                 if (now - last < 900) {
                     return "Keep petting gently!";
                 }
-                const strokes = Number(p.garden?._pet_stroke_count || 0) + 1;
                 p.garden = {
                     ...(p.garden || {}),
-                    _last_pet_stroke_at: now,
-                    _pet_stroke_count: strokes
+                    _last_pet_stroke_at: now
                 };
-                p.affection = clamp(p.affection + 4);
-                if (strokes % 10 === 0) {
-                    p.happiness = clamp(p.happiness + 2);
-                }
+                p.happiness = clamp(p.happiness + 2);
                 msg = "Your pet loves the cuddles!";
                 break;
             }
             case "cuddle":
-                p.affection = clamp(p.affection + 20);
                 p.happiness = clamp(p.happiness + 10);
                 p.xp += 8;
                 msg = "Best friends forever!";
