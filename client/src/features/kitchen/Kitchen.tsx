@@ -327,6 +327,7 @@ export default function Kitchen({ token, api, onPetChange, onToast }: {
     const current = active ? recipes[active] : null;
     const step = current?.steps[kitchen?.recipe_step || 0] || "mix";
     const game: Game = gameForStep(step);
+    const isSwipeGame = game === "rhythm" || game === "wash";
     const assets = gameAssets[game];
         /*
      * DOCU: Handle timing phase behavior for this feature.
@@ -616,7 +617,7 @@ function tapSequence(index: number, expected: number[], label: string) {
     // Listen across the full window so both Rhythm Mixing and Washing accept
     // swipes outside the modal. Listeners are removed when the step closes.
     useEffect(() => {
-        if (!active || !gameOpen || (game !== "rhythm" && game !== "wash") || busy) {
+        if (!active || !gameOpen || !isSwipeGame || busy) {
             return;
         }
         let touchStart: {
@@ -675,15 +676,8 @@ const onTouchStart = (event: TouchEvent) => {
          * Last Updated By: Jorge
          */
 const onTouchMove = (event: TouchEvent) => {
-            if (!touchStart || pending.current) {
-                return;
-            }
-            const touch = Array.from(event.touches).find(item => item.identifier === touchStart?.identifier);
-            if (!touch) {
-                return;
-            }
-            // Stop browser scrolling only when the gesture is becoming a swipe.
-            if (Math.hypot(touch.clientX - touchStart.x, touch.clientY - touchStart.y) > 12 && event.cancelable) {
+            // Claim the first movement before the browser can start pull-to-refresh.
+            if (touchStart && event.touches.length === 1 && event.cancelable) {
                 event.preventDefault();
             }
         };
@@ -742,7 +736,7 @@ const onTouchCancel = () => {
             window.removeEventListener("touchend", onTouchEnd);
             window.removeEventListener("touchcancel", onTouchCancel);
         };
-    }, [active, gameOpen, game, busy, challenge.rhythm, challenge.wash, kitchen?.recipe_step]);
+    }, [active, gameOpen, isSwipeGame, game, busy, challenge.rhythm, challenge.wash, kitchen?.recipe_step]);
 
         /*
      * DOCU: Handle release pour behavior for this feature.
@@ -1006,7 +1000,7 @@ function changeHeat(delta: number) {
         </>}
         </KitchenStationDialog>}
 
-        {active && current && gameOpen && <div className="kitchen-game-overlay" onMouseDown={event => {if (game !== "rhythm" && game !== "wash" && event.target ===event.currentTarget) {setGameOpen(false)}}}>
+        {active && current && gameOpen && <div className={isSwipeGame ? "kitchen-game-overlay kitchen-game-overlay--swipe" : "kitchen-game-overlay"} onMouseDown={event => {if (!isSwipeGame && event.target ===event.currentTarget) {setGameOpen(false)}}}>
             <div className="kitchen-game-modal k3-game-modal" role="dialog" aria-modal="true" aria-label={`Cooking ${current.name}`}>
                 <div className="kitchen-game-head">
                     <div className="kitchen-game-art">
